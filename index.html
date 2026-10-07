@@ -302,7 +302,7 @@
   .bn-dots{display:flex;gap:7px}
   .bn-dot{width:26px;height:6px;border-radius:6px;border:none;background:rgba(255,255,255,.3);padding:0;overflow:hidden;cursor:pointer}
   .bn-dot i{display:block;height:100%;width:0;background:#fff;border-radius:6px}
-  .bn-dot.on i{animation:bnprog 6s linear forwards}.banner.pausado .bn-dot.on i{animation-play-state:paused}
+  .bn-dot.on i{animation:bnprog 3.5s linear forwards}.banner.pausado .bn-dot.on i{animation-play-state:paused}
   @keyframes bnprog{to{width:100%}}
   @media (max-width:640px){
     .banner{grid-template-columns:1fr;margin:4px 10px 8px;min-height:0;background:radial-gradient(circle at 50% 22%,rgba(255,170,60,.38),transparent 34%),linear-gradient(180deg,#c9171d 0%,#a51015 48%,#7e0a0e 100%)}
@@ -451,7 +451,7 @@ function iniciarBanner() {
     try { await sair(); BANNER.i = novo; conteudo().innerHTML = slideHTML(BANNER.slides[novo]); marcar(); entrar();
       if (M) M.animate(b.querySelector('.bn-gigante'), { x: [60 * dir, 0], opacity: [.2, 1] }, mola(.2, .9)); }
     finally { BANNER.ocupado = false; } };
-  const auto = () => { clearInterval(BANNER.timer); if (BANNER.slides.length > 1 && !reduzir) BANNER.timer = setInterval(() => ir(BANNER.i + 1), 6000); };
+  const auto = () => { clearInterval(BANNER.timer); if (BANNER.slides.length > 1 && !reduzir) BANNER.timer = setInterval(() => ir(BANNER.i + 1), 3500); };
   const pausar = (sim) => { b.classList.toggle('pausado', sim); if (sim) clearInterval(BANNER.timer); else auto(); };
   b.addEventListener('click', (e) => { const s = e.target.closest('.bn-seta'), d = e.target.closest('.bn-dot');
     if (s) { ir(BANNER.i + Number(s.dataset.dir)); auto(); } if (d) { ir(Number(d.dataset.i)); auto(); } });
