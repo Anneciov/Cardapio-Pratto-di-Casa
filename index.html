@@ -82,6 +82,55 @@
   .heroimg{width:300px;max-width:100%;aspect-ratio:1;object-fit:cover;border-radius:28px;display:block;box-shadow:0 30px 50px -20px rgba(0,0,0,.95),0 0 0 1px rgba(255,255,255,.08);transform:rotate(-3deg)}
   .destaque.so-texto{grid-template-columns:1fr;min-height:0;padding-bottom:10px}
   .item .mini{width:58px;height:58px;border-radius:14px;object-fit:cover;flex-shrink:0;margin:0}
+  /* ===== monte seu pedido ===== */
+  .cbtn{border:none;cursor:pointer}
+  .item[data-pedir]{cursor:pointer}.item[data-pedir]::after{content:'Pedir →';flex-shrink:0;font:700 12px Inter;color:var(--laranja2);opacity:.0;transition:opacity .2s ease}.item[data-pedir]:hover::after,.item[data-pedir]:focus-visible::after{opacity:1}
+  body.sem-rolagem{overflow:hidden}
+  .ped-fundo{position:fixed;inset:0;z-index:20;background:rgba(5,6,8,.72);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px}
+  .ped-fundo[hidden]{display:none}
+  .ped{position:relative;width:100%;max-width:560px;max-height:min(92vh,860px);display:flex;flex-direction:column;border-radius:24px;overflow:hidden;
+    background:radial-gradient(ellipse 80% 30% at 50% 0%,rgba(255,122,26,.12),transparent 70%),linear-gradient(160deg,#1e232a,#14171c);border:1px solid rgba(255,255,255,.08);box-shadow:0 40px 90px -30px rgba(0,0,0,.95)}
+  .ped-topo{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px 12px;border-bottom:1px solid var(--linha)}
+  .ped-topo small{font:600 11px Inter;letter-spacing:.3em;color:var(--laranja);text-transform:uppercase}
+  .ped-topo h3{font:700 26px Oswald;text-transform:uppercase;letter-spacing:.03em}
+  .ped-x{width:40px;height:40px;border-radius:50%;border:1px solid var(--linha);background:rgba(255,255,255,.05);color:var(--texto);font-size:24px;line-height:1;cursor:pointer}.ped-x:hover{border-color:var(--laranja);color:var(--laranja2)}
+  .ped-corpo{overflow:auto;padding:6px 20px 14px;overscroll-behavior:contain}
+  .ped-sec{padding:14px 0;border-bottom:1px dashed var(--linha);border-radius:12px;transition:background .3s ease}
+  .ped-sec.alerta{animation:alerta 1.2s ease}
+  @keyframes alerta{0%,100%{background:transparent}20%,60%{background:rgba(255,122,26,.12)}}
+  .ped-sec h4{display:flex;align-items:center;gap:8px;font:700 15px Oswald;letter-spacing:.12em;text-transform:uppercase;color:var(--laranja2);margin-bottom:10px}
+  .ped-sec h4 span{font:500 12px Inter;letter-spacing:0;text-transform:none;color:var(--suave)}
+  .ped-cont{margin-left:auto;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.07);color:var(--texto)!important;font:700 12px Inter!important}
+  .ped-cont.cheio{background:rgba(34,197,94,.18);color:#4ade80!important}
+  .ped-nota{font-size:12.5px;color:var(--suave);margin:-2px 0 10px;line-height:1.45}
+  .ped-tams{display:grid;grid-template-columns:repeat(auto-fit,minmax(98px,1fr));gap:8px}
+  .ped-chips{display:flex;flex-wrap:wrap;gap:8px}
+  .ped-chip{border:1px solid var(--linha);background:rgba(255,255,255,.04);color:var(--texto);border-radius:14px;padding:10px 14px;font:600 14px Inter;cursor:pointer;text-align:left;transition:border-color .2s ease,background .2s ease,transform .15s ease}
+  .ped-chip:hover:not(:disabled){border-color:rgba(255,122,26,.5)}
+  .ped-chip:active:not(:disabled){transform:scale(.96)}
+  .ped-chip.on{border-color:var(--laranja);background:rgba(255,122,26,.16);color:#fff;box-shadow:inset 0 0 0 1px var(--laranja);animation:escolhido .35s ease}
+  .ped-chip:disabled{opacity:.32;cursor:not-allowed}
+  @keyframes escolhido{40%{transform:scale(1.05)}}
+  .ped-tam{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 8px;text-align:center}
+  .ped-tam b{font:700 24px Oswald;color:var(--laranja2)}.ped-tam span{font-size:12px;color:var(--suave)}.ped-tam em{font:700 15px Oswald;font-style:normal}
+  .ped-tam.on b{color:#fff}
+  .ped-esp{font-style:normal;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#1a0d02;background:var(--laranja2);padding:2px 6px;border-radius:8px;margin-left:4px}
+  .ped-qtd{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--linha);border-radius:40px;padding:4px}
+  .ped-qtd button{width:40px;height:40px;border-radius:50%;border:none;background:rgba(255,255,255,.07);color:var(--texto);font-size:22px;cursor:pointer}.ped-qtd button:hover{background:var(--laranja);color:#1a0d02}
+  .ped-qtd b{min-width:40px;text-align:center;font:700 22px Oswald}
+  #ped-obs{width:100%;resize:vertical;border-radius:14px;border:1px solid var(--linha);background:rgba(0,0,0,.25);color:var(--texto);font:500 14.5px/1.45 Inter;padding:12px 14px;outline:none}
+  #ped-obs:focus{border-color:var(--laranja)}
+  .ped-rodape{display:flex;align-items:center;gap:14px;padding:14px 20px 18px;border-top:1px solid var(--linha);background:rgba(0,0,0,.25)}
+  .ped-total{flex:1;min-width:0}.ped-total small{display:block;font-size:12px;color:var(--suave);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ped-total b{font:700 30px Oswald;color:var(--laranja)}
+  .ped-enviar{display:inline-flex;align-items:center;gap:9px;border:none;cursor:pointer;padding:15px 22px;border-radius:40px;background:linear-gradient(135deg,#2bd96b,#16a34a);color:#04170b;font:700 16px Inter;box-shadow:0 14px 26px -12px rgba(22,163,74,.9);transition:transform .2s ease}
+  .ped-enviar:hover{transform:translateY(-2px)}.ped-enviar svg{width:20px;height:20px}
+  .ped-erro{position:absolute;left:50%;bottom:92px;transform:translate(-50%,10px);opacity:0;pointer-events:none;background:#ef4444;color:#fff;font:600 13.5px Inter;padding:10px 16px;border-radius:12px;box-shadow:0 12px 24px -10px rgba(239,68,68,.8);transition:opacity .2s ease,transform .2s ease;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis}
+  .ped-erro.on{opacity:1;transform:translate(-50%,0)}
+  @media (max-width:640px){
+    .ped-fundo{align-items:flex-end;padding:0}.ped{max-width:none;border-radius:24px 24px 0 0;max-height:94vh}
+    .ped-rodape{padding-bottom:max(18px,env(safe-area-inset-bottom))}.ped-enviar{padding:14px 16px;font-size:15px}.ped-total b{font-size:26px}
+    .item[data-pedir]::after{display:none}
+  }
   /* ===== capa (página de abertura) ===== */
   #capa{position:relative;z-index:2;min-height:100vh;min-height:100svh;max-width:1180px;margin:0 auto;padding:18px 20px 22px;display:flex;flex-direction:column;gap:16px}
   body.na-capa .cena,body.na-capa .pedir{display:none}
@@ -224,7 +273,7 @@
 <div class="bokeh" aria-hidden="true"></div>
 <div id="capa" aria-label="Início"></div>
 <div class="cena"><main class="quadro" id="quadro"><div class="carregando"><i></i>Carregando o cardápio de hoje…</div></main></div>
-<a class="pedir" id="pedir" href="#" target="_blank" rel="noopener" aria-label="Pedir pelo WhatsApp">
+<a class="pedir" id="pedir" data-pedir="" href="#" target="_blank" rel="noopener" aria-label="Pedir pelo WhatsApp">
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4zm4.5 9.7c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 01-1.9-1.2 7.3 7.3 0 01-1.3-1.7c-.1-.2 0-.4.1-.5l.4-.5c.1-.1.1-.3.2-.4a.4.4 0 000-.4l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5a.9.9 0 00-.6.3 2.6 2.6 0 00-.8 1.9 4.5 4.5 0 001 2.4 10.2 10.2 0 003.9 3.4c1.5.6 2 .7 2.7.6a2.3 2.3 0 001.5-1.1 1.9 1.9 0 00.1-1.1c0-.1-.2-.2-.4-.3z"/></svg>
   Pedir pelo WhatsApp
 </a>
@@ -266,7 +315,7 @@ function slideHTML(p) {
       <div class="bn-tag bn-a"><span>${esc(TAMANHO[p.tamanho] || p.tamanhoNome || 'Hoje')}</span></div>
       ${ing ? `<p class="bn-ing bn-a">${esc(ing)}</p>` : ''}
       ${valor(p.preco) ? `<div class="bn-preco bn-a"><span class="bn-so">Só</span><b><small>R$</small>${esc(p.preco)}</b></div>` : ''}
-      <a class="bn-pedir bn-a" href="${linkWA('Olá! Quero pedir 1 ' + p.nome + '.')}" target="_blank" rel="noopener"><span class="bn-moto">${ICONES.moto}</span><span><b>Peça agora</b><small>Rápido · quentinho · caseiro</small></span></a>
+      <a class="bn-pedir bn-a" data-pedir="${esc(p.tamanho || '')}" href="${linkWA('Olá! Quero pedir 1 ' + p.nome + '.')}" target="_blank" rel="noopener"><span class="bn-moto">${ICONES.moto}</span><span><b>Peça agora</b><small>Rápido · quentinho · caseiro</small></span></a>
     </div>
     <div class="bn-foto"><div class="bn-pop"><div class="bn-anel"></div><div class="bn-flutua"><img src="${esc(urlSegura(p.foto))}" alt="${esc(p.nome)}"></div><div class="bn-sombra"></div><div class="vapor"><span></span><span></span><span></span></div></div></div>`;
 }
@@ -366,6 +415,122 @@ function mostrarCardapio() {
   else if (M) M.animate(cena, { opacity: [0, 1], y: [30, 0] }, { type: 'spring', bounce: .2, duration: .6 });
 }
 const rota = () => (location.hash === '#cardapio' ? mostrarCardapio() : mostrarCapa());
+// ---------- Monte seu pedido: tamanho, prato do dia, até 2 guarnições, quantidade e observação → WhatsApp ----------
+let DADOS = null;
+const MAX_GUARN = 2;
+const PED = { tam: '', prato: '', guarn: [], qtd: 1 };
+const num = (v) => Number(String(v || '').replace(/\./g, '').replace(',', '.')) || 0;
+const reais = (n) => 'R$ ' + n.toFixed(2).replace('.', ',');
+const PROTEINAS_FIT = ['Carne', 'Frango', 'Omelete'];
+// pratos especiais (ex.: "Feijoada / Rabada / Virado / À parmegiana") têm tabela de preço própria
+const palavrasEspeciais = (d) => String((d.especial || {}).nome || '').toLowerCase().split(/[\/,]/).map(s => s.trim().replace(/^(à|a|ao)\s+/, '').split(' ')[0]).filter(w => w.length > 3);
+const ehEspecial = (d, prato) => { const n = String(prato || '').toLowerCase(); return !!n && palavrasEspeciais(d).some(w => n.includes(w)); };
+function tamanhosPedido(d) {
+  const pr = d.precos || {}; const lista = [['P', 'Pequena'], ['M', 'Média'], ['G', 'Grande']].filter(([k]) => valor(pr[k]));
+  if (valor(pr.fitness) || (d.fitness || []).length) lista.push(['F', 'Fitness']);
+  return lista;
+}
+function precoPedido(d, tam, prato) {
+  const pr = d.precos || {}, es = d.especial || {};
+  if (tam === 'F') return { valor: num(pr.fitness), especial: false };
+  if (ehEspecial(d, prato) && valor(es[tam])) return { valor: num(es[tam]), especial: true };
+  return { valor: num(pr[tam]), especial: false };
+}
+function pedidoHTML() {
+  return `<div class="ped-fundo" id="ped" hidden><div class="ped" role="dialog" aria-modal="true" aria-labelledby="ped-tit">
+    <div class="ped-topo"><div><small>Pratto di Casa</small><h3 id="ped-tit">Monte seu pedido</h3></div><button type="button" class="ped-x" data-fechar aria-label="Fechar">×</button></div>
+    <div class="ped-corpo">
+      <div id="ped-opcoes"></div>
+      <section class="ped-sec"><h4>Quantidade</h4><div class="ped-qtd"><button type="button" data-qtd="-1" aria-label="Menos">−</button><b id="ped-qtd">1</b><button type="button" data-qtd="1" aria-label="Mais">+</button></div></section>
+      <section class="ped-sec"><h4>Observação <span>(opcional)</span></h4><textarea id="ped-obs" maxlength="300" rows="3" placeholder="Ex.: sem cebola, carne bem passada, troco para R$ 50, entregar no portão…"></textarea></section>
+    </div>
+    <div class="ped-rodape"><div class="ped-total"><small id="ped-resumo">Escolha o tamanho</small><b id="ped-total">R$ 0,00</b></div>
+      <button type="button" class="ped-enviar" id="ped-enviar"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4z"/></svg>Enviar no WhatsApp</button></div>
+    <div class="ped-erro" id="ped-erro" role="alert"></div>
+  </div></div>`;
+}
+function renderOpcoes() {
+  const d = DADOS; const fit = PED.tam === 'F'; const es = d.especial || {};
+  const tams = tamanhosPedido(d).map(([k, n]) => { const p = precoPedido(d, k, PED.prato);
+    return `<button type="button" class="ped-chip ped-tam${PED.tam === k ? ' on' : ''}" data-tam="${k}" aria-pressed="${PED.tam === k}"><b>${k === 'F' ? 'FIT' : k}</b><span>${n}</span><em>${p.valor ? reais(p.valor) : ''}</em></button>`; }).join('');
+  const pratos = fit ? PROTEINAS_FIT : (d.hoje || []);
+  const listaPratos = pratos.map(n => `<button type="button" class="ped-chip${PED.prato === n ? ' on' : ''}" data-prato="${esc(n)}" aria-pressed="${PED.prato === n}">${esc(n)}${!fit && ehEspecial(d, n) ? ' <i class="ped-esp">especial</i>' : ''}</button>`).join('');
+  const cheio = PED.guarn.length >= MAX_GUARN;
+  const guarn = (d.guarnicoes || []).map(n => { const on = PED.guarn.includes(n);
+    return `<button type="button" class="ped-chip${on ? ' on' : ''}" data-guarn="${esc(n)}" aria-pressed="${on}"${cheio && !on ? ' disabled' : ''}>${on ? '✓ ' : ''}${esc(n)}</button>`; }).join('');
+  document.getElementById('ped-opcoes').innerHTML = `
+    <section class="ped-sec" id="sec-tam"><h4>1. Tamanho</h4><div class="ped-tams">${tams}</div>
+      ${ehEspecial(d, PED.prato) && !fit ? `<p class="ped-nota">${esc(PED.prato)} usa a tabela de especiais (${esc(es.nome || '')}).</p>` : ''}</section>
+    ${pratos.length ? `<section class="ped-sec" id="sec-prato"><h4>2. ${fit ? 'Proteína do fitness' : 'Prato do dia'}</h4><div class="ped-chips">${listaPratos}</div>
+      ${fit && (d.fitness || []).length ? `<p class="ped-nota">Vem com: ${esc(d.fitness.filter(x => !/prote/i.test(x)).join(', '))}.</p>` : ''}</section>` : ''}
+    ${(d.guarnicoes || []).length ? `<section class="ped-sec" id="sec-guarn"><h4>3. Guarnições <span class="ped-cont${cheio ? ' cheio' : ''}">${PED.guarn.length}/${MAX_GUARN}</span></h4>
+      <p class="ped-nota">${fit ? 'Opcional — ' + esc(d.fitnessObs || 'guarnições têm acréscimo') + '.' : `Você tem direito a ${MAX_GUARN} guarnições.`}</p><div class="ped-chips">${guarn}</div></section>` : ''}`;
+  atualizarTotal();
+}
+function atualizarTotal() {
+  const d = DADOS; const p = PED.tam ? precoPedido(d, PED.tam, PED.prato) : { valor: 0 };
+  document.getElementById('ped-qtd').textContent = PED.qtd;
+  document.getElementById('ped-total').textContent = reais(p.valor * PED.qtd);
+  const nome = (tamanhosPedido(d).find(([k]) => k === PED.tam) || [])[1];
+  document.getElementById('ped-resumo').textContent = nome ? `${PED.qtd}× ${nome}${PED.prato ? ' · ' + PED.prato : ''}` : 'Escolha o tamanho';
+}
+function erroPedido(msg, secao) {
+  const e = document.getElementById('ped-erro'); e.textContent = msg; e.classList.add('on'); clearTimeout(erroPedido.t); erroPedido.t = setTimeout(() => e.classList.remove('on'), 2600);
+  const s = document.getElementById(secao); if (s) { s.scrollIntoView({ behavior: 'smooth', block: 'center' }); s.classList.remove('alerta'); void s.offsetWidth; s.classList.add('alerta'); }
+}
+function enviarPedido() {
+  const d = DADOS; const fit = PED.tam === 'F'; const pratos = fit ? PROTEINAS_FIT : (d.hoje || []);
+  if (!PED.tam) return erroPedido('Escolha o tamanho do prato.', 'sec-tam');
+  if (pratos.length && !PED.prato) return erroPedido(fit ? 'Escolha a proteína do fitness.' : 'Escolha o prato do dia.', 'sec-prato');
+  if (!fit && (d.guarnicoes || []).length && PED.guarn.length < MAX_GUARN && !confirm(`Você escolheu ${PED.guarn.length} de ${MAX_GUARN} guarnições. Enviar mesmo assim?`)) return;
+  const nomeTam = (tamanhosPedido(d).find(([k]) => k === PED.tam) || [])[1]; const p = precoPedido(d, PED.tam, PED.prato);
+  const obs = document.getElementById('ped-obs').value.trim();
+  const PRATO_TAM = { P: 'Prato Pequeno', M: 'Prato Médio', G: 'Prato Grande' };
+  const linhas = [
+    `*${fit ? 'Prato Fitness' : (PRATO_TAM[PED.tam] || 'Prato ' + nomeTam) + ' (' + PED.tam + ')'}*${p.valor ? ' — ' + reais(p.valor) : ''}${p.especial ? ' (especial)' : ''}`,
+    PED.prato ? `${fit ? 'Proteína' : 'Prato'}: ${PED.prato}` : '',
+    PED.guarn.length ? `Guarnições: ${PED.guarn.join(' e ')}` : '',
+    `Quantidade: ${PED.qtd}`, obs ? `Observação: ${obs}` : '',
+    p.valor ? `\n*Total: ${reais(p.valor * PED.qtd)}*` : ''].filter(Boolean);
+  const url = linkWA('Olá! Quero fazer um pedido 😊\n\n' + linhas.join('\n'));
+  if (url === '#') return erroPedido('WhatsApp do restaurante não informado.', '');
+  window.open(url, '_blank', 'noopener') || (location.href = url);
+  fecharPedido();
+}
+function abrirPedido(tam, prato) {
+  const d = DADOS; if (!d) return;
+  if (!document.getElementById('ped')) { document.body.insertAdjacentHTML('beforeend', pedidoHTML()); ligarPedido(); }
+  const tams = tamanhosPedido(d).map(([k]) => k);
+  PED.tam = tams.includes(tam) ? tam : (tams.includes('M') ? 'M' : tams[0] || ''); PED.prato = prato || ''; PED.guarn = []; PED.qtd = 1;
+  if (prato && PED.tam === 'F') PED.tam = tams.includes('M') ? 'M' : tams[0];
+  document.getElementById('ped-obs').value = '';
+  renderOpcoes();
+  const fundo = document.getElementById('ped'); fundo.hidden = false; document.body.classList.add('sem-rolagem');
+  const M = !semMovimento() && window.Motion;
+  if (M) { M.animate(fundo, { opacity: [0, 1] }, { duration: .25 });
+    const caixa = fundo.querySelector('.ped'); const a = M.animate(caixa, { y: [60, 0], opacity: [0, 1], scale: [.97, 1] }, { type: 'spring', bounce: .25, duration: .55 });
+    setTimeout(() => { try { a.complete(); } catch (e) {} }, 900); }
+  setTimeout(() => { const f = fundo.querySelector('.ped-tam.on, .ped-chip'); if (f) f.focus(); }, 60);
+}
+function fecharPedido() { const f = document.getElementById('ped'); if (!f) return; f.hidden = true; document.body.classList.remove('sem-rolagem'); }
+function ligarPedido() {
+  const f = document.getElementById('ped');
+  f.addEventListener('click', (e) => {
+    if (e.target === f || e.target.closest('[data-fechar]')) return fecharPedido();
+    const t = e.target.closest('[data-tam]'), pr = e.target.closest('[data-prato]'), g = e.target.closest('[data-guarn]'), q = e.target.closest('[data-qtd]');
+    if (t) { const novo = t.dataset.tam; if ((novo === 'F') !== (PED.tam === 'F')) PED.prato = ''; PED.tam = novo; renderOpcoes(); }
+    else if (pr) { PED.prato = PED.prato === pr.dataset.prato ? '' : pr.dataset.prato; renderOpcoes(); }
+    else if (g && !g.disabled) { const n = g.dataset.guarn; PED.guarn = PED.guarn.includes(n) ? PED.guarn.filter(x => x !== n) : (PED.guarn.length < MAX_GUARN ? [...PED.guarn, n] : PED.guarn); renderOpcoes(); }
+    else if (q) { PED.qtd = Math.min(20, Math.max(1, PED.qtd + Number(q.dataset.qtd))); atualizarTotal(); }
+    else if (e.target.closest('#ped-enviar')) enviarPedido();
+  });
+  // toque numa guarnição bloqueada (já tem 2): avisa
+  f.addEventListener('pointerdown', (e) => { const g = e.target.closest('[data-guarn]'); if (g && g.disabled) erroPedido(`Você já escolheu ${MAX_GUARN} guarnições. Tire uma para trocar.`, 'sec-guarn'); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !f.hidden) fecharPedido(); });
+}
+// qualquer botão "Pedir" da página abre o montador do pedido
+document.addEventListener('click', (e) => { const el = e.target.closest('[data-pedir]'); if (!el || !DADOS) return; e.preventDefault(); abrirPedido(el.dataset.pedir || '', el.dataset.prato || ''); });
+document.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.item[data-pedir]')) { e.preventDefault(); e.target.click(); } });
 function montar(d) {
   const emp = d.empresa || PADRAO.empresa; const hoje = d.hoje || []; const pratos = (d.pratos || []).filter(p => p && p.nome);
   const dia0 = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'2-digit' }); const dia = dia0.charAt(0).toUpperCase() + dia0.slice(1);
@@ -388,14 +553,14 @@ function montar(d) {
       <article class="card">
         <div class="cimg">${f ? `<img src="${esc(f)}" alt="${esc(p.nome)}" loading="lazy">` : `<div class="semfoto"><svg viewBox="0 0 120 120" width="96" height="96" fill="none" stroke="currentColor" stroke-linecap="round" aria-hidden="true"><circle cx="60" cy="60" r="32" stroke-width="2.5"/><circle cx="60" cy="60" r="22" stroke-width="1.5" opacity=".5"/><path d="M16 32v56 M11 32v16 M21 32v16 M11 48q5 6 10 0" stroke-width="3"/><path d="M104 88V32q9 10 0 26" stroke-width="3"/></svg></div>`}<span class="tag">${esc(TAMANHO[p.tamanho] || p.tamanhoNome || '')}</span></div>
         <div class="cbody"><h4>${esc(p.nome)}</h4>${ing(p) ? `<p>${esc(ing(p))}</p>` : (p.obs ? `<p>${esc(p.obs)}</p>` : '')}
-          <div class="crow">${valor(p.preco) ? `<b>R$ ${esc(p.preco)}</b>` : '<span></span>'}<a class="cbtn" href="${linkPedido('Olá! Quero pedir 1 ' + p.nome + '.')}" target="_blank" rel="noopener">Pedir</a></div></div>
+          <div class="crow">${valor(p.preco) ? `<b>R$ ${esc(p.preco)}</b>` : '<span></span>'}<button type="button" class="cbtn" data-pedir="${esc(p.tamanho || '')}">Pedir</button></div></div>
       </article>`; }).join('')}</div></section>` : '';
   return `
   <header class="entra"><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div><div class="data">Cardápio de hoje · ${esc(dia)}</div><a class="inicio" href="#inicio" aria-label="Voltar ao início">‹ Início</a></header>
   ${destaque}
   ${cards}
   ${hoje.length ? `<section class="bloco entra"><div class="titulo"><h3>Hoje <em>tem</em></h3></div><div class="lista">${hoje.map((n, i) => { const f = fotoDe(d, n);
-      return `<div class="item"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="nome">${esc(n)}</span>${f ? `<img class="mini" src="${esc(f)}" alt="" loading="lazy">` : ''}</div>`; }).join('')}</div></section>` : ''}
+      return `<div class="item" data-pedir="" data-prato="${esc(n)}" role="button" tabindex="0" title="Pedir ${esc(n)}"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="nome">${esc(n)}</span>${f ? `<img class="mini" src="${esc(f)}" alt="" loading="lazy">` : ''}</div>`; }).join('')}</div></section>` : ''}
   <section class="bloco entra"><div class="duas">
     ${(d.guarnicoes || []).length ? `<div><div class="titulo"><h3>Guarni<em>ções</em></h3></div><ul class="pontos">${d.guarnicoes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></div>` : ''}
     ${(d.fitness || []).length ? `<div><div class="titulo"><h3><em>Fit</em>ness</h3></div><ul class="pontos">${d.fitness.map(n => `<li>${esc(n)}</li>`).join('')}</ul>${d.fitnessObs ? `<div class="obs">(${esc(d.fitnessObs)})</div>` : ''}${valor(pr.fitness) ? `<div class="fitpreco">Fitness <b>R$ ${esc(pr.fitness)}</b></div>` : ''}</div>` : ''}
@@ -457,7 +622,7 @@ async function iniciar() {
   if (!d && p.has('demo')) d = PADRAO;
   if (!d) { // sem cardápio publicado (ou sem internet): não mostra cardápio antigo, só o caminho para pedir
     document.body.classList.remove('na-capa'); montar(PADRAO); q.innerHTML = '<div class="aviso"><div style="font:700 30px Oswald;color:#f3f4f6;margin-bottom:10px">PRATTO DI <span style="color:#ff7a1a">CASA</span></div>O cardápio de hoje ainda não foi publicado.<br>Chame a gente no WhatsApp que passamos os pratos do dia! 😊</div>'; return; }
-  q.innerHTML = montar(d);
+  DADOS = d; q.innerHTML = montar(d);
   document.getElementById('capa').innerHTML = capaHTML(d);
   rota(); addEventListener('hashchange', rota);
 }
