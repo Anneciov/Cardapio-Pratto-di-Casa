@@ -10,7 +10,7 @@
 <meta property="og:description" content="Veja os pratos de hoje e peça pelo WhatsApp.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Kaushan+Script&family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --laranja:#ff7a1a; --laranja2:#ffa94d; --quadro:#16191e; --quadro2:#1e232a; --linha:rgba(255,255,255,.08);
@@ -82,6 +82,61 @@
   .heroimg{width:300px;max-width:100%;aspect-ratio:1;object-fit:cover;border-radius:28px;display:block;box-shadow:0 30px 50px -20px rgba(0,0,0,.95),0 0 0 1px rgba(255,255,255,.08);transform:rotate(-3deg)}
   .destaque.so-texto{grid-template-columns:1fr;min-height:0;padding-bottom:10px}
   .item .mini{width:58px;height:58px;border-radius:14px;object-fit:cover;flex-shrink:0;margin:0}
+  /* ===== banner (cartaz) do topo ===== */
+  .banner{position:relative;z-index:1;margin:6px 18px 10px;border-radius:26px;overflow:hidden;min-height:480px;display:grid;grid-template-columns:1.05fr 1fr;isolation:isolate;outline:none;touch-action:pan-y;
+    background:radial-gradient(circle at 72% 46%,rgba(255,170,60,.38),transparent 40%),linear-gradient(90deg,#c9171d 0%,#a51015 54%,#7e0a0e 54%,#5c070a 100%);
+    box-shadow:0 34px 60px -30px rgba(201,23,29,.65),inset 0 0 0 1px rgba(255,255,255,.08)}
+  .banner::before{content:'';position:absolute;inset:0;z-index:0;opacity:.35;pointer-events:none;background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);background-size:5px 5px}
+  .banner:focus-visible{box-shadow:0 0 0 3px #ffd28a}
+  .bn-gigante{position:absolute;right:-1%;top:3%;z-index:0;display:flex;flex-direction:column;align-items:flex-end;pointer-events:none;user-select:none;font:400 clamp(84px,14vw,170px)/.84 Anton,Oswald,sans-serif;letter-spacing:.01em;color:rgba(0,0,0,.2)}
+  .bn-gigante span:last-child{color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.13)}
+  .bn-conteudo{display:contents}
+  .bn-txt{position:relative;z-index:2;padding:34px 8px 130px 34px;display:flex;flex-direction:column;align-items:flex-start;gap:9px}
+  .bn-script{font:400 30px 'Kaushan Script',cursive;color:#ffd28a;transform:rotate(-6deg);transform-origin:left;margin-bottom:-4px;text-shadow:0 4px 12px rgba(0,0,0,.3)}
+  .bn-titulo{display:flex;flex-direction:column;line-height:.86;margin:0}
+  .bn-forte{font:400 clamp(46px,6.6vw,82px)/.9 Anton,Oswald,sans-serif;text-transform:uppercase;color:#fff;letter-spacing:.01em;text-shadow:0 10px 26px rgba(0,0,0,.35)}
+  .bn-cursiva{font:400 clamp(42px,6vw,72px)/1.05 'Kaushan Script',cursive;color:#ffd28a;margin:-6px 0 0 26px;transform:rotate(-5deg);transform-origin:left;text-shadow:0 6px 18px rgba(0,0,0,.4)}
+  .bn-tag{position:relative;padding:7px 26px 9px 18px;transform-origin:left center;margin-top:4px}
+  .bn-tag::before{content:'';position:absolute;inset:0;background:#fff;clip-path:polygon(1% 14%,97% 0,100% 44%,95% 100%,3% 90%,0 52%);transform:rotate(-3deg);box-shadow:0 8px 18px rgba(0,0,0,.25)}
+  .bn-tag span{position:relative;font:400 24px Anton,Oswald,sans-serif;color:#a51015;text-transform:uppercase;letter-spacing:.05em}
+  .bn-ing{color:rgba(255,255,255,.85);font-size:14.5px;line-height:1.45;max-width:330px}
+  .bn-preco{display:flex;align-items:flex-end;gap:6px;margin-top:2px}
+  .bn-so{font:400 30px 'Kaushan Script',cursive;color:#ffd28a;transform:rotate(-10deg);margin-bottom:26px}
+  .bn-preco b{display:inline-block;font:400 clamp(56px,7.6vw,84px)/1 Anton,Oswald,sans-serif;color:#fff;text-shadow:0 10px 24px rgba(0,0,0,.35);border-bottom:3px solid rgba(255,255,255,.75);padding-bottom:4px}
+  .bn-preco small{font-size:.4em;margin-right:5px;vertical-align:.95em}
+  .bn-pedir{display:flex;align-items:center;gap:12px;margin-top:10px;text-decoration:none;color:#fff;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.28);padding:7px 22px 7px 7px;border-radius:40px;backdrop-filter:blur(6px);transition:background .25s ease,color .25s ease,transform .25s ease}
+  .bn-pedir:hover{background:#fff;color:#a51015;transform:translateY(-2px)}
+  .bn-moto{width:44px;height:44px;border-radius:50%;background:#fff;color:#c9171d;display:grid;place-items:center;flex-shrink:0;transition:transform .3s ease}.bn-pedir:hover .bn-moto{transform:rotate(-12deg) scale(1.08)}
+  .bn-moto svg{width:25px;height:25px}
+  .bn-pedir b{display:block;font:400 18px Anton,Oswald,sans-serif;letter-spacing:.07em;text-transform:uppercase}
+  .bn-pedir small{display:block;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;opacity:.85}
+  .bn-foto{position:relative;z-index:1;display:grid;place-items:center;padding:24px 24px 90px}
+  .bn-pop{position:relative;display:grid;place-items:center}
+  .bn-flutua{position:relative;z-index:1;animation:flutua 6s ease-in-out infinite}
+  .bn-foto img{width:min(350px,32vw);aspect-ratio:1;object-fit:cover;border-radius:50%;display:block;-webkit-mask-image:radial-gradient(circle,#000 63%,transparent 71%);mask-image:radial-gradient(circle,#000 63%,transparent 71%);filter:saturate(1.12) contrast(1.04)}
+  .bn-anel{position:absolute;inset:-8%;border-radius:50%;border:2px dashed rgba(255,255,255,.35);box-shadow:0 0 70px rgba(255,170,60,.35) inset,0 0 60px rgba(255,170,60,.25);animation:gira 40s linear infinite}
+  .bn-sombra{position:absolute;bottom:-6%;width:70%;height:12%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.55),transparent);animation:sombra 6s ease-in-out infinite}
+  .bn-foto .vapor{top:-4%}
+  .bn-feats{position:absolute;right:26px;bottom:74px;z-index:3;display:flex;flex-direction:column;gap:12px}
+  .bn-feat{display:flex;align-items:center;gap:10px;color:#fff;font:700 11.5px/1.25 Inter,sans-serif;letter-spacing:.13em;text-transform:uppercase}
+  .bn-feat i{width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,255,255,.85);display:grid;place-items:center;flex-shrink:0;transition:background .25s ease,color .25s ease}
+  .bn-feat:hover i{background:#fff;color:#a51015}
+  .bn-feat svg{width:19px;height:19px}
+  .bn-nav{position:absolute;left:34px;bottom:24px;z-index:3;display:flex;align-items:center;gap:12px}
+  .bn-seta{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:rgba(0,0,0,.22);color:#fff;font-size:22px;line-height:1;cursor:pointer;transition:background .2s ease,color .2s ease}.bn-seta:hover{background:#fff;color:#a51015}
+  .bn-dots{display:flex;gap:7px}
+  .bn-dot{width:26px;height:6px;border-radius:6px;border:none;background:rgba(255,255,255,.3);padding:0;overflow:hidden;cursor:pointer}
+  .bn-dot i{display:block;height:100%;width:0;background:#fff;border-radius:6px}
+  .bn-dot.on i{animation:bnprog 6s linear forwards}.banner.pausado .bn-dot.on i{animation-play-state:paused}
+  @keyframes bnprog{to{width:100%}}
+  @media (max-width:640px){
+    .banner{grid-template-columns:1fr;margin:4px 10px 8px;min-height:0;background:radial-gradient(circle at 50% 22%,rgba(255,170,60,.38),transparent 34%),linear-gradient(180deg,#c9171d 0%,#a51015 48%,#7e0a0e 100%)}
+    .bn-foto{order:-1;padding:26px 16px 0}.bn-foto img{width:min(250px,64vw)}
+    .bn-txt{padding:14px 22px 150px;align-items:center;text-align:center}.bn-script,.bn-cursiva{transform-origin:center}.bn-cursiva{margin-left:0}
+    .bn-titulo{align-items:center}.bn-gigante{top:auto;bottom:22%;right:-4%}
+    .bn-feats{left:0;right:0;bottom:70px;flex-direction:row;justify-content:center;gap:14px}.bn-feat{font-size:9.5px;letter-spacing:.08em;gap:6px}.bn-feat i{width:32px;height:32px}.bn-feat svg{width:16px;height:16px}
+    .bn-nav{left:50%;transform:translateX(-50%);bottom:20px}
+  }
   /* blocos */
   .bloco{position:relative;padding:22px 28px}
   .titulo{display:flex;align-items:center;gap:12px;margin-bottom:16px}
@@ -161,12 +216,93 @@ const urlSegura = (u) => /^https:\/\/[a-z0-9.-]+\.supabase\.co\/storage\//i.test
 const fotoDe = (d, nome) => urlSegura((d.fotos || {})[String(nome).toLowerCase().trim()]);
 const valor = (v) => String(v || '').trim();
 const TAMANHO = { P:'Pequena', M:'Média', G:'Grande', F:'Fitness' };
+// ---------- Banner (cartaz) do topo: passa pelos pratos do dia que têm foto ----------
+let WA = '';
+const linkWA = (txt) => WA ? 'https://wa.me/' + WA + '?text=' + encodeURIComponent(txt) : '#';
+const SVG = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const ICONES = {
+  hora: SVG('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
+  casa: SVG('<path d="M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6h-6v6H4a1 1 0 01-1-1z"/>'),
+  coracao: SVG('<path d="M12 20s-7-4.4-9.3-8.8A5.2 5.2 0 0112 6.3a5.2 5.2 0 019.3 4.9C19 15.6 12 20 12 20z"/>'),
+  moto: SVG('<circle cx="5.5" cy="17" r="2.8"/><circle cx="18.5" cy="17" r="2.8"/><path d="M8.3 17h6.9l-2.7-6.5h3.5l3 5.2 M12.5 10.5H9 M4 12.5h5l2 4"/>')
+};
+const BANNER = { slides: [], i: 0, timer: null, ocupado: false };
+const slidesDe = (d) => (d.pratos || []).filter(p => p && p.nome && urlSegura(p.foto));
+function slideHTML(p) {
+  const pal = String(p.nome).trim().split(/\s+/); const cursiva = pal.length > 1 ? pal.pop() : ''; const forte = pal.join(' ');
+  const ing = (p.itens || []).join(' · ');
+  return `<div class="bn-txt">
+      <div class="bn-script bn-a">Prato do dia</div>
+      <h2 class="bn-titulo bn-a"><span class="bn-forte">${esc(forte)}</span>${cursiva ? `<span class="bn-cursiva">${esc(cursiva)}</span>` : ''}</h2>
+      <div class="bn-tag bn-a"><span>${esc(TAMANHO[p.tamanho] || p.tamanhoNome || 'Hoje')}</span></div>
+      ${ing ? `<p class="bn-ing bn-a">${esc(ing)}</p>` : ''}
+      ${valor(p.preco) ? `<div class="bn-preco bn-a"><span class="bn-so">Só</span><b><small>R$</small>${esc(p.preco)}</b></div>` : ''}
+      <a class="bn-pedir bn-a" href="${linkWA('Olá! Quero pedir 1 ' + p.nome + '.')}" target="_blank" rel="noopener"><span class="bn-moto">${ICONES.moto}</span><span><b>Peça agora</b><small>Rápido · quentinho · caseiro</small></span></a>
+    </div>
+    <div class="bn-foto"><div class="bn-pop"><div class="bn-anel"></div><div class="bn-flutua"><img src="${esc(urlSegura(p.foto))}" alt="${esc(p.nome)}"></div><div class="bn-sombra"></div><div class="vapor"><span></span><span></span><span></span></div></div></div>`;
+}
+function bannerHTML(d) {
+  const s = slidesDe(d); BANNER.slides = s; BANNER.i = 0;
+  return `<section class="banner" id="banner" tabindex="0" aria-roledescription="carrossel" aria-label="Pratos de hoje">
+    <div class="bn-gigante" aria-hidden="true"><span>PRATTO</span><span>DI CASA</span></div>
+    <div class="bn-conteudo" id="bn-conteudo" aria-live="polite">${slideHTML(s[0])}</div>
+    <div class="bn-feats">${[['hora', 'Feito', 'na hora'], ['casa', 'Tempero', 'caseiro'], ['coracao', 'Feito com', 'carinho']].map(([ic, a, b]) =>
+      `<div class="bn-feat"><i>${ICONES[ic]}</i><span>${a}<br>${b}</span></div>`).join('')}</div>
+    ${s.length > 1 ? `<div class="bn-nav"><button class="bn-seta" data-dir="-1" aria-label="Prato anterior">‹</button><div class="bn-dots">${s.map((p, i) =>
+      `<button class="bn-dot${i ? '' : ' on'}" data-i="${i}" aria-label="Ver ${esc(p.nome)}"><i></i></button>`).join('')}</div><button class="bn-seta" data-dir="1" aria-label="Próximo prato">›</button></div>` : ''}
+  </section>`;
+}
+function iniciarBanner() {
+  const b = document.getElementById('banner'); if (!b || !BANNER.slides.length) return;
+  const reduzir = matchMedia('(prefers-reduced-motion: reduce)').matches; const M = !reduzir && window.Motion;
+  const mola = (bounce, duration, extra) => ({ type: 'spring', bounce, duration, ...(extra || {}) });
+  const conteudo = () => document.getElementById('bn-conteudo');
+  // garantia: se o navegador travar a animação, o prato aparece inteiro mesmo assim
+  const garantir = (ctl, ms) => setTimeout(() => ctl.forEach(a => { try { a && a.complete(); } catch (e) {} }), ms || 1800);
+  const entrar = () => { if (!M) return; const c = conteudo(); const ctl = [];
+    ctl.push(M.animate(c.querySelectorAll('.bn-a'), { opacity: [0, 1], y: [38, 0] }, mola(.3, .75, { delay: M.stagger(.07) })));
+    const tag = c.querySelector('.bn-tag'); if (tag) ctl.push(M.animate(tag, { scaleX: [0, 1] }, mola(.35, .6, { delay: .22 })));
+    const preco = c.querySelector('.bn-preco b'); if (preco) ctl.push(M.animate(preco, { scale: [.35, 1] }, mola(.55, .85, { delay: .4 })));
+    ctl.push(M.animate(c.querySelector('.bn-pop'), { opacity: [0, 1], scale: [.45, 1], rotate: [-35, 0] }, mola(.42, 1.1))); garantir(ctl); };
+  const sair = async () => { if (!M) return; const c = conteudo();
+    // não espera para sempre: se o navegador não avisar o fim da animação, segue em 0,45 s
+    await Promise.race([Promise.all([M.animate(c.querySelectorAll('.bn-a'), { opacity: 0, y: -18 }, { duration: .22 }),
+      M.animate(c.querySelector('.bn-pop'), { opacity: 0, scale: .7, rotate: 28 }, { duration: .32 })]), new Promise(r => setTimeout(r, 450))]); };
+  const marcar = () => b.querySelectorAll('.bn-dot').forEach((dot, k) => { dot.classList.remove('on'); if (k === BANNER.i) { void dot.offsetWidth; dot.classList.add('on'); } });
+  const ir = async (k) => { const n = BANNER.slides.length; if (BANNER.ocupado || n < 2) return; BANNER.ocupado = true;
+    const novo = ((k % n) + n) % n; const dir = novo > BANNER.i || (BANNER.i === n - 1 && novo === 0) ? 1 : -1;
+    try { await sair(); BANNER.i = novo; conteudo().innerHTML = slideHTML(BANNER.slides[novo]); marcar(); entrar();
+      if (M) M.animate(b.querySelector('.bn-gigante'), { x: [60 * dir, 0], opacity: [.2, 1] }, mola(.2, .9)); }
+    finally { BANNER.ocupado = false; } };
+  const auto = () => { clearInterval(BANNER.timer); if (BANNER.slides.length > 1 && !reduzir) BANNER.timer = setInterval(() => ir(BANNER.i + 1), 6000); };
+  const pausar = (sim) => { b.classList.toggle('pausado', sim); if (sim) clearInterval(BANNER.timer); else auto(); };
+  b.addEventListener('click', (e) => { const s = e.target.closest('.bn-seta'), d = e.target.closest('.bn-dot');
+    if (s) { ir(BANNER.i + Number(s.dataset.dir)); auto(); } if (d) { ir(Number(d.dataset.i)); auto(); } });
+  b.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') { ir(BANNER.i + 1); auto(); } if (e.key === 'ArrowLeft') { ir(BANNER.i - 1); auto(); } });
+  b.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') pausar(true); });
+  b.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') pausar(false); });
+  document.addEventListener('visibilitychange', () => pausar(document.hidden));
+  // arrastar para o lado troca o prato (celular)
+  let x0 = null; b.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
+  b.addEventListener('pointerup', (e) => { if (x0 == null) return; const dx = e.clientX - x0; x0 = null; if (Math.abs(dx) > 50) { ir(BANNER.i + (dx < 0 ? 1 : -1)); auto(); } });
+  // a foto e as letras gigantes acompanham o mouse (profundidade)
+  if (M) b.addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse') return; const r = b.getBoundingClientRect();
+    const dx = (e.clientX - r.left) / r.width - .5, dy = (e.clientY - r.top) / r.height - .5;
+    M.animate(b.querySelector('.bn-foto'), { x: dx * 26, y: dy * 18 }, mola(0, .7));
+    M.animate(b.querySelector('.bn-gigante'), { x: -dx * 40 }, mola(0, .9)); });
+  // abertura
+  if (M) { garantir([M.animate(b, { opacity: [0, 1], scale: [.96, 1] }, mola(.25, .8)),
+    M.animate(b.querySelector('.bn-gigante'), { x: [120, 0], opacity: [0, 1] }, mola(.2, 1.2, { delay: .1 })),
+    M.animate(b.querySelectorAll('.bn-feat'), { opacity: [0, 1], x: [30, 0] }, mola(.3, .7, { delay: M.stagger(.1, { startDelay: .6 }) }))], 2600); }
+  entrar(); marcar(); auto();
+}
 function montar(d) {
   const emp = d.empresa || PADRAO.empresa; const hoje = d.hoje || []; const pratos = (d.pratos || []).filter(p => p && p.nome);
   const dia0 = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'2-digit' }); const dia = dia0.charAt(0).toUpperCase() + dia0.slice(1);
   const pr = d.precos || {}; const es = d.especial || {}; const menor = ['P','M','G'].map(k => valor(pr[k])).filter(Boolean)[0];
   const tams = [['P','Pequena'],['M','Média'],['G','Grande']].filter(([k]) => valor(pr[k]));
   const tel = String(emp.whatsapp || '').replace(/\D/g, ''); const wa = tel ? ('55' + tel.replace(/^55/, '')) : '';
+  WA = wa;
   const linkPedido = (txt) => wa ? 'https://wa.me/' + wa + '?text=' + encodeURIComponent(txt) : '#';
   document.getElementById('pedir').href = linkPedido('Olá! Vi o cardápio de hoje e quero pedir: ');
   document.title = (emp.nome || 'Pratto di Casa') + ' · Cardápio de hoje';
@@ -186,7 +322,7 @@ function montar(d) {
       </article>`; }).join('')}</div></section>` : '';
   return `
   <header class="entra"><div class="selo">PdC</div><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div><div class="data">Cardápio de hoje · ${esc(dia)}</div></header>
-  ${destaque}
+  ${slidesDe(d).length ? bannerHTML(d) : destaque}
   ${cards}
   ${hoje.length ? `<section class="bloco entra"><div class="titulo"><h3>Hoje <em>tem</em></h3></div><div class="lista">${hoje.map((n, i) => { const f = fotoDe(d, n);
       return `<div class="item"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="nome">${esc(n)}</span>${f ? `<img class="mini" src="${esc(f)}" alt="" loading="lazy">` : ''}</div>`; }).join('')}</div></section>` : ''}
@@ -251,7 +387,7 @@ async function iniciar() {
   if (!d && p.has('demo')) d = PADRAO;
   if (!d) { // sem cardápio publicado (ou sem internet): não mostra cardápio antigo, só o caminho para pedir
     montar(PADRAO); q.innerHTML = '<div class="aviso"><div style="font:700 30px Oswald;color:#f3f4f6;margin-bottom:10px">PRATTO DI <span style="color:#ff7a1a">CASA</span></div>O cardápio de hoje ainda não foi publicado.<br>Chame a gente no WhatsApp que passamos os pratos do dia! 😊</div>'; return; }
-  q.innerHTML = montar(d); animar();
+  q.innerHTML = montar(d); animar(); iniciarBanner();
 }
 iniciar();
 </script>
