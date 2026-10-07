@@ -156,7 +156,7 @@
   .inicio{display:inline-flex;align-items:center;padding:8px 14px;border-radius:30px;border:1px solid var(--linha);color:var(--texto);font:600 13px Inter;text-decoration:none;background:rgba(255,255,255,.04)}
   .inicio:hover{border-color:rgba(255,122,26,.5);color:var(--laranja2)}
   @media (max-width:640px){
-    #capa{padding:10px 10px 18px;gap:12px}#capa .banner{min-height:0}
+    #capa{padding:12px 12px 18px;gap:12px}#capa .banner{min-height:0}.capa-topo .marca p{letter-spacing:.18em;font-size:10.5px}.capa-entrar{padding:9px 14px;font-size:13px}
     .capa-cta{flex-direction:column;align-items:stretch}.capa-btn{justify-content:space-between}.capa-info{justify-content:center;text-align:center}
   }
   /* ===== banner (cartaz) do topo ===== */
@@ -165,7 +165,7 @@
     box-shadow:0 34px 60px -30px rgba(201,23,29,.65),inset 0 0 0 1px rgba(255,255,255,.08)}
   .banner::before{content:'';position:absolute;inset:0;z-index:0;opacity:.35;pointer-events:none;background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);background-size:5px 5px}
   .banner:focus-visible{box-shadow:0 0 0 3px #ffd28a}
-  .bn-gigante{position:absolute;right:-1%;top:3%;z-index:0;display:flex;flex-direction:column;align-items:flex-end;pointer-events:none;user-select:none;font:400 clamp(84px,14vw,170px)/.84 Anton,Oswald,sans-serif;letter-spacing:.01em;color:rgba(0,0,0,.2)}
+  .bn-gigante{position:absolute;right:-1%;top:3%;z-index:0;opacity:.75;display:flex;flex-direction:column;align-items:flex-end;pointer-events:none;user-select:none;font:400 clamp(84px,14vw,170px)/.84 Anton,Oswald,sans-serif;letter-spacing:.01em;color:rgba(0,0,0,.2)}
   .bn-gigante span:last-child{color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.13)}
   .bn-conteudo{display:contents}
   .bn-txt{position:relative;z-index:2;padding:34px 8px 130px 34px;display:flex;flex-direction:column;align-items:flex-start;gap:9px}
@@ -190,11 +190,11 @@
   .bn-foto{position:relative;z-index:1;display:grid;place-items:center;padding:24px 24px 90px}
   .bn-pop{position:relative;display:grid;place-items:center}
   .bn-flutua{position:relative;z-index:1;animation:flutua 6s ease-in-out infinite}
-  .bn-foto img{width:min(350px,32vw);aspect-ratio:1;object-fit:cover;border-radius:50%;display:block;-webkit-mask-image:radial-gradient(circle,#000 63%,transparent 71%);mask-image:radial-gradient(circle,#000 63%,transparent 71%);filter:saturate(1.12) contrast(1.04)}
-  .bn-anel{position:absolute;inset:-8%;border-radius:50%;border:2px dashed rgba(255,255,255,.35);box-shadow:0 0 70px rgba(255,170,60,.35) inset,0 0 60px rgba(255,170,60,.25);animation:gira 40s linear infinite}
+  .bn-foto img{width:min(440px,37vw);aspect-ratio:1;object-fit:cover;border-radius:30px;display:block;border:5px solid rgba(255,255,255,.95);transform:rotate(-3deg);box-shadow:0 44px 70px -26px rgba(0,0,0,.8),0 0 0 1px rgba(0,0,0,.25);filter:saturate(1.14) contrast(1.06) brightness(1.04)}
+  .bn-anel{position:absolute;inset:-12%;border-radius:50%;border:2px dashed rgba(255,255,255,.35);box-shadow:0 0 70px rgba(255,170,60,.35) inset,0 0 60px rgba(255,170,60,.25);animation:gira 40s linear infinite}
   .bn-sombra{position:absolute;bottom:-6%;width:70%;height:12%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.55),transparent);animation:sombra 6s ease-in-out infinite}
   .bn-foto .vapor{top:-4%}
-  .bn-feats{position:absolute;right:26px;bottom:74px;z-index:3;display:flex;flex-direction:column;gap:12px}
+  .bn-feats{position:absolute;right:26px;bottom:22px;z-index:3;display:flex;flex-direction:row;gap:20px}
   .bn-feat{display:flex;align-items:center;gap:10px;color:#fff;font:700 11.5px/1.25 Inter,sans-serif;letter-spacing:.13em;text-transform:uppercase}
   .bn-feat i{width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,255,255,.85);display:grid;place-items:center;flex-shrink:0;transition:background .25s ease,color .25s ease}
   .bn-feat:hover i{background:#fff;color:#a51015}
@@ -208,7 +208,7 @@
   @keyframes bnprog{to{width:100%}}
   @media (max-width:640px){
     .banner{grid-template-columns:1fr;margin:4px 10px 8px;min-height:0;background:radial-gradient(circle at 50% 22%,rgba(255,170,60,.38),transparent 34%),linear-gradient(180deg,#c9171d 0%,#a51015 48%,#7e0a0e 100%)}
-    .bn-foto{order:-1;padding:26px 16px 0}.bn-foto img{width:min(250px,64vw)}
+    .bn-foto{order:-1;padding:30px 16px 6px}.bn-foto img{width:min(340px,80vw)}
     .bn-txt{padding:14px 22px 150px;align-items:center;text-align:center}.bn-script,.bn-cursiva{transform-origin:center}.bn-cursiva{margin-left:0}
     .bn-titulo{align-items:center}.bn-gigante{top:auto;bottom:22%;right:-4%}
     .bn-feats{left:0;right:0;bottom:70px;flex-direction:row;justify-content:center;gap:14px}.bn-feat{font-size:9.5px;letter-spacing:.08em;gap:6px}.bn-feat i{width:32px;height:32px}.bn-feat svg{width:16px;height:16px}
@@ -405,8 +405,8 @@ function mostrarCapa() {
   if (!ROTA.capaPronta) { ROTA.capaPronta = true; iniciarBanner(); capa.querySelectorAll('.js-entrar').forEach(a => a.addEventListener('click', entrarCardapio)); }
   else if (BANNER.auto) BANNER.auto();
   const M = !semMovimento() && window.Motion;
-  if (M) { M.animate(capa.querySelectorAll('.capa-topo, .capa-cta'), { opacity: [0, 1], y: [20, 0] }, { type: 'spring', bounce: .3, duration: .7, delay: M.stagger(.12, { startDelay: .2 }) });
-    setTimeout(() => capa.querySelectorAll('.capa-topo, .capa-cta').forEach(el => { el.style.opacity = '1'; }), 1500); }
+  if (M) { const a = M.animate(capa.querySelectorAll('.capa-topo, .capa-cta'), { y: [20, 0] }, { type: 'spring', bounce: .3, duration: .7, delay: M.stagger(.12, { startDelay: .2 }) });
+    setTimeout(() => { try { a.complete(); } catch (e) {} }, 1500); }
 }
 function mostrarCardapio() {
   document.body.classList.remove('na-capa'); window.scrollTo(0, 0); if (BANNER.parar) BANNER.parar();
@@ -576,23 +576,25 @@ function animarMotion() {
   const { animate, inView, scroll, stagger, hover, press } = window.Motion;
   const mola = (bounce, duration) => ({ type: 'spring', bounce, duration });
   const limpar = (els) => els.forEach(e => { e.style.transform = ''; }); // devolve o "hover" em CSS depois da entrada
-  document.querySelectorAll('.entra').forEach(e => { e.style.transition = 'none'; e.classList.add('on'); e.style.opacity = '0'; });
-  const topo = document.querySelector('header.entra'); if (topo) animate(topo, { opacity: [0, 1], y: [-24, 0] }, mola(.3, .8));
+  document.querySelectorAll('.entra').forEach(e => { e.style.transition = 'none'; e.classList.add('on'); if (e.tagName !== 'HEADER') e.style.opacity = '0'; });
+  const fim = []; const concluir = (lista, ms) => setTimeout(() => lista.forEach(a => { try { a && a.complete(); } catch (e) {} }), ms || 1600);
+  const topo = document.querySelector('header.entra'); if (topo) fim.push(animate(topo, { y: [-24, 0] }, mola(.3, .8)));
   const dest = document.querySelector('.destaque');
   if (dest) {
     dest.style.opacity = '1';
-    animate(dest.querySelectorAll('.txt > *'), { opacity: [0, 1], x: [-34, 0] }, { ...mola(.25, .8), delay: stagger(.08, { startDelay: .15 }) });
+    fim.push(animate(dest.querySelectorAll('.txt > *'), { opacity: [0, 1], x: [-34, 0] }, { ...mola(.25, .8), delay: stagger(.08, { startDelay: .15 }) }));
     const img = dest.querySelector('.heroimg');
     if (img) {
-      animate(img, { opacity: [0, 1], scale: [.55, 1], rotate: [-20, -3] }, { ...mola(.45, 1.1), delay: .2 });
+      fim.push(animate(img, { opacity: [0, 1], scale: [.55, 1], rotate: [-20, -3] }, { ...mola(.45, 1.1), delay: .2 }));
       scroll(animate(dest.querySelector('.flutua'), { y: [0, -70], rotate: [0, 7] }, { ease: 'linear' }), { target: dest, offset: ['start start', 'end start'] });
     }
   }
+  concluir(fim);
   // cada seção aparece quando entra na tela, com os itens em sequência
   inView('.bloco.entra, footer.entra', (el) => {
-    animate(el, { opacity: [0, 1], y: [40, 0] }, mola(.2, .8));
+    concluir([animate(el, { opacity: [0, 1], y: [40, 0] }, mola(.2, .8))], 1400);
     const filhos = [...el.querySelectorAll('.card, .item, .pontos li, .preco, .especial, .fitpreco')];
-    if (filhos.length) animate(filhos, { opacity: [0, 1], y: [34, 0], scale: [.94, 1] }, { ...mola(.32, .75), delay: stagger(.06, { startDelay: .08 }) }).then(() => limpar(filhos));
+    if (filhos.length) { const a2 = animate(filhos, { opacity: [0, 1], y: [34, 0], scale: [.94, 1] }, { ...mola(.32, .75), delay: stagger(.06, { startDelay: .08 }) }); a2.then(() => limpar(filhos)); concluir([a2], 2200); }
   }, { amount: .12 });
   // foto do cartão cresce com mola ao passar o mouse; botões "afundam" ao tocar
   hover('.card', (el) => { const im = el.querySelector('.cimg img'); if (!im) return; animate(im, { scale: 1.09 }, mola(.4, .5)); return () => animate(im, { scale: 1 }, mola(.3, .5)); });
