@@ -229,14 +229,14 @@
   .capa-entrar{margin-left:auto;display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:30px;border:1px solid rgba(255,122,26,.55);color:var(--laranja2);font:600 14px Inter;text-decoration:none;transition:background .2s ease,color .2s ease}
   .capa-entrar:hover{background:var(--laranja);color:#1a0d02}
   .capa-cta{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-  .capa-btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:16px;padding:16px 16px 16px 30px;border-radius:50px;text-decoration:none;
-    background:linear-gradient(135deg,var(--laranja2),var(--laranja));color:#1a0d02;font:400 clamp(19px,2.6vw,24px) Anton,Oswald,sans-serif;letter-spacing:.07em;text-transform:uppercase;
-    box-shadow:0 20px 36px -14px rgba(255,122,26,.85);animation:pulsa 2.4s ease-in-out infinite;transition:transform .25s ease}
+  .capa-btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:12px;padding:8px 8px 8px 22px;border-radius:50px;text-decoration:none;
+    background:linear-gradient(135deg,var(--laranja2),var(--laranja));color:#1a0d02;font:500 clamp(14px,1.6vw,16px) Oswald,sans-serif;letter-spacing:.12em;text-transform:uppercase;
+    box-shadow:0 12px 24px -12px rgba(255,122,26,.8);animation:pulsa 2.4s ease-in-out infinite;transition:transform .25s ease}
   .capa-btn:hover{transform:translateY(-3px)}
   .capa-btn::after{content:'';position:absolute;top:0;bottom:0;left:-40%;width:30%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);animation:brilho 3.2s ease-in-out infinite}
-  .capa-btn i{font-style:normal;width:46px;height:46px;border-radius:50%;background:#1a0d02;color:var(--laranja2);display:grid;place-items:center;font:700 22px Inter;transition:transform .3s ease}
+  .capa-btn i{font-style:normal;width:32px;height:32px;border-radius:50%;background:#1a0d02;color:var(--laranja2);display:grid;place-items:center;font:700 16px Inter;transition:transform .3s ease}
   .capa-btn:hover i{transform:translateX(6px)}
-  @keyframes pulsa{0%,100%{box-shadow:0 20px 36px -14px rgba(255,122,26,.85),0 0 0 0 rgba(255,122,26,.45)}50%{box-shadow:0 20px 36px -14px rgba(255,122,26,.85),0 0 0 14px rgba(255,122,26,0)}}
+  @keyframes pulsa{0%,100%{box-shadow:0 12px 24px -12px rgba(255,122,26,.8),0 0 0 0 rgba(255,122,26,.4)}50%{box-shadow:0 12px 24px -12px rgba(255,122,26,.8),0 0 0 9px rgba(255,122,26,0)}}
   @keyframes brilho{0%,60%{left:-40%}100%{left:130%}}
   .capa-info{display:flex;align-items:center;gap:14px;flex-wrap:wrap;color:var(--suave);font-size:13.5px}
   .bn-vazio .bn-txt{padding-bottom:40px}
@@ -245,7 +245,7 @@
   .inicio:hover{border-color:rgba(255,122,26,.5);color:var(--laranja2)}
   @media (max-width:640px){
     #capa{padding:12px 12px 18px;gap:12px}#capa .banner{min-height:0}.capa-topo .marca p{letter-spacing:.18em;font-size:10.5px}.capa-entrar{padding:9px 14px;font-size:13px}
-    .capa-cta{flex-direction:column;align-items:stretch}.capa-btn{justify-content:space-between}.capa-info{justify-content:center;text-align:center}
+    .capa-cta{flex-direction:column;align-items:center}.capa-btn{justify-content:center}.capa-info{justify-content:center;text-align:center}
   }
   /* ===== banner (cartaz) do topo ===== */
   .banner{position:relative;z-index:1;margin:6px 18px 10px;border-radius:26px;overflow:hidden;min-height:480px;display:grid;grid-template-columns:1.05fr 1fr;isolation:isolate;outline:none;touch-action:pan-y;
@@ -253,7 +253,7 @@
     box-shadow:0 34px 60px -30px rgba(201,23,29,.65),inset 0 0 0 1px rgba(255,255,255,.08)}
   .banner::before{content:'';position:absolute;inset:0;z-index:0;opacity:.35;pointer-events:none;background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);background-size:5px 5px}
   .banner:focus-visible{box-shadow:0 0 0 3px #ffd28a}
-  .bn-gigante{position:absolute;right:-1%;top:3%;z-index:0;opacity:.75;display:flex;flex-direction:column;align-items:flex-end;pointer-events:none;user-select:none;font:400 clamp(84px,14vw,170px)/.84 Anton,Oswald,sans-serif;letter-spacing:.01em;color:rgba(0,0,0,.2)}
+  .bn-gigante{position:absolute;left:51%;right:0;top:0;bottom:0;z-index:0;opacity:.75;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none;user-select:none;font:400 clamp(96px,12.5vw,176px)/.84 Anton,Oswald,sans-serif;letter-spacing:.01em;color:rgba(0,0,0,.24);white-space:nowrap}
   .bn-gigante span:last-child{color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.13)}
   .bn-conteudo{display:contents}
   .bn-txt{position:relative;z-index:2;padding:34px 8px 130px 34px;display:flex;flex-direction:column;align-items:flex-start;gap:9px}
@@ -308,7 +308,7 @@
     .banner{grid-template-columns:1fr;margin:4px 10px 8px;min-height:0;background:radial-gradient(circle at 50% 22%,rgba(255,170,60,.38),transparent 34%),linear-gradient(180deg,#c9171d 0%,#a51015 48%,#7e0a0e 100%)}
     .bn-foto{order:-1;padding:30px 16px 6px}.bn-circ{width:min(320px,82vw)}
     .bn-txt{padding:14px 22px 150px;align-items:center;text-align:center}.bn-script,.bn-cursiva{transform-origin:center}.bn-cursiva{margin-left:0}
-    .bn-titulo{align-items:center}.bn-gigante{top:auto;bottom:22%;right:-4%}
+    .bn-titulo{align-items:center}.bn-gigante{left:0;right:0;top:30px;bottom:auto;height:min(330px,86vw);font-size:clamp(72px,25vw,124px)}
     .bn-feats{left:0;right:0;bottom:70px;flex-direction:row;justify-content:center;gap:14px}.bn-feat{font-size:9.5px;letter-spacing:.08em;gap:6px}.bn-feat i{width:32px;height:32px}.bn-feat svg{width:16px;height:16px}
     .bn-nav{left:50%;transform:translateX(-50%);bottom:20px}
   }
