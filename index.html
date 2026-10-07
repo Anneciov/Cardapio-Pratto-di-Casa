@@ -168,7 +168,7 @@ function montar(d) {
   <section class="destaque entra"><div class="txt"><small>Destaque do dia</small><h2>${esc(principal)}</h2><p>Feito na hora, com tempero de casa. Escolha o tamanho e peça pelo WhatsApp.</p>${menor ? `<div class="apartir">a partir de <b>R$ ${esc(menor)}</b></div>` : ''}</div>
     <div class="palco"><div class="chao"></div><div class="flutua">${prato(d, principal, 250)}</div><div class="vapor"><span></span><span></span><span></span></div></div></section>
   ${hoje.length ? `<section class="bloco entra"><div class="titulo"><h3>Pratos de <em>hoje</em></h3></div><div class="lista">${hoje.map((n, i) =>
-      `<div class="item"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="nome">${esc(n)}</span><div class="mini flutua" style="animation-delay:-${i * .7}s">${prato(d, n, 76)}</div></div>`).join('')}</div></section>` : ''}
+      `<div class="item"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="nome">${esc(n)}</span>${fotoDe(d, n) ? `<div class="mini flutua" style="animation-delay:-${i * .7}s">${prato(d, n, 76)}</div>` : ''}</div>`).join('')}</div></section>` : ''}
   <section class="bloco entra"><div class="duas">
     ${(d.guarnicoes || []).length ? `<div><div class="titulo"><h3>Guarni<em>ções</em></h3></div><ul class="pontos">${d.guarnicoes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></div>` : ''}
     ${(d.fitness || []).length ? `<div><div class="titulo"><h3><em>Fit</em>ness</h3></div><ul class="pontos">${d.fitness.map(n => `<li>${esc(n)}</li>`).join('')}</ul>${d.fitnessObs ? `<div class="obs">(${esc(d.fitnessObs)})</div>` : ''}${valor(pr.fitness) ? `<div class="fitpreco">Fitness <b>R$ ${esc(pr.fitness)}</b></div>` : ''}</div>` : ''}
