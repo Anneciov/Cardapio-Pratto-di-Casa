@@ -99,6 +99,7 @@
   .especial .ev span i{font-style:normal;color:var(--laranja);margin-right:5px;font-size:15px}
   footer{padding:20px 28px 30px;border-top:1px solid var(--linha);display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between;color:var(--suave);font-size:13.5px;line-height:1.5}
   footer a{color:var(--laranja2);text-decoration:none}
+  .cred{margin-top:6px;font-size:11.5px;text-align:left}.cred summary{cursor:pointer;color:var(--suave);text-align:right}.cred div{margin-top:4px;color:#7d858f}
   .pedir{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:10px;padding:16px 28px;border-radius:40px;border:none;cursor:pointer;text-decoration:none;
     background:linear-gradient(135deg,#2bd96b,#16a34a);color:#04170b;font:700 17px Inter;box-shadow:0 18px 34px -12px rgba(22,163,74,.9),0 0 0 6px rgba(22,163,74,.15);white-space:nowrap;transition:transform .2s ease}
   .pedir:hover{transform:translateX(-50%) translateY(-3px)}
@@ -144,7 +145,13 @@ const emoji = (n) => { n = String(n || '').toLowerCase();
   if (t('bife','carne','rolê','role')) return ['🥩','🧅','🌿']; if (t('ovo','omelete')) return ['🍳','🌿','🍅']; if (t('purê','pure','batata')) return ['🥔','🧈','🌿'];
   if (t('arroz')) return ['🍚','🌿','🥕']; if (t('salada','repolho','legume','alface')) return ['🥗','🍅','🥕']; if (t('farofa')) return ['🌾','🥓','🌿'];
   if (t('macarr','rondeli','massa','lasanha')) return ['🍝','🧀','🌿']; return ['🍛','🌿','🍅']; };
-const fotoDe = (d, nome) => urlSegura((d.fotos || {})[String(nome).toLowerCase().trim()]);
+// Fotos reais de referência dos pratos (Wikimedia Commons, licenças livres — créditos no rodapé).
+// A foto enviada pelo restaurante no sistema tem prioridade sobre estas.
+const BIBLIOTECA = [[/feijoada/,'feijoada'],[/rabada/,'rabada'],[/virado/,'virado'],[/dobradinha|dobrada|bucho/,'dobradinha'],[/parmegiana|parmigiana/,'parmegiana'],
+  [/\basas?\b|asinha/,'coxinha-da-asa'],[/frango.*(milanesa|empanad)|(milanesa|empanad).*frango/,'frango-milanesa'],[/milanesa|empanad/,'bife-milanesa'],[/rol[êe]/,'bife-a-role'],[/fitness/,'fitness']];
+const CREDITOS = [{"prato": "Bife a rolê", "autor": "Horacio Cambeiro", "licenca": "CC BY 3.0", "pagina": "https://commons.wikimedia.org/wiki/File:Bife_con_pur%C3%A9_de_papas_(estilo_argentino).jpg"}, {"prato": "Coxinha da asa", "autor": "Choo Yut Shing from Singapore, Singapore", "licenca": "CC BY 2.0", "pagina": "https://commons.wikimedia.org/wiki/File:Fried_Chicken_Wings_(54282490120).jpg"}, {"prato": "Dobradinha", "autor": "Jeremy Keith from Brighton & Hove, United Kingdom", "licenca": "CC BY 2.0", "pagina": "https://commons.wikimedia.org/wiki/File:Tripas_(8907365960).jpg"}, {"prato": "Frango à milanesa", "autor": "Gaby Leidy Huarachi Mamani", "licenca": "CC BY-SA 4.0", "pagina": "https://commons.wikimedia.org/wiki/File:G.A._Milanesa_de_pollo.jpg"}, {"prato": "Bife à milanesa", "autor": "mteson Marcelo Teson Los Angeles, CA, USA", "licenca": "CC BY 2.0", "pagina": "https://commons.wikimedia.org/wiki/File:Milanesa.jpg"}, {"prato": "À parmegiana", "autor": "Márcia Cristina Machado", "licenca": "CC BY-SA 4.0", "pagina": "https://commons.wikimedia.org/wiki/File:Bife_a_parmegiana_com_arroz_e_batata_frita.jpg"}, {"prato": "Feijoada", "autor": "Bradleyzm", "licenca": "CC BY-SA 4.0", "pagina": "https://commons.wikimedia.org/wiki/File:Feijoada_%C3%A0_brasileira_-02.jpg"}, {"prato": "Rabada", "autor": "Raimond Spekking", "licenca": "CC BY-SA 4.0", "pagina": "https://commons.wikimedia.org/wiki/File:Oxtail_soup-93323.jpg"}, {"prato": "Virado à paulista", "autor": "edsonaoki", "licenca": "CC BY-SA 3.0", "pagina": "https://commons.wikimedia.org/wiki/File:Virado_a_paulista.jpg"}, {"prato": "Fitness", "autor": "HaJunkiyada", "licenca": "CC BY-SA 4.0", "pagina": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Roasted_chicken_with_cauliflower_broccoli_potatoes_rice_and_salad.jpg"}];
+const daBiblioteca = (nome) => { const n = String(nome || '').toLowerCase(); const b = BIBLIOTECA.find(([re]) => re.test(n)); return b ? 'fotos/' + b[1] + '.jpg' : ''; };
+const fotoDe = (d, nome) => urlSegura((d.fotos || {})[String(nome).toLowerCase().trim()]) || daBiblioteca(nome);
 function prato(d, nome, tam) {
   const f = fotoDe(d, nome);
   if (f) return `<img class="foto" src="${esc(f)}" alt="${esc(nome)}" width="${tam}" height="${tam}" loading="lazy" style="width:${tam}px;height:${tam}px">`;
@@ -177,7 +184,7 @@ function montar(d) {
       `<div class="preco"><div class="tam">${k}</div><div class="tamtxt">${n}</div><div class="v"><small>R$</small>${esc(pr[k])}</div></div>`).join('')}</div>
     ${valor(es.nome) && ['P','M','G'].some(k => valor(es[k])) ? `<div class="especial"><div class="en">${esc(es.nome)}</div><div class="ev">${['P','M','G'].filter(k => valor(es[k])).map(k => `<span><i>${k}</i>R$ ${esc(es[k])}</span>`).join('')}</div></div>` : ''}</section>` : ''}
   <footer class="entra"><div>📍 <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(emp.endereco || '')}" target="_blank" rel="noopener">${esc(emp.endereco || '')}</a><br>📲 WhatsApp ${esc(emp.whatsapp || '')}</div>
-    <div>${d.atualizado ? 'Atualizado em ' + esc(new Date(d.atualizado).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })) : ''}</div></footer>`;
+    <div style="text-align:right">${d.atualizado ? 'Atualizado em ' + esc(new Date(d.atualizado).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })) : ''}<br><details class="cred"><summary>Fotos ilustrativas · créditos</summary>${CREDITOS.map(c => `<div>${esc(c.prato)}: ${esc(c.autor)} — <a href="${esc(c.pagina)}" target="_blank" rel="noopener">${esc(c.licenca)}</a></div>`).join('')}</details></div></footer>`;
 }
 function animar() {
   const els = [...document.querySelectorAll('.entra')]; els.forEach((el, i) => setTimeout(() => el.classList.add('on'), 80 + i * 110));
