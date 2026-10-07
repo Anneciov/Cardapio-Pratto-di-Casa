@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pratto di Casa · Cardápio de hoje</title>
+<meta name="description" content="Cardápio do dia do Pratto di Casa — comida caseira em Cajamar. Peça pelo WhatsApp.">
+<meta name="theme-color" content="#121418">
+<meta property="og:title" content="Pratto di Casa · Cardápio de hoje">
+<meta property="og:description" content="Veja os pratos de hoje e peça pelo WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --laranja:#ff7a1a; --laranja2:#ffa94d; --quadro:#16191e; --quadro2:#1e232a; --linha:rgba(255,255,255,.08);
+    --texto:#f3f4f6; --suave:#9aa3ad; --sombra:0 50px 90px -30px rgba(0,0,0,.85);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{min-height:100vh;font-family:Inter,system-ui,sans-serif;color:var(--texto);background:#0b0c0f;overflow-x:hidden}
+  /* cena: luzes quentes desfocadas atrás do quadro, como num restaurante */
+  .cena{position:relative;min-height:100vh;padding:28px 16px 120px;display:flex;justify-content:center;perspective:1600px;
+    background:radial-gradient(circle at 12% 18%,rgba(255,150,60,.22),transparent 26%),radial-gradient(circle at 88% 10%,rgba(255,196,120,.16),transparent 22%),
+      radial-gradient(circle at 80% 85%,rgba(255,122,26,.14),transparent 30%),radial-gradient(circle at 15% 90%,rgba(120,160,255,.08),transparent 30%),linear-gradient(180deg,#14161b,#0b0c0f)}
+  .bokeh{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+  .bokeh i{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(255,180,100,.35),transparent 70%);filter:blur(2px);animation:boia 14s ease-in-out infinite alternate}
+  @keyframes boia{to{transform:translateY(-30px) scale(1.15)}}
+  .quadro{position:relative;z-index:1;width:100%;max-width:820px;border-radius:26px;overflow:hidden;transform-style:preserve-3d;transition:transform .25s ease-out;box-shadow:var(--sombra),0 0 0 1px rgba(255,255,255,.05);
+    background:radial-gradient(ellipse 80% 40% at 50% 0%,rgba(255,122,26,.10),transparent 70%),linear-gradient(160deg,var(--quadro2),var(--quadro) 45%,#121418)}
+  .quadro::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);background-size:4px 4px}
+  .quadro::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.07),transparent 30%,transparent 70%,rgba(255,255,255,.03))}
+  /* cabeçalho */
+  header{position:relative;padding:30px 28px 10px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .selo{width:58px;height:58px;border-radius:16px;background:linear-gradient(135deg,var(--laranja2),var(--laranja));display:grid;place-items:center;font:700 26px Oswald,sans-serif;color:#1a0d02;box-shadow:0 10px 24px -8px rgba(255,122,26,.7);transform:translateZ(30px)}
+  .marca{flex:1;min-width:200px}
+  .marca h1{font:700 clamp(30px,6vw,44px)/1 Oswald,sans-serif;letter-spacing:.02em;text-transform:uppercase}
+  .marca h1 b{color:var(--laranja)}
+  .marca p{font-size:12px;letter-spacing:.3em;color:var(--suave);margin-top:6px;text-transform:uppercase}
+  .data{display:inline-flex;align-items:center;gap:8px;background:rgba(255,122,26,.12);border:1px solid rgba(255,122,26,.4);color:var(--laranja2);padding:8px 14px;border-radius:30px;font-weight:600;font-size:13px}
+  .data::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--laranja);box-shadow:0 0 10px var(--laranja);animation:pisca 1.8s ease-in-out infinite}
+  @keyframes pisca{50%{opacity:.35}}
+  /* destaque com prato flutuando e vapor */
+  .destaque{position:relative;display:grid;grid-template-columns:1.1fr 1fr;align-items:center;gap:10px;padding:10px 28px 6px;min-height:280px}
+  .destaque .txt small{display:block;font:600 13px Oswald,sans-serif;letter-spacing:.35em;color:var(--laranja);text-transform:uppercase}
+  .destaque .txt h2{font:700 clamp(32px,6.5vw,52px)/1.02 Oswald,sans-serif;text-transform:uppercase;margin:8px 0 12px}
+  .destaque .txt p{color:var(--suave);font-size:15px;line-height:1.5;max-width:330px}
+  .destaque .txt .apartir{margin-top:16px;font:600 15px Inter;color:var(--texto)}
+  .destaque .txt .apartir b{font:700 30px Oswald;color:var(--laranja);margin-left:6px}
+  .palco{position:relative;height:300px;display:grid;place-items:center;transform-style:preserve-3d}
+  .palco .chao{position:absolute;bottom:18px;width:66%;height:34px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.75),transparent);animation:sombra 5s ease-in-out infinite}
+  @keyframes sombra{50%{transform:scale(.86);opacity:.7}}
+  .flutua{animation:flutua 5s ease-in-out infinite;transform:translateZ(60px)}
+  @keyframes flutua{50%{translate:0 -14px;rotate:2deg}}
+  .vapor{position:absolute;top:8%;left:50%;width:120px;height:120px;pointer-events:none}
+  .vapor span{position:absolute;bottom:0;width:22px;height:90px;border-radius:50%;background:linear-gradient(transparent,rgba(255,255,255,.35),transparent);filter:blur(9px);animation:sobe 3.6s ease-in infinite;opacity:0}
+  .vapor span:nth-child(1){left:10px}.vapor span:nth-child(2){left:44px;animation-delay:1.2s}.vapor span:nth-child(3){left:76px;animation-delay:2.4s}
+  @keyframes sobe{0%{transform:translateY(30px) scaleX(.6);opacity:0}30%{opacity:.8}100%{transform:translateY(-70px) scaleX(1.4);opacity:0}}
+  /* foto do prato (IA com fundo escuro) ou tigela 3D desenhada */
+  .foto{border-radius:50%;object-fit:cover;-webkit-mask-image:radial-gradient(circle,#000 58%,transparent 71%);mask-image:radial-gradient(circle,#000 58%,transparent 71%);filter:drop-shadow(0 20px 20px rgba(0,0,0,.6)) saturate(1.1)}
+  .tigela{position:relative;display:grid;place-items:center}
+  .tigela .bowl{position:absolute;bottom:0;left:6%;right:6%;height:52%;border-radius:0 0 50% 50%/0 0 100% 100%;background:linear-gradient(180deg,#3aa0e6,#1b6fb8 60%,#124e86);box-shadow:inset 0 -10px 18px rgba(0,0,0,.35),inset 0 6px 0 rgba(255,255,255,.25),0 18px 26px -10px rgba(0,0,0,.7)}
+  .tigela .borda{position:absolute;bottom:48%;left:4%;right:4%;height:16%;border-radius:50%;background:linear-gradient(180deg,#5fbaf2,#2a86cf);box-shadow:inset 0 3px 6px rgba(0,0,0,.35)}
+  .tigela .comida{position:relative;z-index:1;line-height:1;margin-bottom:28%;filter:drop-shadow(0 6px 6px rgba(0,0,0,.45))}
+  .tigela .comida i{font-style:normal;position:absolute}
+  /* blocos */
+  .bloco{position:relative;padding:22px 28px}
+  .titulo{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .titulo h3{font:700 26px Oswald,sans-serif;letter-spacing:.06em;text-transform:uppercase}
+  .titulo h3 em{font-style:normal;color:var(--laranja)}
+  .titulo::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,122,26,.6),transparent)}
+  .lista{display:grid;gap:10px}
+  .item{position:relative;display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid var(--linha);min-height:68px;transition:transform .25s ease,background .25s ease,border-color .25s ease;cursor:default}
+  .item:hover{transform:translateX(4px) translateZ(20px);background:rgba(255,122,26,.07);border-color:rgba(255,122,26,.35)}
+  .num{flex-shrink:0;width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--laranja2),var(--laranja));color:#1a0d02;display:grid;place-items:center;font:700 15px Oswald;box-shadow:0 6px 14px -6px rgba(255,122,26,.8)}
+  .item .nome{flex:1;font:600 17px Inter;line-height:1.25}
+  .item .mini{flex-shrink:0;width:76px;height:76px;margin:-18px -6px -18px 0}
+  .item .mini.flutua{animation-duration:6s}
+  .duas{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+  .pontos{list-style:none;display:grid;gap:9px}
+  .pontos li{display:flex;gap:11px;align-items:flex-start;font-size:16px;line-height:1.35}
+  .pontos li::before{content:'';flex-shrink:0;width:9px;height:9px;margin-top:6px;border-radius:2px;background:var(--laranja);transform:rotate(45deg);box-shadow:0 0 8px rgba(255,122,26,.7)}
+  .obs{margin-top:10px;font-size:13.5px;color:var(--suave);font-style:italic}
+  .fitpreco{margin-top:14px;display:inline-flex;align-items:baseline;gap:8px;background:rgba(255,255,255,.05);border:1px solid var(--linha);border-radius:12px;padding:8px 14px}
+  .fitpreco b{font:700 26px Oswald;color:var(--laranja)}
+  /* valores */
+  .precos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .preco{position:relative;border-radius:18px;padding:18px 10px 16px;text-align:center;background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border:1px solid var(--linha);transform-style:preserve-3d;transition:transform .3s ease}
+  .preco:hover{transform:translateY(-6px) rotateX(8deg)}
+  .preco .tam{width:44px;height:44px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;font:700 20px Oswald;color:#1a0d02;background:linear-gradient(135deg,var(--laranja2),var(--laranja));box-shadow:0 8px 18px -6px rgba(255,122,26,.8)}
+  .preco .tamtxt{font-size:11px;letter-spacing:.2em;color:var(--suave);text-transform:uppercase}
+  .preco .v{font:700 clamp(24px,5vw,34px) Oswald;margin-top:4px}
+  .preco .v small{font:600 14px Inter;color:var(--suave);margin-right:3px}
+  .especial{margin-top:14px;border-radius:18px;padding:16px 18px;border:1px dashed rgba(255,122,26,.45);background:rgba(255,122,26,.06);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .especial .en{flex:1 1 220px;font:600 15px Oswald;letter-spacing:.1em;text-transform:uppercase;color:var(--laranja2)}
+  .especial .ev{display:flex;gap:14px;flex-wrap:wrap}
+  .especial .ev span{font:600 20px Oswald}
+  .especial .ev span i{font-style:normal;color:var(--laranja);margin-right:5px;font-size:15px}
+  footer{padding:20px 28px 30px;border-top:1px solid var(--linha);display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between;color:var(--suave);font-size:13.5px;line-height:1.5}
+  footer a{color:var(--laranja2);text-decoration:none}
+  .pedir{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:10px;padding:16px 28px;border-radius:40px;border:none;cursor:pointer;text-decoration:none;
+    background:linear-gradient(135deg,#2bd96b,#16a34a);color:#04170b;font:700 17px Inter;box-shadow:0 18px 34px -12px rgba(22,163,74,.9),0 0 0 6px rgba(22,163,74,.15);white-space:nowrap;transition:transform .2s ease}
+  .pedir:hover{transform:translateX(-50%) translateY(-3px)}
+  .pedir svg{width:22px;height:22px}
+  .aviso{padding:60px 28px;text-align:center;color:var(--suave);font-size:16px;line-height:1.6}
+  .carregando{display:grid;place-items:center;gap:14px;padding:120px 20px;color:var(--suave)}
+  .carregando i{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,122,26,.25);border-top-color:var(--laranja);animation:gira 1s linear infinite}
+  @keyframes gira{to{transform:rotate(360deg)}}
+  .entra{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+  .entra.on{opacity:1;transform:none}
+  @media (max-width:640px){
+    .cena{padding:12px 10px 110px}
+    header{padding:22px 18px 6px}.bloco{padding:18px}.destaque{grid-template-columns:1fr;padding:6px 18px;text-align:center}
+    .destaque .txt p{margin:0 auto}.palco{height:250px;order:-1}.duas{grid-template-columns:1fr;gap:22px}
+    .precos{gap:8px}.preco{padding:14px 6px 12px}footer{padding:18px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="bokeh" aria-hidden="true"></div>
+<div class="cena"><main class="quadro" id="quadro"><div class="carregando"><i></i>Carregando o cardápio de hoje…</div></main></div>
+<a class="pedir" id="pedir" href="#" target="_blank" rel="noopener" aria-label="Pedir pelo WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4zm4.5 9.7c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 01-1.9-1.2 7.3 7.3 0 01-1.3-1.7c-.1-.2 0-.4.1-.5l.4-.5c.1-.1.1-.3.2-.4a.4.4 0 000-.4l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5a.9.9 0 00-.6.3 2.6 2.6 0 00-.8 1.9 4.5 4.5 0 001 2.4 10.2 10.2 0 003.9 3.4c1.5.6 2 .7 2.7.6a2.3 2.3 0 001.5-1.1 1.9 1.9 0 00.1-1.1c0-.1-.2-.2-.4-.3z"/></svg>
+  Pedir pelo WhatsApp
+</a>
+<script>
+// Cardápio do dia, publicado pelo sistema do restaurante (Supabase Storage, leitura pública).
+const DADOS_URL = 'https://lawsoipmhompudbdtuxl.supabase.co/storage/v1/object/public/cardapio/cardapio-hoje.json';
+const PADRAO = { // usado se ainda não houver cardápio publicado (cardápio original)
+  empresa:{ nome:'Pratto di Casa', endereco:'R. Alexandrino Pinto da Silva, 262 - Centro, Cajamar/SP', whatsapp:'(11) 4446-6187' },
+  hoje:['Bife a rolê','Coxinha da asa à milanesa','Dobradinha','Filé de frango à milanesa','Bife à milanesa','À parmegiana'],
+  guarnicoes:['Repolho refogado','Purê de batata','Rondeli de frios','Bolinho de arroz','Farofa'],
+  fitness:['Arroz integral','1 proteína (carne, frango ou omelete)','Salada'], fitnessObs:'Guarnições têm acréscimo',
+  precos:{ P:'25,00', M:'28,00', G:'35,00', fitness:'28,00' }, especial:{ nome:'Feijoada / Rabada / Virado / À parmegiana', P:'26,00', M:'30,00', G:'38,00' }, fotos:{}
+};
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const urlSegura = (u) => /^https:\/\/[a-z0-9.-]+\.supabase\.co\/storage\//i.test(String(u || '')) ? String(u) : '';
+const emoji = (n) => { n = String(n || '').toLowerCase();
+  const t = (...k) => k.some(x => n.includes(x));
+  if (t('feijoada','feij')) return ['🫘','🍚','🥓']; if (t('milanesa','parmegiana','empan')) return ['🍖','🍅','🧀']; if (t('frango','asa','coxa')) return ['🍗','🌿','🍋'];
+  if (t('peixe','tilápia','tilapia')) return ['🐟','🍋','🌿']; if (t('dobradinha','rabada','virado','costela')) return ['🍲','🌿','🫘'];
+  if (t('bife','carne','rolê','role')) return ['🥩','🧅','🌿']; if (t('ovo','omelete')) return ['🍳','🌿','🍅']; if (t('purê','pure','batata')) return ['🥔','🧈','🌿'];
+  if (t('arroz')) return ['🍚','🌿','🥕']; if (t('salada','repolho','legume','alface')) return ['🥗','🍅','🥕']; if (t('farofa')) return ['🌾','🥓','🌿'];
+  if (t('macarr','rondeli','massa','lasanha')) return ['🍝','🧀','🌿']; return ['🍛','🌿','🍅']; };
+const fotoDe = (d, nome) => urlSegura((d.fotos || {})[String(nome).toLowerCase().trim()]);
+function prato(d, nome, tam) {
+  const f = fotoDe(d, nome);
+  if (f) return `<img class="foto" src="${esc(f)}" alt="${esc(nome)}" width="${tam}" height="${tam}" loading="lazy" style="width:${tam}px;height:${tam}px">`;
+  const e = emoji(nome); const s = Math.round(tam * .42);
+  return `<div class="tigela" style="width:${tam}px;height:${tam}px"><div class="borda"></div><div class="bowl"></div>
+    <div class="comida" style="font-size:${s}px"><span>${e[0]}</span><i style="font-size:${Math.round(s * .5)}px;left:-${Math.round(s * .45)}px;top:${Math.round(s * .35)}px">${e[1]}</i><i style="font-size:${Math.round(s * .45)}px;right:-${Math.round(s * .42)}px;top:${Math.round(s * .3)}px">${e[2]}</i></div></div>`;
+}
+const valor = (v) => String(v || '').trim();
+function montar(d) {
+  const emp = d.empresa || PADRAO.empresa; const hoje = d.hoje || []; const comFoto = hoje.find(n => fotoDe(d, n));
+  const principal = comFoto || hoje[0] || 'Prato do dia';
+  const dia0 = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'2-digit' }); const dia = dia0.charAt(0).toUpperCase() + dia0.slice(1);
+  const pr = d.precos || {}; const es = d.especial || {}; const menor = ['P','M','G'].map(k => valor(pr[k])).filter(Boolean)[0];
+  const tams = [['P','Pequena'],['M','Média'],['G','Grande']].filter(([k]) => valor(pr[k]));
+  const tel = String(emp.whatsapp || '').replace(/\D/g, ''); const wa = tel ? ('55' + tel.replace(/^55/, '')) : '';
+  document.getElementById('pedir').href = wa ? 'https://wa.me/' + wa + '?text=' + encodeURIComponent('Olá! Vi o cardápio de hoje e quero pedir: ') : '#';
+  document.title = (emp.nome || 'Pratto di Casa') + ' · Cardápio de hoje';
+  const partes = (emp.nome || 'Pratto di Casa').split(' '); const ult = partes.pop();
+  return `
+  <header class="entra"><div class="selo">PdC</div><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div><div class="data">Cardápio de hoje · ${esc(dia)}</div></header>
+  <section class="destaque entra"><div class="txt"><small>Destaque do dia</small><h2>${esc(principal)}</h2><p>Feito na hora, com tempero de casa. Escolha o tamanho e peça pelo WhatsApp.</p>${menor ? `<div class="apartir">a partir de <b>R$ ${esc(menor)}</b></div>` : ''}</div>
+    <div class="palco"><div class="chao"></div><div class="flutua">${prato(d, principal, 250)}</div><div class="vapor"><span></span><span></span><span></span></div></div></section>
+  ${hoje.length ? `<section class="bloco entra"><div class="titulo"><h3>Pratos de <em>hoje</em></h3></div><div class="lista">${hoje.map((n, i) =>
+      `<div class="item"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="nome">${esc(n)}</span><div class="mini flutua" style="animation-delay:-${i * .7}s">${prato(d, n, 76)}</div></div>`).join('')}</div></section>` : ''}
+  <section class="bloco entra"><div class="duas">
+    ${(d.guarnicoes || []).length ? `<div><div class="titulo"><h3>Guarni<em>ções</em></h3></div><ul class="pontos">${d.guarnicoes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></div>` : ''}
+    ${(d.fitness || []).length ? `<div><div class="titulo"><h3><em>Fit</em>ness</h3></div><ul class="pontos">${d.fitness.map(n => `<li>${esc(n)}</li>`).join('')}</ul>${d.fitnessObs ? `<div class="obs">(${esc(d.fitnessObs)})</div>` : ''}${valor(pr.fitness) ? `<div class="fitpreco">Fitness <b>R$ ${esc(pr.fitness)}</b></div>` : ''}</div>` : ''}
+  </div></section>
+  ${tams.length ? `<section class="bloco entra"><div class="titulo"><h3><em>Valores</em></h3></div><div class="precos">${tams.map(([k, n]) =>
+      `<div class="preco"><div class="tam">${k}</div><div class="tamtxt">${n}</div><div class="v"><small>R$</small>${esc(pr[k])}</div></div>`).join('')}</div>
+    ${valor(es.nome) && ['P','M','G'].some(k => valor(es[k])) ? `<div class="especial"><div class="en">${esc(es.nome)}</div><div class="ev">${['P','M','G'].filter(k => valor(es[k])).map(k => `<span><i>${k}</i>R$ ${esc(es[k])}</span>`).join('')}</div></div>` : ''}</section>` : ''}
+  <footer class="entra"><div>📍 <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(emp.endereco || '')}" target="_blank" rel="noopener">${esc(emp.endereco || '')}</a><br>📲 WhatsApp ${esc(emp.whatsapp || '')}</div>
+    <div>${d.atualizado ? 'Atualizado em ' + esc(new Date(d.atualizado).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })) : ''}</div></footer>`;
+}
+function animar() {
+  const els = [...document.querySelectorAll('.entra')]; els.forEach((el, i) => setTimeout(() => el.classList.add('on'), 80 + i * 110));
+  // quadro inclina em 3D com o mouse (computador) ou com o celular
+  const q = document.getElementById('quadro'); if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const incl = (x, y) => { q.style.transform = `rotateY(${x * 5}deg) rotateX(${-y * 4}deg)`; };
+  addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') incl(e.clientX / innerWidth - .5, e.clientY / innerHeight - .5); });
+  addEventListener('deviceorientation', (e) => { if (e.gamma != null) incl(Math.max(-1, Math.min(1, e.gamma / 30)) * .5, Math.max(-1, Math.min(1, (e.beta - 40) / 30)) * .5); });
+}
+(function bokeh() { const b = document.querySelector('.bokeh'); for (let i = 0; i < 14; i++) { const s = 40 + Math.random() * 140; const el = document.createElement('i');
+  el.style.cssText = `width:${s}px;height:${s}px;left:${Math.random() * 100}%;top:${Math.random() * 100}%;opacity:${.15 + Math.random() * .35};animation-delay:-${Math.random() * 14}s`; b.appendChild(el); } })();
+async function iniciar() {
+  const q = document.getElementById('quadro'); let d = null;
+  const p = new URLSearchParams(location.search);
+  if (!p.has('demo')) { try { const r = await fetch(DADOS_URL + '?v=' + Date.now(), { cache:'no-store' }); if (r.ok) d = await r.json(); } catch (e) {} }
+  if (!d && p.has('demo')) d = PADRAO;
+  if (!d) { // sem cardápio publicado (ou sem internet): não mostra cardápio antigo, só o caminho para pedir
+    montar(PADRAO); q.innerHTML = '<div class="aviso"><div style="font:700 30px Oswald;color:#f3f4f6;margin-bottom:10px">PRATTO DI <span style="color:#ff7a1a">CASA</span></div>O cardápio de hoje ainda não foi publicado.<br>Chame a gente no WhatsApp que passamos os pratos do dia! 😊</div>'; return; }
+  q.innerHTML = montar(d); animar();
+}
+iniciar();
+</script>
+</body>
+</html>
