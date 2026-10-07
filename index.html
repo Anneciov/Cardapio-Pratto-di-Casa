@@ -82,6 +82,34 @@
   .heroimg{width:300px;max-width:100%;aspect-ratio:1;object-fit:cover;border-radius:28px;display:block;box-shadow:0 30px 50px -20px rgba(0,0,0,.95),0 0 0 1px rgba(255,255,255,.08);transform:rotate(-3deg)}
   .destaque.so-texto{grid-template-columns:1fr;min-height:0;padding-bottom:10px}
   .item .mini{width:58px;height:58px;border-radius:14px;object-fit:cover;flex-shrink:0;margin:0}
+  /* ===== capa (página de abertura) ===== */
+  #capa{position:relative;z-index:2;min-height:100vh;min-height:100svh;max-width:1180px;margin:0 auto;padding:18px 20px 22px;display:flex;flex-direction:column;gap:16px}
+  body.na-capa .cena,body.na-capa .pedir{display:none}
+  body:not(.na-capa) #capa{display:none}
+  #capa .banner{flex:1;margin:0;min-height:540px}
+  .capa-topo{display:flex;align-items:center;gap:14px}
+  .capa-topo .marca h1{font-size:clamp(24px,4vw,34px)}
+  .capa-entrar{margin-left:auto;display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:30px;border:1px solid rgba(255,122,26,.55);color:var(--laranja2);font:600 14px Inter;text-decoration:none;transition:background .2s ease,color .2s ease}
+  .capa-entrar:hover{background:var(--laranja);color:#1a0d02}
+  .capa-cta{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .capa-btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:16px;padding:16px 16px 16px 30px;border-radius:50px;text-decoration:none;
+    background:linear-gradient(135deg,var(--laranja2),var(--laranja));color:#1a0d02;font:400 clamp(19px,2.6vw,24px) Anton,Oswald,sans-serif;letter-spacing:.07em;text-transform:uppercase;
+    box-shadow:0 20px 36px -14px rgba(255,122,26,.85);animation:pulsa 2.4s ease-in-out infinite;transition:transform .25s ease}
+  .capa-btn:hover{transform:translateY(-3px)}
+  .capa-btn::after{content:'';position:absolute;top:0;bottom:0;left:-40%;width:30%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);animation:brilho 3.2s ease-in-out infinite}
+  .capa-btn i{font-style:normal;width:46px;height:46px;border-radius:50%;background:#1a0d02;color:var(--laranja2);display:grid;place-items:center;font:700 22px Inter;transition:transform .3s ease}
+  .capa-btn:hover i{transform:translateX(6px)}
+  @keyframes pulsa{0%,100%{box-shadow:0 20px 36px -14px rgba(255,122,26,.85),0 0 0 0 rgba(255,122,26,.45)}50%{box-shadow:0 20px 36px -14px rgba(255,122,26,.85),0 0 0 14px rgba(255,122,26,0)}}
+  @keyframes brilho{0%,60%{left:-40%}100%{left:130%}}
+  .capa-info{display:flex;align-items:center;gap:14px;flex-wrap:wrap;color:var(--suave);font-size:13.5px}
+  .bn-vazio .bn-txt{padding-bottom:40px}
+  header .marca h1,.capa-topo .marca h1{white-space:nowrap}
+  .inicio{display:inline-flex;align-items:center;padding:8px 14px;border-radius:30px;border:1px solid var(--linha);color:var(--texto);font:600 13px Inter;text-decoration:none;background:rgba(255,255,255,.04)}
+  .inicio:hover{border-color:rgba(255,122,26,.5);color:var(--laranja2)}
+  @media (max-width:640px){
+    #capa{padding:10px 10px 18px;gap:12px}#capa .banner{min-height:0}
+    .capa-cta{flex-direction:column;align-items:stretch}.capa-btn{justify-content:space-between}.capa-info{justify-content:center;text-align:center}
+  }
   /* ===== banner (cartaz) do topo ===== */
   .banner{position:relative;z-index:1;margin:6px 18px 10px;border-radius:26px;overflow:hidden;min-height:480px;display:grid;grid-template-columns:1.05fr 1fr;isolation:isolate;outline:none;touch-action:pan-y;
     background:radial-gradient(circle at 72% 46%,rgba(255,170,60,.38),transparent 40%),linear-gradient(90deg,#c9171d 0%,#a51015 54%,#7e0a0e 54%,#5c070a 100%);
@@ -192,8 +220,9 @@
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
-<body>
+<body class="na-capa">
 <div class="bokeh" aria-hidden="true"></div>
+<div id="capa" aria-label="Início"></div>
 <div class="cena"><main class="quadro" id="quadro"><div class="carregando"><i></i>Carregando o cardápio de hoje…</div></main></div>
 <a class="pedir" id="pedir" href="#" target="_blank" rel="noopener" aria-label="Pedir pelo WhatsApp">
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4zm4.5 9.7c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 01-1.9-1.2 7.3 7.3 0 01-1.3-1.7c-.1-.2 0-.4.1-.5l.4-.5c.1-.1.1-.3.2-.4a.4.4 0 000-.4l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5a.9.9 0 00-.6.3 2.6 2.6 0 00-.8 1.9 4.5 4.5 0 001 2.4 10.2 10.2 0 003.9 3.4c1.5.6 2 .7 2.7.6a2.3 2.3 0 001.5-1.1 1.9 1.9 0 00.1-1.1c0-.1-.2-.2-.4-.3z"/></svg>
@@ -294,8 +323,49 @@ function iniciarBanner() {
   if (M) { garantir([M.animate(b, { opacity: [0, 1], scale: [.96, 1] }, mola(.25, .8)),
     M.animate(b.querySelector('.bn-gigante'), { x: [120, 0], opacity: [0, 1] }, mola(.2, 1.2, { delay: .1 })),
     M.animate(b.querySelectorAll('.bn-feat'), { opacity: [0, 1], x: [30, 0] }, mola(.3, .7, { delay: M.stagger(.1, { startDelay: .6 }) }))], 2600); }
+  BANNER.auto = auto; BANNER.parar = () => clearInterval(BANNER.timer);
   entrar(); marcar(); auto();
 }
+// ---------- Página de abertura (capa): cartaz com os pratos do dia + botão para entrar no cardápio ----------
+function capaHTML(d) {
+  const emp = d.empresa || PADRAO.empresa; const pr = d.precos || {};
+  const menor = ['P','M','G'].map(k => valor(pr[k])).filter(Boolean)[0];
+  const dia0 = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'2-digit' }); const dia = dia0.charAt(0).toUpperCase() + dia0.slice(1);
+  const partes = (emp.nome || 'Pratto di Casa').split(' '); const ult = partes.pop();
+  const banner = slidesDe(d).length ? bannerHTML(d) : `<section class="banner bn-vazio" id="banner-vazio">
+      <div class="bn-gigante" aria-hidden="true"><span>PRATTO</span><span>DI CASA</span></div>
+      <div class="bn-txt"><div class="bn-script">Cardápio de hoje</div><h2 class="bn-titulo"><span class="bn-forte">Comida</span><span class="bn-cursiva">caseira</span></h2>
+        <div class="bn-tag"><span>Feita na hora</span></div>${(d.hoje || []).length ? `<p class="bn-ing">${esc(d.hoje.join(' · '))}</p>` : ''}
+        ${menor ? `<div class="bn-preco"><span class="bn-so">a partir de</span><b><small>R$</small>${esc(menor)}</b></div>` : ''}</div></section>`;
+  return `<div class="capa-topo"><div class="selo">PdC</div><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div>
+      <a href="#cardapio" class="capa-entrar js-entrar">Cardápio <span>→</span></a></div>
+    ${banner}
+    <div class="capa-cta"><a href="#cardapio" class="capa-btn js-entrar"><span>Ver cardápio de hoje</span><i>→</i></a>
+      <div class="capa-info"><span class="data">${esc(dia)}</span><span>📍 ${esc(emp.endereco || '')}</span></div></div>`;
+}
+const ROTA = { capaPronta: false, menuAnimado: false };
+const semMovimento = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+async function entrarCardapio(e) {
+  if (e) e.preventDefault(); const M = !semMovimento() && window.Motion; const capa = document.getElementById('capa');
+  if (M) await Promise.race([M.animate(capa, { opacity: 0, y: -40, scale: .97 }, { duration: .35, ease: 'easeIn' }), new Promise(r => setTimeout(r, 420))]);
+  location.hash = 'cardapio';
+}
+function mostrarCapa() {
+  const capa = document.getElementById('capa'); document.body.classList.add('na-capa'); window.scrollTo(0, 0);
+  capa.style.opacity = ''; capa.style.transform = '';
+  if (!ROTA.capaPronta) { ROTA.capaPronta = true; iniciarBanner(); capa.querySelectorAll('.js-entrar').forEach(a => a.addEventListener('click', entrarCardapio)); }
+  else if (BANNER.auto) BANNER.auto();
+  const M = !semMovimento() && window.Motion;
+  if (M) { M.animate(capa.querySelectorAll('.capa-topo, .capa-cta'), { opacity: [0, 1], y: [20, 0] }, { type: 'spring', bounce: .3, duration: .7, delay: M.stagger(.12, { startDelay: .2 }) });
+    setTimeout(() => capa.querySelectorAll('.capa-topo, .capa-cta').forEach(el => { el.style.opacity = '1'; }), 1500); }
+}
+function mostrarCardapio() {
+  document.body.classList.remove('na-capa'); window.scrollTo(0, 0); if (BANNER.parar) BANNER.parar();
+  const M = !semMovimento() && window.Motion; const cena = document.querySelector('.cena');
+  if (!ROTA.menuAnimado) { ROTA.menuAnimado = true; animar(); }
+  else if (M) M.animate(cena, { opacity: [0, 1], y: [30, 0] }, { type: 'spring', bounce: .2, duration: .6 });
+}
+const rota = () => (location.hash === '#cardapio' ? mostrarCardapio() : mostrarCapa());
 function montar(d) {
   const emp = d.empresa || PADRAO.empresa; const hoje = d.hoje || []; const pratos = (d.pratos || []).filter(p => p && p.nome);
   const dia0 = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'2-digit' }); const dia = dia0.charAt(0).toUpperCase() + dia0.slice(1);
@@ -321,8 +391,8 @@ function montar(d) {
           <div class="crow">${valor(p.preco) ? `<b>R$ ${esc(p.preco)}</b>` : '<span></span>'}<a class="cbtn" href="${linkPedido('Olá! Quero pedir 1 ' + p.nome + '.')}" target="_blank" rel="noopener">Pedir</a></div></div>
       </article>`; }).join('')}</div></section>` : '';
   return `
-  <header class="entra"><div class="selo">PdC</div><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div><div class="data">Cardápio de hoje · ${esc(dia)}</div></header>
-  ${slidesDe(d).length ? bannerHTML(d) : destaque}
+  <header class="entra"><div class="selo">PdC</div><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div><div class="data">Cardápio de hoje · ${esc(dia)}</div><a class="inicio" href="#inicio" aria-label="Voltar ao início">‹ Início</a></header>
+  ${destaque}
   ${cards}
   ${hoje.length ? `<section class="bloco entra"><div class="titulo"><h3>Hoje <em>tem</em></h3></div><div class="lista">${hoje.map((n, i) => { const f = fotoDe(d, n);
       return `<div class="item"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="nome">${esc(n)}</span>${f ? `<img class="mini" src="${esc(f)}" alt="" loading="lazy">` : ''}</div>`; }).join('')}</div></section>` : ''}
@@ -386,8 +456,10 @@ async function iniciar() {
   if (!p.has('demo')) { try { const r = await fetch(DADOS_URL + '?v=' + Date.now(), { cache:'no-store' }); if (r.ok) d = await r.json(); } catch (e) {} }
   if (!d && p.has('demo')) d = PADRAO;
   if (!d) { // sem cardápio publicado (ou sem internet): não mostra cardápio antigo, só o caminho para pedir
-    montar(PADRAO); q.innerHTML = '<div class="aviso"><div style="font:700 30px Oswald;color:#f3f4f6;margin-bottom:10px">PRATTO DI <span style="color:#ff7a1a">CASA</span></div>O cardápio de hoje ainda não foi publicado.<br>Chame a gente no WhatsApp que passamos os pratos do dia! 😊</div>'; return; }
-  q.innerHTML = montar(d); animar(); iniciarBanner();
+    document.body.classList.remove('na-capa'); montar(PADRAO); q.innerHTML = '<div class="aviso"><div style="font:700 30px Oswald;color:#f3f4f6;margin-bottom:10px">PRATTO DI <span style="color:#ff7a1a">CASA</span></div>O cardápio de hoje ainda não foi publicado.<br>Chame a gente no WhatsApp que passamos os pratos do dia! 😊</div>'; return; }
+  q.innerHTML = montar(d);
+  document.getElementById('capa').innerHTML = capaHTML(d);
+  rota(); addEventListener('hashchange', rota);
 }
 iniciar();
 </script>
