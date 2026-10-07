@@ -84,51 +84,100 @@
   .item .mini{width:58px;height:58px;border-radius:14px;object-fit:cover;flex-shrink:0;margin:0}
   /* ===== monte seu pedido ===== */
   .cbtn{border:none;cursor:pointer}
-  .item[data-pedir]{cursor:pointer}.item[data-pedir]::after{content:'Pedir →';flex-shrink:0;font:700 12px Inter;color:var(--laranja2);opacity:.0;transition:opacity .2s ease}.item[data-pedir]:hover::after,.item[data-pedir]:focus-visible::after{opacity:1}
+  .item[data-pedir]{cursor:pointer}.item[data-pedir]::after{content:'Pedir →';flex-shrink:0;font:700 12px Inter;color:var(--laranja2);opacity:0;transition:opacity .2s ease}.item[data-pedir]:hover::after,.item[data-pedir]:focus-visible::after{opacity:1}
   body.sem-rolagem{overflow:hidden}
-  .ped-fundo{position:fixed;inset:0;z-index:20;background:rgba(5,6,8,.72);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px}
+  .ped-fundo{position:fixed;inset:0;z-index:20;background:rgba(5,6,8,.74);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px}
   .ped-fundo[hidden]{display:none}
-  .ped{position:relative;width:100%;max-width:560px;max-height:min(92vh,860px);display:flex;flex-direction:column;border-radius:24px;overflow:hidden;
-    background:radial-gradient(ellipse 80% 30% at 50% 0%,rgba(255,122,26,.12),transparent 70%),linear-gradient(160deg,#1e232a,#14171c);border:1px solid rgba(255,255,255,.08);box-shadow:0 40px 90px -30px rgba(0,0,0,.95)}
-  .ped-topo{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px 12px;border-bottom:1px solid var(--linha)}
-  .ped-topo small{font:600 11px Inter;letter-spacing:.3em;color:var(--laranja);text-transform:uppercase}
-  .ped-topo h3{font:700 26px Oswald;text-transform:uppercase;letter-spacing:.03em}
-  .ped-x{width:40px;height:40px;border-radius:50%;border:1px solid var(--linha);background:rgba(255,255,255,.05);color:var(--texto);font-size:24px;line-height:1;cursor:pointer}.ped-x:hover{border-color:var(--laranja);color:var(--laranja2)}
-  .ped-corpo{overflow:auto;padding:6px 20px 14px;overscroll-behavior:contain}
-  .ped-sec{padding:14px 0;border-bottom:1px dashed var(--linha);border-radius:12px;transition:background .3s ease}
-  .ped-sec.alerta{animation:alerta 1.2s ease}
-  @keyframes alerta{0%,100%{background:transparent}20%,60%{background:rgba(255,122,26,.12)}}
-  .ped-sec h4{display:flex;align-items:center;gap:8px;font:700 15px Oswald;letter-spacing:.12em;text-transform:uppercase;color:var(--laranja2);margin-bottom:10px}
-  .ped-sec h4 span{font:500 12px Inter;letter-spacing:0;text-transform:none;color:var(--suave)}
-  .ped-cont{margin-left:auto;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.07);color:var(--texto)!important;font:700 12px Inter!important}
-  .ped-cont.cheio{background:rgba(34,197,94,.18);color:#4ade80!important}
-  .ped-nota{font-size:12.5px;color:var(--suave);margin:-2px 0 10px;line-height:1.45}
-  .ped-tams{display:grid;grid-template-columns:repeat(auto-fit,minmax(98px,1fr));gap:8px}
-  .ped-chips{display:flex;flex-wrap:wrap;gap:8px}
-  .ped-chip{border:1px solid var(--linha);background:rgba(255,255,255,.04);color:var(--texto);border-radius:14px;padding:10px 14px;font:600 14px Inter;cursor:pointer;text-align:left;transition:border-color .2s ease,background .2s ease,transform .15s ease}
-  .ped-chip:hover:not(:disabled){border-color:rgba(255,122,26,.5)}
-  .ped-chip:active:not(:disabled){transform:scale(.96)}
-  .ped-chip.on{border-color:var(--laranja);background:rgba(255,122,26,.16);color:#fff;box-shadow:inset 0 0 0 1px var(--laranja);animation:escolhido .35s ease}
-  .ped-chip:disabled{opacity:.32;cursor:not-allowed}
-  @keyframes escolhido{40%{transform:scale(1.05)}}
-  .ped-tam{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 8px;text-align:center}
-  .ped-tam b{font:700 24px Oswald;color:var(--laranja2)}.ped-tam span{font-size:12px;color:var(--suave)}.ped-tam em{font:700 15px Oswald;font-style:normal}
-  .ped-tam.on b{color:#fff}
-  .ped-esp{font-style:normal;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#1a0d02;background:var(--laranja2);padding:2px 6px;border-radius:8px;margin-left:4px}
-  .ped-qtd{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--linha);border-radius:40px;padding:4px}
-  .ped-qtd button{width:40px;height:40px;border-radius:50%;border:none;background:rgba(255,255,255,.07);color:var(--texto);font-size:22px;cursor:pointer}.ped-qtd button:hover{background:var(--laranja);color:#1a0d02}
-  .ped-qtd b{min-width:40px;text-align:center;font:700 22px Oswald}
-  #ped-obs{width:100%;resize:vertical;border-radius:14px;border:1px solid var(--linha);background:rgba(0,0,0,.25);color:var(--texto);font:500 14.5px/1.45 Inter;padding:12px 14px;outline:none}
+  .ped{position:relative;width:100%;max-width:580px;max-height:min(92vh,880px);display:flex;flex-direction:column;border-radius:26px;overflow:hidden;
+    background:radial-gradient(ellipse 90% 28% at 50% 0%,rgba(255,122,26,.14),transparent 70%),linear-gradient(170deg,#1f242b,#131619 60%);border:1px solid rgba(255,255,255,.08);box-shadow:0 40px 90px -30px rgba(0,0,0,.95)}
+  .ped-alca{display:none}
+  .ped-topo{display:flex;align-items:center;gap:14px;padding:18px 18px 14px 20px;border-bottom:1px solid var(--linha);touch-action:none}
+  .ped-hero{width:64px;height:64px;border-radius:50%;overflow:hidden;flex-shrink:0;box-shadow:0 0 0 3px rgba(255,122,26,.55),0 10px 22px -8px rgba(0,0,0,.8)}
+  .ped-hero img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.25)}
+  .ped-hero[hidden]{display:none}
+  .ped-tt{flex:1;min-width:0}
+  .ped-tt small{font:700 10.5px Inter;letter-spacing:.3em;color:var(--laranja);text-transform:uppercase}
+  .ped-tt h3{font:700 25px/1.05 Oswald;text-transform:uppercase;letter-spacing:.02em;margin:2px 0 7px}
+  .ped-passos{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .ped-passos span{font:600 11.5px Inter;color:var(--suave);padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.06);transition:all .25s ease}
+  .ped-passos span.ok{color:#4ade80;background:rgba(34,197,94,.14)}
+  .ped-passos i{width:10px;height:1px;background:var(--linha)}
+  .ped-x{align-self:flex-start;width:40px;height:40px;border-radius:50%;border:1px solid var(--linha);background:rgba(255,255,255,.05);color:var(--texto);font-size:24px;line-height:1;cursor:pointer;flex-shrink:0;transition:all .2s ease}
+  .ped-x:hover{border-color:var(--laranja);color:var(--laranja2);transform:rotate(90deg)}
+  .ped-corpo{overflow:auto;padding:4px 20px 18px;overscroll-behavior:contain;scroll-behavior:smooth}
+  .ped-sec{padding:16px 0 18px;border-bottom:1px solid var(--linha);border-radius:14px}
+  .ped-sec:last-child{border-bottom:none}
+  .ped-sec.alerta{animation:alerta 1.3s ease}
+  @keyframes alerta{0%,100%{background:transparent;box-shadow:none}20%,60%{background:rgba(255,122,26,.10);box-shadow:0 0 0 8px rgba(255,122,26,.10)}}
+  .ped-h{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .ped-n{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;background:rgba(255,122,26,.16);color:var(--laranja2);font:700 13px Inter;transition:all .25s ease}
+  .ped-n.ok{background:#22c55e;color:#06210f}.ped-n svg{width:15px;height:15px}
+  .ped-h h4{font:700 17px Oswald;letter-spacing:.08em;text-transform:uppercase}
+  .ped-req,.ped-opc{margin-left:auto;font:600 11px Inter;color:var(--suave);background:rgba(255,255,255,.06);padding:3px 9px;border-radius:20px}
+  .ped-cont{margin-left:auto;display:inline-flex;align-items:center;gap:5px;font:700 12px Inter;color:var(--texto);background:rgba(255,255,255,.07);padding:4px 10px;border-radius:20px}
+  .ped-cont i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .2s ease}.ped-cont i.on{background:var(--laranja)}
+  .ped-cont.cheio{background:rgba(34,197,94,.16);color:#4ade80}.ped-cont.cheio i.on{background:#22c55e}
+  .ped-nota{font-size:12.5px;color:var(--suave);margin:-4px 0 12px;line-height:1.45}
+  /* tamanhos: cartões com a foto do prato */
+  .ped-tams{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:10px}
+  .ped-tam{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 8px 11px;border-radius:18px;border:1.5px solid var(--linha);background:rgba(255,255,255,.035);color:var(--texto);cursor:pointer;font-family:inherit;transition:all .2s ease}
+  .ped-tam img,.ped-tam-l{width:54px;height:54px;border-radius:50%;object-fit:cover;margin-bottom:4px;box-shadow:0 8px 16px -8px rgba(0,0,0,.8)}
+  .ped-tam-l{display:grid;place-items:center;background:rgba(255,122,26,.14);color:var(--laranja2);font:700 19px Oswald}
+  .ped-tam-n{font:600 13px Inter}.ped-tam em{font:700 16px Oswald;font-style:normal;color:var(--laranja2)}
+  .ped-tam-ok{position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:50%;background:var(--laranja);color:#1a0d02;display:grid;place-items:center;opacity:0;transform:scale(.4);transition:all .25s cubic-bezier(.3,1.6,.5,1)}
+  .ped-tam-ok svg{width:12px;height:12px}
+  .ped-tam:hover{border-color:rgba(255,122,26,.5);transform:translateY(-2px)}
+  .ped-tam.on{border-color:var(--laranja);background:linear-gradient(160deg,rgba(255,122,26,.20),rgba(255,122,26,.06));box-shadow:0 12px 24px -14px rgba(255,122,26,.8)}
+  .ped-tam.on .ped-tam-ok{opacity:1;transform:scale(1)}.ped-tam.on em{color:#fff}
+  /* listas de escolha (rádio / caixinha) */
+  .ped-lista{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .ped-op{display:flex;align-items:center;gap:11px;min-height:50px;padding:10px 13px;border-radius:14px;border:1.5px solid var(--linha);background:rgba(255,255,255,.035);color:var(--texto);font:600 14px/1.3 Inter;text-align:left;cursor:pointer;transition:all .18s ease}
+  .ped-op:hover{border-color:rgba(255,122,26,.45)}
+  .ped-op:active{transform:scale(.98)}
+  .ped-op.on{border-color:var(--laranja);background:rgba(255,122,26,.13);color:#fff}
+  .ped-op span{flex:1}
+  .ped-ind{flex-shrink:0;width:22px;height:22px;display:grid;place-items:center;border:2px solid rgba(255,255,255,.3);transition:all .2s ease}
+  .ped-radio{border-radius:50%}.ped-op.on .ped-radio{border-color:var(--laranja);box-shadow:inset 0 0 0 4px #1a1d22;background:var(--laranja)}
+  .ped-check{border-radius:7px}.ped-check svg{width:14px;height:14px}.ped-op.on .ped-check{border-color:var(--laranja);background:var(--laranja);color:#1a0d02;animation:escolhido .3s ease}
+  .ped-lista.cheia .ped-op:not(.on){opacity:.42}
+  @keyframes escolhido{40%{transform:scale(1.2)}}
+  .ped-esp{font-style:normal;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#1a0d02;background:var(--laranja2);padding:3px 7px;border-radius:8px}
+  /* quantidade e observação */
+  .ped-qtd{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--linha);border-radius:40px;padding:5px}
+  .ped-qtd button{width:42px;height:42px;border-radius:50%;border:none;background:rgba(255,255,255,.08);color:var(--texto);font-size:22px;cursor:pointer;transition:all .15s ease}
+  .ped-qtd button:hover{background:var(--laranja);color:#1a0d02}.ped-qtd button:active{transform:scale(.9)}
+  .ped-qtd b{min-width:44px;text-align:center;font:700 24px Oswald}
+  .ped-tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+  .ped-tag{border:1px dashed rgba(255,255,255,.22);background:transparent;color:var(--suave);border-radius:20px;padding:6px 12px;font:600 12.5px Inter;cursor:pointer;transition:all .18s ease}
+  .ped-tag:hover{border-color:var(--laranja);color:var(--laranja2)}
+  .ped-tag.on{border-style:solid;border-color:var(--laranja);background:rgba(255,122,26,.14);color:#fff}
+  #ped-obs{width:100%;resize:vertical;border-radius:14px;border:1.5px solid var(--linha);background:rgba(0,0,0,.28);color:var(--texto);font:500 14.5px/1.45 Inter;padding:12px 14px;outline:none;transition:border-color .2s ease}
   #ped-obs:focus{border-color:var(--laranja)}
-  .ped-rodape{display:flex;align-items:center;gap:14px;padding:14px 20px 18px;border-top:1px solid var(--linha);background:rgba(0,0,0,.25)}
-  .ped-total{flex:1;min-width:0}.ped-total small{display:block;font-size:12px;color:var(--suave);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ped-total b{font:700 30px Oswald;color:var(--laranja)}
-  .ped-enviar{display:inline-flex;align-items:center;gap:9px;border:none;cursor:pointer;padding:15px 22px;border-radius:40px;background:linear-gradient(135deg,#2bd96b,#16a34a);color:#04170b;font:700 16px Inter;box-shadow:0 14px 26px -12px rgba(22,163,74,.9);transition:transform .2s ease}
+  .ped-cnt{text-align:right;font-size:11.5px;color:var(--suave);margin-top:4px}
+  /* rodapé */
+  .ped-rodape{display:flex;align-items:center;gap:14px;padding:14px 20px 18px;border-top:1px solid var(--linha);background:rgba(10,11,13,.6);backdrop-filter:blur(10px)}
+  .ped-total{flex:1;min-width:0}.ped-total small{display:block;font-size:12px;color:var(--suave);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ped-total b{display:inline-block;font:700 30px Oswald;color:var(--laranja)}
+  .ped-total b.pulo{animation:pulo .35s ease}@keyframes pulo{40%{transform:scale(1.12)}}
+  .ped-enviar{display:inline-flex;align-items:center;gap:9px;border:none;cursor:pointer;padding:15px 22px;border-radius:40px;background:linear-gradient(135deg,#2bd96b,#16a34a);color:#04170b;font:700 15.5px Inter;box-shadow:0 14px 26px -12px rgba(22,163,74,.9);transition:all .25s ease;white-space:nowrap}
   .ped-enviar:hover{transform:translateY(-2px)}.ped-enviar svg{width:20px;height:20px}
-  .ped-erro{position:absolute;left:50%;bottom:92px;transform:translate(-50%,10px);opacity:0;pointer-events:none;background:#ef4444;color:#fff;font:600 13.5px Inter;padding:10px 16px;border-radius:12px;box-shadow:0 12px 24px -10px rgba(239,68,68,.8);transition:opacity .2s ease,transform .2s ease;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis}
+  .ped-enviar.falta{background:rgba(255,255,255,.10);color:var(--texto);box-shadow:none}
+  .ped-enviar.falta svg{opacity:.5}
+  .ped-erro{position:absolute;left:50%;bottom:96px;transform:translate(-50%,10px);opacity:0;pointer-events:none;background:#ef4444;color:#fff;font:600 13.5px Inter;padding:10px 16px;border-radius:12px;box-shadow:0 12px 24px -10px rgba(239,68,68,.8);transition:opacity .2s ease,transform .2s ease;max-width:92%;text-align:center}
   .ped-erro.on{opacity:1;transform:translate(-50%,0)}
   @media (max-width:640px){
-    .ped-fundo{align-items:flex-end;padding:0}.ped{max-width:none;border-radius:24px 24px 0 0;max-height:94vh}
-    .ped-rodape{padding-bottom:max(18px,env(safe-area-inset-bottom))}.ped-enviar{padding:14px 16px;font-size:15px}.ped-total b{font-size:26px}
+    header{display:grid;grid-template-columns:1fr auto;align-items:start;gap:10px 12px}
+    header .marca{min-width:0}header .marca h1{white-space:normal!important;font-size:clamp(26px,8vw,36px);line-height:1.02}header .marca p{letter-spacing:.18em;font-size:10.5px}
+    header .data{grid-column:1/-1;grid-row:2;justify-self:start;font-size:12px;padding:6px 12px}header .data .dl{display:none}
+    header .inicio{grid-column:2;grid-row:1;padding:8px 12px}
+    .ped-fundo{align-items:flex-end;padding:0}
+    .ped{max-width:none;border-radius:26px 26px 0 0;max-height:94vh;max-height:94dvh}
+    .ped-alca{display:block;width:44px;height:5px;border-radius:5px;background:rgba(255,255,255,.25);margin:9px auto 0;touch-action:none}
+    .ped-topo{padding:10px 14px 12px 16px;gap:12px}.ped-hero{width:54px;height:54px}.ped-tt h3{font-size:22px}
+    .ped-corpo{padding:2px 16px 16px}
+    .ped-tams{grid-template-columns:repeat(2,1fr)}
+    .ped-lista{grid-template-columns:1fr}
+    .ped-rodape{padding:12px 16px max(16px,env(safe-area-inset-bottom))}.ped-enviar{padding:14px 16px;font-size:14.5px}.ped-total b{font-size:26px}
     .item[data-pedir]::after{display:none}
   }
   /* ===== capa (página de abertura) ===== */
@@ -433,6 +482,8 @@ const PED = { tam: '', prato: '', guarn: [], qtd: 1 };
 const num = (v) => Number(String(v || '').replace(/\./g, '').replace(',', '.')) || 0;
 const reais = (n) => 'R$ ' + n.toFixed(2).replace('.', ',');
 const PROTEINAS_FIT = ['Carne', 'Frango', 'Omelete'];
+const TAGS_OBS = ['Sem cebola', 'Sem salada', 'Carne bem passada', 'Mandar talheres', 'Vou retirar no local'];
+const ICO_OK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 // pratos especiais (ex.: "Feijoada / Rabada / Virado / À parmegiana") têm tabela de preço própria
 const palavrasEspeciais = (d) => String((d.especial || {}).nome || '').toLowerCase().split(/[\/,]/).map(s => s.trim().replace(/^(à|a|ao)\s+/, '').split(' ')[0]).filter(w => w.length > 3);
 const ehEspecial = (d, prato) => { const n = String(prato || '').toLowerCase(); return !!n && palavrasEspeciais(d).some(w => n.includes(w)); };
@@ -447,52 +498,89 @@ function precoPedido(d, tam, prato) {
   if (ehEspecial(d, prato) && valor(es[tam])) return { valor: num(es[tam]), especial: true };
   return { valor: num(pr[tam]), especial: false };
 }
+const fotoTamanho = (d, tam) => { const p = (d.pratos || []).find(x => x.tamanho === tam && urlSegura(x.foto)); return p ? urlSegura(p.foto) : ''; };
+// o que falta para poder enviar (na ordem das etapas)
+function faltaPedido() {
+  const d = DADOS; const fit = PED.tam === 'F'; const pratos = fit ? PROTEINAS_FIT : (d.hoje || []);
+  if (!PED.tam) return { msg: 'o tamanho', sec: 'sec-tam' };
+  if (pratos.length && !PED.prato) return { msg: fit ? 'a proteína' : 'o prato do dia', sec: 'sec-prato' };
+  return null;
+}
 function pedidoHTML() {
   return `<div class="ped-fundo" id="ped" hidden><div class="ped" role="dialog" aria-modal="true" aria-labelledby="ped-tit">
-    <div class="ped-topo"><div><small>Pratto di Casa</small><h3 id="ped-tit">Monte seu pedido</h3></div><button type="button" class="ped-x" data-fechar aria-label="Fechar">×</button></div>
+    <div class="ped-alca" aria-hidden="true"></div>
+    <div class="ped-topo">
+      <div class="ped-hero" id="ped-hero"></div>
+      <div class="ped-tt"><small>Pratto di Casa</small><h3 id="ped-tit">Monte seu pedido</h3><div class="ped-passos" id="ped-passos"></div></div>
+      <button type="button" class="ped-x" data-fechar aria-label="Fechar">×</button>
+    </div>
     <div class="ped-corpo">
       <div id="ped-opcoes"></div>
-      <section class="ped-sec"><h4>Quantidade</h4><div class="ped-qtd"><button type="button" data-qtd="-1" aria-label="Menos">−</button><b id="ped-qtd">1</b><button type="button" data-qtd="1" aria-label="Mais">+</button></div></section>
-      <section class="ped-sec"><h4>Observação <span>(opcional)</span></h4><textarea id="ped-obs" maxlength="300" rows="3" placeholder="Ex.: sem cebola, carne bem passada, troco para R$ 50, entregar no portão…"></textarea></section>
+      <section class="ped-sec"><div class="ped-h"><span class="ped-n" id="n-qtd">4</span><h4>Quantidade</h4></div>
+        <div class="ped-qtd"><button type="button" data-qtd="-1" aria-label="Menos">−</button><b id="ped-qtd" aria-live="polite">1</b><button type="button" data-qtd="1" aria-label="Mais">+</button></div></section>
+      <section class="ped-sec"><div class="ped-h"><span class="ped-n">5</span><h4>Observação</h4><span class="ped-opc">opcional</span></div>
+        <div class="ped-tags">${TAGS_OBS.map(x => `<button type="button" class="ped-tag" data-tag="${esc(x)}">+ ${esc(x)}</button>`).join('')}</div>
+        <textarea id="ped-obs" maxlength="300" rows="3" placeholder="Algo mais? Ex.: troco para R$ 50, entregar no portão…"></textarea>
+        <div class="ped-cnt"><span id="ped-obs-n">0</span>/300</div></section>
     </div>
     <div class="ped-rodape"><div class="ped-total"><small id="ped-resumo">Escolha o tamanho</small><b id="ped-total">R$ 0,00</b></div>
-      <button type="button" class="ped-enviar" id="ped-enviar"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4z"/></svg>Enviar no WhatsApp</button></div>
+      <button type="button" class="ped-enviar" id="ped-enviar"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4z"/></svg><span id="ped-enviar-txt">Enviar pedido</span></button></div>
     <div class="ped-erro" id="ped-erro" role="alert"></div>
   </div></div>`;
 }
+function cabecalho(numero, titulo, feito, extra) {
+  return `<div class="ped-h"><span class="ped-n${feito ? ' ok' : ''}">${feito ? ICO_OK : numero}</span><h4>${titulo}</h4>${extra || ''}</div>`;
+}
 function renderOpcoes() {
   const d = DADOS; const fit = PED.tam === 'F'; const es = d.especial || {};
-  const tams = tamanhosPedido(d).map(([k, n]) => { const p = precoPedido(d, k, PED.prato);
-    return `<button type="button" class="ped-chip ped-tam${PED.tam === k ? ' on' : ''}" data-tam="${k}" aria-pressed="${PED.tam === k}"><b>${k === 'F' ? 'FIT' : k}</b><span>${n}</span><em>${p.valor ? reais(p.valor) : ''}</em></button>`; }).join('');
+  const tams = tamanhosPedido(d).map(([k, n]) => { const p = precoPedido(d, k, PED.prato); const f = fotoTamanho(d, k);
+    return `<button type="button" class="ped-tam${PED.tam === k ? ' on' : ''}" data-tam="${k}" aria-pressed="${PED.tam === k}">
+      ${f ? `<img src="${esc(f)}" alt="" loading="lazy">` : `<span class="ped-tam-l">${k === 'F' ? 'FIT' : k}</span>`}
+      <span class="ped-tam-n">${n}</span><em>${p.valor ? reais(p.valor) : ''}</em><i class="ped-tam-ok">${ICO_OK}</i></button>`; }).join('');
   const pratos = fit ? PROTEINAS_FIT : (d.hoje || []);
-  const listaPratos = pratos.map(n => `<button type="button" class="ped-chip${PED.prato === n ? ' on' : ''}" data-prato="${esc(n)}" aria-pressed="${PED.prato === n}">${esc(n)}${!fit && ehEspecial(d, n) ? ' <i class="ped-esp">especial</i>' : ''}</button>`).join('');
+  const opPrato = pratos.map(n => `<button type="button" class="ped-op${PED.prato === n ? ' on' : ''}" data-prato="${esc(n)}" role="radio" aria-checked="${PED.prato === n}">
+      <i class="ped-ind ped-radio"></i><span>${esc(n)}</span>${!fit && ehEspecial(d, n) ? '<em class="ped-esp">especial</em>' : ''}</button>`).join('');
   const cheio = PED.guarn.length >= MAX_GUARN;
-  const guarn = (d.guarnicoes || []).map(n => { const on = PED.guarn.includes(n);
-    return `<button type="button" class="ped-chip${on ? ' on' : ''}" data-guarn="${esc(n)}" aria-pressed="${on}"${cheio && !on ? ' disabled' : ''}>${on ? '✓ ' : ''}${esc(n)}</button>`; }).join('');
+  const opGuarn = (d.guarnicoes || []).map(n => { const on = PED.guarn.includes(n);
+    return `<button type="button" class="ped-op${on ? ' on' : ''}" data-guarn="${esc(n)}" role="checkbox" aria-checked="${on}"${cheio && !on ? ' aria-disabled="true"' : ''}>
+      <i class="ped-ind ped-check">${on ? ICO_OK : ''}</i><span>${esc(n)}</span></button>`; }).join('');
+  const contador = `<span class="ped-cont${cheio ? ' cheio' : ''}">${[...Array(MAX_GUARN)].map((_, i) => `<i class="${i < PED.guarn.length ? 'on' : ''}"></i>`).join('')}${PED.guarn.length}/${MAX_GUARN}</span>`;
   document.getElementById('ped-opcoes').innerHTML = `
-    <section class="ped-sec" id="sec-tam"><h4>1. Tamanho</h4><div class="ped-tams">${tams}</div>
-      ${ehEspecial(d, PED.prato) && !fit ? `<p class="ped-nota">${esc(PED.prato)} usa a tabela de especiais (${esc(es.nome || '')}).</p>` : ''}</section>
-    ${pratos.length ? `<section class="ped-sec" id="sec-prato"><h4>2. ${fit ? 'Proteína do fitness' : 'Prato do dia'}</h4><div class="ped-chips">${listaPratos}</div>
-      ${fit && (d.fitness || []).length ? `<p class="ped-nota">Vem com: ${esc(d.fitness.filter(x => !/prote/i.test(x)).join(', '))}.</p>` : ''}</section>` : ''}
-    ${(d.guarnicoes || []).length ? `<section class="ped-sec" id="sec-guarn"><h4>3. Guarnições <span class="ped-cont${cheio ? ' cheio' : ''}">${PED.guarn.length}/${MAX_GUARN}</span></h4>
-      <p class="ped-nota">${fit ? 'Opcional — ' + esc(d.fitnessObs || 'guarnições têm acréscimo') + '.' : `Você tem direito a ${MAX_GUARN} guarnições.`}</p><div class="ped-chips">${guarn}</div></section>` : ''}`;
+    <section class="ped-sec" id="sec-tam">${cabecalho(1, 'Tamanho', !!PED.tam, '<span class="ped-req">obrigatório</span>')}
+      <div class="ped-tams">${tams}</div>
+      ${ehEspecial(d, PED.prato) && !fit ? `<p class="ped-nota">★ ${esc(PED.prato)} usa a tabela de especiais (${esc(es.nome || '')}).</p>` : ''}</section>
+    ${pratos.length ? `<section class="ped-sec" id="sec-prato">${cabecalho(2, fit ? 'Proteína do fitness' : 'Prato do dia', !!PED.prato, '<span class="ped-req">escolha 1</span>')}
+      ${fit && (d.fitness || []).length ? `<p class="ped-nota">Vem com ${esc(d.fitness.filter(x => !/prote/i.test(x)).join(' e ').toLowerCase())}.</p>` : ''}
+      <div class="ped-lista" role="radiogroup">${opPrato}</div></section>` : ''}
+    ${(d.guarnicoes || []).length ? `<section class="ped-sec" id="sec-guarn">${cabecalho(3, 'Guarnições', cheio, contador)}
+      <p class="ped-nota">${fit ? 'Opcional — ' + esc(d.fitnessObs || 'guarnições têm acréscimo') + '.' : `Escolha até ${MAX_GUARN} — já estão inclusas no prato.`}</p>
+      <div class="ped-lista${cheio ? ' cheia' : ''}">${opGuarn}</div></section>` : ''}`;
   atualizarTotal();
 }
 function atualizarTotal() {
   const d = DADOS; const p = PED.tam ? precoPedido(d, PED.tam, PED.prato) : { valor: 0 };
   document.getElementById('ped-qtd').textContent = PED.qtd;
-  document.getElementById('ped-total').textContent = reais(p.valor * PED.qtd);
+  const tot = document.getElementById('ped-total'); const novo = reais(p.valor * PED.qtd);
+  if (tot.textContent !== novo) { tot.textContent = novo; tot.classList.remove('pulo'); void tot.offsetWidth; tot.classList.add('pulo'); }
   const nome = (tamanhosPedido(d).find(([k]) => k === PED.tam) || [])[1];
   document.getElementById('ped-resumo').textContent = nome ? `${PED.qtd}× ${nome}${PED.prato ? ' · ' + PED.prato : ''}` : 'Escolha o tamanho';
+  // foto do topo acompanha o tamanho escolhido
+  const f = fotoTamanho(d, PED.tam) || fotoTamanho(d, 'P') || fotoTamanho(d, 'M') || fotoTamanho(d, 'G');
+  const hero = document.getElementById('ped-hero'); hero.innerHTML = f ? `<img src="${esc(f)}" alt="">` : ''; hero.hidden = !f;
+  // etapas do topo + botão de enviar mostra o que falta
+  const etapas = [['Tamanho', !!PED.tam], [PED.tam === 'F' ? 'Proteína' : 'Prato', !!PED.prato || !(PED.tam === 'F' ? PROTEINAS_FIT : (d.hoje || [])).length], ['Guarnições', PED.guarn.length >= MAX_GUARN || PED.tam === 'F']];
+  document.getElementById('ped-passos').innerHTML = etapas.map(([n, ok]) => `<span class="${ok ? 'ok' : ''}">${ok ? '✓ ' : ''}${n}</span>`).join('<i></i>');
+  const falta = faltaPedido(); const bt = document.getElementById('ped-enviar');
+  bt.classList.toggle('falta', !!falta);
+  document.getElementById('ped-enviar-txt').textContent = falta ? 'Falta ' + falta.msg : 'Enviar pedido';
 }
 function erroPedido(msg, secao) {
   const e = document.getElementById('ped-erro'); e.textContent = msg; e.classList.add('on'); clearTimeout(erroPedido.t); erroPedido.t = setTimeout(() => e.classList.remove('on'), 2600);
   const s = document.getElementById(secao); if (s) { s.scrollIntoView({ behavior: 'smooth', block: 'center' }); s.classList.remove('alerta'); void s.offsetWidth; s.classList.add('alerta'); }
 }
 function enviarPedido() {
-  const d = DADOS; const fit = PED.tam === 'F'; const pratos = fit ? PROTEINAS_FIT : (d.hoje || []);
-  if (!PED.tam) return erroPedido('Escolha o tamanho do prato.', 'sec-tam');
-  if (pratos.length && !PED.prato) return erroPedido(fit ? 'Escolha a proteína do fitness.' : 'Escolha o prato do dia.', 'sec-prato');
+  const d = DADOS; const fit = PED.tam === 'F'; const falta = faltaPedido();
+  if (falta) return erroPedido('Escolha ' + falta.msg + '.', falta.sec);
   if (!fit && (d.guarnicoes || []).length && PED.guarn.length < MAX_GUARN && !confirm(`Você escolheu ${PED.guarn.length} de ${MAX_GUARN} guarnições. Enviar mesmo assim?`)) return;
   const nomeTam = (tamanhosPedido(d).find(([k]) => k === PED.tam) || [])[1]; const p = precoPedido(d, PED.tam, PED.prato);
   const obs = document.getElementById('ped-obs').value.trim();
@@ -514,29 +602,51 @@ function abrirPedido(tam, prato) {
   const tams = tamanhosPedido(d).map(([k]) => k);
   PED.tam = tams.includes(tam) ? tam : (tams.includes('M') ? 'M' : tams[0] || ''); PED.prato = prato || ''; PED.guarn = []; PED.qtd = 1;
   if (prato && PED.tam === 'F') PED.tam = tams.includes('M') ? 'M' : tams[0];
-  document.getElementById('ped-obs').value = '';
+  const obs = document.getElementById('ped-obs'); obs.value = ''; marcarTags();
   renderOpcoes();
-  const fundo = document.getElementById('ped'); fundo.hidden = false; document.body.classList.add('sem-rolagem');
+  const fundo = document.getElementById('ped'); const caixa = fundo.querySelector('.ped'); caixa.style.transform = '';
+  fundo.hidden = false; document.body.classList.add('sem-rolagem'); fundo.querySelector('.ped-corpo').scrollTop = 0;
   const M = !semMovimento() && window.Motion;
-  if (M) { M.animate(fundo, { opacity: [0, 1] }, { duration: .25 });
-    const caixa = fundo.querySelector('.ped'); const a = M.animate(caixa, { y: [60, 0], opacity: [0, 1], scale: [.97, 1] }, { type: 'spring', bounce: .25, duration: .55 });
-    setTimeout(() => { try { a.complete(); } catch (e) {} }, 900); }
-  setTimeout(() => { const f = fundo.querySelector('.ped-tam.on, .ped-chip'); if (f) f.focus(); }, 60);
+  if (M) { const z = M.animate(fundo, { opacity: [0, 1] }, { duration: .25 });
+    const a = M.animate(caixa, { y: [80, 0], opacity: [0, 1] }, { type: 'spring', bounce: .22, duration: .55 });
+    const b = M.animate(caixa.querySelectorAll('.ped-sec'), { opacity: [0, 1], y: [16, 0] }, { duration: .35, delay: M.stagger(.05, { startDelay: .12 }) });
+    setTimeout(() => [z, a, b].forEach(x => { try { x.complete(); } catch (e) {} }), 1100); }
+  setTimeout(() => { const f = fundo.querySelector('.ped-tam.on, .ped-tam'); if (f) f.focus({ preventScroll: true }); }, 80);
 }
-function fecharPedido() { const f = document.getElementById('ped'); if (!f) return; f.hidden = true; document.body.classList.remove('sem-rolagem'); }
+function fecharPedido() {
+  const f = document.getElementById('ped'); if (!f || f.hidden) return; const M = !semMovimento() && window.Motion;
+  const fim = () => { f.hidden = true; document.body.classList.remove('sem-rolagem'); };
+  if (M) { Promise.race([M.animate(f.querySelector('.ped'), { y: 120, opacity: 0 }, { duration: .22 }), new Promise(r => setTimeout(r, 300))]).then(fim); } else fim();
+}
+function marcarTags() { const v = (document.getElementById('ped-obs').value || '').toLowerCase();
+  document.querySelectorAll('#ped .ped-tag').forEach(b => b.classList.toggle('on', v.includes(b.dataset.tag.toLowerCase())));
+  document.getElementById('ped-obs-n').textContent = document.getElementById('ped-obs').value.length; }
 function ligarPedido() {
-  const f = document.getElementById('ped');
+  const f = document.getElementById('ped'); const obs = document.getElementById('ped-obs');
   f.addEventListener('click', (e) => {
     if (e.target === f || e.target.closest('[data-fechar]')) return fecharPedido();
-    const t = e.target.closest('[data-tam]'), pr = e.target.closest('[data-prato]'), g = e.target.closest('[data-guarn]'), q = e.target.closest('[data-qtd]');
-    if (t) { const novo = t.dataset.tam; if ((novo === 'F') !== (PED.tam === 'F')) PED.prato = ''; PED.tam = novo; renderOpcoes(); }
+    const t = e.target.closest('[data-tam]'), pr = e.target.closest('[data-prato]'), g = e.target.closest('[data-guarn]'), q = e.target.closest('[data-qtd]'), tg = e.target.closest('[data-tag]');
+    if (t) { const novo = t.dataset.tam; if ((novo === 'F') !== (PED.tam === 'F')) PED.prato = ''; PED.tam = novo; renderOpcoes();
+      if (!PED.prato) setTimeout(() => { const s = document.getElementById('sec-prato'); if (s) s.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 120); }
     else if (pr) { PED.prato = PED.prato === pr.dataset.prato ? '' : pr.dataset.prato; renderOpcoes(); }
-    else if (g && !g.disabled) { const n = g.dataset.guarn; PED.guarn = PED.guarn.includes(n) ? PED.guarn.filter(x => x !== n) : (PED.guarn.length < MAX_GUARN ? [...PED.guarn, n] : PED.guarn); renderOpcoes(); }
+    else if (g) { const n = g.dataset.guarn;
+      if (PED.guarn.includes(n)) PED.guarn = PED.guarn.filter(x => x !== n);
+      else if (PED.guarn.length < MAX_GUARN) PED.guarn = [...PED.guarn, n];
+      else return erroPedido(`Você já escolheu ${MAX_GUARN} guarnições. Toque numa delas para trocar.`, 'sec-guarn');
+      renderOpcoes(); }
     else if (q) { PED.qtd = Math.min(20, Math.max(1, PED.qtd + Number(q.dataset.qtd))); atualizarTotal(); }
+    else if (tg) { const x = tg.dataset.tag; let v = obs.value.trim();
+      if (v.toLowerCase().includes(x.toLowerCase())) v = v.split(/;\s*/).filter(s => s.toLowerCase() !== x.toLowerCase()).join('; ');
+      else v = v ? v + '; ' + x : x;
+      obs.value = v.slice(0, 300); marcarTags(); }
     else if (e.target.closest('#ped-enviar')) enviarPedido();
   });
-  // toque numa guarnição bloqueada (já tem 2): avisa
-  f.addEventListener('pointerdown', (e) => { const g = e.target.closest('[data-guarn]'); if (g && g.disabled) erroPedido(`Você já escolheu ${MAX_GUARN} guarnições. Tire uma para trocar.`, 'sec-guarn'); });
+  obs.addEventListener('input', marcarTags);
+  // no celular: puxar o topo para baixo fecha
+  const caixa = f.querySelector('.ped'); let y0 = null;
+  caixa.querySelectorAll('.ped-alca, .ped-topo').forEach(el => el.addEventListener('pointerdown', (e) => { if (e.target.closest('button')) return; y0 = e.clientY; caixa.style.transition = 'none'; }));
+  addEventListener('pointermove', (e) => { if (y0 == null) return; const dy = Math.max(0, e.clientY - y0); caixa.style.transform = `translateY(${dy}px)`; });
+  addEventListener('pointerup', (e) => { if (y0 == null) return; const dy = e.clientY - y0; y0 = null; caixa.style.transition = 'transform .25s ease'; if (dy > 110) fecharPedido(); else caixa.style.transform = ''; });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !f.hidden) fecharPedido(); });
 }
 // qualquer botão "Pedir" da página abre o montador do pedido
@@ -567,7 +677,7 @@ function montar(d) {
           <div class="crow">${valor(p.preco) ? `<b>R$ ${esc(p.preco)}</b>` : '<span></span>'}<button type="button" class="cbtn" data-pedir="${esc(p.tamanho || '')}">Pedir</button></div></div>
       </article>`; }).join('')}</div></section>` : '';
   return `
-  <header class="entra"><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div><div class="data">Cardápio de hoje · ${esc(dia)}</div><a class="inicio" href="#inicio" aria-label="Voltar ao início">‹ Início</a></header>
+  <header class="entra"><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div><div class="data"><span class="dl">Cardápio de hoje · </span>${esc(dia)}</div><a class="inicio" href="#inicio" aria-label="Voltar ao início">‹ Início</a></header>
   ${destaque}
   ${cards}
   ${hoje.length ? `<section class="bloco entra"><div class="titulo"><h3>Hoje <em>tem</em></h3></div><div class="lista">${hoje.map((n, i) => { const f = fotoDe(d, n);
@@ -624,7 +734,6 @@ function animar() {
   const q = document.getElementById('quadro'); if (reduzir) return;
   const incl = (x, y) => { q.style.transform = `rotateY(${x * 5}deg) rotateX(${-y * 4}deg)`; };
   addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') incl(e.clientX / innerWidth - .5, e.clientY / innerHeight - .5); });
-  addEventListener('deviceorientation', (e) => { if (e.gamma != null) incl(Math.max(-1, Math.min(1, e.gamma / 30)) * .5, Math.max(-1, Math.min(1, (e.beta - 40) / 30)) * .5); });
 }
 (function bokeh() { const b = document.querySelector('.bokeh'); for (let i = 0; i < 14; i++) { const s = 40 + Math.random() * 140; const el = document.createElement('i');
   el.style.cssText = `width:${s}px;height:${s}px;left:${Math.random() * 100}%;top:${Math.random() * 100}%;opacity:${.15 + Math.random() * .35};animation-delay:-${Math.random() * 14}s`; b.appendChild(el); } })();
