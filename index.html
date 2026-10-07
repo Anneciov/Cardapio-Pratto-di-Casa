@@ -183,8 +183,15 @@
   .bn-preco small{font-size:.4em;margin-right:5px;vertical-align:.95em}
   .bn-pedir{display:flex;align-items:center;gap:12px;margin-top:10px;text-decoration:none;color:#fff;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.28);padding:7px 22px 7px 7px;border-radius:40px;backdrop-filter:blur(6px);transition:background .25s ease,color .25s ease,transform .25s ease}
   .bn-pedir:hover{background:#fff;color:#a51015;transform:translateY(-2px)}
-  .bn-moto{width:44px;height:44px;border-radius:50%;background:#fff;color:#c9171d;display:grid;place-items:center;flex-shrink:0;transition:transform .3s ease}.bn-pedir:hover .bn-moto{transform:rotate(-12deg) scale(1.08)}
-  .bn-moto svg{width:25px;height:25px}
+  .bn-moto{position:relative;width:46px;height:46px;border-radius:50%;background:#fff;color:#c9171d;display:grid;place-items:center;flex-shrink:0;overflow:hidden}
+  .bn-scooter{display:grid;animation:scooter 1.6s ease-in-out infinite;transition:transform .35s ease}
+  @keyframes scooter{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.5px)}}
+  .bn-pedir:hover .bn-scooter{transform:translateX(4px)}
+  .bn-vel{position:absolute;left:3px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:3px}
+  .bn-vel i{display:block;height:2px;border-radius:2px;background:#c9171d;opacity:0;width:7px;transition:opacity .25s ease}
+  .bn-vel i:nth-child(2){width:9px}.bn-pedir:hover .bn-vel i{opacity:.7;animation:vento .6s linear infinite}.bn-pedir:hover .bn-vel i:nth-child(2){animation-delay:.2s}.bn-pedir:hover .bn-vel i:nth-child(3){animation-delay:.4s}
+  @keyframes vento{from{transform:translateX(4px)}to{transform:translateX(-4px);opacity:0}}
+  .bn-moto svg{width:28px;height:28px}
   .bn-pedir b{display:block;font:400 18px Anton,Oswald,sans-serif;letter-spacing:.07em;text-transform:uppercase}
   .bn-pedir small{display:block;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;opacity:.85}
   .bn-foto{position:relative;z-index:1;display:grid;place-items:center;padding:24px 24px 90px}
@@ -305,7 +312,8 @@ const ICONES = {
   hora: SVG('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
   casa: SVG('<path d="M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6h-6v6H4a1 1 0 01-1-1z"/>'),
   coracao: SVG('<path d="M12 20s-7-4.4-9.3-8.8A5.2 5.2 0 0112 6.3a5.2 5.2 0 019.3 4.9C19 15.6 12 20 12 20z"/>'),
-  moto: SVG('<circle cx="5.5" cy="17" r="2.8"/><circle cx="18.5" cy="17" r="2.8"/><path d="M8.3 17h6.9l-2.7-6.5h3.5l3 5.2 M12.5 10.5H9 M4 12.5h5l2 4"/>')
+  // scooter de entrega com baú
+  moto: '<svg viewBox="0 0 24 24" aria-hidden="true"> <g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"> <circle cx="6.2" cy="17.6" r="2.5"/><circle cx="18.7" cy="17.6" r="2.5"/> <path d="M18.7 17.6 16.3 7.6"/><path d="M14.6 7.6h3.4"/><path d="M11.2 15.5h5.6l.9-2.6"/> </g> <path fill="currentColor" d="M2.4 16.2c-.1-2.7 2-4.9 4.7-4.9h4.1c.8 0 1.4.7 1.3 1.5l-.5 3.1h-2.3a3.6 3.6 0 00-7.1.3z"/> <rect x="4.6" y="9.4" width="6.2" height="1.8" rx=".9" fill="currentColor"/> <rect x="1.7" y="3.4" width="6.6" height="5.2" rx="1.2" fill="currentColor"/> <path d="M3.4 6h3.2" stroke="#fff" stroke-width="1.1" stroke-linecap="round"/> <circle cx="6.2" cy="17.6" r=".8" fill="currentColor"/><circle cx="18.7" cy="17.6" r=".8" fill="currentColor"/> </svg>'
 };
 const BANNER = { slides: [], i: 0, timer: null, ocupado: false };
 const slidesDe = (d) => (d.pratos || []).filter(p => p && p.nome && urlSegura(p.foto));
@@ -318,7 +326,7 @@ function slideHTML(p) {
       <div class="bn-tag bn-a"><span>${esc(TAMANHO[p.tamanho] || p.tamanhoNome || 'Hoje')}</span></div>
       ${ing ? `<p class="bn-ing bn-a">${esc(ing)}</p>` : ''}
       ${valor(p.preco) ? `<div class="bn-preco bn-a"><span class="bn-so">Só</span><b><small>R$</small>${esc(p.preco)}</b></div>` : ''}
-      <a class="bn-pedir bn-a" data-pedir="${esc(p.tamanho || '')}" href="${linkWA('Olá! Quero pedir 1 ' + p.nome + '.')}" target="_blank" rel="noopener"><span class="bn-moto">${ICONES.moto}</span><span><b>Peça agora</b><small>Rápido · quentinho · caseiro</small></span></a>
+      <a class="bn-pedir bn-a" data-pedir="${esc(p.tamanho || '')}" href="${linkWA('Olá! Quero pedir 1 ' + p.nome + '.')}" target="_blank" rel="noopener"><span class="bn-moto"><span class="bn-vel" aria-hidden="true"><i></i><i></i><i></i></span><span class="bn-scooter">${ICONES.moto}</span></span><span><b>Peça agora</b><small>Rápido · quentinho · caseiro</small></span></a>
     </div>
     <div class="bn-foto"><div class="bn-pop"><div class="bn-anel"></div><div class="bn-flutua"><div class="bn-circ"><img class="bn-bg" src="${esc(urlSegura(p.foto))}" alt="" aria-hidden="true"><img class="bn-img" src="${esc(urlSegura(p.foto))}" alt="${esc(p.nome)}"></div></div><div class="bn-sombra"></div><div class="vapor"><span></span><span></span><span></span></div></div></div>`;
 }
@@ -629,7 +637,10 @@ async function iniciar() {
     document.body.classList.remove('na-capa'); montar(PADRAO); q.innerHTML = '<div class="aviso"><div style="font:700 30px Oswald;color:#f3f4f6;margin-bottom:10px">PRATTO DI <span style="color:#ff7a1a">CASA</span></div>O cardápio de hoje ainda não foi publicado.<br>Chame a gente no WhatsApp que passamos os pratos do dia! 😊</div>'; return; }
   DADOS = d; q.innerHTML = montar(d);
   document.getElementById('capa').innerHTML = capaHTML(d);
-  rota(); addEventListener('hashchange', rota);
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if (new URLSearchParams(location.search).has('cardapio')) history.replaceState(null, '', location.pathname + location.search + '#cardapio');
+  else if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  window.scrollTo(0, 0); rota(); addEventListener('hashchange', rota);
 }
 iniciar();
 </script>
