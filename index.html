@@ -435,21 +435,28 @@ function iniciarBanner() {
   const mola = (bounce, duration, extra) => ({ type: 'spring', bounce, duration, ...(extra || {}) });
   const conteudo = () => document.getElementById('bn-conteudo');
   // garantia: se o navegador travar a animação, o prato aparece inteiro mesmo assim
-  const garantir = (ctl, ms) => setTimeout(() => ctl.forEach(a => { try { a && a.complete(); } catch (e) {} }), ms || 1800);
+  const garantir = (ctl, ms) => setTimeout(() => ctl.forEach(a => { try { a && a.complete(); } catch (e) {} }), ms || 1200);
   const entrar = () => { if (!M) return; const c = conteudo(); const ctl = [];
-    ctl.push(M.animate(c.querySelectorAll('.bn-a'), { opacity: [0, 1], y: [38, 0] }, mola(.3, .75, { delay: M.stagger(.07) })));
+    ctl.push(M.animate(c.querySelectorAll('.bn-a'), { opacity: [0, 1], y: [22, 0] }, { duration: .5, ease: [.22, 1, .36, 1], delay: M.stagger(.06) }));
     const tag = c.querySelector('.bn-tag'); if (tag) ctl.push(M.animate(tag, { scaleX: [0, 1] }, mola(.35, .6, { delay: .22 })));
     const preco = c.querySelector('.bn-preco b'); if (preco) ctl.push(M.animate(preco, { scale: [.35, 1] }, mola(.55, .85, { delay: .4 })));
-    ctl.push(M.animate(c.querySelector('.bn-pop'), { opacity: [0, 1], scale: [.45, 1], rotate: [-35, 0] }, mola(.42, 1.1))); garantir(ctl); };
+    ctl.push(M.animate(c.querySelector('.bn-pop'), { opacity: [0, 1], scale: [.88, 1], rotate: [-10, 0] }, mola(.25, .8))); garantir(ctl); };
   const sair = async () => { if (!M) return; const c = conteudo();
     // não espera para sempre: se o navegador não avisar o fim da animação, segue em 0,45 s
-    await Promise.race([Promise.all([M.animate(c.querySelectorAll('.bn-a'), { opacity: 0, y: -18 }, { duration: .22 }),
-      M.animate(c.querySelector('.bn-pop'), { opacity: 0, scale: .7, rotate: 28 }, { duration: .32 })]), new Promise(r => setTimeout(r, 450))]); };
+    await Promise.race([Promise.all([M.animate(c.querySelectorAll('.bn-a'), { opacity: 0, y: -12 }, { duration: .25, ease: 'easeIn' }),
+      M.animate(c.querySelector('.bn-pop'), { opacity: 0, scale: .92, rotate: 8 }, { duration: .3, ease: 'easeIn' })]), new Promise(r => setTimeout(r, 420))]); };
+  // carrega a foto antes de trocar (sem isso a foto nova aparecia vazia por um instante e o banner "piscava")
+  const carregar = (url) => new Promise(ok => { const im = new Image(); im.onload = im.onerror = () => ok(); im.src = url; setTimeout(ok, 2500); if (im.decode) im.decode().then(ok, ok); });
+  BANNER.slides.forEach(s => carregar(urlSegura(s.foto)));
+  // monta o próximo prato já invisível e troca tudo de uma vez (sem um quadro com o prato novo "cheio" antes da animação)
+  const trocar = (p) => { const tmp = document.createElement('div'); tmp.innerHTML = slideHTML(p);
+    if (M) tmp.querySelectorAll('.bn-a, .bn-pop').forEach(el => { el.style.opacity = '0'; });
+    conteudo().replaceChildren(...tmp.childNodes); };
   const marcar = () => b.querySelectorAll('.bn-dot').forEach((dot, k) => { dot.classList.remove('on'); if (k === BANNER.i) { void dot.offsetWidth; dot.classList.add('on'); } });
   const ir = async (k) => { const n = BANNER.slides.length; if (BANNER.ocupado || n < 2) return; BANNER.ocupado = true;
     const novo = ((k % n) + n) % n; const dir = novo > BANNER.i || (BANNER.i === n - 1 && novo === 0) ? 1 : -1;
-    try { await sair(); BANNER.i = novo; conteudo().innerHTML = slideHTML(BANNER.slides[novo]); marcar(); entrar();
-      if (M) M.animate(b.querySelector('.bn-gigante'), { x: [60 * dir, 0], opacity: [.2, 1] }, mola(.2, .9)); }
+    try { await Promise.all([carregar(urlSegura(BANNER.slides[novo].foto)), sair()]); BANNER.i = novo; trocar(BANNER.slides[novo]); marcar(); entrar();
+      if (M) M.animate(b.querySelector('.bn-gigante'), { x: [40 * dir, 0] }, mola(.15, .9)); }
     finally { BANNER.ocupado = false; } };
   const auto = () => { clearInterval(BANNER.timer); if (BANNER.slides.length > 1 && !reduzir) BANNER.timer = setInterval(() => ir(BANNER.i + 1), 3500); };
   const pausar = (sim) => { b.classList.toggle('pausado', sim); if (sim) clearInterval(BANNER.timer); else auto(); };
