@@ -64,6 +64,24 @@
   .tigela .borda{position:absolute;bottom:48%;left:4%;right:4%;height:16%;border-radius:50%;background:linear-gradient(180deg,#5fbaf2,#2a86cf);box-shadow:inset 0 3px 6px rgba(0,0,0,.35)}
   .tigela .comida{position:relative;z-index:1;line-height:1;margin-bottom:28%;filter:drop-shadow(0 6px 6px rgba(0,0,0,.45))}
   .tigela .comida i{font-style:normal;position:absolute}
+  /* cartões dos pratos do sistema (mesmos do "Ver Cardápio") */
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+  .card{border-radius:20px;overflow:hidden;background:rgba(255,255,255,.04);border:1px solid var(--linha);display:flex;flex-direction:column;transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease;transform-style:preserve-3d}
+  .card:hover{transform:translateY(-6px) rotateX(4deg);border-color:rgba(255,122,26,.45);box-shadow:0 26px 40px -22px rgba(0,0,0,.9)}
+  .cimg{position:relative;aspect-ratio:4/3;overflow:hidden;background:radial-gradient(circle at 50% 40%,#2a2f37,#14171c)}
+  .cimg img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}.card:hover .cimg img{transform:scale(1.07)}
+  .cimg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.55))}
+  .semfoto{height:100%;display:grid;place-items:center;font:700 44px Oswald;color:rgba(255,122,26,.35)}
+  .tag{position:absolute;z-index:1;top:12px;left:12px;background:linear-gradient(135deg,var(--laranja2),var(--laranja));color:#1a0d02;font:700 12px Inter;letter-spacing:.06em;text-transform:uppercase;padding:5px 11px;border-radius:20px;box-shadow:0 6px 14px -6px rgba(255,122,26,.8)}
+  .cbody{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .cbody h4{font:700 21px Oswald;letter-spacing:.02em;text-transform:uppercase}
+  .cbody p{font-size:13.5px;color:var(--suave);line-height:1.45}
+  .crow{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .crow b{font:700 26px Oswald;color:var(--laranja)}
+  .cbtn{background:linear-gradient(135deg,#2bd96b,#16a34a);color:#04170b;font:700 14px Inter;text-decoration:none;padding:9px 18px;border-radius:24px;box-shadow:0 10px 18px -10px rgba(22,163,74,.9)}
+  .heroimg{width:300px;max-width:100%;aspect-ratio:1;object-fit:cover;border-radius:28px;display:block;box-shadow:0 30px 50px -20px rgba(0,0,0,.95),0 0 0 1px rgba(255,255,255,.08);transform:rotate(-3deg)}
+  .destaque.so-texto{grid-template-columns:1fr;min-height:0;padding-bottom:10px}
+  .item .mini{width:58px;height:58px;border-radius:14px;object-fit:cover;flex-shrink:0;margin:0}
   /* blocos */
   .bloco{position:relative;padding:22px 28px}
   .titulo{display:flex;align-items:center;gap:12px;margin-bottom:16px}
@@ -138,44 +156,39 @@ const PADRAO = { // usado se ainda não houver cardápio publicado (cardápio or
 };
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 const urlSegura = (u) => /^https:\/\/[a-z0-9.-]+\.supabase\.co\/storage\//i.test(String(u || '')) ? String(u) : '';
-const emoji = (n) => { n = String(n || '').toLowerCase();
-  const t = (...k) => k.some(x => n.includes(x));
-  if (t('feijoada','feij')) return ['🫘','🍚','🥓']; if (t('milanesa','parmegiana','empan')) return ['🍖','🍅','🧀']; if (t('frango','asa','coxa')) return ['🍗','🌿','🍋'];
-  if (t('peixe','tilápia','tilapia')) return ['🐟','🍋','🌿']; if (t('dobradinha','rabada','virado','costela')) return ['🍲','🌿','🫘'];
-  if (t('bife','carne','rolê','role')) return ['🥩','🧅','🌿']; if (t('ovo','omelete')) return ['🍳','🌿','🍅']; if (t('purê','pure','batata')) return ['🥔','🧈','🌿'];
-  if (t('arroz')) return ['🍚','🌿','🥕']; if (t('salada','repolho','legume','alface')) return ['🥗','🍅','🥕']; if (t('farofa')) return ['🌾','🥓','🌿'];
-  if (t('macarr','rondeli','massa','lasanha')) return ['🍝','🧀','🌿']; return ['🍛','🌿','🍅']; };
-// Fotos reais de referência dos pratos (Wikimedia Commons, licenças livres — créditos no rodapé).
-// A foto enviada pelo restaurante no sistema tem prioridade sobre estas.
-const BIBLIOTECA = [[/feijoada/,'feijoada'],[/rabada/,'rabada'],[/virado/,'virado'],[/dobradinha|dobrada|bucho/,'dobradinha'],[/parmegiana|parmigiana/,'parmegiana'],
-  [/\basas?\b|asinha/,'coxinha-da-asa'],[/frango.*(milanesa|empanad)|(milanesa|empanad).*frango/,'frango-milanesa'],[/milanesa|empanad/,'bife-milanesa'],[/rol[êe]/,'bife-a-role'],[/fitness/,'fitness']];
-const CREDITOS = [{"prato": "Bife a rolê", "autor": "Horacio Cambeiro", "licenca": "CC BY 3.0", "pagina": "https://commons.wikimedia.org/wiki/File:Bife_con_pur%C3%A9_de_papas_(estilo_argentino).jpg"}, {"prato": "Coxinha da asa", "autor": "Choo Yut Shing from Singapore, Singapore", "licenca": "CC BY 2.0", "pagina": "https://commons.wikimedia.org/wiki/File:Fried_Chicken_Wings_(54282490120).jpg"}, {"prato": "Dobradinha", "autor": "Jeremy Keith from Brighton & Hove, United Kingdom", "licenca": "CC BY 2.0", "pagina": "https://commons.wikimedia.org/wiki/File:Tripas_(8907365960).jpg"}, {"prato": "Frango à milanesa", "autor": "Gaby Leidy Huarachi Mamani", "licenca": "CC BY-SA 4.0", "pagina": "https://commons.wikimedia.org/wiki/File:G.A._Milanesa_de_pollo.jpg"}, {"prato": "Bife à milanesa", "autor": "mteson Marcelo Teson Los Angeles, CA, USA", "licenca": "CC BY 2.0", "pagina": "https://commons.wikimedia.org/wiki/File:Milanesa.jpg"}, {"prato": "À parmegiana", "autor": "Márcia Cristina Machado", "licenca": "CC BY-SA 4.0", "pagina": "https://commons.wikimedia.org/wiki/File:Bife_a_parmegiana_com_arroz_e_batata_frita.jpg"}, {"prato": "Feijoada", "autor": "Bradleyzm", "licenca": "CC BY-SA 4.0", "pagina": "https://commons.wikimedia.org/wiki/File:Feijoada_%C3%A0_brasileira_-02.jpg"}, {"prato": "Rabada", "autor": "Raimond Spekking", "licenca": "CC BY-SA 4.0", "pagina": "https://commons.wikimedia.org/wiki/File:Oxtail_soup-93323.jpg"}, {"prato": "Virado à paulista", "autor": "edsonaoki", "licenca": "CC BY-SA 3.0", "pagina": "https://commons.wikimedia.org/wiki/File:Virado_a_paulista.jpg"}, {"prato": "Fitness", "autor": "HaJunkiyada", "licenca": "CC BY-SA 4.0", "pagina": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Roasted_chicken_with_cauliflower_broccoli_potatoes_rice_and_salad.jpg"}];
-const daBiblioteca = (nome) => { const n = String(nome || '').toLowerCase(); const b = BIBLIOTECA.find(([re]) => re.test(n)); return b ? 'fotos/' + b[1] + '.jpg' : ''; };
-const fotoDe = (d, nome) => urlSegura((d.fotos || {})[String(nome).toLowerCase().trim()]) || daBiblioteca(nome);
-function prato(d, nome, tam) {
-  const f = fotoDe(d, nome);
-  if (f) return `<img class="foto" src="${esc(f)}" alt="${esc(nome)}" width="${tam}" height="${tam}" loading="lazy" style="width:${tam}px;height:${tam}px">`;
-  const e = emoji(nome); const s = Math.round(tam * .42);
-  return `<div class="tigela" style="width:${tam}px;height:${tam}px"><div class="borda"></div><div class="bowl"></div>
-    <div class="comida" style="font-size:${s}px"><span>${e[0]}</span><i style="font-size:${Math.round(s * .5)}px;left:-${Math.round(s * .45)}px;top:${Math.round(s * .35)}px">${e[1]}</i><i style="font-size:${Math.round(s * .45)}px;right:-${Math.round(s * .42)}px;top:${Math.round(s * .3)}px">${e[2]}</i></div></div>`;
-}
+// Fotos: só as enviadas pelo restaurante no sistema (Supabase). Sem fotos de banco de imagens.
+const fotoDe = (d, nome) => urlSegura((d.fotos || {})[String(nome).toLowerCase().trim()]);
 const valor = (v) => String(v || '').trim();
+const TAMANHO = { P:'Pequena', M:'Média', G:'Grande', F:'Fitness' };
 function montar(d) {
-  const emp = d.empresa || PADRAO.empresa; const hoje = d.hoje || []; const comFoto = hoje.find(n => fotoDe(d, n));
-  const principal = comFoto || hoje[0] || 'Prato do dia';
+  const emp = d.empresa || PADRAO.empresa; const hoje = d.hoje || []; const pratos = (d.pratos || []).filter(p => p && p.nome);
   const dia0 = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'2-digit' }); const dia = dia0.charAt(0).toUpperCase() + dia0.slice(1);
   const pr = d.precos || {}; const es = d.especial || {}; const menor = ['P','M','G'].map(k => valor(pr[k])).filter(Boolean)[0];
   const tams = [['P','Pequena'],['M','Média'],['G','Grande']].filter(([k]) => valor(pr[k]));
   const tel = String(emp.whatsapp || '').replace(/\D/g, ''); const wa = tel ? ('55' + tel.replace(/^55/, '')) : '';
-  document.getElementById('pedir').href = wa ? 'https://wa.me/' + wa + '?text=' + encodeURIComponent('Olá! Vi o cardápio de hoje e quero pedir: ') : '#';
+  const linkPedido = (txt) => wa ? 'https://wa.me/' + wa + '?text=' + encodeURIComponent(txt) : '#';
+  document.getElementById('pedir').href = linkPedido('Olá! Vi o cardápio de hoje e quero pedir: ');
   document.title = (emp.nome || 'Pratto di Casa') + ' · Cardápio de hoje';
   const partes = (emp.nome || 'Pratto di Casa').split(' '); const ult = partes.pop();
+  // destaque: o primeiro prato do sistema que tem foto
+  const dest = pratos.find(p => urlSegura(p.foto));
+  const ing = (p) => (p.itens || []).join(' · ');
+  const destaque = dest ? `
+  <section class="destaque entra"><div class="txt"><small>Destaque do dia</small><h2>${esc(dest.nome)}</h2><p>${esc(ing(dest) || 'Feito na hora, com tempero de casa.')}</p>${valor(dest.preco) ? `<div class="apartir">por <b>R$ ${esc(dest.preco)}</b></div>` : (menor ? `<div class="apartir">a partir de <b>R$ ${esc(menor)}</b></div>` : '')}</div>
+    <div class="palco"><div class="chao"></div><div class="flutua"><img class="heroimg" src="${esc(urlSegura(dest.foto))}" alt="${esc(dest.nome)}"></div><div class="vapor"><span></span><span></span><span></span></div></div></section>`
+    : `<section class="destaque so-texto entra"><div class="txt"><small>Cardápio de hoje</small><h2>Comida caseira, feita na hora</h2><p>Escolha o seu prato e peça pelo WhatsApp.</p>${menor ? `<div class="apartir">a partir de <b>R$ ${esc(menor)}</b></div>` : ''}</div></section>`;
+  const cards = pratos.length ? `<section class="bloco entra"><div class="titulo"><h3>Nossos <em>pratos</em></h3></div><div class="cards">${pratos.map(p => { const f = urlSegura(p.foto); return `
+      <article class="card">
+        <div class="cimg">${f ? `<img src="${esc(f)}" alt="${esc(p.nome)}" loading="lazy">` : `<div class="semfoto">PdC</div>`}<span class="tag">${esc(TAMANHO[p.tamanho] || p.tamanhoNome || '')}</span></div>
+        <div class="cbody"><h4>${esc(p.nome)}</h4>${ing(p) ? `<p>${esc(ing(p))}</p>` : (p.obs ? `<p>${esc(p.obs)}</p>` : '')}
+          <div class="crow">${valor(p.preco) ? `<b>R$ ${esc(p.preco)}</b>` : '<span></span>'}<a class="cbtn" href="${linkPedido('Olá! Quero pedir 1 ' + p.nome + '.')}" target="_blank" rel="noopener">Pedir</a></div></div>
+      </article>`; }).join('')}</div></section>` : '';
   return `
   <header class="entra"><div class="selo">PdC</div><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div><div class="data">Cardápio de hoje · ${esc(dia)}</div></header>
-  <section class="destaque entra"><div class="txt"><small>Destaque do dia</small><h2>${esc(principal)}</h2><p>Feito na hora, com tempero de casa. Escolha o tamanho e peça pelo WhatsApp.</p>${menor ? `<div class="apartir">a partir de <b>R$ ${esc(menor)}</b></div>` : ''}</div>
-    <div class="palco"><div class="chao"></div><div class="flutua">${prato(d, principal, 250)}</div><div class="vapor"><span></span><span></span><span></span></div></div></section>
-  ${hoje.length ? `<section class="bloco entra"><div class="titulo"><h3>Pratos de <em>hoje</em></h3></div><div class="lista">${hoje.map((n, i) =>
-      `<div class="item"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="nome">${esc(n)}</span>${fotoDe(d, n) ? `<div class="mini flutua" style="animation-delay:-${i * .7}s">${prato(d, n, 76)}</div>` : ''}</div>`).join('')}</div></section>` : ''}
+  ${destaque}
+  ${cards}
+  ${hoje.length ? `<section class="bloco entra"><div class="titulo"><h3>Hoje <em>tem</em></h3></div><div class="lista">${hoje.map((n, i) => { const f = fotoDe(d, n);
+      return `<div class="item"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="nome">${esc(n)}</span>${f ? `<img class="mini" src="${esc(f)}" alt="" loading="lazy">` : ''}</div>`; }).join('')}</div></section>` : ''}
   <section class="bloco entra"><div class="duas">
     ${(d.guarnicoes || []).length ? `<div><div class="titulo"><h3>Guarni<em>ções</em></h3></div><ul class="pontos">${d.guarnicoes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></div>` : ''}
     ${(d.fitness || []).length ? `<div><div class="titulo"><h3><em>Fit</em>ness</h3></div><ul class="pontos">${d.fitness.map(n => `<li>${esc(n)}</li>`).join('')}</ul>${d.fitnessObs ? `<div class="obs">(${esc(d.fitnessObs)})</div>` : ''}${valor(pr.fitness) ? `<div class="fitpreco">Fitness <b>R$ ${esc(pr.fitness)}</b></div>` : ''}</div>` : ''}
@@ -184,7 +197,7 @@ function montar(d) {
       `<div class="preco"><div class="tam">${k}</div><div class="tamtxt">${n}</div><div class="v"><small>R$</small>${esc(pr[k])}</div></div>`).join('')}</div>
     ${valor(es.nome) && ['P','M','G'].some(k => valor(es[k])) ? `<div class="especial"><div class="en">${esc(es.nome)}</div><div class="ev">${['P','M','G'].filter(k => valor(es[k])).map(k => `<span><i>${k}</i>R$ ${esc(es[k])}</span>`).join('')}</div></div>` : ''}</section>` : ''}
   <footer class="entra"><div>📍 <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(emp.endereco || '')}" target="_blank" rel="noopener">${esc(emp.endereco || '')}</a><br>📲 WhatsApp ${esc(emp.whatsapp || '')}</div>
-    <div style="text-align:right">${d.atualizado ? 'Atualizado em ' + esc(new Date(d.atualizado).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })) : ''}<br><details class="cred"><summary>Fotos ilustrativas · créditos</summary>${CREDITOS.map(c => `<div>${esc(c.prato)}: ${esc(c.autor)} — <a href="${esc(c.pagina)}" target="_blank" rel="noopener">${esc(c.licenca)}</a></div>`).join('')}</details></div></footer>`;
+    <div style="text-align:right">${d.atualizado ? 'Atualizado em ' + esc(new Date(d.atualizado).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })) : ''}<br><span style="font-size:11.5px">Imagens ilustrativas</span></div></footer>`;
 }
 function animar() {
   const els = [...document.querySelectorAll('.entra')]; els.forEach((el, i) => setTimeout(() => el.classList.add('on'), 80 + i * 110));
