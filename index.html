@@ -476,18 +476,18 @@ function iniciarBanner() {
     if (M) tmp.querySelectorAll('.bn-a, .bn-pop').forEach(el => { el.style.opacity = '0'; });
     conteudo().replaceChildren(...tmp.childNodes); };
   const marcar = () => b.querySelectorAll('.bn-dot').forEach((dot, k) => { dot.classList.remove('on'); if (k === BANNER.i) { void dot.offsetWidth; dot.classList.add('on'); } });
-  const ir = async (k) => { const n = BANNER.slides.length; if (BANNER.ocupado || n < 2) return; BANNER.ocupado = true;
+  const ir = async (k) => { const n = BANNER.slides.length; if (n < 2) return;
+    if (BANNER.ocupado && Date.now() - BANNER.ocupado < 2500) return; BANNER.ocupado = Date.now();
     const novo = ((k % n) + n) % n; const dir = novo > BANNER.i || (BANNER.i === n - 1 && novo === 0) ? 1 : -1;
     try { await Promise.all([carregar(urlSegura(BANNER.slides[novo].foto)), sair()]); BANNER.i = novo; trocar(BANNER.slides[novo]); marcar(); entrar();
       if (M) M.animate(b.querySelector('.bn-gigante'), { x: [40 * dir, 0] }, mola(.15, .9)); }
-    finally { BANNER.ocupado = false; } };
-  const auto = () => { clearInterval(BANNER.timer); if (BANNER.slides.length > 1 && !reduzir) BANNER.timer = setInterval(() => ir(BANNER.i + 1), 3500); };
-  const pausar = (sim) => { b.classList.toggle('pausado', sim); if (sim) clearInterval(BANNER.timer); else auto(); };
+    catch (e) { console.warn('[banner]', e); } finally { BANNER.ocupado = 0; } };
+  const auto = () => { clearTimeout(BANNER.timer); if (BANNER.slides.length < 2 || reduzir || document.hidden || document.body.classList.contains('na-capa') === false) return;
+    BANNER.timer = setTimeout(async () => { await ir(BANNER.i + 1); auto(); }, 3500); };
+  const pausar = (sim) => { b.classList.toggle('pausado', sim); if (sim) clearTimeout(BANNER.timer); else auto(); };
   b.addEventListener('click', (e) => { const s = e.target.closest('.bn-seta'), d = e.target.closest('.bn-dot');
     if (s) { ir(BANNER.i + Number(s.dataset.dir)); auto(); } if (d) { ir(Number(d.dataset.i)); auto(); } });
   b.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') { ir(BANNER.i + 1); auto(); } if (e.key === 'ArrowLeft') { ir(BANNER.i - 1); auto(); } });
-  b.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') pausar(true); });
-  b.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') pausar(false); });
   document.addEventListener('visibilitychange', () => pausar(document.hidden));
   // arrastar para o lado troca o prato (celular)
   let x0 = null; b.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
@@ -501,7 +501,7 @@ function iniciarBanner() {
   if (M) { garantir([M.animate(b, { opacity: [0, 1], scale: [.96, 1] }, mola(.25, .8)),
     M.animate(b.querySelector('.bn-gigante'), { x: [120, 0], opacity: [0, 1] }, mola(.2, 1.2, { delay: .1 })),
     M.animate(b.querySelectorAll('.bn-feat'), { opacity: [0, 1], x: [30, 0] }, mola(.3, .7, { delay: M.stagger(.1, { startDelay: .6 }) }))], 2600); }
-  BANNER.auto = auto; BANNER.parar = () => clearInterval(BANNER.timer);
+  BANNER.auto = auto; BANNER.parar = () => clearTimeout(BANNER.timer);
   entrar(); marcar(); auto();
 }
 // ---------- Página de abertura (capa): cartaz com os pratos do dia + botão para entrar no cardápio ----------
