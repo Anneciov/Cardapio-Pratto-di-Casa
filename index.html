@@ -71,7 +71,7 @@
   .cimg{position:relative;aspect-ratio:4/3;overflow:hidden;background:radial-gradient(circle at 50% 40%,#2a2f37,#14171c)}
   .cimg img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}.card:hover .cimg img{transform:scale(1.07)}
   .cimg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.55))}
-  .semfoto{height:100%;display:grid;place-items:center;font:700 44px Oswald;color:rgba(255,122,26,.35)}
+  .semfoto{height:100%;display:grid;place-items:center;color:rgba(255,122,26,.45)}
   .tag{position:absolute;z-index:1;top:12px;left:12px;background:linear-gradient(135deg,var(--laranja2),var(--laranja));color:#1a0d02;font:700 12px Inter;letter-spacing:.06em;text-transform:uppercase;padding:5px 11px;border-radius:20px;box-shadow:0 6px 14px -6px rgba(255,122,26,.8)}
   .cbody{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
   .cbody h4{font:700 21px Oswald;letter-spacing:.02em;text-transform:uppercase}
@@ -337,7 +337,7 @@ function capaHTML(d) {
       <div class="bn-txt"><div class="bn-script">Cardápio de hoje</div><h2 class="bn-titulo"><span class="bn-forte">Comida</span><span class="bn-cursiva">caseira</span></h2>
         <div class="bn-tag"><span>Feita na hora</span></div>${(d.hoje || []).length ? `<p class="bn-ing">${esc(d.hoje.join(' · '))}</p>` : ''}
         ${menor ? `<div class="bn-preco"><span class="bn-so">a partir de</span><b><small>R$</small>${esc(menor)}</b></div>` : ''}</div></section>`;
-  return `<div class="capa-topo"><div class="selo">PdC</div><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div>
+  return `<div class="capa-topo"><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div>
       <a href="#cardapio" class="capa-entrar js-entrar">Cardápio <span>→</span></a></div>
     ${banner}
     <div class="capa-cta"><a href="#cardapio" class="capa-btn js-entrar"><span>Ver cardápio de hoje</span><i>→</i></a>
@@ -386,12 +386,12 @@ function montar(d) {
     : `<section class="destaque so-texto entra"><div class="txt"><small>Cardápio de hoje</small><h2>Comida caseira, feita na hora</h2><p>Escolha o seu prato e peça pelo WhatsApp.</p>${menor ? `<div class="apartir">a partir de <b>R$ ${esc(menor)}</b></div>` : ''}</div></section>`;
   const cards = pratos.length ? `<section class="bloco entra"><div class="titulo"><h3>Nossos <em>pratos</em></h3></div><div class="cards">${pratos.map(p => { const f = urlSegura(p.foto); return `
       <article class="card">
-        <div class="cimg">${f ? `<img src="${esc(f)}" alt="${esc(p.nome)}" loading="lazy">` : `<div class="semfoto">PdC</div>`}<span class="tag">${esc(TAMANHO[p.tamanho] || p.tamanhoNome || '')}</span></div>
+        <div class="cimg">${f ? `<img src="${esc(f)}" alt="${esc(p.nome)}" loading="lazy">` : `<div class="semfoto"><svg viewBox="0 0 120 120" width="96" height="96" fill="none" stroke="currentColor" stroke-linecap="round" aria-hidden="true"><circle cx="60" cy="60" r="32" stroke-width="2.5"/><circle cx="60" cy="60" r="22" stroke-width="1.5" opacity=".5"/><path d="M16 32v56 M11 32v16 M21 32v16 M11 48q5 6 10 0" stroke-width="3"/><path d="M104 88V32q9 10 0 26" stroke-width="3"/></svg></div>`}<span class="tag">${esc(TAMANHO[p.tamanho] || p.tamanhoNome || '')}</span></div>
         <div class="cbody"><h4>${esc(p.nome)}</h4>${ing(p) ? `<p>${esc(ing(p))}</p>` : (p.obs ? `<p>${esc(p.obs)}</p>` : '')}
           <div class="crow">${valor(p.preco) ? `<b>R$ ${esc(p.preco)}</b>` : '<span></span>'}<a class="cbtn" href="${linkPedido('Olá! Quero pedir 1 ' + p.nome + '.')}" target="_blank" rel="noopener">Pedir</a></div></div>
       </article>`; }).join('')}</div></section>` : '';
   return `
-  <header class="entra"><div class="selo">PdC</div><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div><div class="data">Cardápio de hoje · ${esc(dia)}</div><a class="inicio" href="#inicio" aria-label="Voltar ao início">‹ Início</a></header>
+  <header class="entra"><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div><div class="data">Cardápio de hoje · ${esc(dia)}</div><a class="inicio" href="#inicio" aria-label="Voltar ao início">‹ Início</a></header>
   ${destaque}
   ${cards}
   ${hoje.length ? `<section class="bloco entra"><div class="titulo"><h3>Hoje <em>tem</em></h3></div><div class="lista">${hoje.map((n, i) => { const f = fotoDe(d, n);
