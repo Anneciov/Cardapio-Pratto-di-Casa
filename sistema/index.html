@@ -49,6 +49,49 @@ aside nav>div:hover{background:#04315a!important;transform:scale(1.03)}
 [data-theme="dark"] .pd-mut{color:#86b3c1}
 @media (max-width:1100px){.pd-g4{grid-template-columns:repeat(2,1fr)!important}.pd-g3{grid-template-columns:1fr!important}}
 @media (max-width:760px){.pd-g2{grid-template-columns:1fr!important}}
+/* ── Dashboard: hover, foco e dicas ── */
+.pd-click{cursor:pointer}
+.pd-click:focus-visible,.pd-tipw:focus-visible{outline:2px solid #54ACBF;outline-offset:3px}
+.pd-ring{transition:transform .2s ease,box-shadow .2s ease}
+.pd-ring.pd-tipw:hover,.pd-ring.pd-tipw:focus-visible{transform:scale(1.05)}
+.pd-mini{transition:transform .18s ease,background-color .18s ease,border-color .18s ease,box-shadow .18s ease}
+.pd-mini:hover,.pd-mini:focus-visible{transform:translateY(-3px);background:rgba(255,255,255,.08);border-color:rgba(94,234,212,.45);box-shadow:0 12px 24px -12px rgba(45,212,191,.5)}
+.pd-go{margin-left:auto;opacity:0;transform:translateX(-4px);transition:opacity .18s ease,transform .18s ease;color:#5eead4;letter-spacing:0}
+.pd-click:hover .pd-go,.pd-click:focus-visible .pd-go{opacity:1;transform:none}
+.pd-bandit{border-radius:12px;padding:8px;margin:-8px;transition:background-color .18s ease}
+.pd-bandit:hover,.pd-bandit:focus-visible{background:rgba(255,255,255,.06)}
+.pd-bandit:hover .pd-ring{transform:scale(1.06)}
+.pd-tipw{position:relative}
+.pd-tip{position:absolute;bottom:calc(100% + 8px);z-index:30;opacity:0;pointer-events:none;white-space:nowrap;background:#011a33;color:#e4f4f7;border:1px solid rgba(84,172,191,.45);border-radius:8px;padding:6px 10px;font:600 11.5px/1.35 'Space Mono',monospace;letter-spacing:0;text-transform:none;text-align:left;box-shadow:0 12px 26px -10px rgba(0,0,0,.7);transition:opacity .15s ease,transform .15s ease}
+.pd-tip-c{left:50%;transform:translate(-50%,4px)}
+.pd-tip-l{left:0;transform:translateY(4px)}
+.pd-tip-r{right:0;transform:translateY(4px)}
+.pd-tipw:hover>.pd-tip,.pd-tipw:focus-visible>.pd-tip{opacity:1}
+.pd-tipw:hover>.pd-tip-c,.pd-tipw:focus-visible>.pd-tip-c{transform:translate(-50%,0)}
+.pd-tipw:hover>.pd-tip-l,.pd-tipw:hover>.pd-tip-r,.pd-tipw:focus-visible>.pd-tip-l,.pd-tipw:focus-visible>.pd-tip-r{transform:translateY(0)}
+.pd-bandit:hover .pd-tip{opacity:1;transform:translateY(0)}
+.pd-barv{transition:filter .18s ease,box-shadow .18s ease}
+.pd-col:hover .pd-barv,.pd-col:focus-visible .pd-barv{filter:brightness(1.3) saturate(1.2);box-shadow:0 10px 26px -6px rgba(84,172,191,.85)!important}
+.pd-val{transition:color .15s ease}
+.pd-col:hover .pd-val,.pd-col:focus-visible .pd-val{color:var(--text-primary)}
+.pd-sphit{position:absolute;top:-6px;bottom:-6px;width:7.2%;cursor:crosshair}
+.pd-sphit::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(167,235,242,.4);opacity:0;transition:opacity .12s ease}
+.pd-spdot{position:absolute;left:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:#7dd3fc;box-shadow:0 0 0 3px rgba(125,211,252,.25),0 0 12px #54ACBF;opacity:0;transform:scale(.5);transition:opacity .12s ease,transform .12s ease}
+.pd-sphit:hover::before,.pd-sphit:focus-visible::before{opacity:1}
+.pd-sphit:hover .pd-spdot,.pd-sphit:focus-visible .pd-spdot{opacity:1;transform:none}
+.pd-donut{transition:transform .25s ease,filter .25s ease}
+.pd-donut:hover{transform:scale(1.04);filter:drop-shadow(0 8px 18px rgba(84,172,191,.35))}
+.pd-leg{border-radius:8px;margin:0 -8px;padding-left:8px!important;padding-right:8px!important;transition:background-color .15s ease}
+.pd-leg:hover{background:var(--bg-accent-soft)}
+.pd-leg>span:first-child{transition:transform .15s ease}
+.pd-leg:hover>span:first-child{transform:scale(1.4)}
+.pd-row{border-radius:10px;margin:0 -10px;padding-left:10px!important;padding-right:10px!important;transition:background-color .15s ease}
+.pd-row:hover,.pd-row:focus-visible{background:var(--bg-accent-soft)}
+.pd-row .pd-bar>div{transition:filter .15s ease}
+.pd-row:hover .pd-bar>div{filter:brightness(1.2)}
+@media (hover:none){.pd-go{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){[class*="pd-"],[class*="pd-"]::before{transition:none!important}.pd-mini:hover,.pd-ring.pd-tipw:hover,.pd-donut:hover,.pd-bandit:hover .pd-ring{transform:none}}
+/* ── fim do dashboard ── */
 </style>
 <!-- ── React 18.3.1 (local, sem CDN) ── -->
 <script>window.__resources = {};</script>
@@ -2876,8 +2919,8 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           </div>
           <div style="display:flex;gap:28px;align-items:center;flex-wrap:wrap;margin-top:14px">
             <div style="display:flex;gap:18px">
-              <div class="pd-ring" style="{{ dHero.ring1 }}"><div><div class="pd-ring-n" style="color:#4ade80">{{ dHero.pctConc }}</div><div class="pd-ring-l">concluídos</div></div></div>
-              <div class="pd-ring" style="{{ dHero.ring2 }}"><div><div class="pd-ring-n" style="color:#fb923c">{{ dHero.pctCred }}</div><div class="pd-ring-l">no crediário</div></div></div>
+              <div class="pd-ring pd-tipw" tabindex="0" style="{{ dHero.ring1 }}"><div><div class="pd-ring-n" style="color:#4ade80">{{ dHero.pctConc }}</div><div class="pd-ring-l">concluídos</div></div><span class="pd-tip pd-tip-l">{{ dHero.ring1Tip }}</span></div>
+              <div class="pd-ring pd-tipw" tabindex="0" style="{{ dHero.ring2 }}"><div><div class="pd-ring-n" style="color:#fb923c">{{ dHero.pctCred }}</div><div class="pd-ring-l">no crediário</div></div><span class="pd-tip pd-tip-c">{{ dHero.ring2Tip }}</span></div>
             </div>
             <div style="flex:1;min-width:280px">
               <div style="font-family:'Space Mono',monospace;font-size:38px;font-weight:700;line-height:1.1;color:#fff;letter-spacing:-.01em">{{ heroVendasFmt }}</div>
@@ -2885,23 +2928,28 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
               <span style="{{ dHero.trendStyle }}">{{ dHero.trend }}</span>
               <div class="pd-g4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px">
                 <sc-for list="{{ dMini }}" as="k" hint-placeholder-count="4">
-                  <div class="pd-mini">
-                    <div class="pd-lbl" style="font-size:9.5px;color:#cfe6ec;display:flex;align-items:center;gap:6px;font-weight:700"><span style="width:7px;height:7px;border-radius:50%;flex-shrink:0;background:{{ k.cor }};box-shadow:0 0 8px {{ k.cor }}"></span>{{ k.label }}</div>
+                  <div class="pd-mini pd-click" role="button" tabindex="0" onclick="{{ k.onClick }}" title="{{ k.titulo }}">
+                    <div class="pd-lbl" style="font-size:9.5px;color:#cfe6ec;display:flex;align-items:center;gap:6px;font-weight:700"><span style="width:7px;height:7px;border-radius:50%;flex-shrink:0;background:{{ k.cor }};box-shadow:0 0 8px {{ k.cor }}"></span>{{ k.label }}<span class="pd-go">→</span></div>
                     <div style="font-family:'Space Mono',monospace;font-size:22px;font-weight:700;margin-top:4px;color:#fff">{{ k.n }}</div>
                     <div style="font-family:'Space Mono',monospace;font-size:11px;color:#9cc3cf">{{ k.valor }}</div>
                   </div>
                 </sc-for>
               </div>
-              <svg sc-camel-view-box="0 0 600 60" sc-camel-preserve-aspect-ratio="none" style="width:100%;height:46px;margin-top:12px;display:block;overflow:visible"><path d="{{ dSpark.area }}" fill="rgba(84,172,191,.16)"></path><path d="{{ dSpark.line }}" fill="none" stroke="#54ACBF" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"></path></svg>
+              <div style="position:relative;margin-top:12px">
+                <svg sc-camel-view-box="0 0 600 60" sc-camel-preserve-aspect-ratio="none" style="width:100%;height:46px;display:block;overflow:visible"><path d="{{ dSpark.area }}" fill="rgba(84,172,191,.16)"></path><path d="{{ dSpark.line }}" fill="none" stroke="#54ACBF" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"></path></svg>
+                <sc-for list="{{ dSpPts }}" as="p" hint-placeholder-count="14">
+                  <div class="pd-sphit pd-tipw" tabindex="0" style="left:{{ p.left }}"><span class="pd-spdot" style="top:{{ p.top }}"></span><span class="{{ p.tipCls }}">{{ p.tip }}</span></div>
+                </sc-for>
+              </div>
               <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:9.5px;color:#7fa9b7;margin-top:3px"><span>{{ dSpark.ini }}</span><span>vendas dos últimos 14 dias</span><span>hoje</span></div>
             </div>
           </div>
           <div class="pd-g3 pd-band" style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px">
             <sc-for list="{{ dBand }}" as="b" hint-placeholder-count="3">
-              <div style="display:flex;gap:14px;align-items:center;min-width:0">
-                <div class="pd-ring pd-ring-sm" style="{{ b.ring }}"><div><div class="pd-ring-n" style="font-size:15px;color:{{ b.cor }}">{{ b.pct }}</div><div class="pd-ring-l" style="font-size:7.5px">{{ b.ringLbl }}</div></div></div>
+              <div class="pd-bandit pd-click" role="button" tabindex="0" onclick="{{ b.onClick }}" style="display:flex;gap:14px;align-items:center;min-width:0">
+                <div class="pd-ring pd-ring-sm pd-tipw" style="{{ b.ring }}"><div><div class="pd-ring-n" style="font-size:15px;color:{{ b.cor }}">{{ b.pct }}</div><div class="pd-ring-l" style="font-size:7.5px">{{ b.ringLbl }}</div></div><span class="pd-tip pd-tip-l">{{ b.tip }}</span></div>
                 <div style="flex:1;min-width:0">
-                  <div class="pd-lbl" style="font-size:9.5px;font-weight:700;color:{{ b.cor }}">{{ b.label }}</div>
+                  <div class="pd-lbl" style="font-size:9.5px;font-weight:700;color:{{ b.cor }};display:flex;align-items:center;gap:6px">{{ b.label }}<span class="pd-go">→</span></div>
                   <div style="font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:#fff;margin-top:2px">{{ b.valor }}</div>
                   <div style="font-size:11.5px;color:#a9c9d4;margin-top:2px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.sub }}</div>
                   <div class="pd-bar" style="background:rgba(255,255,255,.08);margin-top:7px"><div style="width:{{ b.pct }};background:{{ b.barra }}"></div></div>
@@ -2930,9 +2978,10 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
             <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><div style="font-weight:700;font-size:14px">Últimos 7 dias</div><div class="pd-lbl pd-mut" style="font-size:9.5px">{{ dSemana.sub }}</div><div style="margin-left:auto;font-family:'Space Mono',monospace;font-weight:700;font-size:15px;color:#54ACBF">{{ dSemana.total }}</div></div>
             <div style="display:flex;align-items:flex-end;gap:10px;height:200px;margin-top:14px;padding-bottom:4px;border-bottom:1px solid var(--border-soft)">
               <sc-for list="{{ dDias }}" as="d" hint-placeholder-count="7">
-                <div style="flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;min-width:0">
-                  <div class="pd-mut" style="font-family:'Space Mono',monospace;font-size:10px;white-space:nowrap">{{ d.valor }}</div>
-                  <div style="width:100%;max-width:48px;height:{{ d.h }};border-radius:8px 8px 3px 3px;background:{{ d.cor }};box-shadow:{{ d.sombra }}"></div>
+                <div class="pd-col pd-tipw" tabindex="0" style="flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;min-width:0">
+                  <div class="pd-mut pd-val" style="font-family:'Space Mono',monospace;font-size:10px;white-space:nowrap">{{ d.valor }}</div>
+                  <div class="pd-barv" style="width:100%;max-width:48px;height:{{ d.h }};border-radius:8px 8px 3px 3px;background:{{ d.cor }};box-shadow:{{ d.sombra }}"></div>
+                  <span class="{{ d.tipCls }}">{{ d.tip }}</span>
                 </div>
               </sc-for>
             </div>
@@ -2947,7 +2996,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
               <div class="pd-donut" style="{{ dPag.donut }}"><div><div style="font-family:'Space Mono',monospace;font-weight:700;font-size:17px">{{ dPag.qtd }}</div><div class="pd-mut" style="font-size:10px">pedidos</div></div></div>
               <div style="flex:1;min-width:160px">
                 <sc-for list="{{ dPagItens }}" as="p" hint-placeholder-count="5">
-                  <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border-soft);font-size:12.5px"><span style="width:9px;height:9px;border-radius:3px;flex-shrink:0;background:{{ p.cor }}"></span><span style="flex:1">{{ p.label }}</span><span class="pd-mut" style="font-family:'Space Mono',monospace;font-size:11px">{{ p.pct }}</span><span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;min-width:86px;text-align:right">{{ p.valor }}</span></div>
+                  <div class="pd-leg" style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border-soft);font-size:12.5px"><span style="width:9px;height:9px;border-radius:3px;flex-shrink:0;background:{{ p.cor }}"></span><span style="flex:1">{{ p.label }}</span><span class="pd-mut" style="font-family:'Space Mono',monospace;font-size:11px">{{ p.pct }}</span><span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;min-width:86px;text-align:right">{{ p.valor }}</span></div>
                 </sc-for>
                 <sc-if value="{{ noPag }}" hint-placeholder-val="{{ false }}"><div class="pd-mut" style="font-size:13px">Sem vendas no período.</div></sc-if>
               </div>
@@ -2961,7 +3010,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           <div class="dash-panel" style="border:1px solid var(--border-card);border-radius:16px;padding:17px">
             <div style="font-weight:700;font-size:14px;margin-bottom:10px">Pedidos recentes</div>
             <sc-for list="{{ recentOrders }}" as="o" hint-placeholder-count="4">
-              <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--border-soft)">
+              <div class="pd-row" style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--border-soft)">
                 <div style="flex:1;min-width:0"><div style="font-weight:500;font-size:13px">{{ o.clientName }}</div><div style="font-size:11.5px;color:#9a9084;line-height:1.4">{{ o.items }}</div></div>
                 <span style="{{ o.payStyle }}">{{ o.paymentLabel }}</span>
                 <div style="font-family:'Space Mono',monospace;font-size:12.5px;width:84px;text-align:right">{{ o.totalFmt }}</div>
@@ -2973,7 +3022,8 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
             <div style="display:flex;align-items:center"><div style="font-weight:700;font-size:14px">Mais vendidos</div><span class="pd-chip2">30 dias</span></div>
             <div class="pd-lbl pd-mut" style="font-size:9.5px;margin-top:3px;margin-bottom:6px">ranking por quantidade</div>
             <sc-for list="{{ dTop }}" as="t" hint-placeholder-count="6">
-              <div style="display:flex;align-items:center;gap:10px;padding:7px 0">
+              <div class="pd-row pd-tipw" style="display:flex;align-items:center;gap:10px;padding:7px 0">
+                <span class="pd-tip pd-tip-r">{{ t.tip }}</span>
                 <div style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;width:22px;color:{{ t.cor }}">#{{ t.pos }}</div>
                 <div style="flex:1;min-width:0">
                   <div style="display:flex;justify-content:space-between;gap:8px;font-size:12.5px;font-weight:600"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ t.nome }}</span><span style="font-family:'Space Mono',monospace;flex-shrink:0">{{ t.qtd }}</span></div>
@@ -2991,7 +3041,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           <div class="dash-panel" style="border:1px solid var(--border-card);border-radius:16px;padding:17px">
             <div style="display:flex;align-items:center;margin-bottom:6px"><div style="font-weight:700;font-size:14px">Saldos devedores</div><div style="margin-left:auto;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#fb923c">{{ dReceberFmt }}</div></div>
             <sc-for list="{{ dDev }}" as="c" hint-placeholder-count="3">
-              <div style="padding:9px 0;border-top:1px solid var(--border-soft)">
+              <div class="pd-row pd-click" role="button" tabindex="0" onclick="{{ irCrediario }}" title="Abrir crediário" style="padding:9px 0;border-top:1px solid var(--border-soft)">
                 <div style="display:flex;align-items:center;gap:8px">
                   <div style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:#fb923c;width:20px">#{{ c.pos }}</div>
                   <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.name }}</div><div class="pd-mut" style="font-size:11px">{{ c.typeLabel }} · {{ c.pct }}</div></div>
@@ -3005,7 +3055,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           <div class="dash-panel" style="border:1px solid var(--border-card);border-radius:16px;padding:17px">
             <div style="display:flex;align-items:center;margin-bottom:6px"><div style="font-weight:700;font-size:14px">Entregas pendentes</div><span class="pd-chip2">{{ pendingCount }}</span></div>
             <sc-for list="{{ pendingDeliveries }}" as="d" hint-placeholder-count="2">
-              <div style="display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--border-soft)">
+              <div class="pd-row" style="display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--border-soft)">
                 <div style="flex:1"><div style="font-weight:600;font-size:13px">{{ d.orderRef }} · {{ d.region }}</div><div class="pd-mut" style="font-size:11.5px">{{ d.motoboy }}</div></div>
                 <button onclick="{{ d.onClose }}" style="background:rgba(34,197,94,.14);color:#22c55e;border:1px solid rgba(34,197,94,.35);border-radius:8px;padding:6px 11px;font-size:12px;font-weight:600;cursor:pointer">Encerrar</button>
               </div>
@@ -3015,7 +3065,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           <div class="dash-panel" style="border:1px solid var(--border-card);border-radius:16px;padding:17px">
             <div style="display:flex;align-items:center;margin-bottom:6px"><div style="font-weight:700;font-size:14px">Alertas de estoque</div><span class="pd-chip2">mínimo</span></div>
             <sc-for list="{{ dEst }}" as="x" hint-placeholder-count="2">
-              <div style="padding:9px 0;border-top:1px solid var(--border-soft)">
+              <div class="pd-row pd-click" role="button" tabindex="0" onclick="{{ irEstoque }}" title="Abrir estoque" style="padding:9px 0;border-top:1px solid var(--border-soft)">
                 <div style="display:flex;align-items:center;gap:8px">
                   <div style="flex:1"><div style="font-weight:600;font-size:13px">{{ x.product }}</div><div style="font-size:11px;color:#f97316">mínimo {{ x.min }} {{ x.unit }}</div></div>
                   <div style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#f87171">{{ x.qty }} {{ x.unit }}</div>
@@ -6436,7 +6486,9 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const dSeta=(v)=>(v>=0?'▲ ':'▼ ')+Math.abs(v)+'%';
     const hojeOrd=s.orders.filter(o=>o.today);
     const dTodos=[...(s.dashStats||[]).filter(o=>o.iso<dHoje), ...hojeOrd.map(o=>({iso:dHoje,total:o.total,payment:o.payment,status:o.status,itens:o.itensArr||[]}))];
-    const dPorDia={}; dTodos.forEach(o=>{ dPorDia[o.iso]=(dPorDia[o.iso]||0)+o.total; });
+    const dPorDia={}, dQtdDia={}; dTodos.forEach(o=>{ dPorDia[o.iso]=(dPorDia[o.iso]||0)+o.total; dQtdDia[o.iso]=(dQtdDia[o.iso]||0)+1; });
+    const dIr=(view)=>()=>this.setState({view});
+    const dTipDia=(iso)=>{ const n=dQtdDia[iso]||0; return dDiaSem(iso)+' '+this.fmtDateBR(iso)+' · '+brl(dPorDia[iso]||0)+' · '+n+(n===1?' pedido':' pedidos'); };
     const hojeEnt=hojeOrd.filter(o=>o.status==='entregue'), hojeAb=hojeOrd.filter(o=>o.status!=='entregue');
     const hojeBal=hojeOrd.filter(o=>o.kind==='balcao'), hojePed=hojeOrd.filter(o=>o.kind!=='balcao');
     const pConc=dPct(hojeEnt.length,hojeOrd.length), pCred=dPct(dSoma(hojeOrd.filter(o=>o.payment==='crediario')),vendasDia);
@@ -6445,30 +6497,34 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       entregues:hojeEnt.length, abertos:hojeAb.length,
       qtd:hojeOrd.length+(hojeOrd.length===1?' pedido':' pedidos'),
       ticket:brl(hojeOrd.length?vendasDia/hojeOrd.length:0),
+      ring1Tip:hojeEnt.length+' de '+hojeOrd.length+' pedidos de hoje já entregues',
+      ring2Tip:brl(dSoma(hojeOrd.filter(o=>o.payment==='crediario')))+' de '+brl(vendasDia)+' vendidos no crediário',
       pctConc:pConc+'%', pctCred:pCred+'%', ring1:dRing(pConc,'#22c55e'), ring2:dRing(pCred,'#f97316'),
       trend:dTr===null?'sem vendas ontem para comparar':(dSeta(dTr)+' em relação a ontem ('+brl(dOntem)+')'),
       trendStyle:'display:inline-block;margin-top:8px;padding:3px 9px;border-radius:6px;font-family:Space Mono,monospace;font-size:11px;font-weight:700;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:'+(dTr===null?'#9cc3cf':(dTr>=0?'#4ade80':'#f87171')),
     };
     const dMini=[
-      {label:'Balcão',cor:'#2dd4bf',lista:hojeBal},
-      {label:'Pedidos',cor:'#60a5fa',lista:hojePed},
-      {label:'Em aberto',cor:'#fbbf24',lista:hojeAb},
-      {label:'Entregues',cor:'#22c55e',lista:hojeEnt},
-    ].map(k=>({label:k.label,cor:k.cor,n:String(k.lista.length),valor:brl(dSoma(k.lista))}));
+      {label:'Balcão',cor:'#2dd4bf',lista:hojeBal,view:'lancamento',titulo:'Abrir lançamento no balcão'},
+      {label:'Pedidos',cor:'#60a5fa',lista:hojePed,view:'pedidos',titulo:'Abrir pedidos'},
+      {label:'Em aberto',cor:'#fbbf24',lista:hojeAb,view:'pedidos',titulo:'Abrir pedidos em aberto'},
+      {label:'Entregues',cor:'#22c55e',lista:hojeEnt,view:'pedidos',titulo:'Abrir pedidos'},
+    ].map(k=>({label:k.label,cor:k.cor,titulo:k.titulo,onClick:dIr(k.view),n:String(k.lista.length),valor:brl(dSoma(k.lista))}));
     const dSpVals=Array.from({length:14},(_,i)=>dPorDia[dIso(13-i)]||0), dSpMax=Math.max(1,...dSpVals);
     const dSpLine='M'+dSpVals.map((v,i)=>Math.round(i*600/13)+','+Math.round(56-v/dSpMax*50)).join(' L');
     const dSpark={line:dSpLine, area:dSpLine+' L600,60 L0,60 Z', ini:this.fmtDateBR(dIso(13))};
+    const dSpPts=dSpVals.map((v,i)=>({left:(i/13*100-3.6).toFixed(2)+'%', top:(6+(56-v/dSpMax*50)*46/60).toFixed(1)+'px', tip:dTipDia(dIso(13-i)),
+      tipCls:'pd-tip '+(i<=1?'pd-tip-l':(i>=12?'pd-tip-r':'pd-tip-c'))}));
     const dRecebido=s.crediarioHistory.filter(h=>h.type==='Pagamento').reduce((a,h)=>a+h.amount,0);
     const dDevs=s.clients.filter(c=>c.balance>0).sort((a,b)=>b.balance-a.balance);
     const dEntTot=s.deliveries.length, dEntOk=s.deliveries.filter(d=>d.status==='entregue').length;
     const dBand=[
-      {label:'Crediário a receber',cor:'#fb923c',barra:'linear-gradient(90deg,#f59e0b,#f97316)',p:dPct(dRecebido,dRecebido+totalReceber),ringLbl:'recebido',valor:brl(totalReceber),
+      {label:'Crediário a receber',cor:'#fb923c',barra:'linear-gradient(90deg,#f59e0b,#f97316)',p:dPct(dRecebido,dRecebido+totalReceber),ringLbl:'recebido',view:'crediario',tip:brl(dRecebido)+' recebido · '+brl(totalReceber)+' em aberto',valor:brl(totalReceber),
         sub:debtorCount+(debtorCount===1?' cliente devendo':' clientes devendo')+(dDevs[0]?' · maior: '+dDevs[0].name:'')},
-      {label:'Motoboys a pagar',cor:'#60a5fa',barra:'linear-gradient(90deg,#3b82f6,#8b5cf6)',p:dEntTot?dPct(dEntOk,dEntTot):100,ringLbl:'entregue',valor:brl(pagarMotoboys),
+      {label:'Motoboys a pagar',cor:'#60a5fa',barra:'linear-gradient(90deg,#3b82f6,#8b5cf6)',p:dEntTot?dPct(dEntOk,dEntTot):100,ringLbl:'entregue',view:'motoboys',tip:dEntOk+' de '+dEntTot+' entregas concluídas',valor:brl(pagarMotoboys),
         sub:pendingDel.length+(pendingDel.length===1?' entrega pendente':' entregas pendentes')+' · '+s.motoboys.length+(s.motoboys.length===1?' motoboy':' motoboys')},
-      {label:'Estoque',cor:lowStock.length?'#f87171':'#4ade80',barra:lowStock.length?'linear-gradient(90deg,#ef4444,#f97316)':'linear-gradient(90deg,#22c55e,#2dd4bf)',p:s.stock.length?dPct(s.stock.length-lowStock.length,s.stock.length):100,ringLbl:'em dia',
+      {label:'Estoque',cor:lowStock.length?'#f87171':'#4ade80',barra:lowStock.length?'linear-gradient(90deg,#ef4444,#f97316)':'linear-gradient(90deg,#22c55e,#2dd4bf)',p:s.stock.length?dPct(s.stock.length-lowStock.length,s.stock.length):100,ringLbl:'em dia',view:'estoque',tip:(s.stock.length-lowStock.length)+' de '+s.stock.length+' itens acima do mínimo',
         valor:lowStock.length?(lowStock.length+' abaixo do mínimo'):'Tudo em dia', sub:lowStock.length?lowStock.map(x=>x.product).join(', '):(s.stock.length+' itens controlados')},
-    ].map(b=>({...b,pct:b.p+'%',ring:dRing(b.p,b.cor)}));
+    ].map(b=>({...b,pct:b.p+'%',ring:dRing(b.p,b.cor),onClick:dIr(b.view)}));
     const dSomaDias=(de,ate)=>{ let t=0; for(let k=de;k<=ate;k++) t+=dPorDia[dIso(k)]||0; return t; };
     const d7=dSomaDias(0,6), d7tr=dVar(d7,dSomaDias(7,13)), d30=dSomaDias(0,29);
     const d30Ord=dTodos.filter(o=>o.iso>=dIso(29));
@@ -6482,7 +6538,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     ];
     const dSemVals=Array.from({length:7},(_,i)=>({iso:dIso(6-i),v:dPorDia[dIso(6-i)]||0})), dSemMax=Math.max(1,...dSemVals.map(x=>x.v));
     const dDias=dSemVals.map((x,i)=>{ const hoje=i===6; return {dia:hoje?'Hoje':dDiaSem(x.iso), valor:x.v?dCurto(x.v):'—', h:Math.max(2,Math.round(x.v/dSemMax*82))+'%',
-      cor:hoje?'linear-gradient(180deg,#7dd3fc,#26658C)':'linear-gradient(180deg,#54ACBF,#0d4a73)', sombra:hoje?'0 8px 24px -6px rgba(84,172,191,.75)':'none', lblStyle:hoje?'color:#54ACBF;font-weight:700':'opacity:.6'}; });
+      cor:hoje?'linear-gradient(180deg,#7dd3fc,#26658C)':'linear-gradient(180deg,#54ACBF,#0d4a73)', sombra:hoje?'0 8px 24px -6px rgba(84,172,191,.75)':'none', lblStyle:hoje?'color:#54ACBF;font-weight:700':'opacity:.6', tip:dTipDia(x.iso), tipCls:'pd-tip '+(i===0?'pd-tip-l':(i===6?'pd-tip-r':'pd-tip-c'))}; });
     const dSemana={total:brl(d7),sub:d7tr===null?'total da semana':(dSeta(d7tr)+' vs anterior')};
     const dPagCor={dinheiro:'#22c55e',pix:'#2dd4bf',credito:'#60a5fa',debito:'#a78bfa',vr:'#fbbf24',crediario:'#f97316'};
     const dPagSom={}; d30Ord.forEach(o=>{ dPagSom[o.payment]=(dPagSom[o.payment]||0)+o.total; });
@@ -6494,9 +6550,12 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const dItSom={}; d30Ord.forEach(o=>(o.itens||[]).forEach(i=>{ const n=(i.d||'').trim(); if(n) dItSom[n]=(dItSom[n]||0)+(i.q||0); }));
     const dTopArr=Object.entries(dItSom).sort((a,b)=>b[1]-a[1]).slice(0,7), dTopMax=dTopArr.length?Math.max(1,dTopArr[0][1]):1;
     const dTopCor=['#f97316','#fbbf24','#22c55e','#2dd4bf','#60a5fa','#a78bfa','#f472b6'];
-    const dTop=dTopArr.map(([n,q],i)=>({pos:i+1,nome:n,qtd:q+' un',w:Math.max(3,Math.round(q/dTopMax*100))+'%',cor:dTopCor[i]}));
+    const dItTot=Object.values(dItSom).reduce((a,v)=>a+v,0);
+    const dTop=dTopArr.map(([n,q],i)=>({pos:i+1,nome:n,qtd:q+' un',tip:n+' · '+q+' un · '+dPct(q,dItTot)+'% dos itens vendidos',w:Math.max(3,Math.round(q/dTopMax*100))+'%',cor:dTopCor[i]}));
     const dDev=dDevs.slice(0,6).map((c,i)=>({pos:i+1,name:c.name,typeLabel:this.typeLabel(c.type),balanceFmt:brl(c.balance),pct:dPct(c.balance,totalReceber)+'% do total',w:Math.max(3,dPct(c.balance,totalReceber))+'%'}));
     const dEst=lowStock.map(x=>({product:x.product,qty:x.qty,min:x.min,unit:x.unit,w:Math.max(3,Math.min(100,dPct(x.qty,x.min)))+'%'}));
+    const irCrediario=dIr('crediario'), irEstoque=dIr('estoque');
+    // ── fim do dashboard (cálculos) ──
     const metrics=[
       {id:'vendas',label:'Vendas do dia',value:brl(vendasDia),sub:(n=>n+(n===1?' pedido hoje':' pedidos hoje'))(s.orders.filter(o=>o.today).length),color:'var(--text-primary)',icon:'M12 2v20 M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6',detail:'Soma de todos os pedidos e itens de balcão lançados hoje, em qualquer forma de pagamento.'},
       {id:'abertos',label:'Pedidos em aberto',value:String(openOrders),sub:'aguardando conclusão',color:'#c07b1e',icon:'M5 3h14v18H5z M9 8h6 M9 12h6 M9 16h4',detail:'Pedidos já lançados que ainda não foram marcados como entregues. Conclua em Pedidos.'},
@@ -6606,7 +6665,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       hasSlots: s.signupSlots===null || s.signupSlots>0, noSlots: s.signupSlots!==null && s.signupSlots<=0,
       signupSlotsMsg: s.signupSlots===null?'Verificando vagas…':(s.signupSlots>0?('Vagas disponíveis: '+s.signupSlots+' de 5'):'Nenhuma vaga disponível no momento.'),
       navItems, theme:s.theme, rootStyle, showFull, asideStyle, brandRowStyle, collapseBtnStyle, collapseIcon, themeBtnStyle, themeIcon, themeLabel, toggleTheme:this.toggleTheme, toggleCollapse:this.toggleCollapse,
-      heroVendasFmt:brl(vendasDia), heroSub, dHero, dMini, dSpark, dBand, dStatus, dDias, dSemana, dPag, dPagItens, noPag:dPagItens.length===0, dTop, noTop:dTop.length===0, dDev, dEst, dReceberFmt:brl(totalReceber), goPedido:()=>this.openModal('order'), goLancar:()=>this.setState({view:'lancamento'}),
+      heroVendasFmt:brl(vendasDia), heroSub, dHero, dMini, dSpark, dBand, dStatus, dDias, dSemana, dPag, dPagItens, noPag:dPagItens.length===0, dTop, noTop:dTop.length===0, dDev, dEst, dReceberFmt:brl(totalReceber), dSpPts, irCrediario, irEstoque, goPedido:()=>this.openModal('order'), goLancar:()=>this.setState({view:'lancamento'}),
       closingDate, todayFmt,
       mostrarTopo:s.view!=='whatsapp', conteudoStyle:(s.view==='whatsapp'?'padding:0;height:100vh;overflow:hidden':'padding:16px 24px;overflow:auto')+';flex:1;animation:dcFadeIn .3s ease',
       pageTitle:titles[s.view]?titles[s.view][0]:'', pageSub:titles[s.view]?titles[s.view][1]:'',
@@ -6790,4 +6849,5 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
 })();
 </script>
 
+<script>document.addEventListener('keydown',function(e){var t=e.target;if((e.key==='Enter'||e.key===' ')&&t&&t.classList&&t.classList.contains('pd-click')){e.preventDefault();t.click();}});</script>
 </body></html>
