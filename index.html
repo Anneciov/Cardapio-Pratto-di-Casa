@@ -179,6 +179,16 @@
   .ped-cont{margin-left:auto;display:inline-flex;align-items:center;gap:5px;font:700 12px Inter;color:var(--texto);background:rgba(255,255,255,.07);padding:4px 10px;border-radius:20px}
   .ped-cont i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .2s ease}.ped-cont i.on{background:var(--laranja)}
   .ped-cont.cheio{background:rgba(34,197,94,.16);color:#4ade80}.ped-cont.cheio i.on{background:#22c55e}
+  .ped-sacola ul{list-style:none;display:flex;flex-direction:column;gap:8px;margin:0 0 10px;padding:0}
+  .ped-sacola li{display:flex;align-items:center;gap:12px;padding:10px 10px 10px 14px;border-radius:14px;background:rgba(255,122,26,.07);border:1px solid rgba(255,122,26,.22)}
+  .ped-sacola li div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.ped-sacola li b{font:700 14px Inter}
+  .ped-sacola li span{font-size:12.5px;color:var(--suave);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ped-sacola li em{font:700 16px Oswald;font-style:normal;color:var(--laranja2);white-space:nowrap}
+  .ped-rem{width:36px;height:36px;border-radius:50%;border:1px solid var(--linha);background:rgba(255,255,255,.05);color:var(--suave);font-size:20px;line-height:1;cursor:pointer;flex-shrink:0;transition:all .2s ease}
+  .ped-rem:hover{border-color:#f87171;color:#f87171}
+  .ped-mais{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:14px;padding:13px 16px;border-radius:14px;border:1.5px dashed rgba(255,122,26,.55);background:rgba(255,122,26,.06);color:var(--laranja2);font:700 14.5px Inter;cursor:pointer;transition:background .2s ease,border-color .2s ease,opacity .2s ease}
+  .ped-mais span{font-size:20px;line-height:1}.ped-mais:hover{background:rgba(255,122,26,.14);border-style:solid}.ped-mais.falta{opacity:.6}
+  .ped-mais:focus-visible,.ped-rem:focus-visible{outline:2px solid var(--laranja);outline-offset:2px}
   .ped-nota{font-size:12.5px;color:var(--suave);margin:-4px 0 12px;line-height:1.45}
   /* tamanhos: cartões com a foto do prato */
   .ped-tams{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:10px}
@@ -550,7 +560,7 @@ const rota = () => (location.hash === '#cardapio' ? mostrarCardapio() : mostrarC
 // ---------- Monte seu pedido: tamanho, prato do dia, até 2 guarnições, quantidade e observação → WhatsApp ----------
 let DADOS = null;
 const MAX_GUARN = 2;
-const PED = { tam: '', prato: '', guarn: [], qtd: 1 };
+const PED = { tam: '', prato: '', guarn: [], qtd: 1, itens: [] }; // itens = pratos já adicionados ao pedido
 const num = (v) => Number(String(v || '').replace(/\./g, '').replace(',', '.')) || 0;
 const reais = (n) => 'R$ ' + n.toFixed(2).replace('.', ',');
 const PROTEINAS_FIT = ['Carne', 'Frango', 'Omelete'];
@@ -570,10 +580,35 @@ function precoPedido(d, tam, prato) {
   if (ehEspecial(d, prato) && valor(es[tam])) return { valor: num(es[tam]), especial: true };
   return { valor: num(pr[tam]), especial: false };
 }
+// ── vários pratos no mesmo pedido ──
+const PRATO_TAM = { P: 'Prato Pequeno', M: 'Prato Médio', G: 'Prato Grande' };
+const nomeItem = (it) => it.tam === 'F' ? 'Prato Fitness' : (PRATO_TAM[it.tam] || 'Prato ' + ((tamanhosPedido(DADOS).find(([k]) => k === it.tam) || [])[1] || it.tam)) + ' (' + it.tam + ')';
+const valorItem = (it) => precoPedido(DADOS, it.tam, it.prato).valor * it.qtd;
+const itemAtual = () => (PED.tam && !faltaPedido() ? { tam: PED.tam, prato: PED.prato, guarn: [...PED.guarn], qtd: PED.qtd } : null);
+const qtdItens = (l) => l.reduce((s, it) => s + it.qtd, 0);
+function confirmaGuarn(acao) {
+  if (!PED.tam || PED.tam === 'F' || !(DADOS.guarnicoes || []).length || PED.guarn.length >= MAX_GUARN) return true;
+  return confirm(`Você escolheu ${PED.guarn.length} de ${MAX_GUARN} guarnições. ${acao} mesmo assim?`);
+}
+function renderSacola() {
+  const el = document.getElementById('ped-sacola'); const its = PED.itens; const n = qtdItens(its);
+  el.innerHTML = its.length ? `<section class="ped-sec ped-sacola"><div class="ped-h"><span class="ped-n ok">${ICO_OK}</span><h4>Seu pedido</h4><span class="ped-cont">${n} prato${n > 1 ? 's' : ''}</span></div>
+    <ul>${its.map((it, i) => `<li><div><b>${it.qtd}× ${esc(nomeItem(it))}</b><span>${esc([it.prato, it.guarn.join(' e ')].filter(Boolean).join(' · '))}</span></div><em>${reais(valorItem(it))}</em><button type="button" class="ped-rem" data-rem="${i}" aria-label="Remover ${esc(nomeItem(it))}">×</button></li>`).join('')}</ul>
+    <p class="ped-nota">${PED.tam ? 'Montando mais um prato abaixo — ou envie o pedido.' : 'Quer mais um prato? Escolha o tamanho abaixo. Se não, é só enviar.'}</p></section>` : '';
+}
+function adicionarPrato() {
+  if (!PED.tam) return erroPedido('Escolha o tamanho do próximo prato.', 'sec-tam');
+  const falta = faltaPedido(); if (falta) return erroPedido('Escolha ' + falta.msg + '.', falta.sec);
+  if (!confirmaGuarn('Adicionar')) return;
+  PED.itens.push(itemAtual()); PED.tam = ''; PED.prato = ''; PED.guarn = []; PED.qtd = 1;
+  renderOpcoes(); const c = document.querySelector('#ped .ped-corpo'); if (c) c.scrollTop = 0;
+}
+// ── fim vários pratos ──
 const fotoTamanho = (d, tam) => { const p = (d.pratos || []).find(x => x.tamanho === tam && urlSegura(x.foto)); return p ? urlSegura(p.foto) : ''; };
 // o que falta para poder enviar (na ordem das etapas)
 function faltaPedido() {
   const d = DADOS; const fit = PED.tam === 'F'; const pratos = fit ? PROTEINAS_FIT : (d.hoje || []);
+  if (!PED.tam && PED.itens.length) return null; // só os pratos já adicionados
   if (!PED.tam) return { msg: 'o tamanho', sec: 'sec-tam' };
   if (pratos.length && !PED.prato) return { msg: fit ? 'a proteína' : 'o prato do dia', sec: 'sec-prato' };
   return null;
@@ -587,9 +622,11 @@ function pedidoHTML() {
       <button type="button" class="ped-x" data-fechar aria-label="Fechar">×</button>
     </div>
     <div class="ped-corpo">
+      <div id="ped-sacola"></div>
       <div id="ped-opcoes"></div>
       <section class="ped-sec"><div class="ped-h"><span class="ped-n" id="n-qtd">4</span><h4>Quantidade</h4></div>
-        <div class="ped-qtd"><button type="button" data-qtd="-1" aria-label="Menos">−</button><b id="ped-qtd" aria-live="polite">1</b><button type="button" data-qtd="1" aria-label="Mais">+</button></div></section>
+        <div class="ped-qtd"><button type="button" data-qtd="-1" aria-label="Menos">−</button><b id="ped-qtd" aria-live="polite">1</b><button type="button" data-qtd="1" aria-label="Mais">+</button></div>
+        <button type="button" class="ped-mais" id="ped-mais"><span aria-hidden="true">+</span> Adicionar outro prato (P, M ou G)</button></section>
       <section class="ped-sec"><div class="ped-h"><span class="ped-n">5</span><h4>Observação</h4><span class="ped-opc">opcional</span></div>
         <div class="ped-tags">${TAGS_OBS.map(x => `<button type="button" class="ped-tag" data-tag="${esc(x)}">+ ${esc(x)}</button>`).join('')}</div>
         <textarea id="ped-obs" maxlength="300" rows="3" placeholder="Algo mais? Ex.: troco para R$ 50, entregar no portão…"></textarea>
@@ -605,6 +642,7 @@ function cabecalho(numero, titulo, feito, extra) {
 }
 function renderOpcoes() {
   const d = DADOS; const fit = PED.tam === 'F'; const es = d.especial || {};
+  renderSacola();
   const tams = tamanhosPedido(d).map(([k, n]) => { const p = precoPedido(d, k, PED.prato); const f = fotoTamanho(d, k);
     return `<button type="button" class="ped-tam${PED.tam === k ? ' on' : ''}" data-tam="${k}" aria-pressed="${PED.tam === k}">
       ${f ? `<img src="${esc(f)}" alt="" loading="lazy">` : `<span class="ped-tam-l">${k === 'F' ? 'FIT' : k}</span>`}
@@ -632,10 +670,11 @@ function renderOpcoes() {
 function atualizarTotal() {
   const d = DADOS; const p = PED.tam ? precoPedido(d, PED.tam, PED.prato) : { valor: 0 };
   document.getElementById('ped-qtd').textContent = PED.qtd;
-  const tot = document.getElementById('ped-total'); const novo = reais(p.valor * PED.qtd);
+  const tot = document.getElementById('ped-total'); const novo = reais(PED.itens.reduce((s, it) => s + valorItem(it), 0) + p.valor * PED.qtd);
   if (tot.textContent !== novo) { tot.textContent = novo; tot.classList.remove('pulo'); void tot.offsetWidth; tot.classList.add('pulo'); }
   const nome = (tamanhosPedido(d).find(([k]) => k === PED.tam) || [])[1];
-  document.getElementById('ped-resumo').textContent = nome ? `${PED.qtd}× ${nome}${PED.prato ? ' · ' + PED.prato : ''}` : 'Escolha o tamanho';
+  const nSac = qtdItens(PED.itens), atual = nome ? `${PED.qtd}× ${nome}${PED.prato ? ' · ' + PED.prato : ''}` : '';
+  document.getElementById('ped-resumo').textContent = nSac ? `${nSac} prato${nSac > 1 ? 's' : ''} no pedido${atual ? ' + ' + atual : ''}` : (atual || 'Escolha o tamanho');
   // foto do topo acompanha o tamanho escolhido
   const f = fotoTamanho(d, PED.tam) || fotoTamanho(d, 'P') || fotoTamanho(d, 'M') || fotoTamanho(d, 'G');
   const hero = document.getElementById('ped-hero'); hero.innerHTML = f ? `<img src="${esc(f)}" alt="">` : ''; hero.hidden = !f;
@@ -644,29 +683,31 @@ function atualizarTotal() {
   document.getElementById('ped-passos').innerHTML = etapas.map(([n, ok]) => `<span class="${ok ? 'ok' : ''}">${ok ? '✓ ' : ''}${n}</span>`).join('<i></i>');
   const falta = faltaPedido(); const bt = document.getElementById('ped-enviar');
   bt.classList.toggle('falta', !!falta);
-  document.getElementById('ped-enviar-txt').textContent = falta ? 'Falta ' + falta.msg : 'Enviar pedido';
+  const nTot = nSac + (itemAtual() ? PED.qtd : 0);
+  document.getElementById('ped-enviar-txt').textContent = falta ? 'Falta ' + falta.msg : (nTot > 1 ? `Enviar pedido · ${nTot} pratos` : 'Enviar pedido');
+  document.getElementById('ped-mais').classList.toggle('falta', !PED.tam || !!falta);
 }
 function erroPedido(msg, secao) {
   const e = document.getElementById('ped-erro'); e.textContent = msg; e.classList.add('on'); clearTimeout(erroPedido.t); erroPedido.t = setTimeout(() => e.classList.remove('on'), 2600);
   const s = document.getElementById(secao); if (s) { s.scrollIntoView({ behavior: 'smooth', block: 'center' }); s.classList.remove('alerta'); void s.offsetWidth; s.classList.add('alerta'); }
 }
 function enviarPedido() {
-  const d = DADOS; const fit = PED.tam === 'F'; const falta = faltaPedido();
+  const d = DADOS; const falta = faltaPedido();
   if (falta) return erroPedido('Escolha ' + falta.msg + '.', falta.sec);
-  if (!fit && (d.guarnicoes || []).length && PED.guarn.length < MAX_GUARN && !confirm(`Você escolheu ${PED.guarn.length} de ${MAX_GUARN} guarnições. Enviar mesmo assim?`)) return;
-  const nomeTam = (tamanhosPedido(d).find(([k]) => k === PED.tam) || [])[1]; const p = precoPedido(d, PED.tam, PED.prato);
+  if (!confirmaGuarn('Enviar')) return;
+  const atual = itemAtual(); const itens = [...PED.itens, ...(atual ? [atual] : [])];
+  if (!itens.length) return erroPedido('Escolha o tamanho.', 'sec-tam');
   const obs = document.getElementById('ped-obs').value.trim();
-  const PRATO_TAM = { P: 'Prato Pequeno', M: 'Prato Médio', G: 'Prato Grande' };
-  const linhas = [
-    `*${fit ? 'Prato Fitness' : (PRATO_TAM[PED.tam] || 'Prato ' + nomeTam) + ' (' + PED.tam + ')'}*${p.valor ? ' — ' + reais(p.valor) : ''}${p.especial ? ' (especial)' : ''}`,
-    PED.prato ? `${fit ? 'Proteína' : 'Prato'}: ${PED.prato}` : '',
-    PED.guarn.length ? `Guarnições: ${PED.guarn.join(' e ')}` : '',
-    `Quantidade: ${PED.qtd}`, obs ? `Observação: ${obs}` : '',
-    p.valor ? `\n*Total: ${reais(p.valor * PED.qtd)}*` : ''].filter(Boolean);
-  const url = linkWA('Olá! Quero fazer um pedido 😊\n\n' + linhas.join('\n'));
+  const bloco = (it, i) => { const p = precoPedido(d, it.tam, it.prato); const fit = it.tam === 'F';
+    return [`*${itens.length > 1 ? (i + 1) + ') ' : ''}${nomeItem(it)}*${p.valor ? ' — ' + reais(p.valor) : ''}${p.especial ? ' (especial)' : ''}`,
+      it.prato ? `${fit ? 'Proteína' : 'Prato'}: ${it.prato}` : '', it.guarn.length ? `Guarnições: ${it.guarn.join(' e ')}` : '',
+      `Quantidade: ${it.qtd}`].filter(Boolean).join('\n'); };
+  const total = itens.reduce((s, it) => s + valorItem(it), 0);
+  const msg = 'Olá! Quero fazer um pedido 😊\n\n' + itens.map(bloco).join('\n\n') + (obs ? `\n\nObservação: ${obs}` : '') + (total ? `\n\n*Total: ${reais(total)}*` : '');
+  const url = linkWA(msg);
   if (url === '#') return erroPedido('WhatsApp do restaurante não informado.', '');
   window.open(url, '_blank', 'noopener') || (location.href = url);
-  fecharPedido();
+  PED.itens = []; fecharPedido();
 }
 function abrirPedido(tam, prato, guarn, especial) {
   const d = DADOS; if (!d) return;
@@ -713,6 +754,8 @@ function ligarPedido() {
       if (v.toLowerCase().includes(x.toLowerCase())) v = v.split(/;\s*/).filter(s => s.toLowerCase() !== x.toLowerCase()).join('; ');
       else v = v ? v + '; ' + x : x;
       obs.value = v.slice(0, 300); marcarTags(); }
+    else if (e.target.closest('[data-rem]')) { PED.itens.splice(Number(e.target.closest('[data-rem]').dataset.rem), 1); renderOpcoes(); }
+    else if (e.target.closest('#ped-mais')) adicionarPrato();
     else if (e.target.closest('#ped-enviar')) enviarPedido();
   });
   obs.addEventListener('input', marcarTags);
