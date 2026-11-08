@@ -153,6 +153,23 @@ aside nav>div:hover{background:#04315a!important;transform:scale(1.03)}
 @media (max-width:1100px){.cr-fech{grid-template-columns:repeat(4,minmax(0,1fr))}.cr-resumo-l{margin-left:0}}
 @media (max-width:640px){.cr-fech{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* ── fim crediário compacto ── */
+/* ── histórico mensal ── */
+.hm-gm{grid-template-columns:minmax(112px,1.3fr) 52px repeat(11,minmax(66px,1fr));gap:8px}
+.hm-gd{grid-template-columns:70px 36px 50px repeat(10,minmax(64px,1fr)) minmax(70px,.9fr);gap:8px}
+.hm-gv{grid-template-columns:76px 46px 62px minmax(0,1.2fr) 76px minmax(0,2.1fr) 120px 92px 100px}
+.cr-clic{cursor:pointer}
+.cr-clic:focus-visible{outline:2px solid #54ACBF;outline-offset:-2px}
+.hm-atual{box-shadow:inset 3px 0 0 #54ACBF;background:rgba(84,172,191,.06)}
+.hm-vazio{opacity:.5}
+.hm-dia{font-size:12px;font-weight:600}
+.hm-dom .hm-dia{color:#e5484d}
+.hm-bar{height:7px;border-radius:4px;background:var(--border-soft);overflow:hidden}
+.hm-bar>div{height:100%;border-radius:4px;background:linear-gradient(90deg,#54ACBF,#26658C)}
+.hm-fech{grid-template-columns:repeat(5,minmax(0,1fr))}
+.hm-gm .cr-mono,.hm-gd .cr-mono{font-size:12px}
+.hm-erro{margin:0 0 8px;padding:8px 12px;border-radius:10px;font-size:13px;color:#f3a08c;background:rgba(229,72,77,.1);border:1px solid rgba(229,72,77,.35)}
+@media (max-width:900px){.hm-fech{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* ── fim histórico mensal ── */
 </style>
 <!-- ── React 18.3.1 (local, sem CDN) ── -->
 <script>window.__resources = {};</script>
@@ -3462,55 +3479,122 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
       </sc-if>
       <!-- HISTORICO MENSAL -->
       <sc-if value="{{ isHistorico }}" hint-placeholder-val="{{ false }}">
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
-          <div style="background:#eef6f0;border:1px solid #d3e6da;border-radius:16px;padding:16px 18px">
-            <div style="font-size:12px;color:#4d7a60;text-transform:uppercase;letter-spacing:.06em;font-weight:600">Recebido no mês</div>
-            <div style="font-family:'Space Mono',monospace;font-size:28px;font-weight:700;color:#2f7d4f;margin-top:8px">{{ totalRecebidoMesFmt }}</div>
+        <!-- ── histórico mensal: abas ── -->
+        <div class="cr-top">
+          <div class="cr-abas" role="tablist">
+            <sc-for list="{{ histAbas }}" as="a" hint-placeholder-count="3"><button onclick="{{ a.onClick }}" class="{{ a.cls }}" role="tab">{{ a.label }}<span class="cr-cont">{{ a.n }}</span></button></sc-for>
           </div>
-          <div style="background:#04315a;color:#fff;border-radius:16px;padding:16px 18px">
-            <div style="font-size:12px;color:#b3d6de;text-transform:uppercase;letter-spacing:.06em;font-weight:600">Faturado no mês</div>
-            <div style="font-family:'Space Mono',monospace;font-size:28px;font-weight:700;margin-top:8px">{{ totalFaturadoMesFmt }}</div>
-          </div>
-          <div style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;padding:16px 18px">
-            <div style="font-size:12px;color:#847a6e;text-transform:uppercase;letter-spacing:.06em;font-weight:600">Comprado no mês</div>
-            <div style="font-family:'Space Mono',monospace;font-size:28px;font-weight:700;margin-top:8px">{{ totalCompradoMesFmt }}</div>
+          <div class="cr-resumo-l">
+            <span>Hoje <b>{{ histTopo.hoje }}</b> <small class="cr-sub">{{ histTopo.hojeQtd }}</small></span>
+            <span>A receber <b>{{ histTopo.receber }}</b></span>
+            <span>Devendo <b>{{ histTopo.devendo }}</b></span>
           </div>
         </div>
-        <div style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;overflow:hidden;margin-bottom:16px">
-          <div style="padding:11px 20px;font-weight:600;border-bottom:1px solid var(--border-soft)">Resumo por mês</div>
-          <div style="display:grid;grid-template-columns:1.2fr .9fr .9fr .9fr .8fr .7fr .9fr;gap:12px;padding:12px 22px;background:var(--bg-tablehead);font-size:12px;font-weight:600;color:#847a6e;text-transform:uppercase;letter-spacing:.05em">
-            <div>Mês</div><div style="text-align:right">Recebido</div><div style="text-align:right">Faturado</div><div style="text-align:right">Compras</div><div style="text-align:right">Em aberto</div><div style="text-align:right">Cobr.</div><div style="text-align:right">Motoboys</div>
-          </div>
-          <sc-for list="{{ monthlyRows }}" as="m" hint-placeholder-count="3">
-            <div style="display:grid;grid-template-columns:1.2fr .9fr .9fr .9fr .8fr .7fr .9fr;gap:12px;padding:10px 18px;border-top:1px solid var(--border-soft);align-items:center">
-              <div style="font-weight:600;font-size:14px;text-transform:capitalize">{{ m.month }}</div>
-              <div style="text-align:right;font-family:'Space Mono',monospace;font-size:14px;color:#2f7d4f;font-weight:600">{{ m.recebidoFmt }}</div>
-              <div style="text-align:right;font-family:'Space Mono',monospace;font-size:14px">{{ m.faturadoFmt }}</div>
-              <div style="text-align:right;font-family:'Space Mono',monospace;font-size:14px">{{ m.comprasFmt }}</div>
-              <div style="text-align:right;font-family:'Space Mono',monospace;font-size:14px;color:{{ m.abertoColor }};font-weight:600">{{ m.abertoFmt }}</div>
-              <div style="text-align:right;font-family:'Space Mono',monospace;font-size:14px;color:#847a6e">{{ m.cobrancas }}</div>
-              <div style="text-align:right;font-family:'Space Mono',monospace;font-size:14px">{{ m.motoboysFmt }}</div>
-            </div>
-          </sc-for>
-        </div>
-        <div style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;overflow:hidden">
-          <div style="padding:11px 20px;font-weight:600;border-bottom:1px solid var(--border-soft)">Devedores do mês</div>
-          <div style="display:grid;grid-template-columns:1.6fr 1.1fr 1.3fr 1fr 1fr;gap:12px;padding:12px 22px;background:var(--bg-tablehead);font-size:12px;font-weight:600;color:#847a6e;text-transform:uppercase;letter-spacing:.05em">
-            <div>Cliente</div><div>Tipo</div><div>WhatsApp</div><div style="text-align:right">Saldo</div><div style="text-align:right">Ação</div>
-          </div>
-          <sc-for list="{{ devedoresRows }}" as="c" hint-placeholder-count="3">
-            <div style="display:grid;grid-template-columns:1.6fr 1.1fr 1.3fr 1fr 1fr;gap:12px;padding:10px 18px;border-top:1px solid var(--border-soft);align-items:center">
-              <div style="font-weight:600;font-size:14px">{{ c.name }}</div>
-              <div><span style="{{ c.typeStyle }}">{{ c.typeLabel }}</span></div>
-              <div style="font-size:13px;color:#5f574d;font-family:'Space Mono',monospace">{{ c.phone }}</div>
-              <div style="text-align:right;font-family:'Space Mono',monospace;font-size:14px;color:#b0563f;font-weight:700">{{ c.balanceFmt }}</div>
-              <div style="display:flex;justify-content:flex-end"><button onclick="{{ c.onCharge }}" style="background:#25623f;color:#fff;border:none;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4zm4.5 9.7c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 01-1.9-1.2 7.3 7.3 0 01-1.3-1.7c-.1-.2 0-.4.1-.5l.4-.5c.1-.1.1-.3.2-.4a.4.4 0 000-.4l-.8-1.9c-.2-.4-.4-.4-.5-.4h-.5a.9.9 0 00-.7.3 2.8 2.8 0 00-.9 2.1 5 5 0 001 2.6 11 11 0 004.4 3.9c.6.3 1.1.4 1.5.5.6.2 1.2.2 1.6.1.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.6-.6z"></path></svg>WhatsApp</button></div>
-            </div>
-          </sc-for>
-          <sc-if value="{{ noDevedores }}" hint-placeholder-val="{{ false }}"><div style="padding:20px 22px;color:#9a9084;font-size:14px;border-top:1px solid var(--border-soft)">Nenhum devedor no momento.</div></sc-if>
-        </div>
-      </sc-if>
 
+        <div class="cr-barra cr-periodo">
+          <label class="cr-campo">Mês<input type="month" value="{{ histPer.mes }}" onchange="{{ onHistMes }}"></label>
+          <label class="cr-campo">De<input type="date" value="{{ histPer.de }}" onchange="{{ onHistDe }}"></label>
+          <label class="cr-campo">Até<input type="date" value="{{ histPer.ate }}" onchange="{{ onHistAte }}"></label>
+          <div class="cr-chips"><sc-for list="{{ histPresets }}" as="p" hint-placeholder-count="6"><button onclick="{{ p.onClick }}" class="{{ p.cls }}">{{ p.label }}</button></sc-for></div>
+          <div class="cr-chips" style="margin-left:auto"><button onclick="{{ histImprimir }}" class="cr-b">Imprimir</button><button onclick="{{ histExportar }}" class="cr-b">Exportar planilha</button></div>
+        </div>
+        <sc-if value="{{ histTemErro }}" hint-placeholder-val="{{ false }}"><div class="hm-erro">{{ histErro }}</div></sc-if>
+
+        <div class="cr-fech hm-fech">
+          <div><span>Período</span><b>{{ histPer.label }}</b><small>{{ histPer.nDias }}</small></div>
+          <div><span>Vendas</span><b>{{ histPer.qtd }}</b><small>{{ histPer.diasCom }}</small></div>
+          <div><span>Total vendido</span><b>{{ histPer.total }}</b><small>média {{ histPer.media }} por dia</small></div>
+          <div><span>Ticket médio</span><b>{{ histPer.ticket }}</b><small>maior venda {{ histPer.maior }}</small></div>
+          <div><span>Melhor dia</span><b>{{ histPer.melhor }}</b><small>{{ histPer.melhorDia }}</small></div>
+          <div><span>Pago na hora</span><b class="verde">{{ histPer.avista }}</b><small>dinheiro, PIX, cartão e vale</small></div>
+          <div><span>Na conta</span><b style="color:#e0703a">{{ histPer.conta }}</b><small>para pagar no fim do mês</small></div>
+          <div><span>Recebido da conta</span><b class="verde">{{ histPer.rec }}</b><small>pagamentos do crediário</small></div>
+          <div><span>Motoboys pagos</span><b>{{ histPer.mot }}</b><small>salários e taxas</small></div>
+          <div><span>Caixa líquido</span><b style="color:{{ histPer.caixaCor }}">{{ histPer.caixa }}</b><small>na hora + recebido − motoboys</small></div>
+        </div>
+        <sc-if value="{{ histCarregando }}" hint-placeholder-val="{{ false }}"><div class="cr-info" style="margin:0 0 8px">Carregando do banco…</div></sc-if>
+
+        <!-- Aba: por mês -->
+        <sc-if value="{{ histAbaMes }}" hint-placeholder-val="{{ true }}">
+          <div class="cr-info" style="margin:0 0 6px">Últimos 12 meses até {{ histPer.ateMes }} · valores em R$ · clique num mês para ver dia a dia.</div>
+          <div class="cr-tabela"><div class="cr-in" style="min-width:1010px">
+            <div class="cr-g hm-gm cr-cab"><div>Mês</div><div class="n">Vendas</div><div class="n">Total vendido</div><div class="n">Ticket</div><div class="n">Dinheiro</div><div class="n">PIX</div><div class="n">Débito</div><div class="n">Crédito</div><div class="n">Vale-ref.</div><div class="n">Na conta</div><div class="n">Recebido conta</div><div class="n">Motoboys</div><div class="n">Caixa líquido</div></div>
+            <sc-for list="{{ histMesRows }}" as="m" hint-placeholder-count="6">
+              <div class="{{ m.cls }}" onclick="{{ m.onClick }}" role="button" tabindex="0" title="Ver os dias deste mês">
+                <div class="cr-nome sem">{{ m.mes }}</div>
+                <div class="n cr-mono">{{ m.qtd }}</div>
+                <div class="n cr-mono cr-forte">{{ m.total }}</div>
+                <div class="n cr-mono">{{ m.ticket }}</div>
+                <div class="n cr-mono">{{ m.dinheiro }}</div>
+                <div class="n cr-mono">{{ m.pix }}</div>
+                <div class="n cr-mono">{{ m.debito }}</div>
+                <div class="n cr-mono">{{ m.credito }}</div>
+                <div class="n cr-mono">{{ m.vr }}</div>
+                <div class="n cr-mono" style="color:#e0703a">{{ m.conta }}</div>
+                <div class="n cr-mono" style="color:#3f9d6b">{{ m.rec }}</div>
+                <div class="n cr-mono">{{ m.mot }}</div>
+                <div class="n cr-mono cr-forte" style="color:{{ m.caixaCor }}">{{ m.caixa }}</div>
+              </div>
+            </sc-for>
+            <div class="cr-g hm-gm cr-rod"><div>12 meses</div><div class="n">{{ histMesTot.qtd }}</div><div class="n">{{ histMesTot.total }}</div><div class="n">{{ histMesTot.ticket }}</div><div class="n">{{ histMesTot.dinheiro }}</div><div class="n">{{ histMesTot.pix }}</div><div class="n">{{ histMesTot.debito }}</div><div class="n">{{ histMesTot.credito }}</div><div class="n">{{ histMesTot.vr }}</div><div class="n">{{ histMesTot.conta }}</div><div class="n">{{ histMesTot.rec }}</div><div class="n">{{ histMesTot.mot }}</div><div class="n">{{ histMesTot.caixa }}</div></div>
+          </div></div>
+        </sc-if>
+
+        <!-- Aba: por dia -->
+        <sc-if value="{{ histAbaDia }}" hint-placeholder-val="{{ false }}">
+          <div class="cr-info" style="margin:0 0 6px">Dia a dia de {{ histPer.label }} · valores em R$ · domingos em vermelho.</div>
+          <div class="cr-tabela"><div class="cr-in" style="min-width:1040px">
+            <div class="cr-g hm-gd cr-cab"><div>Data</div><div>Dia</div><div class="n">Vendas</div><div class="n">Total</div><div class="n">Dinheiro</div><div class="n">PIX</div><div class="n">Débito</div><div class="n">Crédito</div><div class="n">Vale-ref.</div><div class="n">Na conta</div><div class="n">Recebido conta</div><div class="n">Motoboys</div><div class="n">Ticket</div><div>Gráfico</div></div>
+            <sc-for list="{{ histDiaRows }}" as="d" hint-placeholder-count="8">
+              <div class="{{ d.cls }}">
+                <div class="cr-mono">{{ d.data }}</div>
+                <div class="hm-dia">{{ d.dia }}</div>
+                <div class="n cr-mono">{{ d.qtd }}</div>
+                <div class="n cr-mono cr-forte">{{ d.total }}</div>
+                <div class="n cr-mono">{{ d.dinheiro }}</div>
+                <div class="n cr-mono">{{ d.pix }}</div>
+                <div class="n cr-mono">{{ d.debito }}</div>
+                <div class="n cr-mono">{{ d.credito }}</div>
+                <div class="n cr-mono">{{ d.vr }}</div>
+                <div class="n cr-mono" style="color:#e0703a">{{ d.conta }}</div>
+                <div class="n cr-mono" style="color:#3f9d6b">{{ d.rec }}</div>
+                <div class="n cr-mono">{{ d.mot }}</div>
+                <div class="n cr-mono">{{ d.ticket }}</div>
+                <div class="hm-bar" title="{{ d.pct }} do maior dia"><div style="width:{{ d.barra }}"></div></div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ noHistDia }}" hint-placeholder-val="{{ false }}"><div class="cr-vazio">Nenhuma venda neste período.</div></sc-if>
+            <div class="cr-g hm-gd cr-rod"><div>Total</div><div></div><div class="n">{{ histDiaTot.qtd }}</div><div class="n">{{ histDiaTot.total }}</div><div class="n">{{ histDiaTot.dinheiro }}</div><div class="n">{{ histDiaTot.pix }}</div><div class="n">{{ histDiaTot.debito }}</div><div class="n">{{ histDiaTot.credito }}</div><div class="n">{{ histDiaTot.vr }}</div><div class="n">{{ histDiaTot.conta }}</div><div class="n">{{ histDiaTot.rec }}</div><div class="n">{{ histDiaTot.mot }}</div><div class="n">{{ histDiaTot.ticket }}</div><div></div></div>
+          </div></div>
+        </sc-if>
+
+        <!-- Aba: vendas -->
+        <sc-if value="{{ histAbaVen }}" hint-placeholder-val="{{ false }}">
+          <div class="cr-barra">
+            <div class="cr-chips"><sc-for list="{{ histFiltros }}" as="f" hint-placeholder-count="6"><button onclick="{{ f.onClick }}" class="{{ f.cls }}">{{ f.label }}</button></sc-for></div>
+            <div class="cr-busca sm"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg><input value="{{ histPer.busca }}" oninput="{{ onHistBusca }}" placeholder="Cliente, item ou nº"></div>
+            <span class="cr-info">{{ histVenTot.mais }}</span>
+          </div>
+          <div class="cr-tabela"><div class="cr-in" style="min-width:1120px">
+            <div class="cr-g hm-gv cr-cab"><div>Data</div><div>Hora</div><div>Nº</div><div>Cliente</div><div>Origem</div><div>Itens</div><div>Forma</div><div>Status</div><div class="n">Valor</div></div>
+            <sc-for list="{{ histVenRows }}" as="v" hint-placeholder-count="8">
+              <div class="cr-g hm-gv cr-lin">
+                <div class="cr-mono">{{ v.data }}</div>
+                <div class="cr-mono cr-sub">{{ v.hora }}</div>
+                <div class="cr-mono cr-sub">{{ v.ref }}</div>
+                <div class="cr-nome sem">{{ v.cliente }}</div>
+                <div class="cr-sub2">{{ v.origem }}</div>
+                <div class="cr-desc" title="{{ v.itens }}">{{ v.itens }}</div>
+                <div><span class="cr-tag" style="{{ v.formaStyle }}">{{ v.forma }}</span></div>
+                <div class="cr-sub2" style="color:{{ v.statusCor }}">{{ v.status }}</div>
+                <div class="n cr-mono cr-forte">{{ v.valor }}</div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ noHistVen }}" hint-placeholder-val="{{ false }}"><div class="cr-vazio">Nenhuma venda neste período.</div></sc-if>
+            <div class="cr-g hm-gv cr-rod"><div>Total</div><div></div><div></div><div>{{ histVenTot.qtd }}</div><div></div><div></div><div></div><div></div><div class="n">{{ histVenTot.total }}</div></div>
+          </div></div>
+        </sc-if>
+      </sc-if>
       <!-- ENTREGAS -->
       <sc-if value="{{ isEntregas }}" hint-placeholder-val="{{ false }}">
         <sc-if value="{{ hasMotoboyQueue }}" hint-placeholder-val="{{ false }}">
@@ -5643,6 +5727,7 @@ class Component extends DCLogic {
     }; });
     this.setState({ orders });
     if (this._dashDia !== today) this.loadDashStats();
+    this._hmKeyRes = null; this._hmKeyVen = null; // o Histórico mensal recarrega se estiver aberto
   };
 
   loadPacotes = async () => {
@@ -5692,10 +5777,32 @@ class Component extends DCLogic {
         desc: (en&&cn?'Consumo de '+cn+(h.descricao?' · ':''):'')+(h.descricao||'') }; }) });
   };
 
+  // ── Histórico mensal: carga ──
+  loadHistResumo = async (de, ate, chave) => {
+    const { data, error } = await sb.rpc('rest_vendas_por_dia', { p_de: de, p_ate: ate });
+    if (error) { console.error(error); this.setState({ histErro: 'Não foi possível carregar o histórico: ' + error.message, histResumoKey: chave }); return; }
+    if (this._hmKeyRes !== chave) return; // o período mudou enquanto carregava
+    this.setState({ histResumo: (data || []).map(r => ({ dia: r.dia, forma: r.forma, origem: r.origem, qtd: Number(r.qtd) || 0, total: Number(r.total) || 0 })), histResumoKey: chave, histErro: '' });
+  };
+  loadHistVendas = async (de, ate, chave) => {
+    let linhas = [];
+    for (let i = 0; i < 20000; i += 1000) {
+      const { data, error } = await sb.from('rest_pedidos').select('id,numero_ref,data,created_at,total,forma_pagamento,origem,status,nome_cliente,cliente_id,empresa_id,rest_pedido_itens(descricao,quantidade)')
+        .gte('data', de).lte('data', ate).order('created_at', { ascending: false }).range(i, i + 999);
+      if (error) { console.error(error); this.setState({ histErro: 'Não foi possível carregar as vendas: ' + error.message, histVendasKey: chave }); return; }
+      linhas = linhas.concat(data || []); if (!data || data.length < 1000) break;
+    }
+    if (this._hmKeyVen !== chave) return;
+    this.setState({ histVendasKey: chave, histErro: '', histVendas: linhas.map(o => ({ id: o.id, ref: o.numero_ref || '', iso: o.data, ts: o.created_at || '',
+      hora: o.created_at ? new Date(o.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '', total: Number(o.total) || 0,
+      forma: o.forma_pagamento || 'dinheiro', origem: o.origem || 'manual', status: o.status || '', cli: o.cliente_id, emp: o.empresa_id, nome: o.nome_cliente || '',
+      itens: (o.rest_pedido_itens || []).map(i => i.quantidade + 'x ' + i.descricao).join(', ') })) });
+  };
+  // ── fim carga histórico ──
   loadMotoboyPayments = async () => {
     const { data, error } = await sb.from('rest_motoboy_pagamentos').select('id,detalhe,valor,data,rest_motoboys(nome)').order('created_at', { ascending: false }).limit(60);
     if (error) { console.error(error); return; }
-    this.setState({ motoboyPayments: (data||[]).map(p => ({ id: p.id, date: this.fmtDateBR(p.data), motoboy: p.rest_motoboys ? p.rest_motoboys.nome : '—', detail: p.detalhe||'', amount: Number(p.valor)||0 })) });
+    this.setState({ motoboyPayments: (data||[]).map(p => ({ id: p.id, date: this.fmtDateBR(p.data), iso: p.data, motoboy: p.rest_motoboys ? p.rest_motoboys.nome : '—', detail: p.detalhe||'', amount: Number(p.valor)||0 })) });
   };
 
   loadBalcaoItens = async () => {
@@ -7191,6 +7298,123 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const credHandlers={ onCredMes:(e)=>{ const v=e.target.value; if(v) this.setState({credDe:v+'-01',credAte:crFimMes(v)}); }, onCredDe:(e)=>{ if(e.target.value) this.setState({credDe:e.target.value}); },
       onCredAte:(e)=>{ if(e.target.value) this.setState({credAte:e.target.value}); }, onCredBusca:(e)=>this.setState({credBuscaMov:e.target.value}) };
     // ── fim do crediário mensal ──
+    // ── Histórico mensal: abas (por mês, por dia, vendas) ──
+    const hmHoje=this.todayISO(), hmMesIni=hmHoje.slice(0,8)+'01', hmMesAtual=hmHoje.slice(0,7);
+    const hmData=(iso)=>iso?String(iso).slice(8,10)+'/'+String(iso).slice(5,7)+'/'+String(iso).slice(2,4):'—';
+    const hmFimMes=(ym)=>{ const [y,m]=ym.split('-').map(Number); return ym+'-'+String(new Date(Date.UTC(y,m,0)).getUTCDate()).padStart(2,'0'); };
+    const hmMenos=(iso,d)=>new Date(Date.parse(iso+'T12:00:00Z')-d*864e5).toISOString().slice(0,10);
+    const hmMesNome=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    const hmSemNome=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    const hmNomeMes=(ym)=>hmMesNome[parseInt(ym.slice(5,7),10)-1]+'/'+ym.slice(0,4);
+    const hmN=(v)=>Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const hmZ=(v)=>Math.abs(v)<0.005?'—':hmN(v); // tabelas sem o R$ em cada célula (cabeçalho avisa)
+    const hmAba=s.histAba||'mes', hmDemo=s.userEmail==='demonstração';
+    const hmDe=s.histDe||hmMesIni, hmAte=s.histAte||hmHoje;
+    const hmIni12=(()=>{ const [y,m]=hmAte.slice(0,7).split('-').map(Number); return new Date(Date.UTC(y,m-12,1)).toISOString().slice(0,10); })();
+    const hmResIni=hmDe<hmIni12?hmDe:hmIni12;
+    const hmK1=hmResIni+'|'+hmAte, hmK2=hmDe+'|'+hmAte;
+    // busca no banco só quando o período muda (os totais vêm prontos da função rest_vendas_por_dia)
+    if(s.view==='historico'&&!hmDemo){
+      if(this._hmKeyRes!==hmK1){ this._hmKeyRes=hmK1; setTimeout(()=>this.loadHistResumo(hmResIni,hmAte,hmK1),0); }
+      if(hmAba==='vendas'&&this._hmKeyVen!==hmK2){ this._hmKeyVen=hmK2; setTimeout(()=>this.loadHistVendas(hmDe,hmAte,hmK2),0); } }
+    const hmNomeCli=(cid,eid,nome)=>nome||(this.clientName(cid)!=='—'?this.clientName(cid):(this.clientName(eid)!=='—'?this.clientName(eid):'Consumidor'));
+    let hmRes, hmVen;
+    if(hmDemo){
+      const base=[...(s.dashStats||[]).map((o,i)=>({id:'ds'+i,ref:'',iso:o.iso,hora:'',ts:'',total:o.total,forma:o.payment,origem:'balcao',status:o.status,cli:null,emp:null,nome:'',itens:(o.itens||[]).map(x=>x.q+'x '+x.d).join(', ')})),
+        ...s.orders.filter(o=>o.today).map(o=>({id:o.dbId,ref:o.id,iso:hmHoje,hora:'',ts:'',total:o.total,forma:o.payment,origem:o.kind==='balcao'?'balcao':'manual',status:o.status,cli:o.clientId,emp:o.empresaId,nome:o.waClient||'',itens:o.items}))];
+      const ag={}; base.forEach(v=>{ const k=v.iso+'|'+v.forma+'|'+v.origem; const g=ag[k]||(ag[k]={dia:v.iso,forma:v.forma,origem:v.origem,qtd:0,total:0}); g.qtd++; g.total+=v.total; });
+      hmRes=Object.values(ag); hmVen=base.filter(v=>v.iso>=hmDe&&v.iso<=hmAte);
+    } else { hmRes=s.histResumo||[]; hmVen=(s.histVendas||[]).filter(v=>v.iso>=hmDe&&v.iso<=hmAte); }
+    const hmF=['dinheiro','pix','debito','credito','vr','crediario'];
+    const hmGrupo=()=>({qtd:0,total:0,f:{dinheiro:0,pix:0,debito:0,credito:0,vr:0,crediario:0},outros:0,rec:0,mot:0,maior:0});
+    const hmSoma=(g,r)=>{ const v=Number(r.total)||0, q=Number(r.qtd)||0; g.qtd+=q; g.total+=v; if(g.f[r.forma]!==undefined) g.f[r.forma]+=v; else g.outros+=v; };
+    const hmJunta=(dst,g)=>{ dst.qtd+=g.qtd; dst.total+=g.total; hmF.forEach(f=>{ dst.f[f]+=g.f[f]; }); dst.outros+=g.outros; dst.rec+=g.rec; dst.mot+=g.mot; };
+    const hmIsoDe=(x)=>x.iso||(hmHoje.slice(0,4)+'-'+((x.date||'').split('/')[1]||'01')+'-'+((x.date||'').split('/')[0]||'01'));
+    const hmPags=(s.crediarioHistory||[]).filter(h=>h.type==='Pagamento').map(h=>({iso:hmIsoDe(h),v:Number(h.amount)||0}));
+    const hmMots=(s.motoboyPayments||[]).map(p=>({iso:hmIsoDe(p),v:Number(p.amount)||0}));
+    const hmCaixa=(g)=>Math.round((g.total-g.f.crediario+g.rec-g.mot)*100)/100;
+    const hmValores=(g)=>{ const cx=hmCaixa(g); return { qtd:g.qtd?String(g.qtd):'—', total:hmZ(g.total), ticket:g.qtd?hmN(g.total/g.qtd):'—', dinheiro:hmZ(g.f.dinheiro), pix:hmZ(g.f.pix), debito:hmZ(g.f.debito),
+      credito:hmZ(g.f.credito), vr:hmZ(g.f.vr), conta:hmZ(g.f.crediario), rec:hmZ(g.rec), mot:hmZ(g.mot), caixa:Math.abs(cx)<0.005?'—':(cx<0?'−':'')+hmN(Math.abs(cx)), caixaCor:cx<0?'#e5484d':'#3f9d6b' }; };
+    // por mês (12 meses até o mês de "Até")
+    const hmMeses=[]; { let [y,m]=hmIni12.slice(0,7).split('-').map(Number); for(let i=0;i<12;i++){ hmMeses.push(y+'-'+String(m).padStart(2,'0')); m++; if(m>12){ m=1; y++; } } }
+    const hmPorMes={}; hmMeses.forEach(ym=>{ hmPorMes[ym]=hmGrupo(); });
+    hmRes.forEach(r=>{ const g=hmPorMes[String(r.dia).slice(0,7)]; if(g) hmSoma(g,r); });
+    hmPags.forEach(p=>{ const g=hmPorMes[p.iso.slice(0,7)]; if(g) g.rec+=p.v; });
+    hmMots.forEach(p=>{ const g=hmPorMes[p.iso.slice(0,7)]; if(g) g.mot+=p.v; });
+    const histMesRows=hmMeses.slice().reverse().map(ym=>({ mes:hmNomeMes(ym), ...hmValores(hmPorMes[ym]), cls:'cr-g hm-gm cr-lin cr-clic'+(ym===hmMesAtual?' hm-atual':'')+(hmPorMes[ym].qtd?'':' hm-vazio'),
+      onClick:()=>this.setState({histAba:'dia',histDe:ym+'-01',histAte:ym===hmMesAtual?hmHoje:hmFimMes(ym)}) }));
+    const hmTot12=hmGrupo(); hmMeses.forEach(ym=>hmJunta(hmTot12,hmPorMes[ym]));
+    const histMesTot=hmValores(hmTot12);
+    // por dia (período De–Até)
+    const hmPorDia={}, hmDiaG=(d)=>hmPorDia[d]||(hmPorDia[d]=hmGrupo());
+    hmRes.forEach(r=>{ const d=String(r.dia).slice(0,10); if(d>=hmDe&&d<=hmAte) hmSoma(hmDiaG(d),r); });
+    hmPags.forEach(p=>{ if(p.iso>=hmDe&&p.iso<=hmAte) hmDiaG(p.iso).rec+=p.v; });
+    hmMots.forEach(p=>{ if(p.iso>=hmDe&&p.iso<=hmAte) hmDiaG(p.iso).mot+=p.v; });
+    const hmNDias=Math.round((Date.parse(hmAte+'T12:00:00Z')-Date.parse(hmDe+'T12:00:00Z'))/864e5)+1;
+    const hmDias=hmNDias>0&&hmNDias<=92?Array.from({length:hmNDias},(_,i)=>hmMenos(hmAte,i)):Object.keys(hmPorDia).sort().reverse();
+    const hmMaxDia=Math.max(1,...hmDias.map(d=>hmPorDia[d]?hmPorDia[d].total:0));
+    const histDiaRows=hmDias.map(d=>{ const g=hmPorDia[d]||hmGrupo(), dow=new Date(d+'T12:00:00Z').getUTCDay(), p=Math.round(g.total/hmMaxDia*100);
+      return { data:hmData(d), dia:hmSemNome[dow], ...hmValores(g), barra:p+'%', pct:p+'%', cls:'cr-g hm-gd cr-lin'+(g.qtd||g.rec||g.mot?'':' hm-vazio')+(dow===0?' hm-dom':'')+(d===hmHoje?' hm-atual':'') }; });
+    const hmPer=hmGrupo(); Object.keys(hmPorDia).forEach(d=>hmJunta(hmPer,hmPorDia[d]));
+    const histDiaTot=hmValores(hmPer);
+    const hmComVenda=Object.keys(hmPorDia).filter(d=>hmPorDia[d].qtd>0);
+    const hmMelhor=hmComVenda.slice().sort((a,b)=>hmPorDia[b].total-hmPorDia[a].total)[0];
+    // vendas (lista)
+    const hmOrigem=(o)=>({balcao:'Caixa',manual:'Pedido',whatsapp:'WhatsApp'}[o]||(o?o.charAt(0).toUpperCase()+o.slice(1):'—'));
+    const hmStatus=(st)=>({entregue:'Concluído',aberto:'Em aberto',recusado:'Recusado',cancelado:'Cancelado'}[st]||st||'—');
+    const hmFiltro=s.histFiltro||'todas', hmQ=(s.histBusca||'').trim().toLowerCase();
+    const hmFormasDo={dinheiro:['dinheiro'],pix:['pix'],cartao:['debito','credito'],vr:['vr'],conta:['crediario']};
+    const hmVenVis=hmVen.map(v=>({...v,cliente:hmNomeCli(v.cli,v.emp,v.nome)}))
+      .filter(v=>(hmFiltro==='todas'||(hmFormasDo[hmFiltro]||[]).includes(v.forma))&&(!hmQ||v.cliente.toLowerCase().includes(hmQ)||String(v.itens||'').toLowerCase().includes(hmQ)||String(v.ref||'').toLowerCase().includes(hmQ)))
+      .sort((a,b)=>(b.iso+(b.ts||'')).localeCompare(a.iso+(a.ts||'')));
+    const hmCorForma={dinheiro:'#3f9d6b',pix:'#14b8a6',debito:'#5b8def',credito:'#8b5cf6',vr:'#d0892b',crediario:'#e0703a'};
+    const histVenRows=hmVenVis.slice(0,1500).map(v=>{ const cor=hmCorForma[v.forma]||'#8a94a6';
+      return { data:hmData(v.iso), hora:v.hora||'', ref:v.ref||'—', cliente:v.cliente, origem:hmOrigem(v.origem), itens:v.itens||'—', forma:this.payLabel(v.forma), formaStyle:'color:'+cor+';border-color:'+cor,
+        status:hmStatus(v.status), statusCor:v.status==='entregue'?'#3f9d6b':(v.status==='aberto'?'#d0892b':'#8a94a6'), valor:brl(v.total) }; });
+    const histVenTot={ qtd:hmVenVis.length+(hmVenVis.length===1?' venda':' vendas'), total:brl(hmVenVis.reduce((a,v)=>a+v.total,0)), mais:hmVenVis.length>1500?'Mostrando as 1.500 mais recentes; use o período ou a busca para achar as outras.':'' };
+    // faixa do período, topo, abas e atalhos
+    const hmCx=hmCaixa(hmPer), hmMaiorVenda=hmVen.reduce((a,v)=>Math.max(a,v.total),0);
+    const histPer={ de:hmDe, ate:hmAte, mes:hmDe.slice(0,7), busca:s.histBusca||'', label:hmData(hmDe)+' a '+hmData(hmAte), nDias:hmNDias+(hmNDias===1?' dia':' dias'), ateMes:hmNomeMes(hmAte.slice(0,7)),
+      qtd:String(hmPer.qtd), diasCom:hmComVenda.length+(hmComVenda.length===1?' dia com venda':' dias com venda'), total:brl(hmPer.total), media:brl(hmComVenda.length?hmPer.total/hmComVenda.length:0),
+      ticket:brl(hmPer.qtd?hmPer.total/hmPer.qtd:0), maior:hmMaiorVenda?brl(hmMaiorVenda):(hmAba==='vendas'?'—':'(veja a aba Vendas)'),
+      melhor:hmMelhor?brl(hmPorDia[hmMelhor].total):'—', melhorDia:hmMelhor?hmSemNome[new Date(hmMelhor+'T12:00:00Z').getUTCDay()]+' '+hmData(hmMelhor):'sem vendas',
+      avista:brl(hmPer.total-hmPer.f.crediario), conta:brl(hmPer.f.crediario), rec:brl(hmPer.rec), mot:brl(hmPer.mot), caixa:(hmCx<0?'− ':'')+brl(Math.abs(hmCx)), caixaCor:hmCx<0?'#e5484d':'#3f9d6b' };
+    const hmHojeOrd=s.orders.filter(o=>o.today);
+    const histTopo={ hoje:brl(hmHojeOrd.reduce((a,o)=>a+o.total,0)), hojeQtd:'('+hmHojeOrd.length+(hmHojeOrd.length===1?' venda)':' vendas)'),
+      receber:brl(s.clients.reduce((a,c)=>a+(c.balance>0?c.balance:0),0)), devendo:String(s.clients.filter(c=>c.balance>0).length) };
+    const hmAbaCls=(id)=>'cr-aba'+(hmAba===id?' on':'');
+    const histAbas=[['mes','Por mês','12'],['dia','Por dia',String(hmComVenda.length)],['vendas','Vendas',String(hmPer.qtd)]].map(([id,label,n])=>({label,n,cls:hmAbaCls(id),onClick:()=>this.setState({histAba:id})}));
+    const hmAnoIni=hmHoje.slice(0,4)+'-01-01';
+    const hmPres=[['Hoje',hmHoje,hmHoje],['7 dias',hmMenos(hmHoje,6),hmHoje],['Este mês',hmMesIni,hmHoje],['Mês passado',hmMenos(hmMesIni,1).slice(0,8)+'01',hmMenos(hmMesIni,1)],['90 dias',hmMenos(hmHoje,89),hmHoje],['Este ano',hmAnoIni,hmHoje]];
+    const histPresets=hmPres.map(([label,de,ate])=>({label,cls:'cr-chip'+(de===hmDe&&ate===hmAte?' on':''),onClick:()=>this.setState({histDe:de,histAte:ate})}));
+    const histFiltros=[['todas','Todas'],['dinheiro','Dinheiro'],['pix','PIX'],['cartao','Cartão'],['vr','Vale-refeição'],['conta','Na conta']].map(([id,label])=>({label,cls:'cr-chip'+(hmFiltro===id?' on':''),onClick:()=>this.setState({histFiltro:id})}));
+    // imprimir / exportar a aba aberta
+    const hmCabV=['Total','Dinheiro','PIX','Débito','Crédito','Vale-refeição','Na conta','Recebido da conta','Motoboys'];
+    const hmLinV=(r)=>[r.total,r.dinheiro,r.pix,r.debito,r.credito,r.vr,r.conta,r.rec,r.mot];
+    const hmTabela=()=>{
+      if(hmAba==='dia') return { titulo:'Histórico por dia · '+histPer.label, cab:['Data','Dia','Vendas',...hmCabV,'Ticket'],
+        linhas:[...histDiaRows.map(r=>[r.data,r.dia,r.qtd,...hmLinV(r),r.ticket]),['Total','',histDiaTot.qtd,...hmLinV(histDiaTot),histDiaTot.ticket]] };
+      if(hmAba==='vendas') return { titulo:'Vendas · '+histPer.label, cab:['Data','Hora','Nº','Cliente','Origem','Itens','Forma','Status','Valor'],
+        linhas:[...histVenRows.map(r=>[r.data,r.hora,r.ref,r.cliente,r.origem,r.itens,r.forma,r.status,r.valor]),['Total','','',histVenTot.qtd,'','','','',histVenTot.total]] };
+      return { titulo:'Histórico por mês · 12 meses até '+histPer.ateMes, cab:['Mês','Vendas','Total vendido','Ticket','Dinheiro','PIX','Débito','Crédito','Vale-refeição','Na conta','Recebido da conta','Motoboys','Caixa líquido'],
+        linhas:[...histMesRows.map(r=>[r.mes,r.qtd,r.total,r.ticket,r.dinheiro,r.pix,r.debito,r.credito,r.vr,r.conta,r.rec,r.mot,r.caixa]),
+          ['12 meses',histMesTot.qtd,histMesTot.total,histMesTot.ticket,histMesTot.dinheiro,histMesTot.pix,histMesTot.debito,histMesTot.credito,histMesTot.vr,histMesTot.conta,histMesTot.rec,histMesTot.mot,histMesTot.caixa]] }; };
+    const histExportar=()=>{ const tb=hmTabela(), q=(v)=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"', nl=String.fromCharCode(13,10);
+      const csv=String.fromCharCode(0xFEFF)+[tb.cab,...tb.linhas].map(l=>l.map(q).join(';')).join(nl);
+      const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); a.download='historico_'+hmAba+'_'+hmDe+'_a_'+hmAte+'.csv';
+      document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500); };
+    const histImprimir=()=>{ const tb=hmTabela(), E=(v)=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+      const resumo='Vendas '+histPer.qtd+' · total '+histPer.total+' · ticket '+histPer.ticket+' · pago na hora '+histPer.avista+' · na conta '+histPer.conta+' · recebido da conta '+histPer.rec+' · motoboys '+histPer.mot+' · caixa líquido '+histPer.caixa;
+      const corpo='<h2>'+E(Component.EMPRESA.nome)+' · '+E(tb.titulo)+'</h2><p>'+E(resumo)+'</p><table><tr>'+tb.cab.map(c=>'<th>'+E(c)+'</th>').join('')+'</tr>'+
+        tb.linhas.map((l,i)=>'<tr'+(i===tb.linhas.length-1?' class="t"':'')+'>'+l.map(v=>'<td>'+E(v)+'</td>').join('')+'</tr>').join('')+'</table>';
+      const doc='<html><head><meta charset="utf-8"><title>Histórico</title><style>@page{size:landscape;margin:10mm}body{font-family:Arial,sans-serif;font-size:10.5px}h2{margin:0 0 4px;font-size:15px}p{margin:0 0 8px;color:#333}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #ccc;padding:3px 5px;text-align:left;white-space:nowrap}th{background:#eee}tr.t td{font-weight:700;border-top:2px solid #333}</style></head><body>'+corpo+'</body></html>';
+      const ifr=document.createElement('iframe'); ifr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0'; document.body.appendChild(ifr);
+      const dd=ifr.contentWindow.document; dd.open(); dd.write(doc); dd.close(); setTimeout(()=>{ try{ ifr.contentWindow.focus(); ifr.contentWindow.print(); }catch(e){} setTimeout(()=>ifr.remove(),1500); },350); };
+    const histHandlers={ onHistMes:(e)=>{ const v=e.target.value; if(v) this.setState({histDe:v+'-01',histAte:v===hmMesAtual?hmHoje:hmFimMes(v)}); },
+      onHistDe:(e)=>{ if(e.target.value) this.setState({histDe:e.target.value}); }, onHistAte:(e)=>{ if(e.target.value) this.setState({histAte:e.target.value}); },
+      onHistBusca:(e)=>this.setState({histBusca:e.target.value}) };
+    const histCarregando=!hmDemo&&(s.histResumoKey!==hmK1||(hmAba==='vendas'&&s.histVendasKey!==hmK2))&&!s.histErro;
+    // ── fim do histórico mensal ──
 
     // Relatório mensal
     const MES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
@@ -7373,7 +7597,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const themeIcon=dark?'M12 3v1 M12 20v1 M5.6 5.6l.7.7 M17.7 17.7l.7.7 M3 12h1 M20 12h1 M5.6 18.4l.7-.7 M17.7 6.3l.7-.7 M12 8a4 4 0 100 8 4 4 0 000-8z':'M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z';
     const themeLabel=dark?'Modo claro':'Modo escuro';
     const heroSub=(n=>n+(n===1?' pedido hoje · ':' pedidos hoje · '))(s.orders.filter(o=>o.today).length)+brl(totalReceber)+' a receber · '+pendingDel.length+' entrega(s) pendente(s)';
-    const titles={dashboard:['Dashboard','Visão geral do restaurante hoje'],whatsapp:['WhatsApp','Conversas com clientes pelo WhatsApp do restaurante'],clientes:['Clientes','Pessoas físicas, empresas e funcionários'],empresas:['Empresas & Funcionários','Registro de empresa e de funcionário'],lancamento:['Lançamento do dia','Conta por pessoa: prato, doceria, refrigerante e suco no balcão'],pedidos:['Pedidos','Todos os pedidos lançados'],crediario:['Crediário','Contas mensais, histórico e fechamento'],entregas:['Entregas','Registro, encerramento e taxas'],motoboys:['Motoboys','Salários, taxas e pagamentos'],estoque:['Estoque','Entradas, baixas e alertas'],historico:['Histórico mensal','Recebidos, faturados e devedores por mês'],doacoes:['Doações','Registro do que o restaurante doou'],cardapio:['Cardápio do Dia','Produtos disponíveis para venda hoje']};
+    const titles={dashboard:['Dashboard','Visão geral do restaurante hoje'],whatsapp:['WhatsApp','Conversas com clientes pelo WhatsApp do restaurante'],clientes:['Clientes','Pessoas físicas, empresas e funcionários'],empresas:['Empresas & Funcionários','Registro de empresa e de funcionário'],lancamento:['Lançamento do dia','Conta por pessoa: prato, doceria, refrigerante e suco no balcão'],pedidos:['Pedidos','Todos os pedidos lançados'],crediario:['Crediário','Contas em aberto, quitadas e movimentações'],entregas:['Entregas','Registro, encerramento e taxas'],motoboys:['Motoboys','Salários, taxas e pagamentos'],estoque:['Estoque','Entradas, baixas e alertas'],historico:['Histórico mensal','Vendas por mês, por dia e venda a venda'],doacoes:['Doações','Registro do que o restaurante doou'],cardapio:['Cardápio do Dia','Produtos disponíveis para venda hoje']};
     const actionMap={clientes:['Novo cliente','client'],empresas:['Nova empresa','empresa'],pedidos:['Novo pedido','order'],entregas:['Registrar entrega','delivery'],motoboys:['Novo motoboy','motoboy'],estoque:['Nova entrada','stock'],doacoes:['Registrar doação','doacao']};
     const act=actionMap[s.view];
 
@@ -7437,6 +7661,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       motoboyRows, motoboyPaymentRows, crediarioHistoryRows, credAbas, credResumo, credAbaAberto:crAba==='aberto', credAbaQuit:crAba==='quitados', credAbaMov:crAba==='mov', credAbertoRows, credQuitRows, noQuit:credQuitRows.length===0, credMovRows, noMov:credMovRows.length===0, credPer, credPresets, credFiltros, credExportar, credImprimir, ...credHandlers,
       stockRows, stockHistoryRows, lowStock, noLowStock:lowStock.length===0, hasLowStock:lowStock.length>0, lowStockMsg:lowStock.map(x=>x.product).join(', ')+(lowStock.length===1?' está abaixo do mínimo.':' estão abaixo do mínimo.'),
       paymentBreakdown,
+      histAbas, histTopo, histPer, histPresets, histFiltros, histAbaMes:hmAba==='mes', histAbaDia:hmAba==='dia', histAbaVen:hmAba==='vendas', histMesRows, histMesTot, histDiaRows, histDiaTot, noHistDia:hmPer.qtd===0, histVenRows, histVenTot, noHistVen:histVenRows.length===0, histExportar, histImprimir, ...histHandlers, histCarregando, histTemErro:!!s.histErro, histErro:s.histErro||'',
       totalReceberFmt:brl(totalReceber),
       regionCards:[{name:'Região',feeFmt:brl(10)},{name:'Jordanésia',feeFmt:brl(15)},{name:'Polvilho',feeFmt:brl(15)}],
       menuEleganteAberto:s.modal==='menuPreview', menuElegante, fecharMenuElegante:()=>this.setState({modal:null}),
