@@ -30,6 +30,15 @@
           "value": "strict-origin-when-cross-origin"
         }
       ]
+    },
+    {
+      "source": "/sistema(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
     }
   ]
 }
