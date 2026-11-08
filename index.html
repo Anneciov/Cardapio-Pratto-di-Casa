@@ -368,6 +368,7 @@
   .especial .ev{display:flex;gap:14px;flex-wrap:wrap}
   .especial .ev span{font:600 20px Oswald}
   .especial .ev span i{font-style:normal;color:var(--laranja);margin-right:5px;font-size:15px}
+  .local-pix b{font:700 13.5px 'Space Mono',monospace;letter-spacing:.02em;color:var(--texto)}.pix-copiar{margin-left:6px;padding:4px 10px;border-radius:999px;border:1px solid var(--laranja2);background:transparent;color:var(--laranja2);font:600 12px inherit;cursor:pointer;transition:background .15s,color .15s}.pix-copiar:hover{background:var(--laranja2);color:#111}.pix-copiar:focus-visible{outline:2px solid var(--laranja2);outline-offset:2px}
   footer{padding:20px 28px 30px;border-top:1px solid var(--linha);display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between;color:var(--suave);font-size:13.5px;line-height:1.5}
   footer a{color:var(--laranja2);text-decoration:none}
   .cred{margin-top:6px;font-size:11.5px;text-align:left}.cred summary{cursor:pointer;color:var(--suave);text-align:right}.cred div{margin-top:4px;color:#7d858f}
@@ -402,6 +403,7 @@
 <script>
 // Cardápio do dia, publicado pelo sistema do restaurante (Supabase Storage, leitura pública).
 const DADOS_URL = 'https://avqytrvpmomtxehjzosq.supabase.co/storage/v1/object/public/cardapio/cardapio-hoje.json';
+const PIX_CNPJ = '47.765.501/0001-22'; // chave PIX do restaurante
 const WHATSAPP_CARDAPIO = '(11) 4446-6132'; // telefone dos pedidos (vale mesmo que o cardápio publicado traga outro)
 const PADRAO = { // usado se ainda não houver cardápio publicado (cardápio original)
   empresa:{ nome:'Pratto di Casa', endereco:'R. Alexandrino Pinto da Silva, 262 - Centro, Cajamar/SP', whatsapp:'(11) 4446-6132' },
@@ -722,6 +724,7 @@ function ligarPedido() {
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !f.hidden) fecharPedido(); });
 }
 // qualquer botão "Pedir" da página abre o montador do pedido
+document.addEventListener('click', async (e) => { const b = e.target.closest('.pix-copiar'); if (!b) return; try { await navigator.clipboard.writeText(b.dataset.pix); } catch (_) { const t = document.createElement('textarea'); t.value = b.dataset.pix; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (_) {} t.remove(); } b.textContent = 'Copiado!'; setTimeout(() => { b.textContent = 'Copiar'; }, 1800); });
 document.addEventListener('click', (e) => { const el = e.target.closest('[data-pedir]'); if (!el || !DADOS) return; e.preventDefault(); abrirPedido(el.dataset.pedir || '', el.dataset.prato || '', el.dataset.g || '', !!el.dataset.especial); });
 document.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.item[data-pedir], li[data-pedir], .fitbox')) { e.preventDefault(); e.target.click(); } });
 function montar(d) {
@@ -766,7 +769,7 @@ function montar(d) {
   ${emp.endereco ? `<section class="bloco entra" id="sec-local"><div class="titulo"><h3>Onde <em>estamos</em></h3></div>
     <div class="local">
       <div class="local-pin" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0114 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.6"/></svg></div>
-      <div class="local-txt"><b>${esc(emp.endereco.split(' - ')[0])}</b><span>${esc(emp.endereco.split(' - ').slice(1).join(' - '))}</span>${emp.whatsapp ? `<span class="local-tel">📲 WhatsApp ${esc(emp.whatsapp)}</span>` : ''}</div>
+      <div class="local-txt"><b>${esc(emp.endereco.split(' - ')[0])}</b><span>${esc(emp.endereco.split(' - ').slice(1).join(' - '))}</span>${emp.whatsapp ? `<span class="local-tel">📲 WhatsApp ${esc(emp.whatsapp)}</span>` : ''}<span class="local-tel local-pix">💠 PIX (CNPJ) <b>${PIX_CNPJ}</b> <button type="button" class="pix-copiar" data-pix="${PIX_CNPJ.replace(/\D/g, '')}">Copiar</button></span></div>
       <div class="local-acoes">
         <a class="local-btn" href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent((emp.nome || '') + ', ' + emp.endereco)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-8-8 18-2-8z"/></svg>Como chegar</a>
         <a class="local-btn2" href="https://waze.com/ul?q=${encodeURIComponent(emp.endereco)}&navigate=yes" target="_blank" rel="noopener">Abrir no Waze</a>

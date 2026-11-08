@@ -6456,7 +6456,7 @@ class Component extends DCLogic {
         '<div class="cx-acoes">'+voltar+confirmar('Confirmar')+'</div></div>'; return; }
     if(cx.modo==='confirmar'){ const pix=cx.pag==='pix';
       p.innerHTML='<div class="cx-box"><div class="cx-lbl">'+E(this._cxPagLabel[cx.pag])+'</div><div class="cx-big">'+this.brl(total)+'</div>'+
-        '<div class="cx-sub">'+(pix?'Mostre a chave ou o QR do PIX e confirme quando o pagamento cair.':'Passe o valor na maquininha e confirme quando aprovar.')+'</div>'+
+        '<div class="cx-sub">'+(pix?'Chave PIX (CNPJ): 47.765.501/0001-22 — confirme quando o pagamento cair.':'Passe o valor na maquininha e confirme quando aprovar.')+'</div>'+
         '<div class="cx-acoes">'+voltar+confirmar(pix?'PIX recebido':'Pagamento aprovado')+'</div></div>'; return; }
     if(cx.modo==='conta'){ const inf=this._cxCobranca(cx.cliente);
       p.innerHTML='<div class="cx-box"><div class="cx-lbl">Lançar na conta · paga no fim do mês</div>'+
@@ -7033,7 +7033,7 @@ class Component extends DCLogic {
     else { m+='Sem lançamentos no período.\n'; }
     m+='━━━━━━━━━━━━━━━\n';
     m+='*Total a pagar: '+this.brl(c.balance)+'*\n\n';
-    m+='Pagamento via PIX: (11) 4446-6187\n';
+    m+='Pagamento via PIX (CNPJ): 47.765.501/0001-22\n';
     m+='Obrigado pela preferência! 🍽️';
     return m;
   }
