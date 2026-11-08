@@ -92,6 +92,22 @@ aside nav>div:hover{background:#04315a!important;transform:scale(1.03)}
 @media (hover:none){.pd-go{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){[class*="pd-"],[class*="pd-"]::before{transition:none!important}.pd-mini:hover,.pd-ring.pd-tipw:hover,.pd-donut:hover,.pd-bandit:hover .pd-ring{transform:none}}
 /* ── fim do dashboard ── */
+/* ── crediário: histórico mensal ── */
+.cr-mes{border-radius:999px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;transition:background-color .15s ease,border-color .15s ease}
+.cr-mes:hover{border-color:#54ACBF!important}
+.cr-tots{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-soft);border-bottom:1px solid var(--border-soft)}
+.cr-tots>div{background:var(--bg-card);padding:12px 18px}
+.cr-num{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;margin-top:4px}
+.cr-num.sm{font-size:14px;margin-top:0}
+.cr-grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1.3fr) 1fr 1fr 1fr 22px;gap:12px;align-items:center;padding:11px 18px}
+.cr-cab{background:var(--bg-tablehead);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#847a6e;padding-top:9px;padding-bottom:9px}
+.cr-lin{border-top:1px solid var(--border-soft);cursor:pointer;transition:background-color .15s ease}
+.cr-lin:hover,.cr-lin:focus-visible{background:var(--bg-accent-soft)}
+.cr-lin:focus-visible{outline:2px solid #54ACBF;outline-offset:-2px}
+.cr-av{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;background:linear-gradient(135deg,#2dd4bf,#26658C)}
+.cr-item{display:grid;grid-template-columns:70px minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:8px 18px 8px 56px;border-top:1px dashed var(--border-soft);background:var(--bg-accent-soft)}
+@media (max-width:760px){.cr-mov{display:none}.cr-grid{grid-template-columns:minmax(0,1.6fr) 1fr 1fr 1fr 18px}.cr-item{padding-left:18px;grid-template-columns:52px minmax(0,1fr) auto}.cr-item>span{display:none}.cr-tots{grid-template-columns:1fr 1fr 1fr}}
+/* ── fim crediário ── */
 </style>
 <!-- ── React 18.3.1 (local, sem CDN) ── -->
 <script>window.__resources = {};</script>
@@ -3326,16 +3342,43 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           </sc-for>
           <sc-if value="{{ noCrediario }}" hint-placeholder-val="{{ false }}"><div style="padding:18px 22px;color:#9a9084;font-size:14px">Nenhum cliente com saldo em aberto.</div></sc-if>
         </div>
-        <div style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;overflow:hidden">
-          <div style="padding:11px 20px;font-weight:600;border-bottom:1px solid var(--border-soft)">Histórico de faturas e pagamentos</div>
-          <sc-for list="{{ crediarioHistoryRows }}" as="h" hint-placeholder-count="4">
-            <div style="display:grid;grid-template-columns:1fr 1.6fr 1.2fr 1fr;gap:12px;padding:10px 18px;border-top:1px solid var(--border-soft);align-items:center">
-              <div style="font-family:'Space Mono',monospace;font-size:13px;color:#9a9084">{{ h.date }}</div>
-              <div style="font-size:14px;font-weight:500">{{ h.client }}</div>
-              <div><span style="{{ h.tagStyle }}">{{ h.type }}</span></div>
-              <div style="text-align:right;font-family:'Space Mono',monospace;font-size:14px;color:{{ h.color }};font-weight:600">{{ h.amountFmt }}</div>
+        <!-- ── crediário: histórico mensal ── -->
+        <div class="cr-hist" style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;overflow:hidden">
+          <div style="display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border-soft);flex-wrap:wrap">
+            <div><div style="font-weight:700;font-size:15px">Histórico mensal</div><div class="pd-mut" style="font-size:12px;margin-top:2px">Compras na conta e pagamentos de cada cliente, somados por mês</div></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-left:auto">
+              <sc-for list="{{ credMeses }}" as="m" hint-placeholder-count="3"><button onclick="{{ m.onClick }}" class="cr-mes" style="{{ m.style }}">{{ m.label }}</button></sc-for>
             </div>
+          </div>
+          <div class="cr-tots">
+            <div><div class="pd-lbl pd-mut" style="font-size:10px;font-weight:700">Compras na conta</div><div class="cr-num">{{ credMesTot.compras }}</div></div>
+            <div><div class="pd-lbl pd-mut" style="font-size:10px;font-weight:700">Recebido no mês</div><div class="cr-num" style="color:#3f9d6b">{{ credMesTot.pagos }}</div></div>
+            <div><div class="pd-lbl pd-mut" style="font-size:10px;font-weight:700">Clientes</div><div class="cr-num">{{ credMesTot.clientes }}</div></div>
+          </div>
+          <div class="cr-grid cr-cab">
+            <div>Cliente</div><div class="cr-mov">Movimento</div><div style="text-align:right">Compras</div><div style="text-align:right">Pagamentos</div><div style="text-align:right">Saldo do mês</div><div></div>
+          </div>
+          <sc-for list="{{ credHistRows }}" as="h" hint-placeholder-count="4">
+            <sc-if value="{{ h.isHead }}" hint-placeholder-val="{{ true }}">
+              <div class="cr-grid cr-lin" role="button" tabindex="0" onclick="{{ h.onToggle }}" title="Ver os lançamentos">
+                <div style="display:flex;align-items:center;gap:10px;min-width:0"><span class="cr-av">{{ h.inicial }}</span><b style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ h.client }}</b></div>
+                <div class="pd-mut cr-mov" style="font-size:12.5px">{{ h.resumo }}</div>
+                <div class="cr-num sm" style="text-align:right">{{ h.compras }}</div>
+                <div class="cr-num sm" style="text-align:right;color:#3f9d6b">{{ h.pagos }}</div>
+                <div class="cr-num sm" style="text-align:right;color:{{ h.saldoCor }}">{{ h.saldo }}</div>
+                <svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6;transition:transform .2s ease;transform:{{ h.chevron }}"><path d="M6 9l6 6 6-6"></path></svg>
+              </div>
+            </sc-if>
+            <sc-if value="{{ h.isItem }}" hint-placeholder-val="{{ false }}">
+              <div class="cr-item">
+                <div class="pd-mut" style="font-family:'Space Mono',monospace;font-size:12px">{{ h.date }}</div>
+                <div style="font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ h.desc }}</div>
+                <span style="{{ h.tagStyle }}">{{ h.type }}</span>
+                <div style="font-family:'Space Mono',monospace;font-size:13px;font-weight:600;min-width:92px;text-align:right;color:{{ h.color }}">{{ h.amountFmt }}</div>
+              </div>
+            </sc-if>
           </sc-for>
+          <sc-if value="{{ noCredHist }}" hint-placeholder-val="{{ false }}"><div class="pd-mut" style="padding:18px 22px;font-size:14px">Nenhum lançamento neste mês.</div></sc-if>
         </div>
       </sc-if>
 
@@ -5562,10 +5605,13 @@ class Component extends DCLogic {
   };
 
   loadCrediarioHistory = async () => {
-    const { data, error } = await sb.from('rest_crediario_lancamentos').select('id,tipo,valor,data,rest_clientes(nome),rest_empresas(nome)').order('created_at', { ascending: false }).limit(120);
+    const { data, error } = await sb.from('rest_crediario_lancamentos').select('id,tipo,valor,data,descricao,cliente_id,empresa_id,rest_clientes(nome),rest_empresas(nome)').order('created_at', { ascending: false }).limit(1500);
     if (error) { console.error(error); return; }
     const typeLabels = { pagamento: 'Pagamento', fatura_fechada: 'Fatura fechada', cobranca_enviada: 'Cobrança enviada', debito: 'Débito' };
-    this.setState({ crediarioHistory: (data||[]).map(h => ({ id: h.id, date: this.fmtDateBR(h.data), client: (h.rest_clientes && h.rest_clientes.nome) || (h.rest_empresas && h.rest_empresas.nome) || '—', type: typeLabels[h.tipo] || h.tipo, amount: Number(h.valor)||0 })) });
+    // a conta é da empresa quando o lançamento tem empresa (funcionário cuja empresa paga): agrupa na empresa e diz de quem foi o consumo
+    this.setState({ crediarioHistory: (data||[]).map(h => { const cn=h.rest_clientes&&h.rest_clientes.nome, en=h.rest_empresas&&h.rest_empresas.nome;
+      return { id: h.id, date: this.fmtDateBR(h.data), iso: h.data, client: en || cn || '—', who: h.empresa_id || h.cliente_id || null, type: typeLabels[h.tipo] || h.tipo, amount: Number(h.valor)||0,
+        desc: (en&&cn?'Consumo de '+cn+(h.descricao?' · ':''):'')+(h.descricao||'') }; }) });
   };
 
   loadMotoboyPayments = async () => {
@@ -6230,7 +6276,8 @@ class Component extends DCLogic {
     const res={ref,pag,total,recebido,troco,itens,cliente:c?c.name:null,conta:pag==='crediario'?inf.quem.name:null,saldoNovo:pag==='crediario'?inf.saldo+total:null,quando:new Date()};
     if(this._cxDemo()){ const hoje=this.todayISO();
       const o={id:ref,dbId:'cx'+Date.now(),clientId:cid,empresaId:eid,items:desc,total,payment:pag,status:'entregue',today:true,kind:'balcao',date:this.fmtDateBR(hoje),iso:hoje,itensArr:itens.map(x=>({d:x.desc,q:x.qtd}))};
-      this.setState(st=>({orders:[o,...st.orders],clients:pag==='crediario'?st.clients.map(x=>x.id===inf.quem.id?{...x,balance:(x.balance||0)+total}:x):st.clients}));
+      const lanc=pag==='crediario'?[{id:'cxh'+Date.now(),date:this.fmtDateBR(hoje),iso:hoje,client:inf.quem.name,who:inf.quem.id,type:'Débito',amount:total,desc:(inf.emp?'Consumo de '+c.name+' · ':'')+'Caixa '+ref+': '+desc}]:[];
+      this.setState(st=>({orders:[o,...st.orders],crediarioHistory:[...lanc,...(st.crediarioHistory||[])],clients:pag==='crediario'?st.clients.map(x=>x.id===inf.quem.id?{...x,balance:(x.balance||0)+total}:x):st.clients}));
       this._cxGuardarLidas(itens.filter(x=>x.codigo).map(x=>x.codigo)); return res; }
     const { data:ped, error } = await sb.from('rest_pedidos').insert({ numero_ref:ref, cliente_id:cid, empresa_id:eid, origem:'balcao', status:'entregue', total, forma_pagamento:pag,
       entregue_em:new Date().toISOString(), observacoes:recebido!=null?('Caixa: recebido '+this.brl(recebido)+', troco '+this.brl(troco)):'Caixa' }).select('id').single();
@@ -7001,6 +7048,30 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const stockHistoryRows=s.stockHistory.map(h=>({date:h.date,product:h.product,type:h.type==='entrada'?'Entrada':'Baixa',tagStyle:this.tagStyle(h.type),color:h.type==='entrada'?'#3f7d5c':'#26658C',qtyFmt:(h.type==='entrada'?'+':'−')+h.qty}));
 
     const crediarioHistoryRows=s.crediarioHistory.map(h=>({date:h.date,client:h.client,type:h.type,tagStyle:this.tagStyle(h.type),color:h.type==='Pagamento'?'#3f7d5c':'var(--text-primary)',amountFmt:brl(h.amount)}));
+    // ── Crediário: histórico mensal agrupado por cliente ──
+    const crMesNome=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    const crAno=this.todayISO().slice(0,4), crHoje=this.todayISO().slice(0,7);
+    const crMesDe=(h)=>h.iso?String(h.iso).slice(0,7):(crAno+'-'+((h.date||'').split('/')[1]||'01'));
+    const crMeses=[...new Set([crHoje,...s.crediarioHistory.map(crMesDe)])].sort().reverse();
+    const crSel=s.credMes&&crMeses.includes(s.credMes)?s.credMes:crMeses[0];
+    const credMeses=crMeses.slice(0,12).map(m=>{ const on=m===crSel; return { label:crMesNome[parseInt(m.slice(5),10)-1]+'/'+m.slice(0,4), onClick:()=>this.setState({credMes:m}),
+      style:'border:1px solid '+(on?'#26658C':'var(--border-input)')+';background:'+(on?'#26658C':'transparent')+';color:'+(on?'#fff':'var(--text-primary)') }; });
+    const crGrupos={};
+    const crIdPorNome=(n)=>{ const c=s.clients.find(x=>x.name===n); return c?c.id:'nome:'+n; };
+    s.crediarioHistory.filter(h=>crMesDe(h)===crSel).forEach(h=>{ const k=h.who||crIdPorNome(h.client);
+      const g=crGrupos[k]||(crGrupos[k]={k,client:h.client,itens:[],compras:0,nCompras:0,pagos:0,nPagos:0});
+      g.itens.push(h); if(h.type==='Débito'){ g.compras+=h.amount; g.nCompras++; } else if(h.type==='Pagamento'){ g.pagos+=h.amount; g.nPagos++; } });
+    const crAbertos=s.credAberto||{}, credHistRows=[];
+    Object.values(crGrupos).sort((a,b)=>b.compras-a.compras||a.client.localeCompare(b.client)).forEach(g=>{ const chave=crSel+'|'+g.k, ab=!!crAbertos[chave], saldo=Math.round((g.compras-g.pagos)*100)/100;
+      const resumo=[g.nCompras?g.nCompras+(g.nCompras===1?' compra':' compras'):'', g.nPagos?g.nPagos+(g.nPagos===1?' pagamento':' pagamentos'):''].filter(Boolean).join(' · ')||(g.itens.length+(g.itens.length===1?' lançamento':' lançamentos'));
+      credHistRows.push({ isHead:true, isItem:false, client:g.client, inicial:(g.client||'?').slice(0,1).toUpperCase(), resumo, compras:g.compras?brl(g.compras):'—', pagos:g.pagos?brl(g.pagos):'—',
+        saldo:saldo<0?'− '+brl(-saldo):brl(saldo), saldoCor:saldo>0?'#d0892b':'#3f9d6b', chevron:ab?'rotate(180deg)':'none',
+        onToggle:()=>this.setState({credAberto:{...crAbertos,[chave]:!ab}}) });
+      if(ab) g.itens.slice().sort((a,b)=>String(b.iso||b.date).localeCompare(String(a.iso||a.date))).forEach(h=>credHistRows.push({ isHead:false, isItem:true, date:h.date, desc:h.desc||({'Débito':'Compra na conta','Pagamento':'Pagamento recebido'}[h.type]||h.type), type:h.type,
+        tagStyle:this.tagStyle(h.type), color:h.type==='Pagamento'?'#3f9d6b':'var(--text-primary)', amountFmt:brl(h.amount) })); });
+    const crTot=(campo)=>brl(Object.values(crGrupos).reduce((a,g)=>a+g[campo],0));
+    const credMesTot={ compras:crTot('compras'), pagos:crTot('pagos'), clientes:String(Object.keys(crGrupos).length) };
+    // ── fim do crediário mensal ──
 
     // Relatório mensal
     const MES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
@@ -7244,7 +7315,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       metrics, orderRows, recentOrders, clientRows, crediarioRows, debtors, noDebtors:debtors.length===0, noCrediario:crediarioRows.length===0,
       waPendentesRows, hasWaPendentes, emAndamentoRows, hasEmAndamento, concluidosRows, hasConcluidos,
       deliveryRows, pendingDeliveries, pendingCount:pendingDel.length, noPending:pendingDel.length===0,
-      motoboyRows, motoboyPaymentRows, crediarioHistoryRows,
+      motoboyRows, motoboyPaymentRows, crediarioHistoryRows, credMeses, credHistRows, noCredHist:credHistRows.length===0, credMesTot,
       stockRows, stockHistoryRows, lowStock, noLowStock:lowStock.length===0, hasLowStock:lowStock.length>0, lowStockMsg:lowStock.map(x=>x.product).join(', ')+(lowStock.length===1?' está abaixo do mínimo.':' estão abaixo do mínimo.'),
       paymentBreakdown,
       totalReceberFmt:brl(totalReceber),
