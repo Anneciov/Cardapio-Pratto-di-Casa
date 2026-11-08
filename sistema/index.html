@@ -4760,9 +4760,10 @@ class Component extends DCLogic {
       const itens=(s.complementos||[]).filter(c=>ids.includes(c.id)).map(c=>c.nome);
       const v=String(VAL[i.size]||'').trim()||(i.price?Number(i.price).toFixed(2).replace('.',','):'');
       return { nome:i.name, tamanho:i.size, tamanhoNome:NOME[i.size]||i.size, preco:v, foto:i.foto_url||'', itens, obs:i.observacoes||'', tempo:i.tempo_preparo||null }; }); };
+  listaConvenios=()=>{ const l=(this.state.clients||[]).filter(c=>c.type==='Empresa').map(c=>String(c.name||'').trim()).filter(Boolean).sort((a,b)=>a.localeCompare(b,'pt-BR')); this._convPub=JSON.stringify(l); return l; };
   agendarPublicacao=()=>{ clearTimeout(this._pubT); this._pubT=setTimeout(this.publicarCardapio,2000); };
   publicarCardapio=async()=>{ if(this._demo||!sb) return; const a=this.state.arte; if(!a) return; const L=this.mcdSplit;
-    const dados={ v:1, atualizado:new Date().toISOString(), empresa:{...Component.EMPRESA, whatsapp:Component.WHATSAPP_CARDAPIO}, hoje:L(a.hoje), guarnicoes:L(a.guarnicoes), fitness:L(a.fitness), fitnessObs:a.fitnessObs||'', guarnExtra:a.gExtra==null?'1,00':String(a.gExtra).trim(), porcoes:L(a.porcoes).map(x=>this.mcdPorcao(x)).filter(x=>x.nome),
+    const dados={ v:1, atualizado:new Date().toISOString(), empresa:{...Component.EMPRESA, whatsapp:Component.WHATSAPP_CARDAPIO}, hoje:L(a.hoje), guarnicoes:L(a.guarnicoes), fitness:L(a.fitness), fitnessObs:a.fitnessObs||'', guarnExtra:a.gExtra==null?'1,00':String(a.gExtra).trim(), convenios:this.listaConvenios(), porcoes:L(a.porcoes).map(x=>this.mcdPorcao(x)).filter(x=>x.nome),
       precos:{ P:a.pP||'', M:a.pM||'', G:a.pG||'', fitness:a.pFit||'' }, especial:{ nome:a.espNome||'', P:a.eP||'', M:a.eM||'', G:a.eG||'' }, fotos:a.fotos||{},
       // os mesmos pratos cadastrados no sistema (com foto, ingredientes e valor do tamanho), para o site ficar igual ao "Ver Cardápio"
       pratos:this.pratosParaSite() };
@@ -5758,6 +5759,7 @@ class Component extends DCLogic {
     }));
     this.setState({ clients: [...empresas, ...pessoas] });
     this._cliKey = null; // a tela Clientes recarrega o resumo
+    if (this._convPub !== undefined) { const ant = this._convPub; if (JSON.stringify(empresas.map(c=>String(c.name||'').trim()).filter(Boolean).sort((a,b)=>a.localeCompare(b,'pt-BR'))) !== ant) this.agendarPublicacao(); }
   };
 
   // ── Dashboard: histórico dos 29 dias anteriores (hoje vem de loadPedidos); 1x por dia ──

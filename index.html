@@ -248,7 +248,9 @@
   .ped-tag.on{border-style:solid;border-color:var(--laranja);background:rgba(255,122,26,.14);color:#fff}
   #ped-obs{width:100%;resize:vertical;border-radius:14px;border:1.5px solid var(--linha);background:rgba(0,0,0,.28);color:var(--texto);font:500 14.5px/1.45 Inter;padding:12px 14px;outline:none;transition:border-color .2s ease}
   #ped-obs:focus{border-color:var(--laranja)}
-  .ped-end{margin-top:12px}.ped-end[hidden]{display:none}
+  .ped-end{margin-top:12px}.ped-end[hidden]{display:none}.ped-conv{margin-top:12px}.ped-conv[hidden],.end-f[hidden]{display:none}
+  .ped-ent3{grid-template-columns:repeat(3,1fr)}@media (max-width:640px){.ped-ent3{grid-template-columns:1fr}}
+  .end-f select{width:100%;min-height:46px;border-radius:12px;border:1.5px solid var(--linha);background:#15181d;color:var(--texto);font:500 15px Inter;padding:10px 12px;outline:none;transition:border-color .2s ease}.end-f select:focus{border-color:var(--laranja)}
   .end-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 10px;align-items:end}.end-2{grid-column:span 2}
   .end-f{display:flex;flex-direction:column;gap:5px;min-width:0}.end-f span{font:600 12.5px Inter;color:var(--suave)}.end-f em{font-style:normal;font-weight:500;opacity:.75}
   .end-f input{width:100%;min-height:46px;border-radius:12px;border:1.5px solid var(--linha);background:rgba(0,0,0,.28);color:var(--texto);font:500 15px Inter;padding:10px 12px;outline:none;transition:border-color .2s ease}
@@ -677,14 +679,16 @@ async function buscarCep() {
 const focarEndereco = () => { const f = endFaltando()[0] || 'num'; const e = document.getElementById(endCampo('cep') || f !== 'rua' ? 'end-' + f : 'end-cep'); if (e) e.focus({ preventScroll: true }); };
 function faltaEnvio() {
   const f = faltaPedido(); if (f) return f;
-  if (!PED.ent) return { msg: 'entrega ou retirada', err: 'Escolha se é para entregar ou se vai retirar.', sec: 'sec-entrega' };
+  if (!PED.ent) return { msg: 'entrega ou retirada', err: 'Escolha se é para entregar, retirar ou convênio.', sec: 'sec-entrega' };
+  if (PED.ent === 'convenio' && !convEmp()) return { msg: 'a empresa', err: 'Escolha a empresa do convênio.', sec: 'sec-entrega' };
   if (PED.ent === 'entrega' && endFaltando().length) { const f = endFaltando(); return { msg: END_NOMES[f[0]], err: 'Falta preencher ' + f.map(k => END_NOMES[k]).join(', ') + ' do endereço.', sec: 'sec-entrega' }; }
   return null;
 }
 function marcarEntrega() {
   document.querySelectorAll('#ped [data-ent]').forEach(b => { const on = b.dataset.ent === PED.ent; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
   document.getElementById('ped-end').hidden = PED.ent !== 'entrega';
-  const n = document.getElementById('n-ent'), ok = !!PED.ent && (PED.ent === 'retirar' || !endFaltando().length);
+  const cv = document.getElementById('ped-conv'); if (cv) { cv.hidden = PED.ent !== 'convenio'; document.getElementById('conv-dep-l').hidden = !convEmp(); }
+  const n = document.getElementById('n-ent'), ok = !!PED.ent && (PED.ent === 'retirar' || (PED.ent === 'convenio' ? !!convEmp() : !endFaltando().length));
   n.classList.toggle('ok', ok); n.innerHTML = ok ? ICO_OK : '6';
 }
 // ── fim entrega ──
@@ -697,6 +701,14 @@ function faltaPedido() {
   if (pratos.length && !PED.prato) return { msg: fit ? 'a proteína' : 'o prato do dia', sec: 'sec-prato' };
   return null;
 }
+// ── convênio: empresas cadastradas no sistema (só o nome vem publicado) ──
+const convenios = () => ((DADOS && DADOS.convenios) || []).filter(Boolean);
+const CONV_KEY = 'pdc_convenio';
+const convEmp = () => { const e = document.getElementById('conv-emp'); return e ? e.value : ''; };
+const convDep = () => { const e = document.getElementById('conv-dep'); return e ? e.value.trim() : ''; };
+function salvarConvenio() { try { localStorage.setItem(CONV_KEY, JSON.stringify({ emp: convEmp(), dep: convDep() })); } catch (_) {} }
+function carregarConvenio() { const s = document.getElementById('conv-emp'); if (!s || s.value) return; let c = null; try { c = JSON.parse(localStorage.getItem(CONV_KEY) || 'null'); } catch (_) {}
+  if (c && convenios().includes(c.emp)) { s.value = c.emp; document.getElementById('conv-dep').value = c.dep || ''; } }
 function pedidoHTML() {
   return `<div class="ped-fundo" id="ped" hidden><div class="ped" role="dialog" aria-modal="true" aria-labelledby="ped-tit">
     <div class="ped-alca" aria-hidden="true"></div>
@@ -717,9 +729,9 @@ function pedidoHTML() {
         <textarea id="ped-obs" maxlength="300" rows="3" placeholder="Algo mais? Ex.: troco para R$ 50, entregar no portão…"></textarea>
         <div class="ped-cnt"><span id="ped-obs-n">0</span>/300</div></section>
       <section class="ped-sec" id="sec-entrega"><div class="ped-h"><span class="ped-n" id="n-ent">6</span><h4>Entrega ou retirada</h4><span class="ped-req">obrigatório</span></div>
-        <div class="ped-lista" role="radiogroup">
+        <div class="ped-lista${convenios().length ? ' ped-ent3' : ''}" role="radiogroup">
           <button type="button" class="ped-op" data-ent="entrega" role="radio" aria-checked="false"><i class="ped-ind ped-radio"></i><span>Entregar no meu endereço</span></button>
-          <button type="button" class="ped-op" data-ent="retirar" role="radio" aria-checked="false"><i class="ped-ind ped-radio"></i><span>Vou retirar no local</span></button></div>
+          <button type="button" class="ped-op" data-ent="retirar" role="radio" aria-checked="false"><i class="ped-ind ped-radio"></i><span>Vou retirar no local</span></button>${convenios().length ? `<button type="button" class="ped-op" data-ent="convenio" role="radio" aria-checked="false"><i class="ped-ind ped-radio"></i><span>Convênio (empresa)</span></button>` : ''}</div>
         <div class="ped-end" id="ped-end" hidden>
           <div class="end-grid">
             <label class="end-f"><span>CEP</span><input id="end-cep" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="00000-000"></label>
@@ -731,7 +743,11 @@ function pedidoHTML() {
             <label class="end-f"><span>Apto / complemento <em>opcional</em></span><input id="end-comp" autocomplete="address-line2" maxlength="60" placeholder="Apto 12, bloco B"></label>
             <label class="end-f end-2"><span>Ponto de referência <em>opcional</em></span><input id="end-ref" maxlength="100" placeholder="Ex.: perto da padaria"></label>
           </div>
-          <p class="ped-nota">Fica salvo neste aparelho para o próximo pedido.</p></div></section>
+          <p class="ped-nota">Fica salvo neste aparelho para o próximo pedido.</p></div>
+        ${convenios().length ? `<div class="ped-conv" id="ped-conv" hidden><div class="end-grid">
+          <label class="end-f end-2"><span>Empresa do convênio</span><select id="conv-emp"><option value="">Escolha a empresa…</option>${convenios().map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('')}</select></label>
+          <label class="end-f end-2" id="conv-dep-l" hidden><span>Departamento / setor <em>opcional</em></span><input id="conv-dep" maxlength="80" placeholder="Ex.: Financeiro, 2º andar"></label></div>
+          <p class="ped-nota">O pedido é lançado na conta da empresa.</p></div>` : ''}</section>
     </div>
     <div class="ped-rodape"><div class="ped-total"><small id="ped-resumo">Escolha o tamanho</small><b id="ped-total">R$ 0,00</b></div>
       <button type="button" class="ped-enviar" id="ped-enviar"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4z"/></svg><span id="ped-enviar-txt">Enviar pedido</span></button></div>
@@ -819,8 +835,8 @@ function enviarPedido() {
       it.prato ? `${fit ? 'Proteína' : 'Prato'}: ${it.prato}` : '', it.semGuarn ? 'Guarnições: sem guarnição' : it.guarn.length ? `Guarnições: ${it.guarn.join(' e ')}` : '', (it.extras || []).length ? `Guarnições extras: ${it.extras.join(' e ')} (+${reais(it.extras.length * valorExtra(d))} cada prato)` : '',
       `Quantidade: ${it.qtd}`].filter(Boolean).join('\n'); };
   const total = itens.reduce((s, it) => s + valorItem(it), 0) + totPorc();
-  const end = enderecoTxt(); const entrega = PED.ent === 'entrega' ? `\n\n*Entregar em:* ${end}` : '\n\n*Vou retirar no local*';
-  if (PED.ent === 'entrega') salvarEndereco();
+  const end = enderecoTxt(); const entrega = PED.ent === 'entrega' ? `\n\n*Entregar em:* ${end}` : PED.ent === 'convenio' ? `\n\n*Convênio:* ${convEmp()}${convDep() ? '\nDepartamento: ' + convDep() : ''}` : '\n\n*Vou retirar no local*';
+  if (PED.ent === 'entrega') salvarEndereco(); if (PED.ent === 'convenio') salvarConvenio();
   const msg = 'Olá! Quero fazer um pedido 😊\n\n' + [itens.map(bloco).join('\n\n'), porcTxt].filter(Boolean).join('\n\n') + entrega + (obs ? `\n\nObservação: ${obs}` : '') + (total ? `\n\n*Total: ${reais(total)}*` : '');
   const url = linkWA(msg);
   if (url === '#') return erroPedido('WhatsApp do restaurante não informado.', '');
@@ -836,7 +852,7 @@ function abrirPedido(tam, prato, guarn, especial) {
   if (guarn && (d.guarnicoes || []).includes(guarn)) PED.guarn = [guarn];
   if (especial && !PED.prato) { const e = (d.hoje || []).find(n => ehEspecial(d, n)); if (e) PED.prato = e; }
   const obs = document.getElementById('ped-obs'); obs.value = ''; marcarTags();
-  carregarEndereco();
+  carregarEndereco(); carregarConvenio();
   renderOpcoes();
   const fundo = document.getElementById('ped'); const caixa = fundo.querySelector('.ped'); caixa.style.transform = '';
   fundo.hidden = false; document.body.classList.add('sem-rolagem'); fundo.querySelector('.ped-corpo').scrollTop = 0;
@@ -880,10 +896,12 @@ function ligarPedido() {
     else if (e.target.closest('[data-porc]')) { const b = e.target.closest('[data-porc]'), n = b.dataset.porc; PED.porc[n] = Math.min(20, Math.max(0, (PED.porc[n] || 0) + Number(b.dataset.d))); if (!PED.porc[n]) delete PED.porc[n]; renderPorcoes(); atualizarTotal(); }
     else if (e.target.closest('#ped-mais')) adicionarPrato();
     else if (e.target.closest('[data-ent]')) { PED.ent = e.target.closest('[data-ent]').dataset.ent; atualizarTotal();
-      if (PED.ent === 'entrega') setTimeout(() => { document.getElementById('ped-end').scrollIntoView({ behavior: 'smooth', block: 'center' }); if (endFaltando().length) focarEndereco(); }, 60); }
+      if (PED.ent === 'entrega') setTimeout(() => { document.getElementById('ped-end').scrollIntoView({ behavior: 'smooth', block: 'center' }); if (endFaltando().length) focarEndereco(); }, 60);
+      if (PED.ent === 'convenio') setTimeout(() => { const s = document.getElementById('conv-emp'); s.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (!s.value) s.focus({ preventScroll: true }); }, 60); }
     else if (e.target.closest('#ped-enviar')) enviarPedido();
   });
   obs.addEventListener('input', marcarTags);
+  const cvEl = document.getElementById('ped-conv'); if (cvEl) cvEl.addEventListener('change', (e) => { atualizarTotal(); if (e.target.id === 'conv-emp' && e.target.value) setTimeout(() => document.getElementById('conv-dep').focus({ preventScroll: true }), 50); });
   document.getElementById('ped-end').addEventListener('input', (e) => { if (e.target.id === 'end-cep') buscarCep(); else atualizarTotal(); });
   // no celular: puxar o topo para baixo fecha
   const caixa = f.querySelector('.ped'); let y0 = null;
