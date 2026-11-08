@@ -5990,7 +5990,30 @@ class Component extends DCLogic {
     '.cx-ref{font-family:"Space Mono",monospace;font-size:12px;color:#8fb8c6;min-width:52px}.cx-forma{font-size:12px;color:#a9c9d4;white-space:nowrap}',
     '.cx-cfgbox{border-color:rgba(251,191,36,.4)}',
     '.cx-ov button:focus-visible,.cx-ov select:focus-visible{outline:2px solid #2dd4bf;outline-offset:2px}',
-    '@media (max-width:1000px){.cx-venda,.cx-clis,.cx-hoje-g{grid-template-columns:1fr}.cx-kpis{grid-template-columns:repeat(2,1fr)}.cx-itens{max-height:none}.cx-teclado{margin-top:0}}',
+    '/* layout: a venda cabe na altura da janela */',
+    '.cx-body.fixo{overflow:hidden}.cx-body{padding:clamp(8px,1.5vh,16px) clamp(10px,1.2vw,18px)}',
+    '.cx-venda{height:100%;min-height:0;grid-template-columns:minmax(0,1.15fr) minmax(380px,1fr);gap:clamp(10px,1.2vw,16px)}',
+    '.cx-esq,.cx-dir{min-height:0;gap:clamp(6px,1.2vh,12px)}',
+    '.cx-top{padding:clamp(6px,1vh,10px) 18px}',
+    '.cx-visor{padding:clamp(10px,1.6vh,16px) clamp(12px,1.2vw,18px)}.cx-visor-top{margin-bottom:clamp(4px,.8vh,8px)}',
+    '.cx-entrada{font-size:clamp(22px,3.8vh,42px);padding:clamp(6px,1.1vh,12px) 14px}',
+    '.cx-prev{font-size:clamp(16px,2.6vh,26px);margin-top:clamp(4px,.8vh,10px);min-height:0}.cx-prev.lendo{color:#7fa9b7;font-size:clamp(13px,1.8vh,15px)}',
+    '.cx-msg{min-height:0;margin-top:0}.cx-msg.erro,.cx-msg.ok,.cx-msg.info{margin-top:6px;padding:6px 10px}',
+    '.cx-rapidos{grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:clamp(5px,.8vh,8px)}',
+    '.cx-rap{min-height:clamp(44px,8vh,92px);justify-content:center;padding:clamp(6px,1vh,12px) 12px;gap:clamp(2px,.5vh,6px)}.cx-rap b{font-size:clamp(12.5px,1.75vh,16px)}.cx-rap span{font-size:clamp(12px,1.6vh,15px)}',
+    '.cx-teclado{flex:1 1 0;min-height:196px;grid-template-rows:repeat(4,minmax(44px,152px));align-content:end;gap:clamp(5px,.8vh,8px);margin-top:0}',
+    '.cx-k{min-height:44px;height:100%;font-size:clamp(17px,2.6vh,22px)}.cx-k.ok{font-size:clamp(14px,2vh,16px)}',
+    '.cx-cli{padding:clamp(8px,1.2vh,12px) 14px}.cx-busca-w{margin-top:clamp(4px,.8vh,8px)}.cx-campo{padding:clamp(7px,1.1vh,10px) 12px}',
+    '.cx-cupom{flex:1 1 0;min-height:110px;padding:clamp(8px,1.2vh,12px) 14px}.cx-itens{max-height:none;min-height:0}.cx-vazio{padding:clamp(10px,3vh,26px) 10px}',
+    '.cx-total{padding:clamp(8px,1.3vh,12px) 16px}.cx-total b{font-size:clamp(24px,4.2vh,34px)}',
+    '.cx-pags{padding:clamp(8px,1.2vh,12px)}.cx-pgrid{grid-template-columns:repeat(5,1fr);gap:clamp(5px,.8vh,8px);margin-top:clamp(5px,.9vh,9px)}',
+    '.cx-pagbt{min-height:clamp(52px,7.6vh,70px);font-size:12.5px;padding:4px}.cx-pagbt.conta{min-height:clamp(44px,6vh,56px)}',
+    '.cx-box{padding:clamp(10px,1.5vh,14px)}.cx-entrada.sm{font-size:clamp(20px,3vh,26px)}.cx-notas{margin:clamp(6px,1vh,10px) 0}.cx-acoes{margin-top:clamp(8px,1.3vh,12px)}',
+    '@media (max-height:860px){.cx-dicas{display:none}}',
+    '@media (max-height:760px){.cx-sec{display:none}.cx-logo{width:30px;height:30px;font-size:16px}.cx-marca small{display:none}}',
+    '@media (max-width:1280px){.cx-pgrid{grid-template-columns:repeat(3,1fr)}}',
+    '@media (max-height:600px){.cx-body.fixo{overflow:auto}.cx-venda{height:auto;min-height:100%}.cx-teclado{flex:none;height:220px}}',
+    '@media (max-width:1000px){.cx-body.fixo{overflow:auto}.cx-venda{height:auto}.cx-cupom{flex:none;min-height:220px}.cx-teclado{flex:none;height:250px}.cx-venda,.cx-clis,.cx-hoje-g{grid-template-columns:1fr}.cx-kpis{grid-template-columns:repeat(2,1fr)}.cx-itens{max-height:none}.cx-teclado{margin-top:0}}',
     '@media (max-width:560px){.cx-body{padding:12px}.cx-pgrid{grid-template-columns:repeat(2,1fr)}.cx-2,.cx-3{grid-template-columns:1fr}.cx-entrada{font-size:28px}.cx-dicas{display:none}.cx-tab kbd,.cx-sair kbd{display:none}}',
     '@media (prefers-reduced-motion:reduce){.cx-ov *{transition:none!important;animation:none!important}}'
   ].join('');
@@ -6000,7 +6023,7 @@ class Component extends DCLogic {
   _cxEl=(id)=>this._cxOv?this._cxOv.querySelector('#'+id):null;
   _cxDemo=()=>this.state.userEmail==='demonstração';
   _cxTotal=()=>Math.round(this._cx.itens.reduce((a,x)=>a+x.valor*x.qtd,0)*100)/100;
-  _cxCfgLer=()=>{ const pad={prefixo:'2',conteudo:'total',precoKg:0}; try{ return Object.assign(pad,JSON.parse(localStorage.getItem('pdc_caixa_balanca')||'{}')); }catch(e){ return pad; } };
+  _cxCfgLer=()=>{ const pad={prefixo:'',conteudo:'total',precoKg:0}; try{ return Object.assign(pad,JSON.parse(localStorage.getItem('pdc_caixa_balanca')||'{}')); }catch(e){ return pad; } };
   _cxLidasHoje=()=>{ try{ const j=JSON.parse(localStorage.getItem('pdc_caixa_comandas')||'{}'); return j.dia===this.todayISO()?(j.codigos||[]):[]; }catch(e){ return []; } };
   _cxGuardarLidas=(cods)=>{ if(!cods.length) return; try{ localStorage.setItem('pdc_caixa_comandas',JSON.stringify({dia:this.todayISO(),codigos:[...this._cxLidasHoje(),...cods].slice(-3000)})); }catch(e){} };
 
@@ -6034,7 +6057,7 @@ class Component extends DCLogic {
     this._cxEl('cx-top').innerHTML='<div class="cx-marca"><span class="cx-logo">Pc</span><div><b>Caixa</b><small>Pratto di Casa'+(this._cxDemo()?' · demonstração':'')+'</small></div></div>'+
       '<nav class="cx-tabs">'+tab('venda','Venda','F2')+tab('clientes','Clientes','F3')+tab('hoje','Vendas de hoje','F4')+'</nav>'+
       '<div class="cx-topdir"><span id="cx-hora" class="cx-hora">'+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'</span><button class="cx-sair" data-cx="sair">Sair do caixa<kbd>Esc</kbd></button></div>';
-    const b=this._cxEl('cx-body');
+    const b=this._cxEl('cx-body'); b.className='cx-body'+(a==='venda'?' fixo':'');
     if(a==='clientes'){ b.innerHTML=this._cxHtmlClientes(); this._cxListaCli(); setTimeout(()=>{ const i=this._cxOv&&this._cxOv.querySelector('form [name=nome]'); if(i) i.focus(); },30); return; }
     if(a==='hoje'){ b.innerHTML=this._cxHtmlHoje(); return; }
     b.innerHTML=this._cxHtmlVenda(); this._cxAtualizar(); this._cxFoco(); };
@@ -6124,6 +6147,8 @@ class Component extends DCLogic {
   _cxEanOk=(c)=>{ let s=0; for(let i=0;i<12;i++) s+=Number(c[i])*(i%2?3:1); return (10-s%10)%10===Number(c[12]); };
   _cxLer=(raw)=>{ let t=String(raw||'').trim().replace(/ /g,''); if(!t) return null; let qtd=1;
     const m=t.match(/^([0-9]{1,3})[*xX×]([0-9.,]*)$/); if(m){ qtd=Math.max(1,parseInt(m[1],10)||1); t=m[2]; if(!t) return {tipo:'mult',qtd}; }
+    // leitores costumam mandar o EAN-13 que começa com 0 como UPC-A (12 dígitos, sem o primeiro zero)
+    if(/^[0-9]{12}$/.test(t)&&this._cxEanOk('0'+t)) return this._cxComanda('0'+t,qtd);
     if(/^[0-9]{13}$/.test(t)) return this._cxComanda(t,qtd);
     if(/^[0-9]{8,}$/.test(t)) return {tipo:'erro',msg:'Código de barras não reconhecido: '+t+'. Se for a comanda da balança, confira em ⚙ Balança.'};
     const v=this._cxValor(t); if(v==null) return {tipo:'erro',msg:'Digite só números. Ex.: 2590 = R$ 25,90.'};
@@ -6133,6 +6158,7 @@ class Component extends DCLogic {
     if(!this._cxEanOk(c)) return {tipo:'erro',msg:'A leitura falhou (dígito verificador não confere). Bipe de novo.'};
     const pre=String(cfg.prefixo||'').trim();
     if(pre&&c.indexOf(pre)!==0) return {tipo:'erro',msg:'O código '+c+' não começa com '+pre+', o prefixo da comanda. Ajuste em ⚙ Balança se for da balança.'};
+    if(!pre&&c[0]!=='0'&&c[0]!=='2') return {tipo:'erro',msg:'O código '+c+' parece ser de produto, não da comanda da balança.'};
     const cod=c.slice(2,7), num=parseInt(c.slice(7,12),10); let valor, desc='Refeição por kg';
     if(cfg.conteudo==='peso'){ const kg=num/1000; if(!(Number(cfg.precoKg)>0)) return {tipo:'erro',msg:'A comanda traz o peso: informe o preço do kg em ⚙ Balança.'};
       valor=Math.round(kg*Number(cfg.precoKg)*100)/100; desc+=' · '+kg.toFixed(3).replace('.',',')+' kg'; }
@@ -6140,10 +6166,10 @@ class Component extends DCLogic {
     if(!(valor>0)) return {tipo:'erro',msg:'Comanda com valor zerado.'};
     return {tipo:'comanda',qtd:1,valor,codigo:c,desc:desc+' · comanda '+cod}; };
   _cxPrev=()=>{ const p=this._cxEl('cx-prev'), i=this._cxEl('cx-entrada'); if(!p||!i) return; const r=this._cxLer(i.value);
-    p.classList.remove('erro','cmd');
+    p.classList.remove('erro','cmd','lendo');
     if(!r){ p.textContent='R$ 0,00'; return; }
     if(r.tipo==='mult'){ p.textContent=r.qtd+' × …'; return; }
-    if(r.tipo==='erro'){ p.textContent=/^[0-9]{8,12}$/.test(i.value.trim())?'lendo código…':'—'; p.classList.add('erro'); return; }
+    if(r.tipo==='erro'){ const lendo=/^[0-9]{8,12}$/.test(i.value.trim()); p.textContent=lendo?'lendo código…':'—'; p.classList.add(lendo?'lendo':'erro'); return; }
     if(r.tipo==='comanda') p.classList.add('cmd');
     p.textContent=(r.qtd>1?r.qtd+' × '+this.brl(r.valor)+' = ':'')+this.brl(r.valor*r.qtd)+(r.tipo==='comanda'?' · comanda':''); };
   _cxMsg=(t,tipo)=>{ const m=this._cxEl('cx-msg'); if(!m){ if(t&&this._cxToastOrig) this._cxToastOrig(t); return; }
@@ -6336,7 +6362,7 @@ class Component extends DCLogic {
       '<label class="cx-f">Teste: bipe uma comanda aqui<input id="cx-teste" class="cx-campo" inputmode="numeric" data-numpad="off" placeholder="o código aparece aqui"></label><div class="cx-sub" id="cx-teste-r"></div>'+
       '<div class="cx-acoes"><button type="submit" class="cx-okbtn">Salvar</button></div></form>';
     setTimeout(()=>{ const t=this._cxEl('cx-teste'); if(t) t.focus(); },30); };
-  _cxTestar=()=>{ const t=this._cxEl('cx-teste'), r=this._cxEl('cx-teste-r'); if(!t||!r) return; const c=t.value.replace(/[^0-9]/g,''); if(c.length<13){ r.textContent=''; return; }
+  _cxTestar=()=>{ const t=this._cxEl('cx-teste'), r=this._cxEl('cx-teste-r'); if(!t||!r) return; let c=t.value.replace(/[^0-9]/g,''); if(c.length===12&&this._cxEanOk('0'+c)) c='0'+c; if(c.length<13){ r.textContent=''; return; }
     const ok=this._cxEanOk(c); r.innerHTML='Código <b>'+c+'</b> · prefixo <b>'+c.slice(0,2)+'</b> · código/sequencial <b>'+c.slice(2,7)+'</b> · valor <b>'+c.slice(7,12)+'</b> ('+this.brl(parseInt(c.slice(7,12),10)/100)+' se for total, '+(parseInt(c.slice(7,12),10)/1000).toFixed(3).replace('.',',')+' kg se for peso) · dígito '+(ok?'confere ✓':'NÃO confere');
     const f=t.form; if(ok&&f&&!f.prefixo.value) f.prefixo.value=c.slice(0,2); };
   _cxSalvarCfg=(f)=>{ const c={prefixo:f.prefixo.value.replace(/[^0-9]/g,'').slice(0,2),conteudo:f.conteudo.value,precoKg:this._cxValorReais(f.precoKg.value)};
