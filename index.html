@@ -225,6 +225,9 @@
   .ped-tag.on{border-style:solid;border-color:var(--laranja);background:rgba(255,122,26,.14);color:#fff}
   #ped-obs{width:100%;resize:vertical;border-radius:14px;border:1.5px solid var(--linha);background:rgba(0,0,0,.28);color:var(--texto);font:500 14.5px/1.45 Inter;padding:12px 14px;outline:none;transition:border-color .2s ease}
   #ped-obs:focus{border-color:var(--laranja)}
+  .ped-end{margin-top:12px}.ped-end[hidden]{display:none}.ped-end label{display:block;font:600 12.5px Inter;color:var(--suave);margin-bottom:6px}
+  #ped-endereco{width:100%;resize:vertical;border-radius:14px;border:1.5px solid var(--linha);background:rgba(0,0,0,.28);color:var(--texto);font:500 14.5px/1.45 Inter;padding:12px 14px;outline:none;transition:border-color .2s ease}
+  #ped-endereco:focus{border-color:var(--laranja)}.ped-end .ped-nota{margin:6px 0 0}
   .ped-cnt{text-align:right;font-size:11.5px;color:var(--suave);margin-top:4px}
   /* rodapé */
   .ped-rodape{display:flex;align-items:center;gap:14px;padding:14px 20px 18px;border-top:1px solid var(--linha);background:rgba(10,11,13,.6);backdrop-filter:blur(10px)}
@@ -560,11 +563,11 @@ const rota = () => (location.hash === '#cardapio' ? mostrarCardapio() : mostrarC
 // ---------- Monte seu pedido: tamanho, prato do dia, até 2 guarnições, quantidade e observação → WhatsApp ----------
 let DADOS = null;
 const MAX_GUARN = 2;
-const PED = { tam: '', prato: '', guarn: [], qtd: 1, itens: [] }; // itens = pratos já adicionados ao pedido
+const PED = { tam: '', prato: '', guarn: [], qtd: 1, itens: [], ent: '' }; // itens = pratos já adicionados ao pedido
 const num = (v) => Number(String(v || '').replace(/\./g, '').replace(',', '.')) || 0;
 const reais = (n) => 'R$ ' + n.toFixed(2).replace('.', ',');
 const PROTEINAS_FIT = ['Carne', 'Frango', 'Omelete'];
-const TAGS_OBS = ['Sem cebola', 'Sem salada', 'Carne bem passada', 'Mandar talheres', 'Vou retirar no local'];
+const TAGS_OBS = ['Sem cebola', 'Sem salada', 'Carne bem passada', 'Mandar talheres'];
 const ICO_OK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 // pratos especiais (ex.: "Feijoada / Rabada / Virado / À parmegiana") têm tabela de preço própria
 const palavrasEspeciais = (d) => String((d.especial || {}).nome || '').toLowerCase().split(/[\/,]/).map(s => s.trim().replace(/^(à|a|ao)\s+/, '').split(' ')[0]).filter(w => w.length > 3);
@@ -604,6 +607,22 @@ function adicionarPrato() {
   renderOpcoes(); const c = document.querySelector('#ped .ped-corpo'); if (c) c.scrollTop = 0;
 }
 // ── fim vários pratos ──
+// ── entrega ou retirada (no fim do pedido) ──
+const END_KEY = 'pdc_endereco_entrega';
+const enderecoTxt = () => { const e = document.getElementById('ped-endereco'); return e ? e.value.trim() : ''; };
+function faltaEnvio() {
+  const f = faltaPedido(); if (f) return f;
+  if (!PED.ent) return { msg: 'entrega ou retirada', err: 'Escolha se é para entregar ou se vai retirar.', sec: 'sec-entrega' };
+  if (PED.ent === 'entrega' && enderecoTxt().length < 8) return { msg: 'o endereço', err: 'Digite o endereço de entrega (rua, número e bairro).', sec: 'sec-entrega' };
+  return null;
+}
+function marcarEntrega() {
+  document.querySelectorAll('#ped [data-ent]').forEach(b => { const on = b.dataset.ent === PED.ent; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
+  document.getElementById('ped-end').hidden = PED.ent !== 'entrega';
+  const n = document.getElementById('n-ent'), ok = !!PED.ent && (PED.ent === 'retirar' || enderecoTxt().length >= 8);
+  n.classList.toggle('ok', ok); n.innerHTML = ok ? ICO_OK : '6';
+}
+// ── fim entrega ──
 const fotoTamanho = (d, tam) => { const p = (d.pratos || []).find(x => x.tamanho === tam && urlSegura(x.foto)); return p ? urlSegura(p.foto) : ''; };
 // o que falta para poder enviar (na ordem das etapas)
 function faltaPedido() {
@@ -631,6 +650,13 @@ function pedidoHTML() {
         <div class="ped-tags">${TAGS_OBS.map(x => `<button type="button" class="ped-tag" data-tag="${esc(x)}">+ ${esc(x)}</button>`).join('')}</div>
         <textarea id="ped-obs" maxlength="300" rows="3" placeholder="Algo mais? Ex.: troco para R$ 50, entregar no portão…"></textarea>
         <div class="ped-cnt"><span id="ped-obs-n">0</span>/300</div></section>
+      <section class="ped-sec" id="sec-entrega"><div class="ped-h"><span class="ped-n" id="n-ent">6</span><h4>Entrega ou retirada</h4><span class="ped-req">obrigatório</span></div>
+        <div class="ped-lista" role="radiogroup">
+          <button type="button" class="ped-op" data-ent="entrega" role="radio" aria-checked="false"><i class="ped-ind ped-radio"></i><span>Entregar no meu endereço</span></button>
+          <button type="button" class="ped-op" data-ent="retirar" role="radio" aria-checked="false"><i class="ped-ind ped-radio"></i><span>Vou retirar no local</span></button></div>
+        <div class="ped-end" id="ped-end" hidden><label for="ped-endereco">Endereço de entrega</label>
+          <textarea id="ped-endereco" maxlength="250" rows="3" autocomplete="street-address" placeholder="Rua, número, bairro e um ponto de referência"></textarea>
+          <p class="ped-nota">Fica salvo neste aparelho para o próximo pedido.</p></div></section>
     </div>
     <div class="ped-rodape"><div class="ped-total"><small id="ped-resumo">Escolha o tamanho</small><b id="ped-total">R$ 0,00</b></div>
       <button type="button" class="ped-enviar" id="ped-enviar"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4z"/></svg><span id="ped-enviar-txt">Enviar pedido</span></button></div>
@@ -681,19 +707,19 @@ function atualizarTotal() {
   // etapas do topo + botão de enviar mostra o que falta
   const etapas = [['Tamanho', !!PED.tam], [PED.tam === 'F' ? 'Proteína' : 'Prato', !!PED.prato || !(PED.tam === 'F' ? PROTEINAS_FIT : (d.hoje || [])).length], ['Guarnições', PED.guarn.length >= MAX_GUARN || PED.tam === 'F']];
   document.getElementById('ped-passos').innerHTML = etapas.map(([n, ok]) => `<span class="${ok ? 'ok' : ''}">${ok ? '✓ ' : ''}${n}</span>`).join('<i></i>');
-  const falta = faltaPedido(); const bt = document.getElementById('ped-enviar');
+  const falta = faltaEnvio(), faltaItem = faltaPedido(); const bt = document.getElementById('ped-enviar'); marcarEntrega();
   bt.classList.toggle('falta', !!falta);
   const nTot = nSac + (itemAtual() ? PED.qtd : 0);
   document.getElementById('ped-enviar-txt').textContent = falta ? 'Falta ' + falta.msg : (nTot > 1 ? `Enviar pedido · ${nTot} pratos` : 'Enviar pedido');
-  document.getElementById('ped-mais').classList.toggle('falta', !PED.tam || !!falta);
+  document.getElementById('ped-mais').classList.toggle('falta', !PED.tam || !!faltaItem);
 }
 function erroPedido(msg, secao) {
   const e = document.getElementById('ped-erro'); e.textContent = msg; e.classList.add('on'); clearTimeout(erroPedido.t); erroPedido.t = setTimeout(() => e.classList.remove('on'), 2600);
   const s = document.getElementById(secao); if (s) { s.scrollIntoView({ behavior: 'smooth', block: 'center' }); s.classList.remove('alerta'); void s.offsetWidth; s.classList.add('alerta'); }
 }
 function enviarPedido() {
-  const d = DADOS; const falta = faltaPedido();
-  if (falta) return erroPedido('Escolha ' + falta.msg + '.', falta.sec);
+  const d = DADOS; const falta = faltaEnvio();
+  if (falta) { if (falta.sec === 'sec-entrega' && PED.ent === 'entrega') setTimeout(() => document.getElementById('ped-endereco').focus({ preventScroll: true }), 350); return erroPedido(falta.err || ('Escolha ' + falta.msg + '.'), falta.sec); }
   if (!confirmaGuarn('Enviar')) return;
   const atual = itemAtual(); const itens = [...PED.itens, ...(atual ? [atual] : [])];
   if (!itens.length) return erroPedido('Escolha o tamanho.', 'sec-tam');
@@ -703,7 +729,9 @@ function enviarPedido() {
       it.prato ? `${fit ? 'Proteína' : 'Prato'}: ${it.prato}` : '', it.guarn.length ? `Guarnições: ${it.guarn.join(' e ')}` : '',
       `Quantidade: ${it.qtd}`].filter(Boolean).join('\n'); };
   const total = itens.reduce((s, it) => s + valorItem(it), 0);
-  const msg = 'Olá! Quero fazer um pedido 😊\n\n' + itens.map(bloco).join('\n\n') + (obs ? `\n\nObservação: ${obs}` : '') + (total ? `\n\n*Total: ${reais(total)}*` : '');
+  const end = enderecoTxt(); const entrega = PED.ent === 'entrega' ? `\n\n*Entregar em:* ${end}` : '\n\n*Vou retirar no local*';
+  if (PED.ent === 'entrega') { try { localStorage.setItem(END_KEY, end); } catch (_) {} }
+  const msg = 'Olá! Quero fazer um pedido 😊\n\n' + itens.map(bloco).join('\n\n') + entrega + (obs ? `\n\nObservação: ${obs}` : '') + (total ? `\n\n*Total: ${reais(total)}*` : '');
   const url = linkWA(msg);
   if (url === '#') return erroPedido('WhatsApp do restaurante não informado.', '');
   window.open(url, '_blank', 'noopener') || (location.href = url);
@@ -718,6 +746,7 @@ function abrirPedido(tam, prato, guarn, especial) {
   if (guarn && (d.guarnicoes || []).includes(guarn)) PED.guarn = [guarn];
   if (especial && !PED.prato) { const e = (d.hoje || []).find(n => ehEspecial(d, n)); if (e) PED.prato = e; }
   const obs = document.getElementById('ped-obs'); obs.value = ''; marcarTags();
+  const endEl = document.getElementById('ped-endereco'); if (!endEl.value) { try { endEl.value = localStorage.getItem(END_KEY) || ''; } catch (_) {} }
   renderOpcoes();
   const fundo = document.getElementById('ped'); const caixa = fundo.querySelector('.ped'); caixa.style.transform = '';
   fundo.hidden = false; document.body.classList.add('sem-rolagem'); fundo.querySelector('.ped-corpo').scrollTop = 0;
@@ -756,9 +785,12 @@ function ligarPedido() {
       obs.value = v.slice(0, 300); marcarTags(); }
     else if (e.target.closest('[data-rem]')) { PED.itens.splice(Number(e.target.closest('[data-rem]').dataset.rem), 1); renderOpcoes(); }
     else if (e.target.closest('#ped-mais')) adicionarPrato();
+    else if (e.target.closest('[data-ent]')) { PED.ent = e.target.closest('[data-ent]').dataset.ent; atualizarTotal();
+      if (PED.ent === 'entrega') setTimeout(() => { const x = document.getElementById('ped-endereco'); x.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (!x.value) x.focus({ preventScroll: true }); }, 60); }
     else if (e.target.closest('#ped-enviar')) enviarPedido();
   });
   obs.addEventListener('input', marcarTags);
+  document.getElementById('ped-endereco').addEventListener('input', atualizarTotal);
   // no celular: puxar o topo para baixo fecha
   const caixa = f.querySelector('.ped'); let y0 = null;
   caixa.querySelectorAll('.ped-alca, .ped-topo').forEach(el => el.addEventListener('pointerdown', (e) => { if (e.target.closest('button')) return; y0 = e.clientY; caixa.style.transition = 'none'; }));

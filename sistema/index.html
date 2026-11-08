@@ -3976,7 +3976,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border-soft)">
                   <button onclick="{{ p.onToggleCard }}" title="{{ p.toggleLabel }}" style="display:flex;align-items:center;gap:7px;background:none;border:none;cursor:pointer;font-size:12px;font-weight:600;color:var(--text-primary);padding:0;font-family:inherit"><span style="{{ p.miniTrack }}"><span style="{{ p.miniKnob }}"></span></span>{{ p.statusLabel }}</button>
                   <sc-if value="{{ p.tempoFmt }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:4px;font-size:11.5px;color:#9a9084"><svg width="12" height="12" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>{{ p.tempoFmt }}</span></sc-if>
-                  <button onclick="{{ p.onEditCard }}" title="Editar prato" class="fx-btn" style="background:none;border:1px solid var(--border-input);border-radius:8px;color:var(--text-primary);cursor:pointer;display:flex;padding:5px"><svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9 M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"></path></svg></button>
+                  <div style="display:flex;gap:6px"><button onclick="{{ p.onExcluirCard }}" title="Excluir prato" class="fx-btn" style="background:none;border:1px solid var(--border-input);border-radius:8px;color:#f3a08c;cursor:pointer;display:flex;padding:5px"><svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 002 2h6a2 2 0 002-2l1-12M9 7V4h6v3"></path></svg></button><button onclick="{{ p.onEditCard }}" title="Editar prato" class="fx-btn" style="background:none;border:1px solid var(--border-input);border-radius:8px;color:var(--text-primary);cursor:pointer;display:flex;padding:5px"><svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9 M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"></path></svg></button></div>
                 </div>
               </div>
             </sc-for>
@@ -4146,10 +4146,12 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           <sc-if value="{{ isCardapioEditForm }}" hint-placeholder-val="{{ false }}">
             <form onsubmit="{{ saveCardapioItem }}">
             <div style="font-size:15px;font-weight:700;margin-bottom:14px">{{ cfTitle }}</div>
-            <label style="{{ lbl }}">Nome do produto</label>
-            <input value="{{ cardapioForm.nome }}" oninput="{{ onCFNome }}" style="{{ inp }}" placeholder="Ex: X-Burger">
-            <label style="{{ lbl }}">Categoria</label>
-            <div style="display:inline-block;background:#26658C;color:#fff;font-family:'Instrument Serif',serif;font-size:16px;border-radius:9px;padding:10px 18px;margin-bottom:14px">{{ cfCategoriaLabel }}</div>
+            <label style="{{ lbl }}">Tamanho do prato</label>
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px">
+              <sc-for list="{{ cfTams }}" as="t" hint-placeholder-count="4"><button type="button" onclick="{{ t.onClick }}" title="{{ t.titulo }}" style="{{ t.style }}">{{ t.label }}</button></sc-for>
+            </div>
+            <label style="{{ lbl }}">Nome do prato <span style="font-weight:400;color:#9a9084">(sai pelo tamanho — pode trocar)</span></label>
+            <input value="{{ cardapioForm.nome }}" oninput="{{ onCFNome }}" style="{{ inp }}" placeholder="Ex: Prato M">
             <div style="display:flex;justify-content:space-between;align-items:center"><label style="{{ lbl }};margin-bottom:0">Itens do prato</label><button type="button" onclick="{{ newComplemento }}" style="background:none;border:none;color:#26658C;font-size:12px;font-weight:600;cursor:pointer;margin-bottom:6px">+ Adicionar</button></div>
             <div style="border:1px solid var(--border-input);border-radius:9px;padding:6px 10px;margin-bottom:14px;max-height:180px;overflow:auto">
               <sc-if value="{{ complementoDraftOpen }}" hint-placeholder-val="{{ false }}">
@@ -4189,6 +4191,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
               <div style="font-size:14px;font-weight:500">{{ cfDisponivelLabel }}</div>
             </div>
             <button type="submit" style="{{ btn }}">Salvar</button>
+            <sc-if value="{{ cfPodeExcluir }}" hint-placeholder-val="{{ false }}"><button type="button" onclick="{{ cfExcluir }}" class="fx-btn" style="width:100%;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;background:none;border:1px solid rgba(240,128,112,.45);color:#f3a08c;border-radius:10px;padding:11px 12px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 002 2h6a2 2 0 002-2l1-12M9 7V4h6v3"></path></svg>Excluir este prato</button></sc-if>
             </form>
           </sc-if>
 
@@ -5976,7 +5979,7 @@ class Component extends DCLogic {
   backToCardapioHub=()=>this.setState({cardapioCategory:null, cardapioSearch:''});
   setCardapioSearch=(e)=>this.setState({cardapioSearch:e.target.value});
   blankCardapioForm=(cat)=>({id:null, nome:'', categoria:cat||'P', observacoes:'', preco:'', foto_url:'', tempo_preparo:'', disponivel:true, ordem_exibicao:'', complementoIds:[]});
-  newCardapioItem=()=>{ this.setState({modal:'cardapioEdit', cardapioForm:this.blankCardapioForm(this.state.cardapioCategory||this.state.cardapioHubCat||'P')}); };
+  newCardapioItem=()=>{ const cat=this.state.cardapioCategory||this.state.cardapioHubCat||'P'; this.setState({modal:'cardapioEdit', cardapioForm:this.formComTamanho(this.blankCardapioForm(cat),cat)}); };
   editCardapioItemById=(id)=>{ const it=this.state.cardapio.find(x=>x.id===id); if(!it) return;
     this.setState({modal:'cardapioEdit', cardapioForm:{id:it.id, nome:it.name, categoria:it.size, observacoes:it.observacoes||'', preco:String(it.price).replace('.',','), foto_url:it.foto_url||'', tempo_preparo:it.tempo_preparo?String(it.tempo_preparo):'', disponivel:it.available, ordem_exibicao:it.ordem_exibicao?String(it.ordem_exibicao):'', complementoIds:[]}});
     sb.from('rest_cardapio_item_complementos').select('complemento_id').eq('item_id',id).then(({data})=>{
@@ -6790,6 +6793,14 @@ class Component extends DCLogic {
       if(!this._demo&&sb){ const { error } = await sb.from('rest_cardapio_dia').update({ foto_url:url }).eq('id',it.id); if(error) throw error; }
       this.setState(s=>({ cardapio:s.cardapio.map(x=>x.id===it.id?{...x,foto_url:url}:x) })); this.agendarPublicacao(); this.showToast('Foto de '+it.name+' salva!'); }
     catch(err){ this.showToast('Não foi possível salvar a foto: '+(err.message||err)); } };
+  // ── tamanho do prato: nome e preço saem sozinhos (P, M, G ou Fitness) ──
+  nomeAutoPrato=(k)=>'Prato '+(k==='F'?'Fitness':k);
+  formComTamanho=(f,k)=>{ const a=this.state.arte||{}, V={P:a.pP,M:a.pM,G:a.pG,F:a.pFit}; const nome=String(f.nome||'').trim();
+    const auto=!nome||/^prato\s+(p|m|g|f|fit|fitness)$/i.test(nome); const p=this.num(f.preco), ant=this.num(V[f.categoria]);
+    const trocaPreco=V[k]&&(!p||(ant&&p===ant));
+    return {...f, categoria:k, nome:auto?this.nomeAutoPrato(k):f.nome, preco:trocaPreco?String(V[k]):f.preco}; };
+  escolherTamanhoPrato=(k)=>this.setState(s=>({cardapioForm:this.formComTamanho(s.cardapioForm||this.blankCardapioForm(k),k)}));
+  // ── fim tamanho do prato ──
   updateCardapioForm=(field,value)=>this.setState(s=>({cardapioForm:{...s.cardapioForm,[field]:value}}));
   toggleCFDisponivel=()=>this.setState(s=>({cardapioForm:{...s.cardapioForm,disponivel:!s.cardapioForm.disponivel}}));
   uploadCardapioFoto=async(e)=>{ let file=e.target.files&&e.target.files[0]; if(!file) return; file=await this._otimizarFoto(file);
@@ -6824,10 +6835,11 @@ class Component extends DCLogic {
     const { error } = await sb.from('rest_cardapio_dia').update({disponivel:!it.available}).eq('id',id);
     if(error){ this.showToast('Erro: '+error.message); return; }
     this.loadCardapio(); };
-  removeCardapio=async(id)=>{ if(!window.confirm('Excluir este item do cardápio?')) return;
+  removeCardapio=async(id)=>{ const it=(this.state.cardapio||[]).find(x=>x.id===id); if(!id||!window.confirm('Excluir '+(it?'"'+it.name+'"':'este prato')+' do cardápio?\nDepois é só montar outro em "Novo prato".')) return;
     const { error } = await sb.from('rest_cardapio_dia').delete().eq('id',id);
     if(error){ this.showToast('Erro: '+error.message); return; }
-    this.showToast('Item removido.');
+    this.showToast('Prato excluído.');
+    if(this.state.cardapioForm&&this.state.cardapioForm.id===id) this.setState({modal:null, cardapioForm:null});
     this.loadCardapio(); };
   openCardapioSection=(sec)=>this.setState({cardapioSection:sec});
   blankAdicionalForm=()=>({id:null,nome:'',valor:'',foto_url:''});
@@ -7237,6 +7249,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
         onClick:()=>this.setState({cardapioHubCat:c.key})}; });
     const cdpLista=s.cardapio.filter(i=>!cdpCat||i.size===cdpCat).slice().sort((a,b)=>(b.available?1:0)-(a.available?1:0));
     const FUNDO={P:'#54ACBF',M:'#3f93ad',G:'#26658C',F:'#2f8f57'};
+    const VALC=(()=>{ const a=s.arte||{}; return {P:a.pP,M:a.pM,G:a.pG,F:a.pFit}; })();
     const cdpPratos=cdpLista.map(i=>{ const c=mkCardapioCard(i); const parar=(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); };
       return {...c, emoji:emojiPrato(i.name), imgStyle:'background:radial-gradient(circle at 30% 25%,'+(FUNDO[i.size]||'#3f93ad')+' -10%,#023859 55%,#011C40 100%)', tamanhoTxt:i.size==='F'?'Prato fitness':('Marmita '+(SIZEL[i.size]||i.size)),
         cardStyle:'position:relative;background:var(--bg-card);border:1px solid var(--border-card);border-radius:22px;padding:76px 16px 14px;margin-top:56px;text-align:center;cursor:pointer;'+(i.available?'':'opacity:.55;filter:grayscale(.6);'),
@@ -7245,6 +7258,9 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
         onAbrir:()=>this.setState({cardapioCategory:i.size, cardapioItemFoco:i.id, cardapioSearch:''}),
         onToggleCard:(e)=>{ parar(e); this.toggleCardapio(i.id); },
         onEditCard:(e)=>{ parar(e); this.editCardapioItemById(i.id); },
+        onExcluirCard:(e)=>{ parar(e); this.removeCardapio(i.id); },
+        name:/^prato\s+(p|m|g|f|fit|fitness)$/i.test(String(i.name||'').trim())?this.nomeAutoPrato(i.size):i.name,
+        priceFmt:i.price>0?c.priceFmt:(this.num(VALC[i.size])?brl(this.num(VALC[i.size])):c.priceFmt),
         onFoto:(e)=>{ parar(e); this.editCardapioItemById(i.id); }}; });
     const cdpAtivos=cdpLista.filter(i=>i.available).length, cdpSemFoto=cdpLista.filter(i=>!i.foto_url).length;
     const cdpVals={ cdpCats, cdpPratos, cdpVazio:cdpPratos.length===0, cdpTitulo:cdpCat?SIZEL[cdpCat]:'Pratos de hoje', cdpTemCat:!!cdpCat,
@@ -7290,6 +7306,8 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const isCardapioEditForm=s.modal==='cardapioEdit';
     const cfTitle=cf.id?'Editar item do cardápio':'Novo item do cardápio';
     const cfCategoriaLabel=SIZEL[cf.categoria]||cf.categoria||'';
+    const cfTams=['P','M','G','F'].map(k=>{ const on=cf.categoria===k; return {label:k==='F'?'Fitness':k+' · '+SIZEL[k], titulo:k==='F'?'Prato Fitness':'Prato '+SIZEL[k], onClick:()=>this.escolherTamanhoPrato(k),
+      style:'padding:10px 4px;border-radius:10px;font-size:13px;font-weight:'+(on?'700':'500')+';cursor:pointer;font-family:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background .15s ease,border-color .15s ease;border:1px solid '+(on?'#54ACBF':'var(--border-input)')+';background:'+(on?'#26658C':'transparent')+';color:'+(on?'#fff':'var(--text-primary)')}; });
     const cfDisponivelLabel=cf.disponivel?'Disponível':'Indisponível';
     const cfDisponivelDotStyle='width:20px;height:20px;border-radius:6px;flex-shrink:0;background:'+(cf.disponivel?'#2f8f57':'#847a6e');
     const cfComplementoIds=cf.complementoIds||[];
@@ -7908,7 +7926,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       cardapioSearchActive, cardapioShowTiles, cardapioShowSkeleton, cardapioSearchResults, noCardapioSearchResults,
       cardapioCategoryItems, noCardapioCategoryItems,
       backToCardapioHub:this.backToCardapioHub, newCardapioItem:this.newCardapioItem,
-      isCardapioEditForm, cfTitle, cardapioForm:cf, cfCategoriaLabel,
+      isCardapioEditForm, cfTitle, cardapioForm:cf, cfCategoriaLabel, cfTams, cfPodeExcluir:!!cf.id, cfExcluir:()=>this.removeCardapio(cf.id),
       onCFNome:(e)=>this.updateCardapioForm('nome',e.target.value),
       onCFObservacoes:(e)=>this.updateCardapioForm('observacoes',e.target.value),
       onCFPreco:(e)=>this.updateCardapioForm('preco',e.target.value),
