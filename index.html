@@ -211,6 +211,21 @@
   .ped-ind{flex-shrink:0;width:22px;height:22px;display:grid;place-items:center;border:2px solid rgba(255,255,255,.3);transition:all .2s ease}
   .ped-radio{border-radius:50%}.ped-op.on .ped-radio{border-color:var(--laranja);box-shadow:inset 0 0 0 4px #1a1d22;background:var(--laranja)}
   .ped-check{border-radius:7px}.ped-check svg{width:14px;height:14px}.ped-op.on .ped-check{border-color:var(--laranja);background:var(--laranja);color:#1a0d02;animation:escolhido .3s ease}
+  .ped-extra{margin-top:14px;padding:14px;border-radius:16px;border:1.5px solid rgba(255,122,26,.45);background:rgba(255,122,26,.08);animation:entraExtra .3s ease}
+  .ped-extra-pergunta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .ped-extra-pergunta>div:first-child{flex:1;min-width:180px;display:flex;flex-direction:column;gap:3px}
+  .ped-extra-pergunta b,.ped-extra-h b{font:700 15px Inter;color:#fff}.ped-extra-pergunta span,.ped-extra-h span{font-size:12.5px;color:var(--suave)}
+  .ped-extra-bts{display:flex;gap:8px}
+  .ped-extra-sim,.ped-extra-nao2{min-height:44px;min-width:78px;padding:0 18px;border-radius:12px;font:700 14px Inter;cursor:pointer;transition:transform .15s ease,border-color .15s ease}
+  .ped-extra-sim{border:none;background:linear-gradient(135deg,var(--laranja2),var(--laranja));color:#1a0d02}.ped-extra-sim:hover{transform:translateY(-1px)}
+  .ped-extra-nao2{border:1.5px solid var(--linha);background:transparent;color:var(--texto)}.ped-extra-nao2:hover{border-color:var(--suave)}
+  .ped-extra-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}.ped-extra-h span{flex:1}
+  .ped-extra-x,.ped-extra-nao button{border:none;background:none;color:var(--laranja2);font:600 12.5px Inter;cursor:pointer;text-decoration:underline;padding:6px 4px}
+  .ped-mais1{margin-left:auto;font:700 12.5px Inter;font-style:normal;color:var(--laranja2);white-space:nowrap}
+  .ped-extra-nao{margin:12px 0 0}.ped-extra-tot{margin:10px 0 0;color:var(--laranja2)}
+  .ped-extra-sim:focus-visible,.ped-extra-nao2:focus-visible,.ped-extra-x:focus-visible,.ped-extra-nao button:focus-visible{outline:2px solid var(--laranja);outline-offset:2px}
+  @keyframes entraExtra{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.ped-extra{animation:none}}
   .ped-lista.cheia .ped-op:not(.on){opacity:.42}
   @keyframes escolhido{40%{transform:scale(1.2)}}
   .ped-esp{font-style:normal;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#1a0d02;background:var(--laranja2);padding:3px 7px;border-radius:8px}
@@ -563,7 +578,7 @@ const rota = () => (location.hash === '#cardapio' ? mostrarCardapio() : mostrarC
 // ---------- Monte seu pedido: tamanho, prato do dia, até 2 guarnições, quantidade e observação → WhatsApp ----------
 let DADOS = null;
 const MAX_GUARN = 2;
-const PED = { tam: '', prato: '', guarn: [], qtd: 1, itens: [], ent: '' }; // itens = pratos já adicionados ao pedido
+const PED = { tam: '', prato: '', guarn: [], qtd: 1, itens: [], ent: '', extras: [], querExtra: null }; // itens = pratos já adicionados ao pedido
 const num = (v) => Number(String(v || '').replace(/\./g, '').replace(',', '.')) || 0;
 const reais = (n) => 'R$ ' + n.toFixed(2).replace('.', ',');
 const PROTEINAS_FIT = ['Carne', 'Frango', 'Omelete'];
@@ -586,8 +601,9 @@ function precoPedido(d, tam, prato) {
 // ── vários pratos no mesmo pedido ──
 const PRATO_TAM = { P: 'Prato Pequeno', M: 'Prato Médio', G: 'Prato Grande' };
 const nomeItem = (it) => it.tam === 'F' ? 'Prato Fitness' : (PRATO_TAM[it.tam] || 'Prato ' + ((tamanhosPedido(DADOS).find(([k]) => k === it.tam) || [])[1] || it.tam)) + ' (' + it.tam + ')';
-const valorItem = (it) => precoPedido(DADOS, it.tam, it.prato).valor * it.qtd;
-const itemAtual = () => (PED.tam && !faltaPedido() ? { tam: PED.tam, prato: PED.prato, guarn: [...PED.guarn], qtd: PED.qtd } : null);
+const valorExtra = (d) => num(d.guarnExtra == null ? '1,00' : d.guarnExtra); // preço de cada guarnição extra (definido no sistema)
+const valorItem = (it) => (precoPedido(DADOS, it.tam, it.prato).valor + (it.extras || []).length * valorExtra(DADOS)) * it.qtd;
+const itemAtual = () => (PED.tam && !faltaPedido() ? { tam: PED.tam, prato: PED.prato, guarn: [...PED.guarn], extras: [...PED.extras], qtd: PED.qtd } : null);
 const qtdItens = (l) => l.reduce((s, it) => s + it.qtd, 0);
 function confirmaGuarn(acao) {
   if (!PED.tam || PED.tam === 'F' || !(DADOS.guarnicoes || []).length || PED.guarn.length >= MAX_GUARN) return true;
@@ -596,14 +612,14 @@ function confirmaGuarn(acao) {
 function renderSacola() {
   const el = document.getElementById('ped-sacola'); const its = PED.itens; const n = qtdItens(its);
   el.innerHTML = its.length ? `<section class="ped-sec ped-sacola"><div class="ped-h"><span class="ped-n ok">${ICO_OK}</span><h4>Seu pedido</h4><span class="ped-cont">${n} prato${n > 1 ? 's' : ''}</span></div>
-    <ul>${its.map((it, i) => `<li><div><b>${it.qtd}× ${esc(nomeItem(it))}</b><span>${esc([it.prato, it.guarn.join(' e ')].filter(Boolean).join(' · '))}</span></div><em>${reais(valorItem(it))}</em><button type="button" class="ped-rem" data-rem="${i}" aria-label="Remover ${esc(nomeItem(it))}">×</button></li>`).join('')}</ul>
+    <ul>${its.map((it, i) => `<li><div><b>${it.qtd}× ${esc(nomeItem(it))}</b><span>${esc([it.prato, it.guarn.join(' e '), (it.extras || []).length ? '+ ' + it.extras.join(' e ') : ''].filter(Boolean).join(' · '))}</span></div><em>${reais(valorItem(it))}</em><button type="button" class="ped-rem" data-rem="${i}" aria-label="Remover ${esc(nomeItem(it))}">×</button></li>`).join('')}</ul>
     <p class="ped-nota">${PED.tam ? 'Montando mais um prato abaixo — ou envie o pedido.' : 'Quer mais um prato? Escolha o tamanho abaixo. Se não, é só enviar.'}</p></section>` : '';
 }
 function adicionarPrato() {
   if (!PED.tam) return erroPedido('Escolha o tamanho do próximo prato.', 'sec-tam');
   const falta = faltaPedido(); if (falta) return erroPedido('Escolha ' + falta.msg + '.', falta.sec);
   if (!confirmaGuarn('Adicionar')) return;
-  PED.itens.push(itemAtual()); PED.tam = ''; PED.prato = ''; PED.guarn = []; PED.qtd = 1;
+  PED.itens.push(itemAtual()); PED.tam = ''; PED.prato = ''; PED.guarn = []; PED.qtd = 1; PED.extras = []; PED.querExtra = null;
   renderOpcoes(); const c = document.querySelector('#ped .ped-corpo'); if (c) c.scrollTop = 0;
 }
 // ── fim vários pratos ──
@@ -668,6 +684,7 @@ function cabecalho(numero, titulo, feito, extra) {
 }
 function renderOpcoes() {
   const d = DADOS; const fit = PED.tam === 'F'; const es = d.especial || {};
+  if (fit || PED.guarn.length < MAX_GUARN) { PED.extras = []; PED.querExtra = null; } PED.extras = PED.extras.filter(x => !PED.guarn.includes(x));
   renderSacola();
   const tams = tamanhosPedido(d).map(([k, n]) => { const p = precoPedido(d, k, PED.prato); const f = fotoTamanho(d, k);
     return `<button type="button" class="ped-tam${PED.tam === k ? ' on' : ''}" data-tam="${k}" aria-pressed="${PED.tam === k}">
@@ -681,6 +698,16 @@ function renderOpcoes() {
     return `<button type="button" class="ped-op${on ? ' on' : ''}" data-guarn="${esc(n)}" role="checkbox" aria-checked="${on}"${cheio && !on ? ' aria-disabled="true"' : ''}>
       <i class="ped-ind ped-check">${on ? ICO_OK : ''}</i><span>${esc(n)}</span></button>`; }).join('');
   const contador = `<span class="ped-cont${cheio ? ' cheio' : ''}">${[...Array(MAX_GUARN)].map((_, i) => `<i class="${i < PED.guarn.length ? 'on' : ''}"></i>`).join('')}${PED.guarn.length}/${MAX_GUARN}</span>`;
+  // ── guarnição extra: depois das 2 inclusas, pergunta se quer mais (preço vem do sistema) ──
+  const ve = valorExtra(d), resto = (d.guarnicoes || []).filter(n => !PED.guarn.includes(n)); let extraHTML = '';
+  if (!fit && cheio && ve > 0 && resto.length) {
+    if (PED.querExtra === true) extraHTML = `<div class="ped-extra"><div class="ped-extra-h"><b>Guarnições extras</b><span>+ ${reais(ve)} cada</span><button type="button" class="ped-extra-x" data-querextra="nao">Não quero</button></div>
+      <div class="ped-lista">${resto.map(n => { const on = PED.extras.includes(n); return `<button type="button" class="ped-op${on ? ' on' : ''}" data-extra="${esc(n)}" role="checkbox" aria-checked="${on}"><i class="ped-ind ped-check">${on ? ICO_OK : ''}</i><span>${esc(n)}</span><em class="ped-mais1">+${reais(ve)}</em></button>`; }).join('')}</div>
+      ${PED.extras.length ? `<p class="ped-nota ped-extra-tot">${PED.extras.length} extra${PED.extras.length > 1 ? 's' : ''}: + ${reais(PED.extras.length * ve)} por prato</p>` : ''}</div>`;
+    else if (PED.querExtra === false) extraHTML = `<p class="ped-nota ped-extra-nao">Sem guarnição extra. <button type="button" data-querextra="sim">Quero extra (+ ${reais(ve)} cada)</button></p>`;
+    else extraHTML = `<div class="ped-extra ped-extra-pergunta" role="group" aria-label="Guarnição extra"><div><b>Gostaria de guarnição extra?</b><span>Cada uma a mais custa ${reais(ve)}.</span></div>
+      <div class="ped-extra-bts"><button type="button" class="ped-extra-sim" data-querextra="sim">Sim</button><button type="button" class="ped-extra-nao2" data-querextra="nao">Não</button></div></div>`;
+  }
   document.getElementById('ped-opcoes').innerHTML = `
     <section class="ped-sec" id="sec-tam">${cabecalho(1, 'Tamanho', !!PED.tam, '<span class="ped-req">obrigatório</span>')}
       <div class="ped-tams">${tams}</div>
@@ -690,13 +717,13 @@ function renderOpcoes() {
       <div class="ped-lista" role="radiogroup">${opPrato}</div></section>` : ''}
     ${(d.guarnicoes || []).length ? `<section class="ped-sec" id="sec-guarn">${cabecalho(3, 'Guarnições', cheio, contador)}
       <p class="ped-nota">${fit ? 'Opcional — ' + esc(d.fitnessObs || 'guarnições têm acréscimo') + '.' : `Escolha até ${MAX_GUARN} — já estão inclusas no prato.`}</p>
-      <div class="ped-lista${cheio ? ' cheia' : ''}">${opGuarn}</div></section>` : ''}`;
+      <div class="ped-lista${cheio ? ' cheia' : ''}">${opGuarn}</div>${extraHTML}</section>` : ''}`;
   atualizarTotal();
 }
 function atualizarTotal() {
   const d = DADOS; const p = PED.tam ? precoPedido(d, PED.tam, PED.prato) : { valor: 0 };
   document.getElementById('ped-qtd').textContent = PED.qtd;
-  const tot = document.getElementById('ped-total'); const novo = reais(PED.itens.reduce((s, it) => s + valorItem(it), 0) + p.valor * PED.qtd);
+  const tot = document.getElementById('ped-total'); const novo = reais(PED.itens.reduce((s, it) => s + valorItem(it), 0) + (p.valor + (PED.tam ? PED.extras.length * valorExtra(d) : 0)) * PED.qtd);
   if (tot.textContent !== novo) { tot.textContent = novo; tot.classList.remove('pulo'); void tot.offsetWidth; tot.classList.add('pulo'); }
   const nome = (tamanhosPedido(d).find(([k]) => k === PED.tam) || [])[1];
   const nSac = qtdItens(PED.itens), atual = nome ? `${PED.qtd}× ${nome}${PED.prato ? ' · ' + PED.prato : ''}` : '';
@@ -726,7 +753,7 @@ function enviarPedido() {
   const obs = document.getElementById('ped-obs').value.trim();
   const bloco = (it, i) => { const p = precoPedido(d, it.tam, it.prato); const fit = it.tam === 'F';
     return [`*${itens.length > 1 ? (i + 1) + ') ' : ''}${nomeItem(it)}*${p.valor ? ' — ' + reais(p.valor) : ''}${p.especial ? ' (especial)' : ''}`,
-      it.prato ? `${fit ? 'Proteína' : 'Prato'}: ${it.prato}` : '', it.guarn.length ? `Guarnições: ${it.guarn.join(' e ')}` : '',
+      it.prato ? `${fit ? 'Proteína' : 'Prato'}: ${it.prato}` : '', it.guarn.length ? `Guarnições: ${it.guarn.join(' e ')}` : '', (it.extras || []).length ? `Guarnições extras: ${it.extras.join(' e ')} (+${reais(it.extras.length * valorExtra(d))} cada prato)` : '',
       `Quantidade: ${it.qtd}`].filter(Boolean).join('\n'); };
   const total = itens.reduce((s, it) => s + valorItem(it), 0);
   const end = enderecoTxt(); const entrega = PED.ent === 'entrega' ? `\n\n*Entregar em:* ${end}` : '\n\n*Vou retirar no local*';
@@ -741,7 +768,7 @@ function abrirPedido(tam, prato, guarn, especial) {
   const d = DADOS; if (!d) return;
   if (!document.getElementById('ped')) { document.body.insertAdjacentHTML('beforeend', pedidoHTML()); ligarPedido(); }
   const tams = tamanhosPedido(d).map(([k]) => k);
-  PED.tam = tams.includes(tam) ? tam : (tams.includes('M') ? 'M' : tams[0] || ''); PED.prato = prato || ''; PED.guarn = []; PED.qtd = 1;
+  PED.tam = tams.includes(tam) ? tam : (tams.includes('M') ? 'M' : tams[0] || ''); PED.prato = prato || ''; PED.guarn = []; PED.qtd = 1; PED.extras = []; PED.querExtra = null;
   if (prato && PED.tam === 'F') PED.tam = tams.includes('M') ? 'M' : tams[0];
   if (guarn && (d.guarnicoes || []).includes(guarn)) PED.guarn = [guarn];
   if (especial && !PED.prato) { const e = (d.hoje || []).find(n => ehEspecial(d, n)); if (e) PED.prato = e; }
@@ -784,6 +811,8 @@ function ligarPedido() {
       else v = v ? v + '; ' + x : x;
       obs.value = v.slice(0, 300); marcarTags(); }
     else if (e.target.closest('[data-rem]')) { PED.itens.splice(Number(e.target.closest('[data-rem]').dataset.rem), 1); renderOpcoes(); }
+    else if (e.target.closest('[data-querextra]')) { PED.querExtra = e.target.closest('[data-querextra]').dataset.querextra === 'sim'; if (!PED.querExtra) PED.extras = []; renderOpcoes(); }
+    else if (e.target.closest('[data-extra]')) { const n = e.target.closest('[data-extra]').dataset.extra; PED.extras = PED.extras.includes(n) ? PED.extras.filter(x => x !== n) : [...PED.extras, n]; renderOpcoes(); }
     else if (e.target.closest('#ped-mais')) adicionarPrato();
     else if (e.target.closest('[data-ent]')) { PED.ent = e.target.closest('[data-ent]').dataset.ent; atualizarTotal();
       if (PED.ent === 'entrega') setTimeout(() => { const x = document.getElementById('ped-endereco'); x.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (!x.value) x.focus({ preventScroll: true }); }, 60); }

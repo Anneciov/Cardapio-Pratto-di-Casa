@@ -3922,6 +3922,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
                   </div>
                   <form onsubmit="{{ col.adicionar }}" style="display:flex;gap:6px"><input value="{{ col.novo }}" oninput="{{ col.setNovo }}" placeholder="{{ col.ph }}" maxlength="80" style="{{ mcdInp }}"><button type="submit" title="Adicionar" style="flex-shrink:0;width:36px;border-radius:9px;border:none;background:#26658C;color:#fff;font-size:19px;font-weight:700;cursor:pointer">+</button></form>
                   <sc-if value="{{ col.temSug }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-wrap:wrap;gap:5px"><sc-for list="{{ col.sugestoes }}" as="sg" hint-placeholder-count="3"><button onclick="{{ sg.add }}" class="mcd-sug" title="Adicionar ao cardápio de hoje">+ {{ sg.t }}</button></sc-for></div></sc-if>
+                  <sc-if value="{{ col.ehGuarn }}" hint-placeholder-val="{{ false }}"><label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#9a9084;white-space:nowrap">Guarnição extra (R$ cada)<input value="{{ mcdGExtra }}" oninput="{{ arteSet.gExtra }}" inputmode="decimal" placeholder="1,00" title="Valor cobrado no site por guarnição a mais (deixe vazio para não oferecer)" style="{{ mcdInp }};max-width:110px"></label></sc-if>
                   <sc-if value="{{ col.ehFitness }}" hint-placeholder-val="{{ false }}"><input value="{{ arte.fitnessObs }}" oninput="{{ arteSet.fitnessObs }}" placeholder="Observação (ex.: Guarnições têm acréscimo)" style="{{ mcdInp }}"></sc-if>
                 </div>
               </sc-for>
@@ -4738,7 +4739,7 @@ class Component extends DCLogic {
   arteOriginal=()=>({ v:2, titulo:'Pratto di Casa',
     hoje:'Bife a rolê\nCoxinha da asa à milanesa\nDobradinha\nFilé de frango à milanesa\nBife à milanesa\nÀ parmegiana',
     guarnicoes:'Repolho refogado\nPurê de batata\nRondeli de frios\nBolinho de arroz\nFarofa',
-    fitness:'Arroz integral\n1 proteína (carne, frango ou omelete)\nSalada', fitnessObs:'Guarnições têm acréscimo',
+    fitness:'Arroz integral\n1 proteína (carne, frango ou omelete)\nSalada', fitnessObs:'Guarnições têm acréscimo', gExtra:'1,00',
     pP:'25,00', pM:'28,00', pG:'35,00', pFit:'28,00', espNome:'Feijoada / Rabada / Virado / À parmegiana', eP:'26,00', eM:'30,00', eG:'38,00' });
   arteSugestao=()=>this.arteOriginal();
   arteDados=()=>{ let salvo=null; try{ salvo=JSON.parse(localStorage.getItem('pdc_cardapio_arte')||'null'); }catch(e){}
@@ -4756,7 +4757,7 @@ class Component extends DCLogic {
       return { nome:i.name, tamanho:i.size, tamanhoNome:NOME[i.size]||i.size, preco:v, foto:i.foto_url||'', itens, obs:i.observacoes||'', tempo:i.tempo_preparo||null }; }); };
   agendarPublicacao=()=>{ clearTimeout(this._pubT); this._pubT=setTimeout(this.publicarCardapio,2000); };
   publicarCardapio=async()=>{ if(this._demo||!sb) return; const a=this.state.arte; if(!a) return; const L=this.mcdSplit;
-    const dados={ v:1, atualizado:new Date().toISOString(), empresa:{...Component.EMPRESA, whatsapp:Component.WHATSAPP_CARDAPIO}, hoje:L(a.hoje), guarnicoes:L(a.guarnicoes), fitness:L(a.fitness), fitnessObs:a.fitnessObs||'',
+    const dados={ v:1, atualizado:new Date().toISOString(), empresa:{...Component.EMPRESA, whatsapp:Component.WHATSAPP_CARDAPIO}, hoje:L(a.hoje), guarnicoes:L(a.guarnicoes), fitness:L(a.fitness), fitnessObs:a.fitnessObs||'', guarnExtra:a.gExtra==null?'1,00':String(a.gExtra).trim(),
       precos:{ P:a.pP||'', M:a.pM||'', G:a.pG||'', fitness:a.pFit||'' }, especial:{ nome:a.espNome||'', P:a.eP||'', M:a.eM||'', G:a.eG||'' }, fotos:a.fotos||{},
       // os mesmos pratos cadastrados no sistema (com foto, ingredientes e valor do tamanho), para o site ficar igual ao "Ver Cardápio"
       pratos:this.pratosParaSite() };
@@ -4898,7 +4899,7 @@ class Component extends DCLogic {
     const dia=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit'});
     let txt='*'+emp.nome+'* 🍽️\n_Cardápio de hoje — '+dia+'_\n';
     const sec=(titulo,ls)=>{ if(ls.length){ txt+='\n*'+titulo+'*\n'; ls.forEach(x=>{ txt+='• '+x+'\n'; }); } };
-    sec('HOJE',L(a.hoje)); sec('GUARNIÇÕES',L(a.guarnicoes)); sec('FITNESS',L(a.fitness)); if(a.fitnessObs&&L(a.fitness).length) txt+='_('+a.fitnessObs+')_\n';
+    sec('HOJE',L(a.hoje)); sec('GUARNIÇÕES',L(a.guarnicoes)); { const gx=a.gExtra==null?'1,00':String(a.gExtra).trim(); if(gx&&L(a.guarnicoes).length) txt+='_(guarnição extra R$ '+gx+' cada)_\n'; } sec('FITNESS',L(a.fitness)); if(a.fitnessObs&&L(a.fitness).length) txt+='_('+a.fitnessObs+')_\n';
     const pr=(p,m,g)=>[['P',p],['M',m],['G',g]].filter(x=>String(x[1]||'').trim()).map(x=>x[0]+' R$ '+x[1]).join('  ·  ');
     txt+='\n*VALORES*\n'+pr(a.pP,a.pM,a.pG)+'\n'; if(String(a.pFit||'').trim()) txt+='Fitness R$ '+a.pFit+'\n';
     if(String(a.espNome||'').trim()&&pr(a.eP,a.eM,a.eG)) txt+='\n*'+a.espNome+'*\n'+pr(a.eP,a.eM,a.eG)+'\n';
@@ -7272,7 +7273,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       const ls=spl(arteAtual[k]); const low=ls.map(x=>x.toLowerCase()); const sug=(mcdH[k]||[]).filter(x=>!low.includes(x.toLowerCase())).slice(0,12);
       return { titulo, sub, ph, vazio:ls.length===0, temItens:ls.length>0, contagem:ls.length, itens:ls.map((tx,i)=>{ const f=((arteAtual.fotos||{})[this.mcdChaveFoto(tx)])||(k==='hoje'?fotoPratoSite(tx):''); return { t:tx, remover:()=>this.mcdDel(k,i), foto:f, temFoto:!!f, semFoto:!f, abrirFoto:()=>this.abrirFotoItem(tx) }; }), sugestoes:sug.map(tx=>({ t:tx, add:()=>this.mcdAdd(k,tx) })), temSug:sug.length>0,
         novo:(s.mcdNovo||{})[k]||'', setNovo:(e)=>{ const v=e.target.value; this.setState(st=>({ mcdNovo:{ ...(st.mcdNovo||{}), [k]:v } })); },
-        adicionar:(e)=>{ if(e&&e.preventDefault) e.preventDefault(); this.mcdAdd(k,(this.state.mcdNovo||{})[k]); }, limpar:()=>this.mcdLimpar(k,titulo), ehFitness:k==='fitness' }; });
+        adicionar:(e)=>{ if(e&&e.preventDefault) e.preventDefault(); this.mcdAdd(k,(this.state.mcdNovo||{})[k]); }, limpar:()=>this.mcdLimpar(k,titulo), ehFitness:k==='fitness', ehGuarn:k==='guarnicoes' }; });
     const mcdData=arteAtual.atualizado?new Date(arteAtual.atualizado):null; const mcdHojeOk=!!mcdData&&mcdData.toDateString()===new Date().toDateString();
     const mcdFotoPropria=s.mcdFoto?(((arteAtual.fotos||{})[this.mcdChaveFoto(s.mcdFoto)])||''):''; const mcdFotoUrl=mcdFotoPropria||(s.mcdFoto?fotoPratoSite(s.mcdFoto):'');
     const mcdVals={ mcdFotoAberto:!!s.mcdFoto, mcdFotoNome:s.mcdFoto||'', mcdFotoUrl, mcdTemFotoItem:!!mcdFotoUrl, mcdSemFotoItem:!mcdFotoUrl, mcdTemFotoPropria:!!mcdFotoPropria, mcdFotoIlustrativa:!mcdFotoPropria&&!!mcdFotoUrl, mcdFotoEnviando:!!s.mcdFotoEnviando,
@@ -7918,7 +7919,8 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       noCardapio:s.cardapio.length===0, cardapioTotal:String(s.cardapio.length), cardapioAvailFmt:String(cardapioAvail),
       cardapioCategories, cardapioCategoryOpen, cardapioHubOpen, cardapioCategoryLabel, ...cdpVals, ...mcdVals, ...mvVals,
       arteAberta:!!s.arteAberta, arte:s.arte||{}, abrirArte:this.abrirArte, fecharArte:this.fecharArte, arteRecarregar:this.arteRecarregar, baixarArte:this.baixarArte, copiarArte:this.copiarArte,
-      arteSet:['hoje','guarnicoes','fitness','fitnessObs','pP','pM','pG','pFit','espNome','eP','eM','eG'].reduce((o,k)=>{ o[k]=this.setArte(k); return o; },{}),
+      mcdGExtra:(s.arte||{}).gExtra==null?'1,00':(s.arte||{}).gExtra,
+      arteSet:['hoje','guarnicoes','fitness','fitnessObs','gExtra','pP','pM','pG','pFit','espNome','eP','eM','eG'].reduce((o,k)=>{ o[k]=this.setArte(k); return o; },{}),
       arteLbl:'display:block;font-size:11.5px;font-weight:700;color:#847a6e;text-transform:uppercase;letter-spacing:.05em;margin:10px 0 6px',
       arteInp:'width:100%;box-sizing:border-box;padding:9px 11px;border:1px solid var(--border-input);border-radius:9px;font-size:14px;margin-bottom:8px;background:var(--bg-card);color:var(--text-primary);font-family:inherit',
       arteTa:'width:100%;box-sizing:border-box;padding:9px 11px;border:1px solid var(--border-input);border-radius:9px;font-size:14px;line-height:1.45;margin-bottom:6px;background:var(--bg-card);color:var(--text-primary);font-family:inherit;resize:vertical',
