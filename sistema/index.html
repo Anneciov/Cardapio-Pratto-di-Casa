@@ -4619,6 +4619,9 @@ class Component extends DCLogic {
     const isInt=()=> this._numTarget && (this._numTarget.getAttribute('inputmode')==='numeric');
     const refresh=()=>{ const d=pad.querySelector('#pdc-np-disp'); if(!this._numTarget) return; const v=this._numTarget.value||''; d.textContent = isInt()?(v||'0'):fmt(v); };
     grid.addEventListener('click',(e)=>{ const b=e.target.closest('[data-k]'); if(!b||!this._numTarget) return; const t=this._numTarget; let v=t.value||''; const k=b.dataset.k;
+      if(!isInt()){ let dg=String(v).replace(/\D/g,'').replace(/^0+/,'');
+        if(k==='back') dg=dg.slice(0,-1); else if(k===','){ if(dg) dg=dg+'00'; } else dg=dg+k;
+        dg=dg.replace(/^0+/,'').slice(0,9); setVal(t, dg?(Number(dg)/100).toFixed(2).replace('.',','):''); refresh(); return; }
       if(k==='back'){ v=v.slice(0,-1); }
       else if(k===','){ if(!isInt()&&v.indexOf(',')<0) v=(v||'0')+','; }
       else { if(!isInt()&&v.indexOf(',')>=0 && v.split(',')[1].length>=2) {} else v=v+k; }
@@ -4632,7 +4635,9 @@ class Component extends DCLogic {
     });
     document.addEventListener('mousedown',(e)=>{ if(this._numpad&&this._numTarget&&!pad.contains(e.target)&&e.target!==this._numTarget) this._closeNumpad(); });
   }
-  _openNumpad(el){ this._numTarget=el; el.setAttribute('readonly','readonly'); const cap=this._numpad.querySelector('#pdc-np-cap');
+  _openNumpad(el){ this._numTarget=el; el.setAttribute('readonly','readonly'); const dec=el.getAttribute('inputmode')!=='numeric';
+    const kv=this._numpad.querySelector('[data-k=","]'); if(kv) kv.textContent=dec?'00':',';
+    if(dec&&String(el.value||'').trim()){ const s0=String(el.value).trim(); const n0=parseFloat(s0.indexOf(',')>=0?s0.replace(/\./g,'').replace(',','.'):s0); const f0=isNaN(n0)?'':n0.toFixed(2).replace('.',','); if(f0!==el.value){ Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(el,f0); el.dispatchEvent(new Event('input',{bubbles:true})); } } const cap=this._numpad.querySelector('#pdc-np-cap');
     const lab=el.getAttribute('data-numpad-label'); cap.textContent = lab || (el.getAttribute('inputmode')==='numeric'?'Quantidade':'Valor');
     const d=this._numpad.querySelector('#pdc-np-disp'); const v=el.value||''; const n=parseFloat(v.replace(',','.'));
     d.textContent = el.getAttribute('inputmode')==='numeric'?(v||'0'):(isNaN(n)?'R$ 0,00':n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}));
@@ -7992,6 +7997,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
 
 <script>
 (function(){
+  return; // teclado antigo desligado — o sistema usa só o teclado de valor (pdc-numpad)
   var SELECTOR = 'input[inputmode="decimal"]:not([data-numpad="off"]), input[inputmode="numeric"]:not([data-numpad="off"])';
   var panel = null, activeInput = null;
 
