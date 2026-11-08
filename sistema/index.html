@@ -93,29 +93,65 @@ aside nav>div:hover{background:#04315a!important;transform:scale(1.03)}
 @media (prefers-reduced-motion:reduce){[class*="pd-"],[class*="pd-"]::before{transition:none!important}.pd-mini:hover,.pd-ring.pd-tipw:hover,.pd-donut:hover,.pd-bandit:hover .pd-ring{transform:none}}
 /* ── fim do dashboard ── */
 /* ── crediário: histórico mensal ── */
-.cr-mes{border-radius:999px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;transition:background-color .15s ease,border-color .15s ease}
-.cr-mes:hover{border-color:#54ACBF!important}
-.cr-tots{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-soft);border-bottom:1px solid var(--border-soft)}
-.cr-tots>div{background:var(--bg-card);padding:12px 18px}
-.cr-num{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;margin-top:4px}
-.cr-num.sm{font-size:14px;margin-top:0}
-.cr-grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1.3fr) 1fr 1fr 1fr 22px;gap:12px;align-items:center;padding:11px 18px}
-.cr-cab{background:var(--bg-tablehead);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#847a6e;padding-top:9px;padding-bottom:9px}
-.cr-lin{border-top:1px solid var(--border-soft);cursor:pointer;transition:background-color .15s ease}
-.cr-lin:hover,.cr-lin:focus-visible{background:var(--bg-accent-soft)}
-.cr-lin:focus-visible{outline:2px solid #54ACBF;outline-offset:-2px}
-.cr-av{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;background:linear-gradient(135deg,#2dd4bf,#26658C)}
-.cr-item{display:grid;grid-template-columns:70px minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:8px 18px 8px 56px;border-top:1px dashed var(--border-soft);background:var(--bg-accent-soft)}
-@media (max-width:760px){.cr-mov{display:none}.cr-grid{grid-template-columns:minmax(0,1.6fr) 1fr 1fr 1fr 18px}.cr-item{padding-left:18px;grid-template-columns:52px minmax(0,1fr) auto}.cr-item>span{display:none}.cr-tots{grid-template-columns:1fr 1fr 1fr}}
-/* ── fim crediário ── */
-/* ── crediário compacto ── */
-.cr-resumo{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(167,235,242,.14);border-radius:14px;overflow:hidden;margin-bottom:10px;color:#fff}
-.cr-resumo>div{background:#04315a;padding:9px 16px;display:flex;flex-direction:column;gap:1px;min-width:0}
-.cr-resumo>div>span{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:#b3d6de;font-weight:700}
-.cr-resumo b{display:block;font-family:'Space Mono',monospace!important;font-size:19px!important;font-weight:700;line-height:1.3;color:#fff}.cr-resumo b.verde{color:#4ade80}
-.cr-hist .cr-grid{padding-top:7px;padding-bottom:7px}.cr-hist .cr-cab{padding-top:7px;padding-bottom:7px}.cr-hist .cr-tots>div{padding:8px 16px}.cr-hist .cr-num{font-size:17px;margin-top:2px}.cr-hist .cr-num.sm{font-size:13.5px;margin-top:0}
-.cr-hist .cr-item{padding-top:6px;padding-bottom:6px}.cr-hist .cr-av{width:24px;height:24px;font-size:11px}
-@media (max-width:760px){.cr-resumo b{font-size:15px!important}.cr-resumo>div{padding:8px 10px}}
+.cr-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.cr-abas{display:flex;gap:4px;background:var(--bg-card);border:1px solid var(--border-card);border-radius:12px;padding:4px}
+.cr-aba{display:flex;align-items:center;gap:7px;background:transparent;border:none;border-radius:9px;padding:7px 13px;font-size:13px;font-weight:600;color:var(--text-primary);opacity:.75;cursor:pointer;transition:background-color .15s ease,opacity .15s ease}
+.cr-aba:hover{opacity:1;background:var(--bg-accent-soft)}
+.cr-aba.on{opacity:1;background:#26658C;color:#fff}
+.cr-cont{font-family:'Space Mono',monospace;font-size:11px;padding:1px 7px;border-radius:999px;background:rgba(127,127,127,.18)}
+.cr-aba.on .cr-cont{background:rgba(255,255,255,.2)}
+.cr-resumo-l{display:flex;gap:6px 18px;flex-wrap:wrap;margin-left:auto;font-size:12px;opacity:.9}
+.cr-resumo-l>span{white-space:nowrap}
+.cr-resumo-l b{font-family:'Space Mono',monospace;font-size:13px;margin-left:4px}
+.cr-resumo-l b.verde,.cr-fech b.verde{color:#3f9d6b}
+.cr-barra{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;margin-bottom:8px}
+.cr-info{font-size:12px;opacity:.7}
+.cr-busca{position:relative;display:flex;align-items:center;flex:1;min-width:220px;max-width:420px}
+.cr-busca.sm{flex:0 1 220px;min-width:160px}
+.cr-busca svg{position:absolute;left:10px;opacity:.55}
+.cr-busca input{width:100%;padding:7px 10px 7px 32px;border:1px solid var(--border-input);border-radius:9px;font-size:13px;background:var(--bg-card);color:var(--text-primary);outline:none}
+.cr-busca input:focus,.cr-campo input:focus{border-color:#54ACBF;box-shadow:0 0 0 3px rgba(84,172,191,.18)}
+.cr-campo{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;opacity:.85}
+.cr-campo input{padding:6px 8px;border:1px solid var(--border-input);border-radius:8px;font-size:13px;background:var(--bg-card);color:var(--text-primary);outline:none;font-family:inherit;text-transform:none;letter-spacing:0;font-weight:400;color-scheme:light dark}
+.cr-chips{display:flex;gap:4px;flex-wrap:wrap}
+.cr-chip{border:1px solid var(--border-input);background:transparent;color:var(--text-primary);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;transition:background-color .15s ease,border-color .15s ease}
+.cr-chip:hover{border-color:#54ACBF}
+.cr-chip.on{background:#26658C;border-color:#26658C;color:#fff}
+.cr-b{border:1px solid var(--border-input);background:transparent;color:var(--text-primary);border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background-color .15s ease}
+.cr-b:hover{background:var(--bg-accent-soft)}
+.cr-b-ok{background:#eef1ec;color:#3f7d5c;border-color:transparent}
+.cr-b-ok:hover{background:#dfe8dc}
+.cr-b-wa{background:#25623f;color:#fff;border-color:transparent}
+.cr-b-wa:hover{background:#2c7449}
+.cr-tabela{background:var(--bg-card);border:1px solid var(--border-card);border-radius:12px;overflow:auto;max-height:calc(100vh - 250px)}
+.cr-in{display:flex;flex-direction:column}
+.cr-g{display:grid;gap:10px;align-items:center;padding:6px 14px;font-size:13px}
+.cr-ga{grid-template-columns:minmax(0,1.6fr) 1fr 1.05fr .9fr 1fr 1fr 236px}
+.cr-gq{grid-template-columns:minmax(0,1.6fr) 1fr 1fr 1fr 1fr 1fr .7fr}
+.cr-gm{grid-template-columns:78px 46px minmax(0,1.2fr) 96px minmax(0,2.2fr) 104px 112px 124px}
+.cr-cab{position:sticky;top:0;z-index:1;background:var(--bg-tablehead);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#847a6e;padding-top:7px;padding-bottom:7px}
+.cr-lin{border-top:1px solid var(--border-soft);transition:background-color .12s ease}
+.cr-lin:hover{background:var(--bg-accent-soft)}
+.cr-rod{position:sticky;bottom:0;background:var(--bg-tablehead);border-top:1px solid var(--border-card);font-weight:700;font-size:12.5px}
+.cr-g .n{text-align:right}
+.cr-acoes{display:flex;gap:5px;justify-content:flex-end}
+.cr-nome{font-weight:600;font-size:13.5px;color:#26658C;text-decoration:underline dotted;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cr-nome.sem{text-decoration:none;cursor:default;color:var(--text-primary)}
+[data-theme="dark"] .cr-nome:not(.sem){color:#7dd3fc}
+.cr-sub{font-size:11.5px;opacity:.65}
+.cr-sub2{font-size:12px;opacity:.8}
+.cr-mono{font-family:'Space Mono',monospace;font-size:12.5px;white-space:nowrap}
+.cr-forte{font-weight:700;font-size:13px}
+.cr-desc{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12.5px}
+.cr-tag{display:inline-block;font-size:11px;font-weight:700;border:1px solid;border-radius:999px;padding:1px 8px}
+.cr-vazio{padding:16px 18px;font-size:13px;opacity:.7}
+.cr-fech{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border:1px solid var(--border-card);border-radius:12px;overflow:hidden;margin-bottom:8px;background:var(--border-soft);gap:1px}
+.cr-fech>div{background:var(--bg-card);padding:7px 12px;display:flex;flex-direction:column;min-width:0}
+.cr-fech>div>span{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;opacity:.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cr-fech b{font-family:'Space Mono',monospace;font-size:14px;white-space:nowrap}
+.cr-fech small{font-size:11px;opacity:.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:1100px){.cr-fech{grid-template-columns:repeat(4,minmax(0,1fr))}.cr-resumo-l{margin-left:0}}
+@media (max-width:640px){.cr-fech{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* ── fim crediário compacto ── */
 </style>
 <!-- ── React 18.3.1 (local, sem CDN) ── -->
@@ -3325,73 +3361,105 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 
       <!-- CREDIARIO -->
       <sc-if value="{{ isCrediario }}" hint-placeholder-val="{{ false }}">
-        <div class="cr-resumo">
-          <div><span>Total a receber</span><b>{{ totalReceberFmt }}</b></div>
-          <div><span>Clientes devendo</span><b>{{ credResumo.devendo }}</b></div>
-          <div><span>Recebido este mês</span><b class="verde">{{ credResumo.recebido }}</b></div>
-        </div>
-        <div style="position:relative;margin-bottom:10px">
-          <svg width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="#9a9084" stroke-width="1.8" stroke-linecap="round" style="position:absolute;left:14px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg>
-          <input value="{{ credSearch }}" oninput="{{ setCredSearch }}" placeholder="Buscar cliente devedor…" style="width:100%;padding:8px 12px 8px 38px;border:1px solid var(--border-input);border-radius:11px;font-size:14px;background:var(--bg-card);color:var(--text-primary);outline:none">
-        </div>
-        <div style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;overflow:hidden;margin-bottom:10px">
-          <div style="display:grid;grid-template-columns:1.6fr 1.1fr 1fr 1.6fr;gap:12px;padding:7px 16px;background:var(--bg-tablehead);font-size:11.5px;font-weight:600;color:#847a6e;text-transform:uppercase;letter-spacing:.05em">
-            <div>Cliente</div><div>Tipo</div><div style="text-align:right">Saldo devedor</div><div style="text-align:right">Ações</div>
+        <!-- ── crediário: abas ── -->
+        <div class="cr-top">
+          <div class="cr-abas" role="tablist">
+            <sc-for list="{{ credAbas }}" as="a" hint-placeholder-count="3"><button onclick="{{ a.onClick }}" class="{{ a.cls }}" role="tab">{{ a.label }}<span class="cr-cont">{{ a.n }}</span></button></sc-for>
           </div>
-          <sc-for list="{{ crediarioRows }}" as="c" hint-placeholder-count="4">
-            <div style="display:grid;grid-template-columns:1.6fr 1.1fr 1fr 1.6fr;gap:12px;padding:6px 16px;border-top:1px solid var(--border-soft);align-items:center">
-              <div onclick="{{ c.onPedido }}" title="Lançar pedido" style="cursor:pointer"><div style="font-weight:600;font-size:14px;color:#26658C;text-decoration:underline dotted">{{ c.name }}</div><sc-if value="{{ c.hasLink }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#9a9084">{{ c.linkLabel }}</div></sc-if></div>
-              <div><span style="{{ c.typeStyle }}">{{ c.typeLabel }}</span></div>
-              <div style="text-align:right;font-family:'Space Mono',monospace;font-size:15px;color:#26658C;font-weight:700">{{ c.balanceFmt }}</div>
-              <div style="display:flex;gap:6px;justify-content:flex-end">
-                <button onclick="{{ c.onView }}" style="background:none;border:1px solid var(--border-input);border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;color:#5f574d">Extrato</button>
-                <button onclick="{{ c.onPay }}" style="background:#eef1ec;border:none;border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;color:#3f7d5c;font-weight:600">Pagamento</button>
-                <button onclick="{{ c.onCharge }}" style="background:#25623f;border:none;border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;color:#fff;font-weight:600;display:flex;align-items:center;gap:5px"><svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4zm4.5 9.7c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 01-1.9-1.2 7.3 7.3 0 01-1.3-1.7c-.1-.2 0-.4.1-.5l.4-.5c.1-.1.1-.3.2-.4a.4.4 0 000-.4l-.8-1.9c-.2-.4-.4-.4-.5-.4h-.5a.9.9 0 00-.7.3 2.8 2.8 0 00-.9 2.1 5 5 0 001 2.6 11 11 0 004.4 3.9c.6.3 1.1.4 1.5.5.6.2 1.2.2 1.6.1.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.6-.6z"></path></svg>Cobrar</button>
-              </div>
-            </div>
-          </sc-for>
-          <sc-if value="{{ noCrediario }}" hint-placeholder-val="{{ false }}"><div style="padding:18px 22px;color:#9a9084;font-size:14px">Nenhum cliente com saldo em aberto.</div></sc-if>
+          <div class="cr-resumo-l">
+            <span>A receber <b>{{ totalReceberFmt }}</b></span>
+            <span>Devendo <b>{{ credResumo.devendo }}</b></span>
+            <span>Compras no mês <b>{{ credResumo.comprasMes }}</b></span>
+            <span>Recebido no mês <b class="verde">{{ credResumo.recebido }}</b></span>
+          </div>
         </div>
-        <!-- ── crediário: histórico mensal ── -->
-        <div class="cr-hist" style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;overflow:hidden">
-          <div style="display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border-soft);flex-wrap:wrap">
-            <div><div style="font-weight:700;font-size:15px">Histórico mensal</div><div class="pd-mut" style="font-size:12px;margin-top:2px">Compras na conta e pagamentos de cada cliente, somados por mês</div></div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-left:auto">
-              <sc-for list="{{ credMeses }}" as="m" hint-placeholder-count="3"><button onclick="{{ m.onClick }}" class="cr-mes" style="{{ m.style }}">{{ m.label }}</button></sc-for>
-            </div>
-          </div>
-          <div class="cr-tots">
-            <div><div class="pd-lbl pd-mut" style="font-size:10px;font-weight:700">Compras na conta</div><div class="cr-num">{{ credMesTot.compras }}</div></div>
-            <div><div class="pd-lbl pd-mut" style="font-size:10px;font-weight:700">Recebido no mês</div><div class="cr-num" style="color:#3f9d6b">{{ credMesTot.pagos }}</div></div>
-            <div><div class="pd-lbl pd-mut" style="font-size:10px;font-weight:700">Clientes</div><div class="cr-num">{{ credMesTot.clientes }}</div></div>
-          </div>
-          <div class="cr-grid cr-cab">
-            <div>Cliente</div><div class="cr-mov">Movimento</div><div style="text-align:right">Compras</div><div style="text-align:right">Pagamentos</div><div style="text-align:right">Saldo do mês</div><div></div>
-          </div>
-          <sc-for list="{{ credHistRows }}" as="h" hint-placeholder-count="4">
-            <sc-if value="{{ h.isHead }}" hint-placeholder-val="{{ true }}">
-              <div class="cr-grid cr-lin" role="button" tabindex="0" onclick="{{ h.onToggle }}" title="Ver os lançamentos">
-                <div style="display:flex;align-items:center;gap:10px;min-width:0"><span class="cr-av">{{ h.inicial }}</span><b style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ h.client }}</b></div>
-                <div class="pd-mut cr-mov" style="font-size:12.5px">{{ h.resumo }}</div>
-                <div class="cr-num sm" style="text-align:right">{{ h.compras }}</div>
-                <div class="cr-num sm" style="text-align:right;color:#3f9d6b">{{ h.pagos }}</div>
-                <div class="cr-num sm" style="text-align:right;color:{{ h.saldoCor }}">{{ h.saldo }}</div>
-                <svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6;transition:transform .2s ease;transform:{{ h.chevron }}"><path d="M6 9l6 6 6-6"></path></svg>
-              </div>
-            </sc-if>
-            <sc-if value="{{ h.isItem }}" hint-placeholder-val="{{ false }}">
-              <div class="cr-item">
-                <div class="pd-mut" style="font-family:'Space Mono',monospace;font-size:12px">{{ h.date }}</div>
-                <div style="font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ h.desc }}</div>
-                <span style="{{ h.tagStyle }}">{{ h.type }}</span>
-                <div style="font-family:'Space Mono',monospace;font-size:13px;font-weight:600;min-width:92px;text-align:right;color:{{ h.color }}">{{ h.amountFmt }}</div>
-              </div>
-            </sc-if>
-          </sc-for>
-          <sc-if value="{{ noCredHist }}" hint-placeholder-val="{{ false }}"><div class="pd-mut" style="padding:18px 22px;font-size:14px">Nenhum lançamento neste mês.</div></sc-if>
-        </div>
-      </sc-if>
 
+        <!-- Aba: em aberto -->
+        <sc-if value="{{ credAbaAberto }}" hint-placeholder-val="{{ true }}">
+          <div class="cr-barra">
+            <div class="cr-busca"><svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg><input value="{{ credSearch }}" oninput="{{ setCredSearch }}" placeholder="Buscar cliente devedor…"></div>
+            <span class="cr-info">Só quem tem saldo a pagar. Quem quitou vai para a aba Quitados.</span>
+          </div>
+          <div class="cr-tabela"><div class="cr-in" style="min-width:980px">
+            <div class="cr-g cr-ga cr-cab"><div>Cliente</div><div>Tipo</div><div>Em aberto desde</div><div>Última compra</div><div class="n">Compras no mês</div><div class="n">Saldo devedor</div><div class="n">Ações</div></div>
+            <sc-for list="{{ credAbertoRows }}" as="c" hint-placeholder-count="3">
+              <div class="cr-g cr-ga cr-lin">
+                <div style="min-width:0"><div onclick="{{ c.onPedido }}" title="Lançar pedido" class="cr-nome">{{ c.name }}</div><sc-if value="{{ c.hasLink }}" hint-placeholder-val="{{ false }}"><div class="cr-sub">{{ c.linkLabel }}</div></sc-if></div>
+                <div><span style="{{ c.typeStyle }}">{{ c.typeLabel }}</span></div>
+                <div class="cr-mono">{{ c.desde }}<span class="cr-sub"> {{ c.dias }}</span></div>
+                <div class="cr-mono">{{ c.ultCompra }}</div>
+                <div class="n cr-mono">{{ c.comprasMes }}<span class="cr-sub"> {{ c.nMes }}</span></div>
+                <div class="n cr-mono cr-forte" style="color:#d0892b">{{ c.balanceFmt }}</div>
+                <div class="n cr-acoes">
+                  <button onclick="{{ c.onView }}" class="cr-b">Extrato</button>
+                  <button onclick="{{ c.onPay }}" class="cr-b cr-b-ok">Pagamento</button>
+                  <button onclick="{{ c.onCharge }}" class="cr-b cr-b-wa">Cobrar</button>
+                </div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ noCrediario }}" hint-placeholder-val="{{ false }}"><div class="cr-vazio">Nenhum cliente com saldo em aberto.</div></sc-if>
+          </div></div>
+        </sc-if>
+
+        <!-- Aba: quitados -->
+        <sc-if value="{{ credAbaQuit }}" hint-placeholder-val="{{ false }}">
+          <div class="cr-barra"><span class="cr-info">Clientes que compraram na conta e estão com tudo pago.</span></div>
+          <div class="cr-tabela"><div class="cr-in" style="min-width:860px">
+            <div class="cr-g cr-gq cr-cab"><div>Cliente</div><div>Tipo</div><div class="n">Total comprado</div><div class="n">Total pago</div><div>Última compra</div><div>Último pagamento</div><div class="n">Lançamentos</div></div>
+            <sc-for list="{{ credQuitRows }}" as="q" hint-placeholder-count="2">
+              <div class="cr-g cr-gq cr-lin">
+                <div class="cr-nome sem">{{ q.cliente }}</div>
+                <div><span style="{{ q.typeStyle }}">{{ q.typeLabel }}</span></div>
+                <div class="n cr-mono">{{ q.comprado }}</div>
+                <div class="n cr-mono" style="color:#3f9d6b">{{ q.pago }}</div>
+                <div class="cr-mono">{{ q.ultCompra }}</div>
+                <div class="cr-mono">{{ q.ultPag }}</div>
+                <div class="n cr-mono">{{ q.movs }}</div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ noQuit }}" hint-placeholder-val="{{ false }}"><div class="cr-vazio">Ninguém quitou a conta ainda.</div></sc-if>
+          </div></div>
+        </sc-if>
+
+        <!-- Aba: movimentações (período com calendário) -->
+        <sc-if value="{{ credAbaMov }}" hint-placeholder-val="{{ false }}">
+          <div class="cr-barra cr-periodo">
+            <label class="cr-campo">Mês<input type="month" value="{{ credPer.mes }}" onchange="{{ onCredMes }}"></label>
+            <label class="cr-campo">De<input type="date" value="{{ credPer.de }}" onchange="{{ onCredDe }}"></label>
+            <label class="cr-campo">Até<input type="date" value="{{ credPer.ate }}" onchange="{{ onCredAte }}"></label>
+            <div class="cr-chips"><sc-for list="{{ credPresets }}" as="p" hint-placeholder-count="5"><button onclick="{{ p.onClick }}" class="{{ p.cls }}">{{ p.label }}</button></sc-for></div>
+            <div class="cr-chips"><sc-for list="{{ credFiltros }}" as="f" hint-placeholder-count="3"><button onclick="{{ f.onClick }}" class="{{ f.cls }}">{{ f.label }}</button></sc-for></div>
+            <div class="cr-busca sm"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg><input value="{{ credPer.busca }}" oninput="{{ onCredBusca }}" placeholder="Cliente ou descrição"></div>
+            <div class="cr-chips" style="margin-left:auto"><button onclick="{{ credImprimir }}" class="cr-b">Imprimir</button><button onclick="{{ credExportar }}" class="cr-b">Exportar planilha</button></div>
+          </div>
+          <div class="cr-fech">
+            <div><span>Período</span><b>{{ credPer.label }}</b></div>
+            <div><span>Compras na conta</span><b>{{ credPer.compras }}</b><small>{{ credPer.nCompras }}</small></div>
+            <div><span>Pagamentos</span><b class="verde">{{ credPer.pagos }}</b><small>{{ credPer.nPagos }}</small></div>
+            <div><span>Baixas (fechamento)</span><b>{{ credPer.baixas }}</b><small>{{ credPer.nBaixas }}</small></div>
+            <div><span>Resultado</span><b style="color:{{ credPer.liqCor }}">{{ credPer.liquido }}</b><small>a receber do período</small></div>
+            <div><span>Ticket médio</span><b>{{ credPer.ticket }}</b><small>maior: {{ credPer.maior }}</small></div>
+            <div><span>Clientes</span><b>{{ credPer.clientes }}</b><small>{{ credPer.movs }} lançamentos</small></div>
+          </div>
+          <div class="cr-tabela"><div class="cr-in" style="min-width:1060px">
+            <div class="cr-g cr-gm cr-cab"><div>Data</div><div>Hora</div><div>Cliente</div><div>Tipo</div><div>Descrição</div><div>Forma</div><div class="n">Valor</div><div class="n">Saldo do cliente</div></div>
+            <sc-for list="{{ credMovRows }}" as="m" hint-placeholder-count="5">
+              <div class="cr-g cr-gm cr-lin">
+                <div class="cr-mono">{{ m.data }}</div>
+                <div class="cr-mono cr-sub">{{ m.hora }}</div>
+                <div class="cr-nome sem">{{ m.cliente }}</div>
+                <div><span class="cr-tag" style="{{ m.tipoStyle }}">{{ m.tipo }}</span></div>
+                <div class="cr-desc" title="{{ m.desc }}">{{ m.desc }}</div>
+                <div class="cr-sub2">{{ m.forma }}</div>
+                <div class="n cr-mono cr-forte" style="color:{{ m.valorCor }}">{{ m.valor }}</div>
+                <div class="n cr-mono">{{ m.saldo }}</div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ noMov }}" hint-placeholder-val="{{ false }}"><div class="cr-vazio">Nenhuma movimentação neste período.</div></sc-if>
+            <div class="cr-g cr-gm cr-rod"><div>Total</div><div></div><div>{{ credPer.movsVis }}</div><div></div><div></div><div></div><div class="n">{{ credPer.totVis }}</div><div></div></div>
+          </div></div>
+        </sc-if>
+      </sc-if>
       <!-- HISTORICO MENSAL -->
       <sc-if value="{{ isHistorico }}" hint-placeholder-val="{{ false }}">
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
@@ -5615,12 +5683,12 @@ class Component extends DCLogic {
   };
 
   loadCrediarioHistory = async () => {
-    const { data, error } = await sb.from('rest_crediario_lancamentos').select('id,tipo,valor,data,descricao,cliente_id,empresa_id,rest_clientes(nome),rest_empresas(nome)').order('created_at', { ascending: false }).limit(1500);
+    const { data, error } = await sb.from('rest_crediario_lancamentos').select('id,tipo,valor,data,created_at,descricao,cliente_id,empresa_id,rest_clientes(nome),rest_empresas(nome)').order('created_at', { ascending: false }).limit(1500);
     if (error) { console.error(error); return; }
     const typeLabels = { pagamento: 'Pagamento', fatura_fechada: 'Fatura fechada', cobranca_enviada: 'Cobrança enviada', debito: 'Débito' };
     // a conta é da empresa quando o lançamento tem empresa (funcionário cuja empresa paga): agrupa na empresa e diz de quem foi o consumo
     this.setState({ crediarioHistory: (data||[]).map(h => { const cn=h.rest_clientes&&h.rest_clientes.nome, en=h.rest_empresas&&h.rest_empresas.nome;
-      return { id: h.id, date: this.fmtDateBR(h.data), iso: h.data, client: en || cn || '—', who: h.empresa_id || h.cliente_id || null, type: typeLabels[h.tipo] || h.tipo, amount: Number(h.valor)||0,
+      return { id: h.id, date: this.fmtDateBR(h.data), iso: h.data, ts: h.created_at || '', hora: h.created_at ? new Date(h.created_at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '', client: en || cn || '—', who: h.empresa_id || h.cliente_id || null, type: typeLabels[h.tipo] || h.tipo, amount: Number(h.valor)||0,
         desc: (en&&cn?'Consumo de '+cn+(h.descricao?' · ':''):'')+(h.descricao||'') }; }) });
   };
 
@@ -7058,30 +7126,70 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const stockHistoryRows=s.stockHistory.map(h=>({date:h.date,product:h.product,type:h.type==='entrada'?'Entrada':'Baixa',tagStyle:this.tagStyle(h.type),color:h.type==='entrada'?'#3f7d5c':'#26658C',qtyFmt:(h.type==='entrada'?'+':'−')+h.qty}));
 
     const crediarioHistoryRows=s.crediarioHistory.map(h=>({date:h.date,client:h.client,type:h.type,tagStyle:this.tagStyle(h.type),color:h.type==='Pagamento'?'#3f7d5c':'var(--text-primary)',amountFmt:brl(h.amount)}));
-    // ── Crediário: histórico mensal agrupado por cliente ──
-    const crMesNome=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-    const crAno=this.todayISO().slice(0,4), crHoje=this.todayISO().slice(0,7);
-    const crMesDe=(h)=>h.iso?String(h.iso).slice(0,7):(crAno+'-'+((h.date||'').split('/')[1]||'01'));
-    const crMeses=[...new Set([crHoje,...s.crediarioHistory.map(crMesDe)])].sort().reverse();
-    const crSel=s.credMes&&crMeses.includes(s.credMes)?s.credMes:crMeses[0];
-    const credMeses=crMeses.slice(0,12).map(m=>{ const on=m===crSel; return { label:crMesNome[parseInt(m.slice(5),10)-1]+'/'+m.slice(0,4), onClick:()=>this.setState({credMes:m}),
-      style:'border:1px solid '+(on?'#26658C':'var(--border-input)')+';background:'+(on?'#26658C':'transparent')+';color:'+(on?'#fff':'var(--text-primary)') }; });
-    const crGrupos={};
+    // ── Crediário: abas (em aberto, quitados, movimentações) ──
+    const crHoje=this.todayISO(), crMesIni=crHoje.slice(0,8)+'01';
+    const crData=(iso)=>iso?iso.slice(8,10)+'/'+iso.slice(5,7)+'/'+iso.slice(2,4):'—';
+    const crFimMes=(ym)=>{ const [y,m]=ym.split('-').map(Number); return ym+'-'+String(new Date(Date.UTC(y,m,0)).getUTCDate()).padStart(2,'0'); };
+    const crMenos=(iso,dias)=>new Date(Date.parse(iso+'T12:00:00Z')-dias*864e5).toISOString().slice(0,10);
+    const crDias=(iso)=>Math.max(0,Math.round((Date.parse(crHoje+'T12:00:00Z')-Date.parse(iso+'T12:00:00Z'))/864e5));
+    const crTipoNome={'Débito':'Compra','Pagamento':'Pagamento','Fatura fechada':'Baixa','Cobrança enviada':'Cobrança'};
+    const crSinal=(t)=>t==='Débito'?1:((t==='Pagamento'||t==='Fatura fechada')?-1:0);
     const crIdPorNome=(n)=>{ const c=s.clients.find(x=>x.name===n); return c?c.id:'nome:'+n; };
-    s.crediarioHistory.filter(h=>crMesDe(h)===crSel).forEach(h=>{ const k=h.who||crIdPorNome(h.client);
-      const g=crGrupos[k]||(crGrupos[k]={k,client:h.client,itens:[],compras:0,nCompras:0,pagos:0,nPagos:0});
-      g.itens.push(h); if(h.type==='Débito'){ g.compras+=h.amount; g.nCompras++; } else if(h.type==='Pagamento'){ g.pagos+=h.amount; g.nPagos++; } });
-    const crAbertos=s.credAberto||{}, credHistRows=[];
-    Object.values(crGrupos).sort((a,b)=>b.compras-a.compras||a.client.localeCompare(b.client)).forEach(g=>{ const chave=crSel+'|'+g.k, ab=!!crAbertos[chave], saldo=Math.round((g.compras-g.pagos)*100)/100;
-      const resumo=[g.nCompras?g.nCompras+(g.nCompras===1?' compra':' compras'):'', g.nPagos?g.nPagos+(g.nPagos===1?' pagamento':' pagamentos'):''].filter(Boolean).join(' · ')||(g.itens.length+(g.itens.length===1?' lançamento':' lançamentos'));
-      credHistRows.push({ isHead:true, isItem:false, client:g.client, inicial:(g.client||'?').slice(0,1).toUpperCase(), resumo, compras:g.compras?brl(g.compras):'—', pagos:g.pagos?brl(g.pagos):'—',
-        saldo:saldo<0?'− '+brl(-saldo):brl(saldo), saldoCor:saldo>0?'#d0892b':'#3f9d6b', chevron:ab?'rotate(180deg)':'none',
-        onToggle:()=>this.setState({credAberto:{...crAbertos,[chave]:!ab}}) });
-      if(ab) g.itens.slice().sort((a,b)=>String(b.iso||b.date).localeCompare(String(a.iso||a.date))).forEach(h=>credHistRows.push({ isHead:false, isItem:true, date:h.date, desc:h.desc||({'Débito':'Compra na conta','Pagamento':'Pagamento recebido'}[h.type]||h.type), type:h.type,
-        tagStyle:this.tagStyle(h.type), color:h.type==='Pagamento'?'#3f9d6b':'var(--text-primary)', amountFmt:brl(h.amount) })); });
-    const crTot=(campo)=>brl(Object.values(crGrupos).reduce((a,g)=>a+g[campo],0));
-    const credMesTot={ compras:crTot('compras'), pagos:crTot('pagos'), clientes:String(Object.keys(crGrupos).length) };
-    const credResumo={ devendo:String(s.clients.filter(c=>c.balance>0).length), recebido:brl(s.crediarioHistory.filter(h=>h.type==='Pagamento'&&crMesDe(h)===crHoje).reduce((a,h)=>a+h.amount,0)) };
+    const crIsoDe=(h)=>h.iso||(crHoje.slice(0,4)+'-'+((h.date||'').split('/')[1]||'01')+'-'+((h.date||'').split('/')[0]||'01'));
+    // ordem cronológica + saldo de cada cliente depois de cada lançamento
+    const crCrono=s.crediarioHistory.map((h,i)=>({...h,_iso:crIsoDe(h),_k:h.who||crIdPorNome(h.client),_ord:h.ts||String(1e6-i).padStart(7,'0')}))
+      .sort((a,b)=>(a._iso+a._ord).localeCompare(b._iso+b._ord));
+    const crSaldo={}, crDesde={}, crUltCompra={}, crPorCli={};
+    crCrono.forEach(h=>{ const antes=crSaldo[h._k]||0, depois=Math.round((antes+crSinal(h.type)*h.amount)*100)/100; crSaldo[h._k]=depois; h._saldo=depois;
+      if(antes<=0.004&&depois>0.004) crDesde[h._k]=h._iso; if(depois<=0.004) delete crDesde[h._k];
+      const g=crPorCli[h._k]||(crPorCli[h._k]={k:h._k,client:h.client,comprado:0,pago:0,ult:null,ultPag:null,n:0}); g.n++;
+      if(h.type==='Débito'){ g.comprado+=h.amount; g.ult=h._iso; crUltCompra[h._k]=h._iso; } else if(crSinal(h.type)<0){ g.pago+=h.amount; g.ultPag=h._iso; } });
+    const crAba=s.credAba||'aberto', crAbaCls=(id)=>'cr-aba'+(crAba===id?' on':'');
+    // aba Em aberto
+    const crMesAtual=crCrono.filter(h=>h._iso>=crMesIni&&h._iso<=crHoje);
+    const credAbertoRows=crediarioRows.map(r=>{ const k=r.id, compr=crMesAtual.filter(h=>h._k===k&&h.type==='Débito'), d=crDesde[k];
+      return {...r, desde:d?crData(d):'—', dias:d?'('+crDias(d)+(crDias(d)===1?' dia)':' dias)'):'', ultCompra:crUltCompra[k]?crData(crUltCompra[k]):'—',
+        comprasMes:compr.length?brl(compr.reduce((a,h)=>a+h.amount,0)):'—', nMes:compr.length?'· '+compr.length:''}; });
+    // aba Quitados
+    const credQuitRows=Object.values(crPorCli).filter(g=>{ if(!(g.comprado>0)) return false; const c=s.clients.find(x=>x.id===g.k); return c?!(c.balance>0):(g.comprado-g.pago)<=0.004; })
+      .sort((a,b)=>String(b.ultPag||b.ult).localeCompare(String(a.ultPag||a.ult))).map(g=>{ const c=s.clients.find(x=>x.id===g.k);
+        return { cliente:g.client, typeLabel:c?this.typeLabel(c.type):'—', typeStyle:c?this.typeStyle(c.type):'', comprado:brl(g.comprado), pago:brl(g.pago), ultCompra:crData(g.ult), ultPag:crData(g.ultPag), movs:String(g.n) }; });
+    // aba Movimentações
+    const crDe=s.credDe||crMesIni, crAte=s.credAte||crHoje, crFiltro=s.credFiltro||'todos', crQ=(s.credBuscaMov||'').trim().toLowerCase();
+    const crPer=crCrono.filter(h=>h._iso>=crDe&&h._iso<=crAte);
+    const crPassa=(h)=>crFiltro==='todos'||(crFiltro==='compras'&&h.type==='Débito')||(crFiltro==='pagamentos'&&crSinal(h.type)<0);
+    const crVis=crPer.filter(h=>crPassa(h)&&(!crQ||h.client.toLowerCase().includes(crQ)||(h.desc||'').toLowerCase().includes(crQ))).reverse();
+    const crForma=(h)=>{ if(h.type==='Débito') return 'Na conta'; if(h.type==='Fatura fechada') return 'Fechamento'; if(h.type==='Cobrança enviada') return 'WhatsApp';
+      const m=(h.desc||'').match(/— *(.+)$/); if(!m) return '—'; const f=m[1].trim(), l=this.payLabel(f.toLowerCase()); return l===f.toLowerCase()?f:l; };
+    const crTagCor={'Débito':'#d0892b','Pagamento':'#3f9d6b','Fatura fechada':'#5b8def','Cobrança enviada':'#8a94a6'};
+    const credMovRows=crVis.map(h=>{ const sg=crSinal(h.type), cor=crTagCor[h.type]||'#8a94a6';
+      return { data:crData(h._iso), hora:h.hora||'', cliente:h.client, tipo:crTipoNome[h.type]||h.type, tipoStyle:'color:'+cor+';border-color:'+cor,
+        desc:h.desc||(crTipoNome[h.type]||h.type), forma:crForma(h), valor:(sg<0?'− ':(sg>0?'+ ':''))+brl(h.amount), valorCor:sg<0?'#3f9d6b':(sg>0?'#d0892b':'var(--text-primary)'), saldo:brl(h._saldo) }; });
+    const crSoma=(arr)=>arr.reduce((a,h)=>a+h.amount,0), crConta=(n,um,v)=>n+(n===1?' '+um:' '+v);
+    const crC=crPer.filter(h=>h.type==='Débito'), crP=crPer.filter(h=>h.type==='Pagamento'), crB=crPer.filter(h=>h.type==='Fatura fechada');
+    const crLiq=Math.round((crSoma(crC)-crSoma(crP)-crSoma(crB))*100)/100, crTotVis=crVis.reduce((a,h)=>a+crSinal(h.type)*h.amount,0);
+    const credPer={ de:crDe, ate:crAte, mes:crDe.slice(0,7), busca:s.credBuscaMov||'', label:crData(crDe)+' a '+crData(crAte),
+      compras:brl(crSoma(crC)), nCompras:crConta(crC.length,'compra','compras'), pagos:brl(crSoma(crP)), nPagos:crConta(crP.length,'pagamento','pagamentos'),
+      baixas:brl(crSoma(crB)), nBaixas:crConta(crB.length,'baixa','baixas'), liquido:(crLiq<0?'− ':'')+brl(Math.abs(crLiq)), liqCor:crLiq>0?'#d0892b':'#3f9d6b',
+      ticket:brl(crC.length?crSoma(crC)/crC.length:0), maior:brl(crC.reduce((a,h)=>Math.max(a,h.amount),0)),
+      clientes:String(new Set(crPer.map(h=>h._k)).size), movs:String(crPer.length), movsVis:crConta(crVis.length,'lançamento','lançamentos'), totVis:(crTotVis<0?'− ':'')+brl(Math.abs(crTotVis)) };
+    const crPres=[['Hoje',crHoje,crHoje],['7 dias',crMenos(crHoje,6),crHoje],['Este mês',crMesIni,crHoje],['Mês passado',crMenos(crMesIni,1).slice(0,8)+'01',crMenos(crMesIni,1)],['90 dias',crMenos(crHoje,89),crHoje]];
+    const credPresets=crPres.map(([label,de,ate])=>({label,cls:'cr-chip'+(de===crDe&&ate===crAte?' on':''),onClick:()=>this.setState({credDe:de,credAte:ate})}));
+    const credFiltros=[['todos','Tudo'],['compras','Compras'],['pagamentos','Pagamentos e baixas']].map(([id,label])=>({label,cls:'cr-chip'+(crFiltro===id?' on':''),onClick:()=>this.setState({credFiltro:id})}));
+    const credAbas=[['aberto','Em aberto',String(crediarioRows.length)],['quitados','Quitados',String(credQuitRows.length)],['mov','Movimentações',String(crPer.length)]].map(([id,label,n])=>({label,n,cls:crAbaCls(id),onClick:()=>this.setState({credAba:id})}));
+    const credResumo={ devendo:String(s.clients.filter(c=>c.balance>0).length), comprasMes:brl(crSoma(crMesAtual.filter(h=>h.type==='Débito'))), recebido:brl(crSoma(crMesAtual.filter(h=>h.type==='Pagamento'))) };
+    const crLinhas=()=>credMovRows.map(m=>[m.data,m.hora,m.cliente,m.tipo,m.desc,m.forma,m.valor,m.saldo]);
+    const credExportar=()=>{ const q=(v)=>'"'+String(v).replace(/"/g,'""')+'"', nl=String.fromCharCode(13,10);
+      const csv=String.fromCharCode(0xFEFF)+[['Data','Hora','Cliente','Tipo','Descrição','Forma','Valor','Saldo do cliente'],...crLinhas()].map(l=>l.map(q).join(';')).join(nl);
+      const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); a.download='crediario_'+crDe+'_a_'+crAte+'.csv'; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500); };
+    const credImprimir=()=>{ const E=(v)=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+      const corpo='<h2>Crediário · movimentações</h2><p>'+E(credPer.label)+' · compras '+E(credPer.compras)+' · pagamentos '+E(credPer.pagos)+' · baixas '+E(credPer.baixas)+' · resultado '+E(credPer.liquido)+'</p>'+
+        '<table><tr><th>Data</th><th>Hora</th><th>Cliente</th><th>Tipo</th><th>Descrição</th><th>Forma</th><th>Valor</th><th>Saldo</th></tr>'+crLinhas().map(l=>'<tr>'+l.map((v,i)=>'<td'+(i>=6?' class="n"':'')+'>'+E(v)+'</td>').join('')+'</tr>').join('')+'</table>';
+      const doc='<html><head><meta charset="utf-8"><title>Crediário</title><style>body{font-family:Arial,sans-serif;font-size:11px;margin:12mm}h2{margin:0 0 4px}p{margin:0 0 10px;color:#333}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #ccc;padding:4px 6px;text-align:left}th{background:#eee}.n{text-align:right;white-space:nowrap}</style></head><body>'+corpo+'</body></html>';
+      const ifr=document.createElement('iframe'); ifr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0'; document.body.appendChild(ifr);
+      const dd=ifr.contentWindow.document; dd.open(); dd.write(doc); dd.close(); setTimeout(()=>{ try{ ifr.contentWindow.focus(); ifr.contentWindow.print(); }catch(e){} setTimeout(()=>ifr.remove(),1500); },350); };
+    const credHandlers={ onCredMes:(e)=>{ const v=e.target.value; if(v) this.setState({credDe:v+'-01',credAte:crFimMes(v)}); }, onCredDe:(e)=>{ if(e.target.value) this.setState({credDe:e.target.value}); },
+      onCredAte:(e)=>{ if(e.target.value) this.setState({credAte:e.target.value}); }, onCredBusca:(e)=>this.setState({credBuscaMov:e.target.value}) };
     // ── fim do crediário mensal ──
 
     // Relatório mensal
@@ -7326,7 +7434,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       metrics, orderRows, recentOrders, clientRows, crediarioRows, debtors, noDebtors:debtors.length===0, noCrediario:crediarioRows.length===0,
       waPendentesRows, hasWaPendentes, emAndamentoRows, hasEmAndamento, concluidosRows, hasConcluidos,
       deliveryRows, pendingDeliveries, pendingCount:pendingDel.length, noPending:pendingDel.length===0,
-      motoboyRows, motoboyPaymentRows, crediarioHistoryRows, credMeses, credHistRows, noCredHist:credHistRows.length===0, credMesTot, credResumo,
+      motoboyRows, motoboyPaymentRows, crediarioHistoryRows, credAbas, credResumo, credAbaAberto:crAba==='aberto', credAbaQuit:crAba==='quitados', credAbaMov:crAba==='mov', credAbertoRows, credQuitRows, noQuit:credQuitRows.length===0, credMovRows, noMov:credMovRows.length===0, credPer, credPresets, credFiltros, credExportar, credImprimir, ...credHandlers,
       stockRows, stockHistoryRows, lowStock, noLowStock:lowStock.length===0, hasLowStock:lowStock.length>0, lowStockMsg:lowStock.map(x=>x.product).join(', ')+(lowStock.length===1?' está abaixo do mínimo.':' estão abaixo do mínimo.'),
       paymentBreakdown,
       totalReceberFmt:brl(totalReceber),
