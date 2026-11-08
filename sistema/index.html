@@ -19,6 +19,36 @@ aside nav>div:hover{background:#04315a!important;transform:scale(1.03)}
 .hc:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,.14)}
 @keyframes skelPulse{0%{opacity:.5}50%{opacity:1}100%{opacity:.5}}
 .skel{animation:skelPulse 1.3s ease-in-out infinite;background:var(--border-card,#e6ded1);border-radius:14px}
+/* ── Dashboard (estilo painel com gráficos) ── */
+.pd-hero{position:relative;overflow:hidden;isolation:isolate;border-radius:20px;padding:20px 24px 22px;margin-bottom:6px;color:#e4f4f7;background:radial-gradient(130% 150% at 0% 0%,#064a73 0%,#022a4d 42%,#011a33 100%);border:1px solid rgba(84,172,191,.25);box-shadow:0 30px 60px -32px rgba(1,22,47,.95)}
+.pd-blob{position:absolute;z-index:-1;border-radius:50%;filter:blur(70px);opacity:.32;pointer-events:none}
+.pd-lbl{font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase}
+.pd-chip{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.08em;color:#5eead4;border:1px solid rgba(94,234,212,.35);background:rgba(94,234,212,.08);border-radius:999px;padding:4px 10px;align-self:center}
+.pd-chip2{margin-left:auto;font-family:'Space Mono',monospace;font-size:10px;color:#54ACBF;border:1px solid rgba(84,172,191,.35);border-radius:999px;padding:3px 9px}
+.pd-btn{border-radius:10px;padding:9px 15px;font-size:13px;font-weight:600;cursor:pointer}
+.pd-btn-1{background:linear-gradient(135deg,#2dd4bf,#26658C);color:#fff;border:none;box-shadow:0 6px 18px -6px rgba(45,212,191,.6)}
+.pd-btn-2{background:rgba(255,255,255,.08);color:#e4f4f7;border:1px solid rgba(255,255,255,.22)}
+.pd-ring{position:relative;width:120px;height:120px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.pd-ring::after{content:'';position:absolute;inset:11px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#04335a,#011c38)}
+.pd-ring>div{position:relative;z-index:1;text-align:center}
+.pd-ring-sm{width:76px;height:76px}
+.pd-ring-sm::after{inset:8px}
+.pd-ring-n{font-family:'Space Mono',monospace;font-size:24px;font-weight:700;line-height:1}
+.pd-ring-l{font-family:'Space Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:#8fb8c6;margin-top:4px}
+.pd-mini{background:rgba(255,255,255,.045);border:1px solid rgba(167,235,242,.13);border-radius:12px;padding:10px 12px;min-width:0}
+.pd-band{background:rgba(0,0,0,.18);border:1px solid rgba(167,235,242,.09);border-radius:16px;padding:16px 18px}
+.pd-sec{display:flex;align-items:center;gap:10px;margin:22px 2px 12px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;font-weight:700;color:var(--text-primary)}
+.pd-sec::before{content:'';width:18px;height:2px;border-radius:2px;background:#54ACBF}
+.pd-sec span{margin-left:auto;font-size:9.5px;letter-spacing:.16em;font-weight:400;opacity:.55}
+.pd-bar{height:6px;border-radius:6px;background:var(--border-soft);overflow:hidden}
+.pd-bar>div{height:100%;border-radius:6px}
+.pd-donut{position:relative;width:132px;height:132px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.pd-donut::after{content:'';position:absolute;inset:18px;border-radius:50%;background:var(--bg-card)}
+.pd-donut>div{position:relative;z-index:1;text-align:center}
+.pd-mut{color:#5e7e8c}
+[data-theme="dark"] .pd-mut{color:#86b3c1}
+@media (max-width:1100px){.pd-g4{grid-template-columns:repeat(2,1fr)!important}.pd-g3{grid-template-columns:1fr!important}}
+@media (max-width:760px){.pd-g2{grid-template-columns:1fr!important}}
 </style>
 <!-- ── React 18.3.1 (local, sem CDN) ── -->
 <script>window.__resources = {};</script>
@@ -2830,40 +2860,106 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 
       <!-- DASHBOARD -->
       <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
-        <div style="border-radius:16px;padding:18px 22px;margin-bottom:14px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;color:#fff;background-image:linear-gradient(125deg,#023859 0%,#26658C 55%,#54ACBF 135%);box-shadow:0 4px 10px rgba(20,15,10,.1), 0 30px 50px -20px rgba(38,101,140,.55)">
-          <div style="flex:1;min-width:220px">
-            <div style="font-size:11px;color:#a9d3dc;letter-spacing:.1em;text-transform:uppercase">Resumo de hoje · {{ todayFmt }}</div>
-            <div style="font-family:'Instrument Serif',serif;font-size:24px;margin-top:6px;line-height:1.15">Vendas de hoje: {{ heroVendasFmt }}</div>
-            <div style="font-size:12.5px;color:#c7d8e9;margin-top:5px">{{ heroSub }}</div>
+        <!-- ── Hero: vendas de hoje ── -->
+        <div class="pd-hero">
+          <div class="pd-blob" style="width:340px;height:340px;left:-90px;top:-140px;background:#1fb5c4"></div>
+          <div class="pd-blob" style="width:280px;height:280px;left:45%;top:-150px;background:#3b5bdb"></div>
+          <div class="pd-blob" style="width:260px;height:260px;right:-70px;bottom:-120px;background:#7c3aed"></div>
+          <div style="display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap">
+            <div style="flex:1;min-width:220px">
+              <div class="pd-lbl" style="color:#8fd3df;font-weight:700">Resumo de hoje · {{ todayFmt }}</div>
+              <div style="font-family:'Space Mono',monospace;font-size:12px;margin-top:6px"><span style="color:#4ade80">▲ {{ dHero.entregues }} entregues</span><span style="color:#5f8ea0"> · </span><span style="color:#fbbf24">● {{ dHero.abertos }} em aberto</span></div>
+            </div>
+            <span class="pd-chip">● Tempo real</span>
+            <button onclick="{{ goPedido }}" class="pd-btn pd-btn-1">+ Novo pedido</button>
+            <button onclick="{{ goLancar }}" class="pd-btn pd-btn-2">Lançar no balcão</button>
           </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button onclick="{{ goPedido }}" style="background:#fff;color:#26658C;border:none;border-radius:10px;padding:9px 15px;font-size:13px;font-weight:600;cursor:pointer">+ Novo pedido</button>
-            <button onclick="{{ goLancar }}" style="background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:9px 15px;font-size:13px;font-weight:600;cursor:pointer">Lançar no balcão</button>
+          <div style="display:flex;gap:28px;align-items:center;flex-wrap:wrap;margin-top:14px">
+            <div style="display:flex;gap:18px">
+              <div class="pd-ring" style="{{ dHero.ring1 }}"><div><div class="pd-ring-n" style="color:#4ade80">{{ dHero.pctConc }}</div><div class="pd-ring-l">concluídos</div></div></div>
+              <div class="pd-ring" style="{{ dHero.ring2 }}"><div><div class="pd-ring-n" style="color:#fb923c">{{ dHero.pctCred }}</div><div class="pd-ring-l">no crediário</div></div></div>
+            </div>
+            <div style="flex:1;min-width:280px">
+              <div style="font-family:'Space Mono',monospace;font-size:38px;font-weight:700;line-height:1.1;color:#fff;letter-spacing:-.01em">{{ heroVendasFmt }}</div>
+              <div style="font-size:12.5px;color:#c7dde6;margin-top:4px">Vendas de hoje · {{ dHero.qtd }} · ticket médio {{ dHero.ticket }}</div>
+              <span style="{{ dHero.trendStyle }}">{{ dHero.trend }}</span>
+              <div class="pd-g4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px">
+                <sc-for list="{{ dMini }}" as="k" hint-placeholder-count="4">
+                  <div class="pd-mini">
+                    <div class="pd-lbl" style="font-size:9.5px;color:#cfe6ec;display:flex;align-items:center;gap:6px;font-weight:700"><span style="width:7px;height:7px;border-radius:50%;flex-shrink:0;background:{{ k.cor }};box-shadow:0 0 8px {{ k.cor }}"></span>{{ k.label }}</div>
+                    <div style="font-family:'Space Mono',monospace;font-size:22px;font-weight:700;margin-top:4px;color:#fff">{{ k.n }}</div>
+                    <div style="font-family:'Space Mono',monospace;font-size:11px;color:#9cc3cf">{{ k.valor }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <svg sc-camel-view-box="0 0 600 60" sc-camel-preserve-aspect-ratio="none" style="width:100%;height:46px;margin-top:12px;display:block;overflow:visible"><path d="{{ dSpark.area }}" fill="rgba(84,172,191,.16)"></path><path d="{{ dSpark.line }}" fill="none" stroke="#54ACBF" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"></path></svg>
+              <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:9.5px;color:#7fa9b7;margin-top:3px"><span>{{ dSpark.ini }}</span><span>vendas dos últimos 14 dias</span><span>hoje</span></div>
+            </div>
+          </div>
+          <div class="pd-g3 pd-band" style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px">
+            <sc-for list="{{ dBand }}" as="b" hint-placeholder-count="3">
+              <div style="display:flex;gap:14px;align-items:center;min-width:0">
+                <div class="pd-ring pd-ring-sm" style="{{ b.ring }}"><div><div class="pd-ring-n" style="font-size:15px;color:{{ b.cor }}">{{ b.pct }}</div><div class="pd-ring-l" style="font-size:7.5px">{{ b.ringLbl }}</div></div></div>
+                <div style="flex:1;min-width:0">
+                  <div class="pd-lbl" style="font-size:9.5px;font-weight:700;color:{{ b.cor }}">{{ b.label }}</div>
+                  <div style="font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:#fff;margin-top:2px">{{ b.valor }}</div>
+                  <div style="font-size:11.5px;color:#a9c9d4;margin-top:2px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.sub }}</div>
+                  <div class="pd-bar" style="background:rgba(255,255,255,.08);margin-top:7px"><div style="width:{{ b.pct }};background:{{ b.barra }}"></div></div>
+                </div>
+              </div>
+            </sc-for>
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px">
-          <sc-for list="{{ metrics }}" as="m" hint-placeholder-count="6">
-            <div onclick="{{ m.onToggle }}" class="dash-card" style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:14px;padding:13px 15px;cursor:pointer;user-select:none">
-              <span class="go-corner"><span class="go-arrow">→</span></span>
-              <div style="display:flex;align-items:center;gap:10px">
-                <div style="width:28px;height:28px;border-radius:8px;background:var(--bg-accent-soft);display:flex;align-items:center;justify-content:center;color:#26658C;flex-shrink:0"><svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="{{ m.icon }}"></path></svg></div>
-                <div style="font-size:11px;color:#847a6e;text-transform:uppercase;letter-spacing:.06em;font-weight:600">{{ m.label }}</div>
-                <svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="#c2b9ab" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;flex-shrink:0;transition:transform .2s ease;transform:{{ m.chevronRotate }}"><path d="M6 9l6 6 6-6"></path></svg>
-              </div>
-              <div style="font-size:20px;font-weight:700;margin-top:9px;line-height:1.2;font-family:'Space Mono',monospace;color:{{ m.color }}">{{ m.value }}</div>
-              <div style="font-size:11.5px;color:#9a9084;margin-top:3px">{{ m.sub }}</div>
-              <sc-if value="{{ m.expanded }}" hint-placeholder-val="{{ false }}">
-                <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border-soft);animation:expandDown .25s ease both">
-                  <div style="font-size:12.5px;color:#5f574d;line-height:1.6">{{ m.detail }}</div>
-                </div>
-              </sc-if>
+
+        <!-- ── Desempenho ── -->
+        <div class="pd-sec">Desempenho<span>últimos 30 dias</span></div>
+        <div class="pd-g4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+          <sc-for list="{{ dStatus }}" as="c" hint-placeholder-count="4">
+            <div class="dash-card" style="border:1px solid var(--border-card);border-radius:14px;padding:14px 16px">
+              <div style="display:flex;align-items:center"><div class="pd-lbl pd-mut" style="font-size:10px;font-weight:700">{{ c.label }}</div><span style="margin-left:auto;width:8px;height:8px;border-radius:50%;background:{{ c.cor }};box-shadow:0 0 10px {{ c.cor }}"></span></div>
+              <div style="font-family:'Space Mono',monospace;font-size:22px;font-weight:700;margin-top:8px;color:{{ c.cor }}">{{ c.valor }}</div>
+              <div class="pd-mut" style="font-size:11.5px;margin-top:3px">{{ c.sub }}</div>
             </div>
           </sc-for>
         </div>
 
-        <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:12px;margin-bottom:12px">
-          <div class="dash-panel" style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;padding:17px">
-            <div style="font-weight:600;font-size:14px;margin-bottom:10px">Pedidos recentes</div>
+        <!-- ── Vendas ── -->
+        <div class="pd-sec">Vendas<span>dia a dia · formas de pagamento</span></div>
+        <div class="pd-g2" style="display:grid;grid-template-columns:1.5fr 1fr;gap:12px">
+          <div class="dash-panel" style="border:1px solid var(--border-card);border-radius:16px;padding:17px">
+            <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><div style="font-weight:700;font-size:14px">Últimos 7 dias</div><div class="pd-lbl pd-mut" style="font-size:9.5px">{{ dSemana.sub }}</div><div style="margin-left:auto;font-family:'Space Mono',monospace;font-weight:700;font-size:15px;color:#54ACBF">{{ dSemana.total }}</div></div>
+            <div style="display:flex;align-items:flex-end;gap:10px;height:200px;margin-top:14px;padding-bottom:4px;border-bottom:1px solid var(--border-soft)">
+              <sc-for list="{{ dDias }}" as="d" hint-placeholder-count="7">
+                <div style="flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;min-width:0">
+                  <div class="pd-mut" style="font-family:'Space Mono',monospace;font-size:10px;white-space:nowrap">{{ d.valor }}</div>
+                  <div style="width:100%;max-width:48px;height:{{ d.h }};border-radius:8px 8px 3px 3px;background:{{ d.cor }};box-shadow:{{ d.sombra }}"></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:7px">
+              <sc-for list="{{ dDias }}" as="d" hint-placeholder-count="7"><div class="pd-lbl" style="flex:1;text-align:center;font-size:9.5px;{{ d.lblStyle }}">{{ d.dia }}</div></sc-for>
+            </div>
+          </div>
+          <div class="dash-panel" style="border:1px solid var(--border-card);border-radius:16px;padding:17px">
+            <div style="font-weight:700;font-size:14px">Formas de pagamento</div>
+            <div class="pd-lbl pd-mut" style="font-size:9.5px;margin-top:3px">30 dias · {{ dPag.total }}</div>
+            <div style="display:flex;align-items:center;gap:18px;margin-top:14px;flex-wrap:wrap">
+              <div class="pd-donut" style="{{ dPag.donut }}"><div><div style="font-family:'Space Mono',monospace;font-weight:700;font-size:17px">{{ dPag.qtd }}</div><div class="pd-mut" style="font-size:10px">pedidos</div></div></div>
+              <div style="flex:1;min-width:160px">
+                <sc-for list="{{ dPagItens }}" as="p" hint-placeholder-count="5">
+                  <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--border-soft);font-size:12.5px"><span style="width:9px;height:9px;border-radius:3px;flex-shrink:0;background:{{ p.cor }}"></span><span style="flex:1">{{ p.label }}</span><span class="pd-mut" style="font-family:'Space Mono',monospace;font-size:11px">{{ p.pct }}</span><span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;min-width:86px;text-align:right">{{ p.valor }}</span></div>
+                </sc-for>
+                <sc-if value="{{ noPag }}" hint-placeholder-val="{{ false }}"><div class="pd-mut" style="font-size:13px">Sem vendas no período.</div></sc-if>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Visão operacional ── -->
+        <div class="pd-sec">Visão operacional<span>pedidos · mais vendidos</span></div>
+        <div class="pd-g2" style="display:grid;grid-template-columns:1.5fr 1fr;gap:12px">
+          <div class="dash-panel" style="border:1px solid var(--border-card);border-radius:16px;padding:17px">
+            <div style="font-weight:700;font-size:14px;margin-bottom:10px">Pedidos recentes</div>
             <sc-for list="{{ recentOrders }}" as="o" hint-placeholder-count="4">
               <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--border-soft)">
                 <div style="flex:1;min-width:0"><div style="font-weight:500;font-size:13px">{{ o.clientName }}</div><div style="font-size:11.5px;color:#9a9084;line-height:1.4">{{ o.items }}</div></div>
@@ -2873,47 +2969,61 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
               </div>
             </sc-for>
           </div>
-          <div class="dash-panel" style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;padding:17px">
-            <div style="font-weight:600;font-size:14px;margin-bottom:12px">Recebido por forma (mês)</div>
-            <sc-for list="{{ paymentBreakdown }}" as="p" hint-placeholder-count="6">
-              <div style="margin-bottom:13px">
-                <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px"><span style="color:#5f574d">{{ p.label }}</span><span style="font-family:'Space Mono',monospace;font-weight:600">{{ p.valueFmt }}</span></div>
-                <div style="height:7px;background:var(--border-soft);border-radius:6px;overflow:hidden"><div style="height:100%;width:{{ p.pct }};background:{{ p.color }};border-radius:6px"></div></div>
+          <div class="dash-panel" style="border:1px solid var(--border-card);border-radius:16px;padding:17px">
+            <div style="display:flex;align-items:center"><div style="font-weight:700;font-size:14px">Mais vendidos</div><span class="pd-chip2">30 dias</span></div>
+            <div class="pd-lbl pd-mut" style="font-size:9.5px;margin-top:3px;margin-bottom:6px">ranking por quantidade</div>
+            <sc-for list="{{ dTop }}" as="t" hint-placeholder-count="6">
+              <div style="display:flex;align-items:center;gap:10px;padding:7px 0">
+                <div style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;width:22px;color:{{ t.cor }}">#{{ t.pos }}</div>
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;justify-content:space-between;gap:8px;font-size:12.5px;font-weight:600"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ t.nome }}</span><span style="font-family:'Space Mono',monospace;flex-shrink:0">{{ t.qtd }}</span></div>
+                  <div class="pd-bar" style="margin-top:5px"><div style="width:{{ t.w }};background:{{ t.cor }}"></div></div>
+                </div>
               </div>
             </sc-for>
+            <sc-if value="{{ noTop }}" hint-placeholder-val="{{ false }}"><div class="pd-mut" style="padding:12px 0;font-size:13px">Ainda não há vendas registradas.</div></sc-if>
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
-          <div class="dash-panel" style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;padding:17px">
-            <div style="font-weight:600;margin-bottom:12px">Saldos devedores</div>
-            <sc-for list="{{ debtors }}" as="c" hint-placeholder-count="3">
-              <div style="display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--border-soft)">
-                <div style="flex:1"><div style="font-weight:500;font-size:14px">{{ c.name }}</div><div style="font-size:12px;color:#9a9084">{{ c.typeLabel }}</div></div>
-                <div style="font-family:'Space Mono',monospace;font-size:14px;color:#26658C;font-weight:700">{{ c.balanceFmt }}</div>
+        <!-- ── Financeiro e alertas ── -->
+        <div class="pd-sec">Financeiro e alertas<span>crediário · entregas · estoque</span></div>
+        <div class="pd-g3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <div class="dash-panel" style="border:1px solid var(--border-card);border-radius:16px;padding:17px">
+            <div style="display:flex;align-items:center;margin-bottom:6px"><div style="font-weight:700;font-size:14px">Saldos devedores</div><div style="margin-left:auto;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#fb923c">{{ dReceberFmt }}</div></div>
+            <sc-for list="{{ dDev }}" as="c" hint-placeholder-count="3">
+              <div style="padding:9px 0;border-top:1px solid var(--border-soft)">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:#fb923c;width:20px">#{{ c.pos }}</div>
+                  <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.name }}</div><div class="pd-mut" style="font-size:11px">{{ c.typeLabel }} · {{ c.pct }}</div></div>
+                  <div style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700">{{ c.balanceFmt }}</div>
+                </div>
+                <div class="pd-bar" style="margin-top:6px"><div style="width:{{ c.w }};background:linear-gradient(90deg,#f59e0b,#f97316)"></div></div>
               </div>
             </sc-for>
-            <sc-if value="{{ noDebtors }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 0;color:#9a9084;font-size:13px">Nenhum saldo em aberto.</div></sc-if>
+            <sc-if value="{{ noDebtors }}" hint-placeholder-val="{{ false }}"><div class="pd-mut" style="padding:12px 0;font-size:13px">Nenhum saldo em aberto.</div></sc-if>
           </div>
-          <div class="dash-panel" style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;padding:17px">
-            <div style="display:flex;align-items:center;margin-bottom:12px"><div style="font-weight:600">Entregas pendentes</div><span style="margin-left:auto;font-size:12px;color:#9a9084">{{ pendingCount }}</span></div>
+          <div class="dash-panel" style="border:1px solid var(--border-card);border-radius:16px;padding:17px">
+            <div style="display:flex;align-items:center;margin-bottom:6px"><div style="font-weight:700;font-size:14px">Entregas pendentes</div><span class="pd-chip2">{{ pendingCount }}</span></div>
             <sc-for list="{{ pendingDeliveries }}" as="d" hint-placeholder-count="2">
               <div style="display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--border-soft)">
-                <div style="flex:1"><div style="font-weight:500;font-size:14px">{{ d.orderRef }} · {{ d.region }}</div><div style="font-size:12px;color:#9a9084">{{ d.motoboy }}</div></div>
-                <button onclick="{{ d.onClose }}" style="background:#eef1ec;color:#3f7d5c;border:none;border-radius:8px;padding:6px 11px;font-size:12px;font-weight:600;cursor:pointer">Encerrar</button>
+                <div style="flex:1"><div style="font-weight:600;font-size:13px">{{ d.orderRef }} · {{ d.region }}</div><div class="pd-mut" style="font-size:11.5px">{{ d.motoboy }}</div></div>
+                <button onclick="{{ d.onClose }}" style="background:rgba(34,197,94,.14);color:#22c55e;border:1px solid rgba(34,197,94,.35);border-radius:8px;padding:6px 11px;font-size:12px;font-weight:600;cursor:pointer">Encerrar</button>
               </div>
             </sc-for>
-            <sc-if value="{{ noPending }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 0;color:#9a9084;font-size:13px">Nenhuma entrega pendente.</div></sc-if>
+            <sc-if value="{{ noPending }}" hint-placeholder-val="{{ false }}"><div class="pd-mut" style="padding:12px 0;font-size:13px">Nenhuma entrega pendente.</div></sc-if>
           </div>
-          <div class="dash-panel" style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;padding:17px">
-            <div style="font-weight:600;margin-bottom:12px">Alertas de estoque</div>
-            <sc-for list="{{ lowStock }}" as="s" hint-placeholder-count="2">
-              <div style="display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--border-soft)">
-                <div style="flex:1"><div style="font-weight:500;font-size:14px">{{ s.product }}</div><div style="font-size:12px;color:#c07b1e">mínimo {{ s.min }} {{ s.unit }}</div></div>
-                <div style="font-family:'Space Mono',monospace;font-size:14px;color:#26658C;font-weight:700">{{ s.qty }} {{ s.unit }}</div>
+          <div class="dash-panel" style="border:1px solid var(--border-card);border-radius:16px;padding:17px">
+            <div style="display:flex;align-items:center;margin-bottom:6px"><div style="font-weight:700;font-size:14px">Alertas de estoque</div><span class="pd-chip2">mínimo</span></div>
+            <sc-for list="{{ dEst }}" as="x" hint-placeholder-count="2">
+              <div style="padding:9px 0;border-top:1px solid var(--border-soft)">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="flex:1"><div style="font-weight:600;font-size:13px">{{ x.product }}</div><div style="font-size:11px;color:#f97316">mínimo {{ x.min }} {{ x.unit }}</div></div>
+                  <div style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#f87171">{{ x.qty }} {{ x.unit }}</div>
+                </div>
+                <div class="pd-bar" style="margin-top:6px"><div style="width:{{ x.w }};background:linear-gradient(90deg,#ef4444,#f97316)"></div></div>
               </div>
             </sc-for>
-            <sc-if value="{{ noLowStock }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 0;color:#9a9084;font-size:13px">Estoque em dia.</div></sc-if>
+            <sc-if value="{{ noLowStock }}" hint-placeholder-val="{{ false }}"><div class="pd-mut" style="padding:12px 0;font-size:13px">Estoque em dia.</div></sc-if>
           </div>
         </div>
       </sc-if>
@@ -4677,7 +4787,7 @@ class Component extends DCLogic {
     const complementos=['Arroz','Feijão','Frango','Batata','Macarrão','Bife','Salada','Ovo frito','Farofa','Peixe'].map((nome,i)=>({id:'cp'+i,nome,ativo:true,ordem:i}));
     const liga={cm9:[0,1,2,3,4],cm10:[0,1,5,6,8],cm11:[0,1,7,6],cm3:[2,6]};
     const itemComplementos=[]; Object.keys(liga).forEach(k=>liga[k].forEach(i=>itemComplementos.push({item_id:k,complemento_id:'cp'+i})));
-    this.setState({ authed:true, cardapioLoading:false, complementos, itemComplementos, waMsgs:waMsgsDemo, waContatos:Object.fromEntries(waConv.map(c=>[c[0],c[1]])), waConexao:{ status:'conectado', numero:'5511944466187', nome_perfil:'Pratto di Casa' }, waSel:null, waLocalOffline:false, userEmail:'demonstração', theme:'dark', view:'dashboard',
+    this.setState({ authed:true, cardapioLoading:false, dashStats:this._demoDashStats(), complementos, itemComplementos, waMsgs:waMsgsDemo, waContatos:Object.fromEntries(waConv.map(c=>[c[0],c[1]])), waConexao:{ status:'conectado', numero:'5511944466187', nome_perfil:'Pratto di Casa' }, waSel:null, waLocalOffline:false, userEmail:'demonstração', theme:'dark', view:'dashboard',
       clients, orders, balcaoItems, motoboys, stock, deliveries, crediarioHistory, pacotes, doacoes, cardapio, cozinha,
       waPendentes, waEmAndamento:[], waConcluidos:[] });
     this.showToast('Modo demonstração — dados fictícios.'); };
@@ -5312,6 +5422,29 @@ class Component extends DCLogic {
     this.setState({ clients: [...empresas, ...pessoas] });
   };
 
+  // ── Dashboard: histórico dos 29 dias anteriores (hoje vem de loadPedidos); 1x por dia ──
+  loadDashStats = async () => {
+    if (this.state.userEmail === 'demonstração') return;
+    const hoje = this.todayISO(); this._dashDia = hoje;
+    const desde = new Date(Date.parse(hoje+'T12:00:00Z') - 29*864e5).toISOString().slice(0,10);
+    let linhas = [];
+    for (let de = 0; de < 20000; de += 1000) {
+      const { data, error } = await sb.from('rest_pedidos').select('data,total,forma_pagamento,status,rest_pedido_itens(descricao,quantidade)')
+        .gte('data', desde).lt('data', hoje).order('data', { ascending: true }).range(de, de + 999);
+      if (error) { console.error(error); this._dashDia = null; return; }
+      linhas = linhas.concat(data || []); if (!data || data.length < 1000) break;
+    }
+    this.setState({ dashStats: linhas.map(o => ({ iso:o.data, total:Number(o.total)||0, payment:o.forma_pagamento||'dinheiro', status:o.status==='entregue'?'entregue':'aberto',
+      itens:(o.rest_pedido_itens||[]).map(i=>({ d:i.descricao, q:Number(i.quantidade)||0 })) })) });
+  };
+
+  _demoDashStats(){ const base=Date.parse(this.todayISO()+'T12:00:00Z'); let sem=7; const rnd=()=>{ sem=(sem*9301+49297)%233280; return sem/233280; };
+    const pratos=['Marmita M','Marmita G','Marmita P','Marmita Fitness','Feijoada','Suco natural'], precos=[22,26,18,28,32,9], pags=['dinheiro','pix','pix','debito','credito','crediario','vr'];
+    const out=[]; for(let k=1;k<=29;k++){ const dt=new Date(base-k*864e5); if(dt.getUTCDay()===0) continue; const iso=dt.toISOString().slice(0,10); const n=7+Math.floor(rnd()*9)+(dt.getUTCDay()===5?6:0);
+      for(let j=0;j<n;j++){ const a=Math.floor(rnd()*rnd()*6), q=1+Math.floor(rnd()*1.6); const itens=[{d:pratos[a],q}]; let total=precos[a]*q;
+        if(rnd()<.35){ itens.push({d:'Coca-Cola lata',q:1}); total+=6; } out.push({iso,total,payment:pags[Math.floor(rnd()*pags.length)],status:'entregue',itens}); } }
+    return out; }
+
   loadPedidos = async () => {
     const { data, error } = await sb.from('rest_pedidos')
       .select('id,numero_ref,cliente_id,empresa_id,forma_pagamento,status,total,data,origem,nome_cliente,pronto,motoboy_id,rest_motoboys(nome),rest_pedido_itens(descricao,quantidade)')
@@ -5332,10 +5465,13 @@ class Component extends DCLogic {
       payment: o.forma_pagamento || 'dinheiro',
       status: o.status === 'entregue' ? 'entregue' : 'aberto',
       today: o.data === today,
+      iso: o.data,
+      itensArr: (o.rest_pedido_itens||[]).map(i=>({ d:i.descricao, q:Number(i.quantidade)||0 })),
       kind: o.origem === 'balcao' ? 'balcao' : undefined,
       date: this.fmtDateBR(o.data),
     }; });
     this.setState({ orders });
+    if (this._dashDia !== today) this.loadDashStats();
   };
 
   loadPacotes = async () => {
@@ -6287,6 +6423,80 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const vendasDia=s.orders.filter(o=>o.today).reduce((a,o)=>a+o.total,0);
     const totalReceber=s.clients.reduce((a,c)=>a+c.balance,0);
     const pagarMotoboys=s.motoboys.reduce((a,m)=>a+m.salary,0)+s.deliveries.reduce((a,d)=>a+d.fee,0);
+    // ── Dashboard: números e gráficos (histórico em dashStats + pedidos de hoje) ──
+    const dHoje=this.todayISO(), dBase=Date.parse(dHoje+'T12:00:00Z');
+    const dIso=(k)=>new Date(dBase-k*864e5).toISOString().slice(0,10);
+    const dCurto=(v)=>v>=1000?'R$ '+(v/1000).toFixed(1).replace('.',',')+'k':'R$ '+Math.round(v);
+    const dPct=(a,b)=>b>0?Math.round(a/b*100):0;
+    const dSoma=(arr)=>arr.reduce((a,o)=>a+o.total,0);
+    const dRing=(p,cor)=>'background:conic-gradient('+cor+' 0 '+p+'%,rgba(255,255,255,.08) 0);box-shadow:0 0 30px -8px '+cor;
+    const dSemNome=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    const dDiaSem=(iso)=>dSemNome[new Date(iso+'T12:00:00Z').getUTCDay()];
+    const dVar=(a,b)=>b>0?Math.round((a-b)/b*100):null;
+    const dSeta=(v)=>(v>=0?'▲ ':'▼ ')+Math.abs(v)+'%';
+    const hojeOrd=s.orders.filter(o=>o.today);
+    const dTodos=[...(s.dashStats||[]).filter(o=>o.iso<dHoje), ...hojeOrd.map(o=>({iso:dHoje,total:o.total,payment:o.payment,status:o.status,itens:o.itensArr||[]}))];
+    const dPorDia={}; dTodos.forEach(o=>{ dPorDia[o.iso]=(dPorDia[o.iso]||0)+o.total; });
+    const hojeEnt=hojeOrd.filter(o=>o.status==='entregue'), hojeAb=hojeOrd.filter(o=>o.status!=='entregue');
+    const hojeBal=hojeOrd.filter(o=>o.kind==='balcao'), hojePed=hojeOrd.filter(o=>o.kind!=='balcao');
+    const pConc=dPct(hojeEnt.length,hojeOrd.length), pCred=dPct(dSoma(hojeOrd.filter(o=>o.payment==='crediario')),vendasDia);
+    const dOntem=dPorDia[dIso(1)]||0, dTr=dVar(vendasDia,dOntem);
+    const dHero={
+      entregues:hojeEnt.length, abertos:hojeAb.length,
+      qtd:hojeOrd.length+(hojeOrd.length===1?' pedido':' pedidos'),
+      ticket:brl(hojeOrd.length?vendasDia/hojeOrd.length:0),
+      pctConc:pConc+'%', pctCred:pCred+'%', ring1:dRing(pConc,'#22c55e'), ring2:dRing(pCred,'#f97316'),
+      trend:dTr===null?'sem vendas ontem para comparar':(dSeta(dTr)+' em relação a ontem ('+brl(dOntem)+')'),
+      trendStyle:'display:inline-block;margin-top:8px;padding:3px 9px;border-radius:6px;font-family:Space Mono,monospace;font-size:11px;font-weight:700;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:'+(dTr===null?'#9cc3cf':(dTr>=0?'#4ade80':'#f87171')),
+    };
+    const dMini=[
+      {label:'Balcão',cor:'#2dd4bf',lista:hojeBal},
+      {label:'Pedidos',cor:'#60a5fa',lista:hojePed},
+      {label:'Em aberto',cor:'#fbbf24',lista:hojeAb},
+      {label:'Entregues',cor:'#22c55e',lista:hojeEnt},
+    ].map(k=>({label:k.label,cor:k.cor,n:String(k.lista.length),valor:brl(dSoma(k.lista))}));
+    const dSpVals=Array.from({length:14},(_,i)=>dPorDia[dIso(13-i)]||0), dSpMax=Math.max(1,...dSpVals);
+    const dSpLine='M'+dSpVals.map((v,i)=>Math.round(i*600/13)+','+Math.round(56-v/dSpMax*50)).join(' L');
+    const dSpark={line:dSpLine, area:dSpLine+' L600,60 L0,60 Z', ini:this.fmtDateBR(dIso(13))};
+    const dRecebido=s.crediarioHistory.filter(h=>h.type==='Pagamento').reduce((a,h)=>a+h.amount,0);
+    const dDevs=s.clients.filter(c=>c.balance>0).sort((a,b)=>b.balance-a.balance);
+    const dEntTot=s.deliveries.length, dEntOk=s.deliveries.filter(d=>d.status==='entregue').length;
+    const dBand=[
+      {label:'Crediário a receber',cor:'#fb923c',barra:'linear-gradient(90deg,#f59e0b,#f97316)',p:dPct(dRecebido,dRecebido+totalReceber),ringLbl:'recebido',valor:brl(totalReceber),
+        sub:debtorCount+(debtorCount===1?' cliente devendo':' clientes devendo')+(dDevs[0]?' · maior: '+dDevs[0].name:'')},
+      {label:'Motoboys a pagar',cor:'#60a5fa',barra:'linear-gradient(90deg,#3b82f6,#8b5cf6)',p:dEntTot?dPct(dEntOk,dEntTot):100,ringLbl:'entregue',valor:brl(pagarMotoboys),
+        sub:pendingDel.length+(pendingDel.length===1?' entrega pendente':' entregas pendentes')+' · '+s.motoboys.length+(s.motoboys.length===1?' motoboy':' motoboys')},
+      {label:'Estoque',cor:lowStock.length?'#f87171':'#4ade80',barra:lowStock.length?'linear-gradient(90deg,#ef4444,#f97316)':'linear-gradient(90deg,#22c55e,#2dd4bf)',p:s.stock.length?dPct(s.stock.length-lowStock.length,s.stock.length):100,ringLbl:'em dia',
+        valor:lowStock.length?(lowStock.length+' abaixo do mínimo'):'Tudo em dia', sub:lowStock.length?lowStock.map(x=>x.product).join(', '):(s.stock.length+' itens controlados')},
+    ].map(b=>({...b,pct:b.p+'%',ring:dRing(b.p,b.cor)}));
+    const dSomaDias=(de,ate)=>{ let t=0; for(let k=de;k<=ate;k++) t+=dPorDia[dIso(k)]||0; return t; };
+    const d7=dSomaDias(0,6), d7tr=dVar(d7,dSomaDias(7,13)), d30=dSomaDias(0,29);
+    const d30Ord=dTodos.filter(o=>o.iso>=dIso(29));
+    const dDiasCom=Object.keys(dPorDia).filter(k=>k>=dIso(29)&&dPorDia[k]>0).sort((a,b)=>dPorDia[b]-dPorDia[a]);
+    const dMelhor=dDiasCom[0];
+    const dStatus=[
+      {label:'Semana',cor:'#22c55e',valor:brl(d7),sub:d7tr===null?'últimos 7 dias':(dSeta(d7tr)+' vs semana anterior')},
+      {label:'Mês',cor:'#60a5fa',valor:brl(d30),sub:d30Ord.length+(d30Ord.length===1?' pedido':' pedidos')+' em 30 dias'},
+      {label:'Média por dia',cor:'#fbbf24',valor:brl(dDiasCom.length?d30/dDiasCom.length:0),sub:dDiasCom.length+(dDiasCom.length===1?' dia com venda':' dias com venda')},
+      {label:'Melhor dia',cor:'#a78bfa',valor:dMelhor?brl(dPorDia[dMelhor]):'—',sub:dMelhor?(dDiaSem(dMelhor)+' · '+this.fmtDateBR(dMelhor)):'sem vendas no período'},
+    ];
+    const dSemVals=Array.from({length:7},(_,i)=>({iso:dIso(6-i),v:dPorDia[dIso(6-i)]||0})), dSemMax=Math.max(1,...dSemVals.map(x=>x.v));
+    const dDias=dSemVals.map((x,i)=>{ const hoje=i===6; return {dia:hoje?'Hoje':dDiaSem(x.iso), valor:x.v?dCurto(x.v):'—', h:Math.max(2,Math.round(x.v/dSemMax*82))+'%',
+      cor:hoje?'linear-gradient(180deg,#7dd3fc,#26658C)':'linear-gradient(180deg,#54ACBF,#0d4a73)', sombra:hoje?'0 8px 24px -6px rgba(84,172,191,.75)':'none', lblStyle:hoje?'color:#54ACBF;font-weight:700':'opacity:.6'}; });
+    const dSemana={total:brl(d7),sub:d7tr===null?'total da semana':(dSeta(d7tr)+' vs anterior')};
+    const dPagCor={dinheiro:'#22c55e',pix:'#2dd4bf',credito:'#60a5fa',debito:'#a78bfa',vr:'#fbbf24',crediario:'#f97316'};
+    const dPagSom={}; d30Ord.forEach(o=>{ dPagSom[o.payment]=(dPagSom[o.payment]||0)+o.total; });
+    const dPagTot=Object.values(dPagSom).reduce((a,v)=>a+v,0);
+    let dAc=0; const dSeg=[];
+    const dPagItens=Object.keys(dPagSom).sort((a,b)=>dPagSom[b]-dPagSom[a]).map(k=>{ const p=dPagTot?dPagSom[k]/dPagTot*100:0, cor=dPagCor[k]||'#94a3b8';
+      dSeg.push(cor+' '+dAc.toFixed(2)+'% '+(dAc+p).toFixed(2)+'%'); dAc+=p; return {label:this.payLabel(k),cor,pct:Math.round(p)+'%',valor:brl(dPagSom[k])}; });
+    const dPag={total:brl(dPagTot), qtd:String(d30Ord.length), donut:'background:conic-gradient('+(dSeg.length?dSeg.join(','):'rgba(127,127,127,.2) 0 100%')+')'};
+    const dItSom={}; d30Ord.forEach(o=>(o.itens||[]).forEach(i=>{ const n=(i.d||'').trim(); if(n) dItSom[n]=(dItSom[n]||0)+(i.q||0); }));
+    const dTopArr=Object.entries(dItSom).sort((a,b)=>b[1]-a[1]).slice(0,7), dTopMax=dTopArr.length?Math.max(1,dTopArr[0][1]):1;
+    const dTopCor=['#f97316','#fbbf24','#22c55e','#2dd4bf','#60a5fa','#a78bfa','#f472b6'];
+    const dTop=dTopArr.map(([n,q],i)=>({pos:i+1,nome:n,qtd:q+' un',w:Math.max(3,Math.round(q/dTopMax*100))+'%',cor:dTopCor[i]}));
+    const dDev=dDevs.slice(0,6).map((c,i)=>({pos:i+1,name:c.name,typeLabel:this.typeLabel(c.type),balanceFmt:brl(c.balance),pct:dPct(c.balance,totalReceber)+'% do total',w:Math.max(3,dPct(c.balance,totalReceber))+'%'}));
+    const dEst=lowStock.map(x=>({product:x.product,qty:x.qty,min:x.min,unit:x.unit,w:Math.max(3,Math.min(100,dPct(x.qty,x.min)))+'%'}));
     const metrics=[
       {id:'vendas',label:'Vendas do dia',value:brl(vendasDia),sub:(n=>n+(n===1?' pedido hoje':' pedidos hoje'))(s.orders.filter(o=>o.today).length),color:'var(--text-primary)',icon:'M12 2v20 M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6',detail:'Soma de todos os pedidos e itens de balcão lançados hoje, em qualquer forma de pagamento.'},
       {id:'abertos',label:'Pedidos em aberto',value:String(openOrders),sub:'aguardando conclusão',color:'#c07b1e',icon:'M5 3h14v18H5z M9 8h6 M9 12h6 M9 16h4',detail:'Pedidos já lançados que ainda não foram marcados como entregues. Conclua em Pedidos.'},
@@ -6396,7 +6606,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       hasSlots: s.signupSlots===null || s.signupSlots>0, noSlots: s.signupSlots!==null && s.signupSlots<=0,
       signupSlotsMsg: s.signupSlots===null?'Verificando vagas…':(s.signupSlots>0?('Vagas disponíveis: '+s.signupSlots+' de 5'):'Nenhuma vaga disponível no momento.'),
       navItems, theme:s.theme, rootStyle, showFull, asideStyle, brandRowStyle, collapseBtnStyle, collapseIcon, themeBtnStyle, themeIcon, themeLabel, toggleTheme:this.toggleTheme, toggleCollapse:this.toggleCollapse,
-      heroVendasFmt:brl(vendasDia), heroSub, goPedido:()=>this.openModal('order'), goLancar:()=>this.setState({view:'lancamento'}),
+      heroVendasFmt:brl(vendasDia), heroSub, dHero, dMini, dSpark, dBand, dStatus, dDias, dSemana, dPag, dPagItens, noPag:dPagItens.length===0, dTop, noTop:dTop.length===0, dDev, dEst, dReceberFmt:brl(totalReceber), goPedido:()=>this.openModal('order'), goLancar:()=>this.setState({view:'lancamento'}),
       closingDate, todayFmt,
       mostrarTopo:s.view!=='whatsapp', conteudoStyle:(s.view==='whatsapp'?'padding:0;height:100vh;overflow:hidden':'padding:16px 24px;overflow:auto')+';flex:1;animation:dcFadeIn .3s ease',
       pageTitle:titles[s.view]?titles[s.view][0]:'', pageSub:titles[s.view]?titles[s.view][1]:'',
