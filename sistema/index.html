@@ -4516,6 +4516,7 @@ const FOTOS_INGR = {"arroz":"data:image/webp;base64,UklGRmYvAABXRUJQVlA4IFovAACQ
 
 class Component extends DCLogic {
   static EMPRESA = { nome:'Pratto di Casa', endereco:'R. Alexandrino Pinto da Silva, 262 - Centro, Cajamar/SP', whatsapp:'(11) 4446-6187' };
+  static WHATSAPP_CARDAPIO = '(11) 4446-6132'; // telefone de pedidos do cardápio do cliente (site, arte e texto do WhatsApp)
   constructor(){
     super();
     sbReady.then(()=>{ this.checkSession(); });
@@ -4690,7 +4691,7 @@ class Component extends DCLogic {
       return { nome:i.name, tamanho:i.size, tamanhoNome:NOME[i.size]||i.size, preco:v, foto:i.foto_url||'', itens, obs:i.observacoes||'', tempo:i.tempo_preparo||null }; }); };
   agendarPublicacao=()=>{ clearTimeout(this._pubT); this._pubT=setTimeout(this.publicarCardapio,2000); };
   publicarCardapio=async()=>{ if(this._demo||!sb) return; const a=this.state.arte; if(!a) return; const L=this.mcdSplit;
-    const dados={ v:1, atualizado:new Date().toISOString(), empresa:Component.EMPRESA, hoje:L(a.hoje), guarnicoes:L(a.guarnicoes), fitness:L(a.fitness), fitnessObs:a.fitnessObs||'',
+    const dados={ v:1, atualizado:new Date().toISOString(), empresa:{...Component.EMPRESA, whatsapp:Component.WHATSAPP_CARDAPIO}, hoje:L(a.hoje), guarnicoes:L(a.guarnicoes), fitness:L(a.fitness), fitnessObs:a.fitnessObs||'',
       precos:{ P:a.pP||'', M:a.pM||'', G:a.pG||'', fitness:a.pFit||'' }, especial:{ nome:a.espNome||'', P:a.eP||'', M:a.eM||'', G:a.eG||'' }, fotos:a.fotos||{},
       // os mesmos pratos cadastrados no sistema (com foto, ingredientes e valor do tamanho), para o site ficar igual ao "Ver Cardápio"
       pratos:this.pratosParaSite() };
@@ -4808,7 +4809,7 @@ class Component extends DCLogic {
     precos([['P',d.eP],['M',d.eM],['G',d.eG]],cx(2),BY+42+nomeEsp.length*23+30);
     // rodapé
     const emp=Component.EMPRESA; ctx.fillStyle='rgba(212,169,90,.08)'; ctx.fillRect(0,H-74,W,74); ctx.strokeStyle='rgba(212,169,90,.35)'; ctx.beginPath(); ctx.moveTo(0,H-74); ctx.lineTo(W,H-74); ctx.stroke();
-    ctx.font='600 25px '+SERIF; ctx.fillStyle=CREME; ctx.fillText('Peça pelo WhatsApp  '+emp.whatsapp,W/2,H-40);
+    ctx.font='600 25px '+SERIF; ctx.fillStyle=CREME; ctx.fillText('Peça pelo WhatsApp  '+Component.WHATSAPP_CARDAPIO,W/2,H-40);
     ctx.font='500 18px '+SERIF; ctx.fillStyle=SUAVE; ctx.fillText(emp.endereco,W/2,H-15);
   };
   // Bimo: "Cardápio de hoje" envia a arte (imagem) na conversa aberta
@@ -4836,7 +4837,7 @@ class Component extends DCLogic {
     const pr=(p,m,g)=>[['P',p],['M',m],['G',g]].filter(x=>String(x[1]||'').trim()).map(x=>x[0]+' R$ '+x[1]).join('  ·  ');
     txt+='\n*VALORES*\n'+pr(a.pP,a.pM,a.pG)+'\n'; if(String(a.pFit||'').trim()) txt+='Fitness R$ '+a.pFit+'\n';
     if(String(a.espNome||'').trim()&&pr(a.eP,a.eM,a.eG)) txt+='\n*'+a.espNome+'*\n'+pr(a.eP,a.eM,a.eG)+'\n';
-    txt+='\n📍 '+emp.endereco+'\n📲 Peça pelo WhatsApp '+emp.whatsapp; if(CARDAPIO_LINK) txt='👉 Veja o cardápio de hoje com fotos: '+CARDAPIO_LINK+String.fromCharCode(10,10)+txt; return txt; };
+    txt+='\n📍 '+emp.endereco+'\n📲 Peça pelo WhatsApp '+Component.WHATSAPP_CARDAPIO; if(CARDAPIO_LINK) txt='👉 Veja o cardápio de hoje com fotos: '+CARDAPIO_LINK+String.fromCharCode(10,10)+txt; return txt; };
   shareMenuWhatsapp=()=>{ const txt=this.buildMenuText(); window.open('https://wa.me/?text='+encodeURIComponent(txt), '_blank'); };
   printMenu=async()=>{ const w=window.open('','_blank'); if(!w){ this.showToast('O navegador bloqueou a janela de impressão.'); return; } const cv=await this.arteCanvas();
     w.document.write('<!doctype html><title>Cardápio</title><style>@page{margin:8mm}body{margin:0;display:flex;justify-content:center}img{width:100%;max-width:190mm}</style><img src="'+cv.toDataURL('image/png')+'">');

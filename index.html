@@ -402,8 +402,9 @@
 <script>
 // Cardápio do dia, publicado pelo sistema do restaurante (Supabase Storage, leitura pública).
 const DADOS_URL = 'https://avqytrvpmomtxehjzosq.supabase.co/storage/v1/object/public/cardapio/cardapio-hoje.json';
+const WHATSAPP_CARDAPIO = '(11) 4446-6132'; // telefone dos pedidos (vale mesmo que o cardápio publicado traga outro)
 const PADRAO = { // usado se ainda não houver cardápio publicado (cardápio original)
-  empresa:{ nome:'Pratto di Casa', endereco:'R. Alexandrino Pinto da Silva, 262 - Centro, Cajamar/SP', whatsapp:'(11) 4446-6187' },
+  empresa:{ nome:'Pratto di Casa', endereco:'R. Alexandrino Pinto da Silva, 262 - Centro, Cajamar/SP', whatsapp:'(11) 4446-6132' },
   hoje:['Bife a rolê','Coxinha da asa à milanesa','Dobradinha','Filé de frango à milanesa','Bife à milanesa','À parmegiana'],
   guarnicoes:['Repolho refogado','Purê de batata','Rondeli de frios','Bolinho de arroz','Farofa'],
   fitness:['Arroz integral','1 proteína (carne, frango ou omelete)','Salada'], fitnessObs:'Guarnições têm acréscimo',
@@ -724,7 +725,7 @@ function ligarPedido() {
 document.addEventListener('click', (e) => { const el = e.target.closest('[data-pedir]'); if (!el || !DADOS) return; e.preventDefault(); abrirPedido(el.dataset.pedir || '', el.dataset.prato || '', el.dataset.g || '', !!el.dataset.especial); });
 document.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.item[data-pedir], li[data-pedir], .fitbox')) { e.preventDefault(); e.target.click(); } });
 function montar(d) {
-  const emp = d.empresa || PADRAO.empresa; const hoje = d.hoje || []; const pratos = (d.pratos || []).filter(p => p && p.nome);
+  const emp = { ...(d.empresa || PADRAO.empresa), whatsapp: WHATSAPP_CARDAPIO }; const hoje = d.hoje || []; const pratos = (d.pratos || []).filter(p => p && p.nome);
   const dia0 = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'2-digit' }); const dia = dia0.charAt(0).toUpperCase() + dia0.slice(1);
   const pr = d.precos || {}; const es = d.especial || {}; const menor = ['P','M','G'].map(k => valor(pr[k])).filter(Boolean)[0];
   const tams = [['P','Pequena'],['M','Média'],['G','Grande']].filter(([k]) => valor(pr[k]));
