@@ -189,6 +189,10 @@
   .ped-mais{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:14px;padding:13px 16px;border-radius:14px;border:1.5px dashed rgba(255,122,26,.55);background:rgba(255,122,26,.06);color:var(--laranja2);font:700 14.5px Inter;cursor:pointer;transition:background .2s ease,border-color .2s ease,opacity .2s ease}
   .ped-mais span{font-size:20px;line-height:1}.ped-mais:hover{background:rgba(255,122,26,.14);border-style:solid}.ped-mais.falta{opacity:.6}
   .ped-mais:focus-visible,.ped-rem:focus-visible{outline:2px solid var(--laranja);outline-offset:2px}
+  .ped-abas{position:sticky;top:0;z-index:3;display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:12px 0 10px;background:linear-gradient(var(--quadro) 82%,transparent)}.ped-abas[hidden]{display:none}
+  .ped-aba{min-height:46px;border-radius:12px;border:1.5px solid var(--linha);background:rgba(255,255,255,.04);color:var(--suave);font:700 14.5px Inter;cursor:pointer;transition:background .18s ease,border-color .18s ease,color .18s ease}
+  .ped-aba:hover{color:var(--texto)}.ped-aba.on{border-color:var(--laranja);background:rgba(255,122,26,.14);color:#fff}.ped-aba:focus-visible{outline:2px solid var(--laranja);outline-offset:2px}
+  .grupo-t{font:700 15px Oswald;letter-spacing:.12em;text-transform:uppercase;color:var(--suave);margin:18px 0 10px}
   .porc-lista{display:grid;gap:8px}
   .porc{display:flex;align-items:center;gap:12px;padding:10px 10px 10px 14px;border-radius:14px;border:1.5px solid var(--linha);background:rgba(255,255,255,.035);transition:border-color .2s ease,background .2s ease}
   .porc.on{border-color:var(--laranja);background:rgba(255,122,26,.1)}
@@ -594,7 +598,7 @@ const rota = () => (location.hash === '#cardapio' ? mostrarCardapio() : mostrarC
 // ---------- Monte seu pedido: tamanho, prato do dia, até 2 guarnições, quantidade e observação → WhatsApp ----------
 let DADOS = null;
 const MAX_GUARN = 2;
-const PED = { tam: '', prato: '', guarn: [], qtd: 1, itens: [], ent: '', extras: [], querExtra: null, semGuarn: false, porc: {} }; // itens = pratos já adicionados ao pedido
+const PED = { tam: '', prato: '', guarn: [], qtd: 1, itens: [], ent: '', extras: [], querExtra: null, semGuarn: false, porc: {}, monte: {}, aba: 'prato' }; // itens = pratos já adicionados ao pedido
 const num = (v) => Number(String(v || '').replace(/\./g, '').replace(',', '.')) || 0;
 const reais = (n) => 'R$ ' + n.toFixed(2).replace('.', ',');
 const PROTEINAS_FIT = ['Carne', 'Frango', 'Omelete'];
@@ -651,15 +655,32 @@ function adicionarPrato() {
 }
 // ── fim vários pratos ──
 // ── porções (pede junto com o prato ou sozinhas) ──
-const porcoesDe = (d) => (d.porcoes || []).filter(p => p && p.nome);
-const qtdPorc = () => Object.values(PED.porc).reduce((s, n) => s + n, 0);
-const totPorc = () => porcoesDe(DADOS).reduce((s, p) => s + (PED.porc[p.nome] || 0) * num(p.preco), 0);
+// guia "Monte seu pedido": itens avulsos e porções, com preço definido no sistema
+const GRUPOS = [['monte', 'Itens', 'Escolha os itens que quiser — cada um com seu preço.', 'Monte seu pedido'], ['porc', 'Porções', 'Peça junto com o prato ou só a porção.', 'Porções']];
+const listaGrupo = (d, g) => ((g === 'monte' ? d.monte : d.porcoes) || []).filter(p => p && p.nome);
+const porcoesDe = (d) => listaGrupo(d, 'porc');
+const temAvulsos = (d) => GRUPOS.some(([g]) => listaGrupo(d, g).length);
+const qtdGrupo = (g) => Object.values(PED[g] || {}).reduce((s, n) => s + n, 0);
+const qtdPorc = () => qtdGrupo('monte') + qtdGrupo('porc');
+const totPorc = () => GRUPOS.reduce((s, [g]) => s + listaGrupo(DADOS, g).reduce((x, p) => x + ((PED[g] || {})[p.nome] || 0) * num(p.preco), 0), 0);
+function avulsosTxt() {
+  return GRUPOS.map(([g, , , tit]) => { const sel = listaGrupo(DADOS, g).filter(p => (PED[g] || {})[p.nome]);
+    return sel.length ? `*${tit}:*\n` + sel.map(p => { const n = PED[g][p.nome]; return `${n}× ${p.nome}${p.preco ? ' — ' + reais(n * num(p.preco)) : ''}`; }).join('\n') : ''; }).filter(Boolean).join('\n\n');
+}
 function renderPorcoes() {
-  const el = document.getElementById('ped-porcoes'); const ps = porcoesDe(DADOS); const n0 = qtdPorc();
-  el.innerHTML = ps.length ? `<section class="ped-sec" id="sec-porc">${cabecalho('+', 'Porções', n0 > 0, '<span class="ped-opc">opcional</span>')}
-    <p class="ped-nota">Peça junto com o prato ou só a porção.</p>
-    <div class="porc-lista">${ps.map(p => { const n = PED.porc[p.nome] || 0; return `<div class="porc${n ? ' on' : ''}"><div class="porc-t"><b>${esc(p.nome)}</b><span>${p.preco ? reais(num(p.preco)) : ''}</span></div>
-      <div class="porc-q"><button type="button" data-porc="${esc(p.nome)}" data-d="-1" aria-label="Menos ${esc(p.nome)}"${n ? '' : ' disabled'}>−</button><b aria-live="polite">${n}</b><button type="button" data-porc="${esc(p.nome)}" data-d="1" aria-label="Mais ${esc(p.nome)}">+</button></div></div>`; }).join('')}</div></section>` : '';
+  document.getElementById('ped-porcoes').innerHTML = GRUPOS.map(([g, tit, nota]) => { const ps = listaGrupo(DADOS, g); if (!ps.length) return ''; const n0 = qtdGrupo(g);
+    return `<section class="ped-sec" id="sec-${g}">${cabecalho('+', tit, n0 > 0, '<span class="ped-opc">opcional</span>')}<p class="ped-nota">${nota}</p>
+    <div class="porc-lista">${ps.map(p => { const n = (PED[g] || {})[p.nome] || 0; return `<div class="porc${n ? ' on' : ''}"><div class="porc-t"><b>${esc(p.nome)}</b><span>${p.preco ? reais(num(p.preco)) : ''}</span></div>
+      <div class="porc-q"><button type="button" data-porc="${esc(p.nome)}" data-g="${g}" data-d="-1" aria-label="Menos ${esc(p.nome)}"${n ? '' : ' disabled'}>−</button><b aria-live="polite">${n}</b><button type="button" data-porc="${esc(p.nome)}" data-g="${g}" data-d="1" aria-label="Mais ${esc(p.nome)}">+</button></div></div>`; }).join('')}</div></section>`; }).join('');
+}
+function mostrarAba(aba) {
+  const tem = !!DADOS && temAvulsos(DADOS); const ab = tem ? aba : 'prato'; PED.aba = ab; const el = document.getElementById('ped-abas'); el.hidden = !tem;
+  el.querySelectorAll('[data-aba]').forEach(b => { const on = b.dataset.aba === ab; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+  document.getElementById('aba-prato').hidden = ab !== 'prato'; document.getElementById('aba-monte').hidden = ab !== 'monte'; document.getElementById('ped-passos').style.visibility = ab === 'monte' ? 'hidden' : '';
+}
+function irParaAba(aba) {
+  if (aba === 'monte' && PED.tam && faltaPedido()) { PED.tam = ''; PED.prato = ''; PED.guarn = []; PED.extras = []; PED.querExtra = null; PED.semGuarn = false; } // prato pela metade não trava o envio
+  PED.aba = aba; renderOpcoes(); const c = document.querySelector('#ped .ped-corpo'); if (c) c.scrollTop = 0;
 }
 // ── fim porções ──
 // ── entrega ou retirada (no fim do pedido) ──
@@ -709,6 +730,7 @@ const fotoTamanho = (d, tam) => { const p = (d.pratos || []).find(x => x.tamanho
 function faltaPedido() {
   const d = DADOS; const fit = PED.tam === 'F'; const pratos = fit ? PROTEINAS_FIT : (d.hoje || []);
   if (!PED.tam && (PED.itens.length || qtdPorc())) return null; // só os pratos já adicionados / só porções
+  if (!PED.tam && PED.aba === 'monte') return { msg: 'escolher um item', err: 'Escolha pelo menos um item.', sec: 'aba-monte' };
   if (!PED.tam) return { msg: 'o tamanho', sec: 'sec-tam' };
   if (pratos.length && !PED.prato) return { msg: fit ? 'a proteína' : 'o prato do dia', sec: 'sec-prato' };
   return null;
@@ -730,12 +752,13 @@ function pedidoHTML() {
       <button type="button" class="ped-x" data-fechar aria-label="Fechar">×</button>
     </div>
     <div class="ped-corpo">
-      <div id="ped-sacola"></div>
+      <div class="ped-abas" id="ped-abas" role="tablist" hidden><button type="button" class="ped-aba on" data-aba="prato" role="tab" aria-selected="true">Prato feito</button><button type="button" class="ped-aba" data-aba="monte" role="tab" aria-selected="false">Monte seu pedido</button></div>
+      <div id="aba-prato"><div id="ped-sacola"></div>
       <div id="ped-opcoes"></div>
       <section class="ped-sec"><div class="ped-h"><span class="ped-n" id="n-qtd">4</span><h4>Quantidade</h4></div>
         <div class="ped-qtd"><button type="button" data-qtd="-1" aria-label="Menos">−</button><b id="ped-qtd" aria-live="polite">1</b><button type="button" data-qtd="1" aria-label="Mais">+</button></div>
         <button type="button" class="ped-mais" id="ped-mais"><span aria-hidden="true">+</span> Adicionar outro prato (P, M ou G)</button></section>
-      <div id="ped-porcoes"></div>
+      </div><div id="aba-monte" hidden><div id="ped-porcoes"></div></div>
       <section class="ped-sec"><div class="ped-h"><span class="ped-n">5</span><h4>Observação</h4><span class="ped-opc">opcional</span></div>
         <p class="ped-nota">Quer tirar algo do prato? Toque no que não quer.</p>
         <div class="ped-tags" id="ped-tags"></div>
@@ -774,7 +797,7 @@ function cabecalho(numero, titulo, feito, extra) {
 function renderOpcoes() {
   const d = DADOS; const fit = PED.tam === 'F'; const es = d.especial || {};
   if (fit) { PED.guarn = []; PED.semGuarn = false; PED.extras = []; PED.querExtra = null; } else if (PED.guarn.length < MAX_GUARN) { PED.extras = []; PED.querExtra = null; } PED.extras = PED.extras.filter(x => !PED.guarn.includes(x));
-  renderSacola(); renderPorcoes(); renderTags();
+  renderSacola(); renderPorcoes(); renderTags(); mostrarAba(PED.aba);
   const tams = tamanhosPedido(d).map(([k, n]) => { const p = precoPedido(d, k, PED.prato); const f = fotoTamanho(d, k);
     return `<button type="button" class="ped-tam${PED.tam === k ? ' on' : ''}" data-tam="${k}" aria-pressed="${PED.tam === k}">
       ${f ? `<img src="${esc(f)}" alt="" loading="lazy">` : `<span class="ped-tam-l">${k === 'F' ? 'FIT' : k}</span>`}
@@ -817,8 +840,8 @@ function atualizarTotal() {
   if (tot.textContent !== novo) { tot.textContent = novo; tot.classList.remove('pulo'); void tot.offsetWidth; tot.classList.add('pulo'); }
   const nome = (tamanhosPedido(d).find(([k]) => k === PED.tam) || [])[1];
   const nSac = qtdItens(PED.itens), atual = nome ? `${PED.qtd}× ${nome}${PED.prato ? ' · ' + PED.prato : ''}` : '';
-  const nP = qtdPorc(), txP = nP ? `${nP} porç${nP > 1 ? 'ões' : 'ão'}` : '';
-  document.getElementById('ped-resumo').textContent = [nSac ? `${nSac} prato${nSac > 1 ? 's' : ''} no pedido` : '', atual, txP].filter(Boolean).join(' + ') || 'Escolha o tamanho';
+  const nP = qtdPorc(), txP = nP ? `${nP} ite${nP > 1 ? 'ns' : 'm'} à parte` : '';
+  document.getElementById('ped-resumo').textContent = [nSac ? `${nSac} prato${nSac > 1 ? 's' : ''} no pedido` : '', atual, txP].filter(Boolean).join(' + ') || (PED.aba === 'monte' ? 'Escolha os itens' : 'Escolha o tamanho');
   // foto do topo acompanha o tamanho escolhido
   const f = fotoTamanho(d, PED.tam) || fotoTamanho(d, 'P') || fotoTamanho(d, 'M') || fotoTamanho(d, 'G');
   const hero = document.getElementById('ped-hero'); hero.innerHTML = f ? `<img src="${esc(f)}" alt="">` : ''; hero.hidden = !f;
@@ -841,8 +864,7 @@ function enviarPedido() {
   if (!confirmaGuarn('Enviar')) return;
   const atual = itemAtual(); const itens = [...PED.itens, ...(atual ? [atual] : [])];
   if (!itens.length && !qtdPorc()) return erroPedido('Escolha o tamanho.', 'sec-tam');
-  const porcSel = porcoesDe(d).filter(p => PED.porc[p.nome]);
-  const porcTxt = porcSel.length ? '*Porções:*\n' + porcSel.map(p => `${PED.porc[p.nome]}× ${p.nome}${p.preco ? ' — ' + reais(PED.porc[p.nome] * num(p.preco)) : ''}`).join('\n') : '';
+  const porcTxt = avulsosTxt();
   const obs = document.getElementById('ped-obs').value.trim();
   const bloco = (it, i) => { const p = precoPedido(d, it.tam, it.prato); const fit = it.tam === 'F';
     return [`*${itens.length > 1 ? (i + 1) + ') ' : ''}${nomeItem(it)}*${p.valor ? ' — ' + reais(p.valor) : ''}${p.especial ? ' (especial)' : ''}`,
@@ -855,13 +877,13 @@ function enviarPedido() {
   const url = linkWA(msg);
   if (url === '#') return erroPedido('WhatsApp do restaurante não informado.', '');
   window.open(url, '_blank', 'noopener') || (location.href = url);
-  PED.itens = []; PED.porc = {}; fecharPedido();
+  PED.itens = []; PED.porc = {}; PED.monte = {}; fecharPedido();
 }
 function abrirPedido(tam, prato, guarn, especial) {
   const d = DADOS; if (!d) return;
   if (!document.getElementById('ped')) { document.body.insertAdjacentHTML('beforeend', pedidoHTML()); ligarPedido(); }
   const tams = tamanhosPedido(d).map(([k]) => k);
-  PED.tam = tams.includes(tam) ? tam : (tams.includes('M') ? 'M' : tams[0] || ''); PED.prato = prato || ''; PED.guarn = []; PED.qtd = 1; PED.extras = []; PED.querExtra = null; PED.semGuarn = false;
+  PED.tam = tams.includes(tam) ? tam : (tams.includes('M') ? 'M' : tams[0] || ''); PED.prato = prato || ''; PED.guarn = []; PED.qtd = 1; PED.extras = []; PED.querExtra = null; PED.semGuarn = false; PED.aba = 'prato';
   if (prato && PED.tam === 'F') PED.tam = tams.includes('M') ? 'M' : tams[0];
   if (guarn && (d.guarnicoes || []).includes(guarn)) PED.guarn = [guarn];
   if (especial && !PED.prato) { const e = (d.hoje || []).find(n => ehEspecial(d, n)); if (e) PED.prato = e; }
@@ -907,7 +929,8 @@ function ligarPedido() {
     else if (e.target.closest('[data-rem]')) { PED.itens.splice(Number(e.target.closest('[data-rem]').dataset.rem), 1); renderOpcoes(); }
     else if (e.target.closest('[data-querextra]')) { PED.querExtra = e.target.closest('[data-querextra]').dataset.querextra === 'sim'; if (!PED.querExtra) PED.extras = []; renderOpcoes(); }
     else if (e.target.closest('[data-extra]')) { const n = e.target.closest('[data-extra]').dataset.extra; PED.extras = PED.extras.includes(n) ? PED.extras.filter(x => x !== n) : [...PED.extras, n]; renderOpcoes(); }
-    else if (e.target.closest('[data-porc]')) { const b = e.target.closest('[data-porc]'), n = b.dataset.porc; PED.porc[n] = Math.min(20, Math.max(0, (PED.porc[n] || 0) + Number(b.dataset.d))); if (!PED.porc[n]) delete PED.porc[n]; renderPorcoes(); atualizarTotal(); }
+    else if (e.target.closest('[data-porc]')) { const b = e.target.closest('[data-porc]'), n = b.dataset.porc, gr = PED[b.dataset.g || 'porc']; gr[n] = Math.min(20, Math.max(0, (gr[n] || 0) + Number(b.dataset.d))); if (!gr[n]) delete gr[n]; renderPorcoes(); atualizarTotal(); }
+    else if (e.target.closest('[data-aba]')) irParaAba(e.target.closest('[data-aba]').dataset.aba);
     else if (e.target.closest('#ped-mais')) adicionarPrato();
     else if (e.target.closest('[data-ent]')) { PED.ent = e.target.closest('[data-ent]').dataset.ent; atualizarTotal();
       if (PED.ent === 'entrega') setTimeout(() => { document.getElementById('ped-end').scrollIntoView({ behavior: 'smooth', block: 'center' }); if (endFaltando().length) focarEndereco(); }, 60);
@@ -927,8 +950,8 @@ function ligarPedido() {
 // qualquer botão "Pedir" da página abre o montador do pedido
 document.addEventListener('click', async (e) => { const b = e.target.closest('.pix-copiar'); if (!b) return; try { await navigator.clipboard.writeText(b.dataset.pix); } catch (_) { const t = document.createElement('textarea'); t.value = b.dataset.pix; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (_) {} t.remove(); } b.textContent = 'Copiado!'; setTimeout(() => { b.textContent = 'Copiar'; }, 1800); });
 document.addEventListener('click', (e) => { const el = e.target.closest('[data-pedir]'); if (!el || !DADOS) return; e.preventDefault(); abrirPedido(el.dataset.pedir || '', el.dataset.prato || '', el.dataset.g || '', !!el.dataset.especial);
-  if (el.dataset.porcao) { const n = el.dataset.porcao; PED.porc[n] = (PED.porc[n] || 0) + 1; PED.tam = ''; PED.prato = ''; renderOpcoes();
-    setTimeout(() => { const s = document.getElementById('sec-porc'); if (s) s.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200); } });
+  if (el.dataset.porcao) { const n = el.dataset.porcao, g = el.dataset.grupo || 'porc'; PED[g][n] = (PED[g][n] || 0) + 1; PED.tam = ''; PED.prato = ''; PED.aba = 'monte'; renderOpcoes();
+    setTimeout(() => { const s = document.getElementById('sec-' + g); if (s) s.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200); } });
 document.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.item[data-pedir], li[data-pedir], .fitbox')) { e.preventDefault(); e.target.click(); } });
 function montar(d) {
   const emp = { ...(d.empresa || PADRAO.empresa), whatsapp: WHATSAPP_CARDAPIO }; const hoje = d.hoje || []; const pratos = (d.pratos || []).filter(p => p && p.nome);
@@ -956,7 +979,7 @@ function montar(d) {
       </article>`; }).join('')}</div></section>` : '';
   return `
   <header class="entra"><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div><div class="data"><span class="dl">Cardápio de hoje · </span>${esc(dia)}</div><a class="inicio" href="#inicio" aria-label="Voltar ao início">‹ Início</a></header>
-  <nav class="atalhos" aria-label="Seções do cardápio">${[['sec-pratos', 'Pratos', pratos.length], ['sec-hoje', 'Hoje tem', hoje.length], ['sec-acomp', 'Guarnições', (d.guarnicoes || []).length + (d.fitness || []).length], ['sec-porcoes', 'Porções', porcoesDe(d).length], ['sec-valores', 'Valores', tams.length], ['sec-local', 'Como chegar', emp.endereco]].filter(x => x[2]).map(([id, n]) => `<a href="#${id}" data-ir="${id}">${n}</a>`).join('')}</nav>
+  <nav class="atalhos" aria-label="Seções do cardápio">${[['sec-pratos', 'Pratos', pratos.length], ['sec-hoje', 'Hoje tem', hoje.length], ['sec-acomp', 'Guarnições', (d.guarnicoes || []).length + (d.fitness || []).length], ['sec-porcoes', 'Monte seu pedido', temAvulsos(d)], ['sec-valores', 'Valores', tams.length], ['sec-local', 'Como chegar', emp.endereco]].filter(x => x[2]).map(([id, n]) => `<a href="#${id}" data-ir="${id}">${n}</a>`).join('')}</nav>
   ${cards}
   ${hoje.length ? `<section class="bloco entra" id="sec-hoje"><div class="titulo"><h3>Hoje <em>tem</em></h3></div><p class="dica">Toque no prato para pedir</p><div class="lista">${hoje.map((n, i) => { const f = fotoDe(d, n);
       return `<div class="item" data-pedir="" data-prato="${esc(n)}" role="button" tabindex="0" title="Pedir ${esc(n)}"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="nome">${esc(n)}</span>${f ? `<img class="mini" src="${esc(f)}" alt="" loading="lazy">` : ''}</div>`; }).join('')}</div></section>` : ''}
@@ -964,7 +987,7 @@ function montar(d) {
     ${(d.guarnicoes || []).length ? `<div><div class="titulo"><h3>Guarni<em>ções</em></h3></div><p class="dica">Toque numa guarnição para já começar o pedido com ela · até 2 por prato</p><ul class="pontos clicaveis">${d.guarnicoes.map(n => `<li data-pedir="" data-g="${esc(n)}" role="button" tabindex="0">${esc(n)}<span class="mais">+</span></li>`).join('')}</ul></div>` : ''}
     ${(d.fitness || []).length ? `<div class="fitbox" data-pedir="F" role="button" tabindex="0" title="Pedir prato fitness"><div class="titulo"><h3><em>Fit</em>ness</h3></div><ul class="pontos">${d.fitness.map(n => `<li>${esc(n)}</li>`).join('')}</ul>${d.fitnessObs ? `<div class="obs">(${esc(d.fitnessObs)})</div>` : ''}${valor(pr.fitness) ? `<div class="fitpreco">Fitness <b>R$ ${esc(pr.fitness)}</b><span class="vai">Pedir →</span></div>` : ''}</div>` : ''}
   </div></section>
-  ${porcoesDe(d).length ? `<section class="bloco entra" id="sec-porcoes"><div class="titulo"><h3><em>Porções</em></h3></div><p class="dica">Toque para pedir — junto com o prato ou sozinha</p><div class="lista">${porcoesDe(d).map(p => `<div class="item" data-pedir="" data-porcao="${esc(p.nome)}" role="button" tabindex="0" title="Pedir ${esc(p.nome)}"><span class="nome">${esc(p.nome)}</span>${p.preco ? `<span class="porc-preco">R$ ${esc(p.preco)}</span>` : ''}</div>`).join('')}</div></section>` : ''}
+  ${temAvulsos(d) ? `<section class="bloco entra" id="sec-porcoes"><div class="titulo"><h3>Monte seu <em>pedido</em></h3></div><p class="dica">Toque no item para colocar no pedido — junto com o prato ou sozinho</p>${GRUPOS.map(([g, tit]) => { const ls = listaGrupo(d, g); return ls.length ? `<h4 class="grupo-t">${tit}</h4><div class="lista">${ls.map(p => `<div class="item" data-pedir="" data-porcao="${esc(p.nome)}" data-grupo="${g}" role="button" tabindex="0" title="Pedir ${esc(p.nome)}"><span class="nome">${esc(p.nome)}</span>${p.preco ? `<span class="porc-preco">R$ ${esc(p.preco)}</span>` : ''}</div>`).join('')}</div>` : ''; }).join('')}</section>` : ''}
   ${tams.length ? `<section class="bloco entra" id="sec-valores"><div class="titulo"><h3><em>Valores</em></h3></div><p class="dica">Toque no tamanho para montar o seu pedido</p><div class="precos">${[...tams, ...(valor(pr.fitness) ? [['F', 'Fitness']] : [])].map(([k, n]) => {
       const info = k === 'F' ? ((d.fitness || []).filter(x => !/prote/i.test(x)).join(', ') + ' + 1 proteína') : `Prato do dia + ${MAX_GUARN} guarnições`;
       const v = k === 'F' ? pr.fitness : pr[k];
