@@ -108,6 +108,15 @@ aside nav>div:hover{background:#04315a!important;transform:scale(1.03)}
 .cr-item{display:grid;grid-template-columns:70px minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:8px 18px 8px 56px;border-top:1px dashed var(--border-soft);background:var(--bg-accent-soft)}
 @media (max-width:760px){.cr-mov{display:none}.cr-grid{grid-template-columns:minmax(0,1.6fr) 1fr 1fr 1fr 18px}.cr-item{padding-left:18px;grid-template-columns:52px minmax(0,1fr) auto}.cr-item>span{display:none}.cr-tots{grid-template-columns:1fr 1fr 1fr}}
 /* ── fim crediário ── */
+/* ── crediário compacto ── */
+.cr-resumo{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(167,235,242,.14);border-radius:14px;overflow:hidden;margin-bottom:10px;color:#fff}
+.cr-resumo>div{background:#04315a;padding:9px 16px;display:flex;flex-direction:column;gap:1px;min-width:0}
+.cr-resumo>div>span{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:#b3d6de;font-weight:700}
+.cr-resumo b{display:block;font-family:'Space Mono',monospace!important;font-size:19px!important;font-weight:700;line-height:1.3;color:#fff}.cr-resumo b.verde{color:#4ade80}
+.cr-hist .cr-grid{padding-top:7px;padding-bottom:7px}.cr-hist .cr-cab{padding-top:7px;padding-bottom:7px}.cr-hist .cr-tots>div{padding:8px 16px}.cr-hist .cr-num{font-size:17px;margin-top:2px}.cr-hist .cr-num.sm{font-size:13.5px;margin-top:0}
+.cr-hist .cr-item{padding-top:6px;padding-bottom:6px}.cr-hist .cr-av{width:24px;height:24px;font-size:11px}
+@media (max-width:760px){.cr-resumo b{font-size:15px!important}.cr-resumo>div{padding:8px 10px}}
+/* ── fim crediário compacto ── */
 </style>
 <!-- ── React 18.3.1 (local, sem CDN) ── -->
 <script>window.__resources = {};</script>
@@ -3316,27 +3325,28 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 
       <!-- CREDIARIO -->
       <sc-if value="{{ isCrediario }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;justify-content:space-between;align-items:center;background:#04315a;color:#fff;border-radius:16px;padding:20px 24px;margin-bottom:16px">
-          <div><div style="font-size:13px;color:#b3d6de">Total a receber em crediário</div><div style="font-size:30px;font-weight:700;font-family:'Space Mono',monospace;margin-top:4px">{{ totalReceberFmt }}</div></div>
-          <button onclick="{{ closeAllInvoices }}" style="background:#26658C;color:#fff;border:none;border-radius:10px;padding:12px 20px;font-weight:600;cursor:pointer;font-size:14px">Fechar faturas do mês →</button>
+        <div class="cr-resumo">
+          <div><span>Total a receber</span><b>{{ totalReceberFmt }}</b></div>
+          <div><span>Clientes devendo</span><b>{{ credResumo.devendo }}</b></div>
+          <div><span>Recebido este mês</span><b class="verde">{{ credResumo.recebido }}</b></div>
         </div>
-        <div style="position:relative;margin-bottom:16px">
+        <div style="position:relative;margin-bottom:10px">
           <svg width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="#9a9084" stroke-width="1.8" stroke-linecap="round" style="position:absolute;left:14px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg>
-          <input value="{{ credSearch }}" oninput="{{ setCredSearch }}" placeholder="Buscar cliente devedor…" style="width:100%;padding:11px 14px 11px 40px;border:1px solid var(--border-input);border-radius:11px;font-size:14px;background:var(--bg-card);color:var(--text-primary);outline:none">
+          <input value="{{ credSearch }}" oninput="{{ setCredSearch }}" placeholder="Buscar cliente devedor…" style="width:100%;padding:8px 12px 8px 38px;border:1px solid var(--border-input);border-radius:11px;font-size:14px;background:var(--bg-card);color:var(--text-primary);outline:none">
         </div>
-        <div style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;overflow:hidden;margin-bottom:16px">
-          <div style="display:grid;grid-template-columns:1.6fr 1.1fr 1fr 1.6fr;gap:12px;padding:10px 18px;background:var(--bg-tablehead);font-size:12px;font-weight:600;color:#847a6e;text-transform:uppercase;letter-spacing:.05em">
+        <div style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;overflow:hidden;margin-bottom:10px">
+          <div style="display:grid;grid-template-columns:1.6fr 1.1fr 1fr 1.6fr;gap:12px;padding:7px 16px;background:var(--bg-tablehead);font-size:11.5px;font-weight:600;color:#847a6e;text-transform:uppercase;letter-spacing:.05em">
             <div>Cliente</div><div>Tipo</div><div style="text-align:right">Saldo devedor</div><div style="text-align:right">Ações</div>
           </div>
           <sc-for list="{{ crediarioRows }}" as="c" hint-placeholder-count="4">
-            <div style="display:grid;grid-template-columns:1.6fr 1.1fr 1fr 1.6fr;gap:12px;padding:11px 18px;border-top:1px solid var(--border-soft);align-items:center">
-              <div onclick="{{ c.onPedido }}" title="Lançar pedido" style="cursor:pointer"><div style="font-weight:600;font-size:14px;color:#26658C;text-decoration:underline dotted">{{ c.name }}</div><div style="font-size:12px;color:#9a9084">{{ c.linkLabel }}</div></div>
+            <div style="display:grid;grid-template-columns:1.6fr 1.1fr 1fr 1.6fr;gap:12px;padding:6px 16px;border-top:1px solid var(--border-soft);align-items:center">
+              <div onclick="{{ c.onPedido }}" title="Lançar pedido" style="cursor:pointer"><div style="font-weight:600;font-size:14px;color:#26658C;text-decoration:underline dotted">{{ c.name }}</div><sc-if value="{{ c.hasLink }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#9a9084">{{ c.linkLabel }}</div></sc-if></div>
               <div><span style="{{ c.typeStyle }}">{{ c.typeLabel }}</span></div>
               <div style="text-align:right;font-family:'Space Mono',monospace;font-size:15px;color:#26658C;font-weight:700">{{ c.balanceFmt }}</div>
               <div style="display:flex;gap:6px;justify-content:flex-end">
-                <button onclick="{{ c.onView }}" style="background:none;border:1px solid var(--border-input);border-radius:8px;padding:7px 11px;font-size:12px;cursor:pointer;color:#5f574d">Extrato</button>
-                <button onclick="{{ c.onPay }}" style="background:#eef1ec;border:none;border-radius:8px;padding:7px 11px;font-size:12px;cursor:pointer;color:#3f7d5c;font-weight:600">Pagamento</button>
-                <button onclick="{{ c.onCharge }}" style="background:#25623f;border:none;border-radius:8px;padding:7px 11px;font-size:12px;cursor:pointer;color:#fff;font-weight:600;display:flex;align-items:center;gap:5px"><svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4zm4.5 9.7c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 01-1.9-1.2 7.3 7.3 0 01-1.3-1.7c-.1-.2 0-.4.1-.5l.4-.5c.1-.1.1-.3.2-.4a.4.4 0 000-.4l-.8-1.9c-.2-.4-.4-.4-.5-.4h-.5a.9.9 0 00-.7.3 2.8 2.8 0 00-.9 2.1 5 5 0 001 2.6 11 11 0 004.4 3.9c.6.3 1.1.4 1.5.5.6.2 1.2.2 1.6.1.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.6-.6z"></path></svg>Cobrar</button>
+                <button onclick="{{ c.onView }}" style="background:none;border:1px solid var(--border-input);border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;color:#5f574d">Extrato</button>
+                <button onclick="{{ c.onPay }}" style="background:#eef1ec;border:none;border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;color:#3f7d5c;font-weight:600">Pagamento</button>
+                <button onclick="{{ c.onCharge }}" style="background:#25623f;border:none;border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;color:#fff;font-weight:600;display:flex;align-items:center;gap:5px"><svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4zm4.5 9.7c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 01-1.9-1.2 7.3 7.3 0 01-1.3-1.7c-.1-.2 0-.4.1-.5l.4-.5c.1-.1.1-.3.2-.4a.4.4 0 000-.4l-.8-1.9c-.2-.4-.4-.4-.5-.4h-.5a.9.9 0 00-.7.3 2.8 2.8 0 00-.9 2.1 5 5 0 001 2.6 11 11 0 004.4 3.9c.6.3 1.1.4 1.5.5.6.2 1.2.2 1.6.1.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.6-.6z"></path></svg>Cobrar</button>
               </div>
             </div>
           </sc-for>
@@ -6913,7 +6923,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const orderRows=s.orders.filter(o=>(s.orderFilter==='all'||o.status===s.orderFilter)&&(this.clientName(o.clientId).toLowerCase().includes(oq)||this.clientName(o.empresaId).toLowerCase().includes(oq)||o.items.toLowerCase().includes(oq)||o.id.toLowerCase().includes(oq))).map(mkOrderRow);
     const recentOrders=s.orders.slice(0,5).map(mkOrderRow);
 
-    const mkClient=(c)=>({id:c.id,name:c.name,typeLabel:this.typeLabel(c.type),typeStyle:this.typeStyle(c.type),linkLabel:c.type==='Funcionario'?('vínculo: '+(c.company||'—')):(c.type==='Empresa'?'paga funcionários':'—'),contact:c.email,balanceFmt:c.balance>0?brl(c.balance):'—',balColor:c.balance>0?'#26658C':'#9a9084',onView:()=>this.setState({modal:'statement',selectedClient:c.id}),onPay:()=>this.setState({modal:'payment',selectedClient:c.id}),onCharge:()=>this.chargeClient(c.id),onDelete:()=>this.deleteClient(c.id)});
+    const mkClient=(c)=>({id:c.id,name:c.name,hasLink:c.type!=='PF',typeLabel:this.typeLabel(c.type),typeStyle:this.typeStyle(c.type),linkLabel:c.type==='Funcionario'?('vínculo: '+(c.company||'—')):(c.type==='Empresa'?'paga funcionários':'—'),contact:c.email,balanceFmt:c.balance>0?brl(c.balance):'—',balColor:c.balance>0?'#26658C':'#9a9084',onView:()=>this.setState({modal:'statement',selectedClient:c.id}),onPay:()=>this.setState({modal:'payment',selectedClient:c.id}),onCharge:()=>this.chargeClient(c.id),onDelete:()=>this.deleteClient(c.id)});
     const q=(s.clientSearch||'').toLowerCase();
     const clientRows=s.clients.filter(c=>c.name.toLowerCase().includes(q)&&(s.clientType==='all'||c.type===s.clientType)).map(mkClient);
     const cq=(s.credSearch||'').toLowerCase();
@@ -7071,6 +7081,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
         tagStyle:this.tagStyle(h.type), color:h.type==='Pagamento'?'#3f9d6b':'var(--text-primary)', amountFmt:brl(h.amount) })); });
     const crTot=(campo)=>brl(Object.values(crGrupos).reduce((a,g)=>a+g[campo],0));
     const credMesTot={ compras:crTot('compras'), pagos:crTot('pagos'), clientes:String(Object.keys(crGrupos).length) };
+    const credResumo={ devendo:String(s.clients.filter(c=>c.balance>0).length), recebido:brl(s.crediarioHistory.filter(h=>h.type==='Pagamento'&&crMesDe(h)===crHoje).reduce((a,h)=>a+h.amount,0)) };
     // ── fim do crediário mensal ──
 
     // Relatório mensal
@@ -7315,7 +7326,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       metrics, orderRows, recentOrders, clientRows, crediarioRows, debtors, noDebtors:debtors.length===0, noCrediario:crediarioRows.length===0,
       waPendentesRows, hasWaPendentes, emAndamentoRows, hasEmAndamento, concluidosRows, hasConcluidos,
       deliveryRows, pendingDeliveries, pendingCount:pendingDel.length, noPending:pendingDel.length===0,
-      motoboyRows, motoboyPaymentRows, crediarioHistoryRows, credMeses, credHistRows, noCredHist:credHistRows.length===0, credMesTot,
+      motoboyRows, motoboyPaymentRows, crediarioHistoryRows, credMeses, credHistRows, noCredHist:credHistRows.length===0, credMesTot, credResumo,
       stockRows, stockHistoryRows, lowStock, noLowStock:lowStock.length===0, hasLowStock:lowStock.length>0, lowStockMsg:lowStock.map(x=>x.product).join(', ')+(lowStock.length===1?' está abaixo do mínimo.':' estão abaixo do mínimo.'),
       paymentBreakdown,
       totalReceberFmt:brl(totalReceber),
