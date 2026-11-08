@@ -3920,7 +3920,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
                     <sc-for list="{{ col.itens }}" as="it" hint-placeholder-count="3"><span class="mcd-chip"><button onclick="{{ it.abrirFoto }}" class="mcd-fotobtn" title="Foto deste prato (gerar no Gemini e colar)"><sc-if value="{{ it.temFoto }}" hint-placeholder-val="{{ false }}"><img src="{{ it.foto }}" alt=""></sc-if><sc-if value="{{ it.semFoto }}" hint-placeholder-val="{{ true }}"><svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg></sc-if></button><span>{{ it.t }}</span><button onclick="{{ it.remover }}" title="Tirar do cardápio de hoje" aria-label="Tirar">×</button></span></sc-for>
                     <sc-if value="{{ col.vazio }}" hint-placeholder-val="{{ false }}"><span style="font-size:12.5px;color:#9a9084;font-style:italic;padding:5px 2px">Nada ainda — adicione abaixo.</span></sc-if>
                   </div>
-                  <form onsubmit="{{ col.adicionar }}" style="display:flex;gap:6px"><input value="{{ col.novo }}" oninput="{{ col.setNovo }}" placeholder="{{ col.ph }}" maxlength="80" style="{{ mcdInp }}"><button type="submit" title="Adicionar" style="flex-shrink:0;width:36px;border-radius:9px;border:none;background:#26658C;color:#fff;font-size:19px;font-weight:700;cursor:pointer">+</button></form>
+                  <form onsubmit="{{ col.adicionar }}" style="display:flex;gap:6px"><input value="{{ col.novo }}" oninput="{{ col.setNovo }}" placeholder="{{ col.ph }}" maxlength="80" style="{{ mcdInp }}"><sc-if value="{{ col.ehPorcao }}" hint-placeholder-val="{{ false }}"><input value="{{ col.novoPreco }}" oninput="{{ col.setNovoPreco }}" placeholder="R$" title="Preço da porção" inputmode="decimal" maxlength="10" style="{{ mcdInp }};width:84px;flex:none"></sc-if><button type="submit" title="Adicionar" style="flex-shrink:0;width:36px;border-radius:9px;border:none;background:#26658C;color:#fff;font-size:19px;font-weight:700;cursor:pointer">+</button></form>
                   <sc-if value="{{ col.temSug }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-wrap:wrap;gap:5px"><sc-for list="{{ col.sugestoes }}" as="sg" hint-placeholder-count="3"><button onclick="{{ sg.add }}" class="mcd-sug" title="Adicionar ao cardápio de hoje">+ {{ sg.t }}</button></sc-for></div></sc-if>
                   <sc-if value="{{ col.ehGuarn }}" hint-placeholder-val="{{ false }}"><label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:#9a9084;white-space:nowrap">Guarnição extra (R$ cada)<input value="{{ mcdGExtra }}" oninput="{{ arteSet.gExtra }}" inputmode="decimal" placeholder="1,00" title="Valor cobrado no site por guarnição a mais (deixe vazio para não oferecer)" style="{{ mcdInp }};max-width:110px"></label></sc-if>
                   <sc-if value="{{ col.ehFitness }}" hint-placeholder-val="{{ false }}"><input value="{{ arte.fitnessObs }}" oninput="{{ arteSet.fitnessObs }}" placeholder="Observação (ex.: Guarnições têm acréscimo)" style="{{ mcdInp }}"></sc-if>
@@ -4757,7 +4757,7 @@ class Component extends DCLogic {
       return { nome:i.name, tamanho:i.size, tamanhoNome:NOME[i.size]||i.size, preco:v, foto:i.foto_url||'', itens, obs:i.observacoes||'', tempo:i.tempo_preparo||null }; }); };
   agendarPublicacao=()=>{ clearTimeout(this._pubT); this._pubT=setTimeout(this.publicarCardapio,2000); };
   publicarCardapio=async()=>{ if(this._demo||!sb) return; const a=this.state.arte; if(!a) return; const L=this.mcdSplit;
-    const dados={ v:1, atualizado:new Date().toISOString(), empresa:{...Component.EMPRESA, whatsapp:Component.WHATSAPP_CARDAPIO}, hoje:L(a.hoje), guarnicoes:L(a.guarnicoes), fitness:L(a.fitness), fitnessObs:a.fitnessObs||'', guarnExtra:a.gExtra==null?'1,00':String(a.gExtra).trim(),
+    const dados={ v:1, atualizado:new Date().toISOString(), empresa:{...Component.EMPRESA, whatsapp:Component.WHATSAPP_CARDAPIO}, hoje:L(a.hoje), guarnicoes:L(a.guarnicoes), fitness:L(a.fitness), fitnessObs:a.fitnessObs||'', guarnExtra:a.gExtra==null?'1,00':String(a.gExtra).trim(), porcoes:L(a.porcoes).map(x=>this.mcdPorcao(x)).filter(x=>x.nome),
       precos:{ P:a.pP||'', M:a.pM||'', G:a.pG||'', fitness:a.pFit||'' }, especial:{ nome:a.espNome||'', P:a.eP||'', M:a.eM||'', G:a.eG||'' }, fotos:a.fotos||{},
       // os mesmos pratos cadastrados no sistema (com foto, ingredientes e valor do tamanho), para o site ficar igual ao "Ver Cardápio"
       pratos:this.pratosParaSite() };
@@ -4784,6 +4784,16 @@ class Component extends DCLogic {
   setArte=(campo)=>(e)=>{ const v=e.target.value; this.setState(s=>({ arte:{ ...(s.arte||{}), [campo]:v } })); this.arteMudou(); };
   arteRecarregar=()=>this.mcdOriginais();
   // ---- painel "Montar o cardápio de hoje" ----
+  // ── Porções: cada linha é "Nome | preço" ──
+  mcdPorcao=(linha)=>{ const [n,p]=String(linha||'').split('|').map(x=>x.trim()); return {nome:n||'', preco:p||''}; };
+  mcdPorcaoTxt=(linha)=>{ const o=this.mcdPorcao(linha); return o.preco?o.nome+' · R$ '+o.preco:o.nome; };
+  mcdAddPorcaoLinha=(linha)=>{ const o=this.mcdPorcao(linha); if(!o.nome) return; const a=this.state.arte||this.arteDados(); const ls=this.mcdSplit(a.porcoes);
+    const i=ls.findIndex(x=>this.mcdPorcao(x).nome.toLowerCase()===o.nome.toLowerCase()); const nova=o.nome+(o.preco?' | '+o.preco:'');
+    if(i<0){ this.mcdAdd('porcoes',nova); } else { ls[i]=nova; this.setState(s=>({ arte:{ ...(s.arte||a), porcoes:ls.join('\n') }, mcdNovo:{ ...(s.mcdNovo||{}), porcoes:'' } })); this.arteMudou(); this.showToast('Preço de '+o.nome+' atualizado.'); }
+    this.setState(s=>({ mcdNovo:{ ...(s.mcdNovo||{}), porcoesPreco:'' } })); };
+  mcdAddPorcao=()=>{ const nv=this.state.mcdNovo||{}; const nome=String(nv.porcoes||'').trim().replace(/\|/g,'/'); const preco=String(nv.porcoesPreco||'').trim();
+    if(!nome) return; if(!preco){ this.showToast('Coloque o preço da porção.'); return; } this.mcdAddPorcaoLinha(nome+' | '+preco); };
+  // ── fim porções ──
   mcdSplit=(t)=>String(t||'').split('\n').map(x=>x.trim()).filter(Boolean);
   mcdHist=()=>{ let h=null; try{ h=JSON.parse(localStorage.getItem('pdc_cardapio_hist')||'null'); }catch(e){} const o=this.arteOriginal();
     return h||{ hoje:this.mcdSplit(o.hoje), guarnicoes:this.mcdSplit(o.guarnicoes), fitness:this.mcdSplit(o.fitness) }; };
@@ -4899,7 +4909,7 @@ class Component extends DCLogic {
     const dia=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit'});
     let txt='*'+emp.nome+'* 🍽️\n_Cardápio de hoje — '+dia+'_\n';
     const sec=(titulo,ls)=>{ if(ls.length){ txt+='\n*'+titulo+'*\n'; ls.forEach(x=>{ txt+='• '+x+'\n'; }); } };
-    sec('HOJE',L(a.hoje)); sec('GUARNIÇÕES',L(a.guarnicoes)); { const gx=a.gExtra==null?'1,00':String(a.gExtra).trim(); if(gx&&L(a.guarnicoes).length) txt+='_(guarnição extra R$ '+gx+' cada)_\n'; } sec('FITNESS',L(a.fitness)); if(a.fitnessObs&&L(a.fitness).length) txt+='_('+a.fitnessObs+')_\n';
+    sec('HOJE',L(a.hoje)); sec('GUARNIÇÕES',L(a.guarnicoes)); { const gx=a.gExtra==null?'1,00':String(a.gExtra).trim(); if(gx&&L(a.guarnicoes).length) txt+='_(guarnição extra R$ '+gx+' cada)_\n'; } sec('FITNESS',L(a.fitness)); if(a.fitnessObs&&L(a.fitness).length) txt+='_('+a.fitnessObs+')_\n'; sec('PORÇÕES',L(a.porcoes).map(x=>this.mcdPorcaoTxt(x)));
     const pr=(p,m,g)=>[['P',p],['M',m],['G',g]].filter(x=>String(x[1]||'').trim()).map(x=>x[0]+' R$ '+x[1]).join('  ·  ');
     txt+='\n*VALORES*\n'+pr(a.pP,a.pM,a.pG)+'\n'; if(String(a.pFit||'').trim()) txt+='Fitness R$ '+a.pFit+'\n';
     if(String(a.espNome||'').trim()&&pr(a.eP,a.eM,a.eG)) txt+='\n*'+a.espNome+'*\n'+pr(a.eP,a.eM,a.eG)+'\n';
@@ -7269,11 +7279,13 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       cdpAtivosTxt:cdpAtivos+(cdpAtivos===1?' disponível hoje':' disponíveis hoje'),
       cdpSemFotoTxt:cdpSemFoto?(' · '+cdpSemFoto+(cdpSemFoto===1?' prato sem foto — copie a foto e, com o mouse em cima do prato, aperte Ctrl+V':' pratos sem foto — copie a foto e, com o mouse em cima do prato, aperte Ctrl+V')):'' };
     const arteAtual=s.arte||{}; const spl=this.mcdSplit; const mcdH=this.mcdHist();
-    const mcdCols=[['hoje','Hoje','pratos principais do dia','Ex.: Bife a rolê'],['guarnicoes','Guarnições','acompanhamentos do dia','Ex.: Purê de batata'],['fitness','Fitness','o que vai no prato fitness','Ex.: Arroz integral']].map(([k,titulo,sub,ph])=>{
-      const ls=spl(arteAtual[k]); const low=ls.map(x=>x.toLowerCase()); const sug=(mcdH[k]||[]).filter(x=>!low.includes(x.toLowerCase())).slice(0,12);
-      return { titulo, sub, ph, vazio:ls.length===0, temItens:ls.length>0, contagem:ls.length, itens:ls.map((tx,i)=>{ const f=((arteAtual.fotos||{})[this.mcdChaveFoto(tx)])||(k==='hoje'?fotoPratoSite(tx):''); return { t:tx, remover:()=>this.mcdDel(k,i), foto:f, temFoto:!!f, semFoto:!f, abrirFoto:()=>this.abrirFotoItem(tx) }; }), sugestoes:sug.map(tx=>({ t:tx, add:()=>this.mcdAdd(k,tx) })), temSug:sug.length>0,
+    const mcdCols=[['hoje','Hoje','pratos principais do dia','Ex.: Bife a rolê'],['guarnicoes','Guarnições','acompanhamentos do dia','Ex.: Purê de batata'],['fitness','Fitness','o que vai no prato fitness','Ex.: Arroz integral'],['porcoes','Porções','porções à parte, com preço','Ex.: Batata frita']].map(([k,titulo,sub,ph])=>{
+      const ehP=k==='porcoes', nm=(tx)=>ehP?this.mcdPorcao(tx).nome:tx, mostra=(tx)=>ehP?this.mcdPorcaoTxt(tx):tx;
+      const ls=spl(arteAtual[k]); const low=ls.map(x=>x.toLowerCase()); const lowN=ls.map(x=>nm(x).toLowerCase()); const sug=(mcdH[k]||[]).filter(x=>!low.includes(x.toLowerCase())&&!lowN.includes(nm(x).toLowerCase())).slice(0,12);
+      return { titulo, sub, ph, vazio:ls.length===0, temItens:ls.length>0, contagem:ls.length, itens:ls.map((tx,i)=>{ const f=((arteAtual.fotos||{})[this.mcdChaveFoto(nm(tx))])||(k==='hoje'?fotoPratoSite(tx):''); return { t:mostra(tx), remover:()=>this.mcdDel(k,i), foto:f, temFoto:!!f, semFoto:!f, abrirFoto:()=>this.abrirFotoItem(nm(tx)) }; }), sugestoes:sug.map(tx=>({ t:mostra(tx), add:()=>ehP?this.mcdAddPorcaoLinha(tx):this.mcdAdd(k,tx) })), temSug:sug.length>0,
         novo:(s.mcdNovo||{})[k]||'', setNovo:(e)=>{ const v=e.target.value; this.setState(st=>({ mcdNovo:{ ...(st.mcdNovo||{}), [k]:v } })); },
-        adicionar:(e)=>{ if(e&&e.preventDefault) e.preventDefault(); this.mcdAdd(k,(this.state.mcdNovo||{})[k]); }, limpar:()=>this.mcdLimpar(k,titulo), ehFitness:k==='fitness', ehGuarn:k==='guarnicoes' }; });
+        adicionar:(e)=>{ if(e&&e.preventDefault) e.preventDefault(); if(ehP) this.mcdAddPorcao(); else this.mcdAdd(k,(this.state.mcdNovo||{})[k]); }, limpar:()=>this.mcdLimpar(k,titulo), ehFitness:k==='fitness', ehGuarn:k==='guarnicoes', ehPorcao:ehP,
+        novoPreco:(s.mcdNovo||{}).porcoesPreco||'', setNovoPreco:(e)=>{ const v=e.target.value; this.setState(st=>({ mcdNovo:{ ...(st.mcdNovo||{}), porcoesPreco:v } })); } }; });
     const mcdData=arteAtual.atualizado?new Date(arteAtual.atualizado):null; const mcdHojeOk=!!mcdData&&mcdData.toDateString()===new Date().toDateString();
     const mcdFotoPropria=s.mcdFoto?(((arteAtual.fotos||{})[this.mcdChaveFoto(s.mcdFoto)])||''):''; const mcdFotoUrl=mcdFotoPropria||(s.mcdFoto?fotoPratoSite(s.mcdFoto):'');
     const mcdVals={ mcdFotoAberto:!!s.mcdFoto, mcdFotoNome:s.mcdFoto||'', mcdFotoUrl, mcdTemFotoItem:!!mcdFotoUrl, mcdSemFotoItem:!mcdFotoUrl, mcdTemFotoPropria:!!mcdFotoPropria, mcdFotoIlustrativa:!mcdFotoPropria&&!!mcdFotoUrl, mcdFotoEnviando:!!s.mcdFotoEnviando,
