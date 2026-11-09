@@ -803,7 +803,7 @@ function irParaAba(aba) {
 // ── fim porções ──
 // ── entrega ou retirada (no fim do pedido) ──
 const END_KEY = 'pdc_endereco_campos';
-const END_IDS = ['cep', 'rua', 'bairro', 'cidade', 'num', 'comp', 'ref'];
+const END_IDS = ['cep', 'rua', 'bairro', 'cidade', 'num', 'comp', 'ref', 'regiao'];
 const endCampo = (k) => { const e = document.getElementById('end-' + k); return e ? e.value.trim() : ''; };
 const END_NOMES = { rua: 'a rua', bairro: 'o bairro', cidade: 'a cidade', num: 'o número' };
 const endFaltando = () => ['rua', 'bairro', 'cidade', 'num'].filter(k => !endCampo(k));
@@ -811,7 +811,8 @@ const enderecoTxt = () => { const c = {}; END_IDS.forEach(k => { c[k] = endCampo
   return `${c.rua}, ${c.num}${c.comp ? ' - ' + c.comp : ''} - ${c.bairro}, ${c.cidade}${c.cep ? ' - CEP ' + c.cep : ''}${c.ref ? ' (Ref.: ' + c.ref + ')' : ''}`; };
 function salvarEndereco() { const c = {}; END_IDS.forEach(k => { c[k] = endCampo(k); }); try { localStorage.setItem(END_KEY, JSON.stringify(c)); } catch (_) {} }
 function carregarEndereco() { if (END_IDS.some(k => endCampo(k))) return; let c = null; try { c = JSON.parse(localStorage.getItem(END_KEY) || 'null'); } catch (_) {}
-  if (c) END_IDS.forEach(k => { const e = document.getElementById('end-' + k); if (e && c[k]) e.value = c[k]; }); }
+  if (c) END_IDS.forEach(k => { const e = document.getElementById('end-' + k); if (e && c[k]) e.value = c[k]; });
+  const s = document.getElementById('end-regiao'); if (s && s.value) s.dataset.manual = '1'; else autoRegiao(false); }
 // CEP → rua, bairro e cidade (ViaCEP)
 async function buscarCep() {
   const el = document.getElementById('end-cep'), st = document.getElementById('end-status'); const so = el.value.replace(/\D/g, '').slice(0, 8);
@@ -822,13 +823,13 @@ async function buscarCep() {
     if (!r.ok || j.erro) throw new Error('cep');
     const por = (k, v) => { const e = document.getElementById('end-' + k); if (v) e.value = v; };
     por('rua', j.logradouro); por('bairro', j.bairro); por('cidade', j.localidade ? j.localidade + (j.uf ? '/' + j.uf : '') : '');
-    st.textContent = '✓ Endereço encontrado — confira e coloque o número'; st.className = 'end-status ok'; agendarTaxa();
+    st.textContent = '✓ Endereço encontrado — confira e coloque o número'; st.className = 'end-status ok'; autoRegiao(true); agendarTaxa();
     const prox = !endCampo('rua') ? 'rua' : !endCampo('bairro') ? 'bairro' : 'num'; document.getElementById('end-' + prox).focus({ preventScroll: true });
   } catch (e) { if (buscarCep.ult !== so) return; buscarCep.ult = ''; st.textContent = 'CEP não encontrado — preencha o endereço à mão'; st.className = 'end-status erro'; document.getElementById('end-rua').focus({ preventScroll: true }); }
   atualizarTotal();
 }
 const focarEndereco = () => { const f = endFaltando()[0] || 'num'; const e = document.getElementById(endCampo('cep') || f !== 'rua' ? 'end-' + f : 'end-cep'); if (e) e.focus({ preventScroll: true }); };
-// ── nome do cliente, pagamento e taxa de entrega (R$ por km, definido no sistema) ──
+// ── nome do cliente, pagamento e taxa de entrega (por região, definida no sistema) ──
 const NOME_KEY = 'pdc_nome_cliente';
 const nomeCli = () => { const e = document.getElementById('ped-nome'); return e ? e.value.trim() : ''; };
 const TEL_KEY = 'pdc_tel_cliente', PEDIDO_URL = 'https://avqytrvpmomtxehjzosq.supabase.co/functions/v1/pedido-site';
@@ -851,7 +852,24 @@ async function distanciaKm(a, b) {
   const rad = (x) => x * Math.PI / 180, dLa = rad(b.lat - a.lat), dLo = rad(b.lon - a.lon); const h = Math.sin(dLa / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLo / 2) ** 2;
   return 2 * 6371 * Math.asin(Math.sqrt(h)) * 1.35; // em linha reta + 35% (ruas)
 }
-const valorTaxa = () => 0; // taxa de entrega: a consultar (não é cobrada no site)
+// ── taxa de entrega por região (valores no sistema; o CEP escolhe a região pelo bairro) ──
+const REGIOES_PADRAO = [['Novo Paraná', '7,00'], ['Centro / Vila Nova / Água Fria / Cimiga', '5,00'], ['Assaí / Correio / Complexo', '10,00'], ['Jordanésia', '15,00'], ['Guaturinho', '10,00'], ['Portal dos Ipês', '15,00'], ['Polvilho', '20,00'], ['Maria Luiza / Scorpios', '20,00']].map(([nome, preco]) => ({ nome, preco }));
+const regioes = () => DADOS && Array.isArray(DADOS.regioes) ? DADOS.regioes.filter(r => r && r.nome) : REGIOES_PADRAO;
+const REG_APELIDO = { portais: 'ipes' }; // o ViaCEP chama o Portal dos Ipês de "Portais (Polvilho)"
+function regiaoDoBairro(bairro, cidade) {
+  if (cidade && !normTxt(cidade).startsWith('cajamar')) return null;
+  const tira = (s) => normTxt(s).replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+  const b = String(bairro || ''), principal = tira(b.replace(/\(.*\)/, '')), distrito = tira((b.match(/\(([^)]+)\)/) || [])[1] || '');
+  const ls = regioes(), partes = ls.map(r => String(r.nome).split('/').map(tira).filter(Boolean));
+  const acha = (x) => { if (!x || x.length < 3) return null; x = REG_APELIDO[x] || x; const bx = ' ' + x + ' ';
+    const i = partes.findIndex(ps => ps.some(p => bx.includes(' ' + p + ' ') || (x.length >= 4 && (' ' + p + ' ').includes(bx)))); return i >= 0 ? ls[i] : null; };
+  return acha(principal) || acha(distrito); // bairro primeiro (Portal dos Ipês), depois o distrito (Polvilho, Jordanésia)
+}
+const regSel = () => { const e = document.getElementById('end-regiao'); return e ? e.value : ''; };
+const regiaoAtual = () => { const v = regSel(); return v && v !== 'outra' ? regioes().find(r => r.nome === v) || null : null; };
+function autoRegiao(forcar) { const s = document.getElementById('end-regiao'); if (!s || (s.dataset.manual && !forcar)) return;
+  const r = regiaoDoBairro(endCampo('bairro'), endCampo('cidade')); if (r) { s.value = r.nome; s.dataset.manual = ''; } else if (forcar) { s.value = ''; s.dataset.manual = ''; } }
+const valorTaxa = () => { if (PED.ent !== 'entrega') return 0; const r = regiaoAtual(); return r ? num(r.preco) : 0; };
 function agendarTaxa() { PED.taxa = null; }
 async function calcularTaxa() {
   if (PED.ent !== 'entrega' || endFaltando().length) { if (PED.taxa) { PED.taxa = null; atualizarTotal(); } return; }
@@ -862,8 +880,11 @@ async function calcularTaxa() {
   else { const km = Math.max(0.5, Math.round((await distanciaKm(RESTAURANTE, p)) * 10) / 10); if (!PED.taxa || PED.taxa.chave !== chave) return; PED.taxa = { chave, status: 'ok', km, valor: Math.round(km * taxaKm() * 100) / 100 }; }
   atualizarTotal();
 }
-function mostrarTaxa() { const el = document.getElementById('taxa-box'); if (!el) return; const on = PED.ent === 'entrega'; el.hidden = !on; el.className = 'taxa-box consultar';
-  el.innerHTML = on ? 'Taxa de entrega: <b>a consultar</b><small>O restaurante informa o valor da entrega pelo WhatsApp.</small>' : ''; }
+function mostrarTaxa() { const el = document.getElementById('taxa-box'); if (!el) return; const on = PED.ent === 'entrega'; el.hidden = !on; if (!on) { el.innerHTML = ''; return; }
+  const r = regiaoAtual(), s = document.getElementById('end-regiao'), bai = endCampo('bairro');
+  if (r) { el.className = 'taxa-box ok'; el.innerHTML = `Taxa de entrega · ${esc(r.nome)}: <b>${reais(num(r.preco))}</b><small>${s && !s.dataset.manual && bai ? 'Pela região do bairro ' + esc(bai) + '. Se não for a sua, troque a região acima.' : 'Já somada no total do pedido.'}</small>`; }
+  else if (regSel() === 'outra') { el.className = 'taxa-box consultar'; el.innerHTML = 'Taxa de entrega: <b>a consultar</b><small>O restaurante informa o valor da entrega pelo WhatsApp.</small>'; }
+  else { el.className = 'taxa-box erro'; el.innerHTML = 'Escolha a <b>região de entrega</b><small>A taxa depende do bairro: digite o CEP ou escolha na lista acima.</small>'; } }
 function totalGeral() { const d = DADOS; const p = PED.tam ? precoPedido(d, PED.tam, PED.prato) : { valor: 0 };
   return PED.itens.reduce((s, it) => s + valorItem(it), 0) + (p.valor + (PED.tam ? PED.extras.length * valorExtra(d) : 0)) * PED.qtd + totPorc() + valorTaxa(); }
 function faltaPag() {
@@ -897,6 +918,7 @@ function faltaEnvio() {
   if (!PED.ent) return { msg: 'entrega ou retirada', err: 'Escolha se é para entregar, retirar ou convênio.', sec: 'sec-entrega' };
   if (PED.ent === 'convenio' && !convEmp()) return { msg: 'a empresa', err: 'Escolha a empresa do convênio.', sec: 'sec-entrega' };
   if (PED.ent === 'entrega' && endFaltando().length) { const f = endFaltando(); return { msg: END_NOMES[f[0]], err: 'Falta preencher ' + f.map(k => END_NOMES[k]).join(', ') + ' do endereço.', sec: 'sec-entrega' }; }
+  if (PED.ent === 'entrega' && !regSel()) return { msg: 'a região de entrega', err: 'Escolha a região de entrega (a taxa depende do bairro).', sec: 'sec-entrega' };
   const fp = faltaPag(); if (fp) return fp;
   return null;
 }
@@ -963,6 +985,7 @@ function pedidoHTML() {
             <label class="end-f"><span>Número</span><input id="end-num" inputmode="numeric" maxlength="12" placeholder="Ex.: 262"></label>
             <label class="end-f"><span>Apto / complemento <em>opcional</em></span><input id="end-comp" autocomplete="address-line2" maxlength="60" placeholder="Apto 12, bloco B"></label>
             <label class="end-f end-2"><span>Ponto de referência <em>opcional</em></span><input id="end-ref" maxlength="100" placeholder="Ex.: perto da padaria"></label>
+            <label class="end-f end-2"><span>Região de entrega</span><select id="end-regiao"><option value="">Escolha a sua região…</option>${regioes().map(r => `<option value="${esc(r.nome)}">${esc(r.nome)} — R$ ${esc(r.preco)}</option>`).join('')}<option value="outra">Outra região (taxa a consultar)</option></select></label>
           </div>
           <div class="taxa-box" id="taxa-box" hidden aria-live="polite"></div>
           <p class="ped-nota">Fica salvo neste aparelho para o próximo pedido.</p></div>
@@ -1068,7 +1091,7 @@ function enviarPedido() {
       it.prato ? `${fit ? 'Proteína' : 'Prato'}: ${it.prato}` : '', it.semGuarn ? 'Guarnições: sem guarnição' : it.guarn.length ? `Guarnições: ${it.guarn.join(' e ')}` : '', (it.extras || []).length ? `Guarnições extras: ${it.extras.join(' e ')} (+${reais(it.extras.length * valorExtra(d))} cada prato)` : '',
       `Quantidade: ${it.qtd}`].filter(Boolean).join('\n'); };
   const total = itens.reduce((s, it) => s + valorItem(it), 0) + totPorc() + valorTaxa();
-  const end = enderecoTxt(); const tx = PED.taxa; const taxaTxt = PED.ent !== 'entrega' ? '' : (tx && tx.status === 'ok') ? `\n*Taxa de entrega (≈ ${String(tx.km).replace('.', ',')} km):* ${reais(tx.valor)}` : '\n*Taxa de entrega:* a consultar';
+  const end = enderecoTxt(); const reg = PED.ent === 'entrega' ? regiaoAtual() : null; const taxaTxt = PED.ent !== 'entrega' ? '' : reg ? `\n*Taxa de entrega (${reg.nome}):* ${reais(num(reg.preco))}` : '\n*Taxa de entrega:* a consultar';
   const entrega = PED.ent === 'entrega' ? `\n\n*Entregar em:* ${end}${taxaTxt}` : PED.ent === 'convenio' ? `\n\n*Convênio:* ${convEmp()}${convDep() ? '\nDepartamento: ' + convDep() : ''}` : '\n\n*Vou retirar no local*';
   if (PED.ent === 'entrega') salvarEndereco(); if (PED.ent === 'convenio') salvarConvenio();
   try { localStorage.setItem(NOME_KEY, nomeCli()); } catch (_) {}
@@ -1077,11 +1100,11 @@ function enviarPedido() {
   const itensP = itens.map(it => { const p = precoPedido(d, it.tam, it.prato); const ex = it.extras || [];
     return { descricao: [nomeItem(it), it.prato, it.semGuarn ? 'sem guarnição' : it.guarn.join(' e '), ex.length ? '+ ' + ex.join(' e ') : ''].filter(Boolean).join(' · '), quantidade: it.qtd, valor_unitario: Math.round((p.valor + ex.length * valorExtra(d)) * 100) / 100 }; });
   GRUPOS.forEach(([g]) => listaGrupo(d, g).forEach(p => { const n = (PED[g] || {})[p.nome]; if (n) itensP.push({ descricao: p.nome + (g === 'porc' ? ' (porção)' + (((PED.porcObs || {})[p.nome] || '').trim() ? ' · Obs: ' + PED.porcObs[p.nome].trim() : '') : ''), quantidade: n, valor_unitario: num(p.preco) }); }));
-  if (PED.ent === 'entrega' && tx && tx.status === 'ok') itensP.push({ descricao: `Taxa de entrega (≈ ${String(tx.km).replace('.', ',')} km)`, quantidade: 1, valor_unitario: tx.valor });
+  if (reg && num(reg.preco) > 0) itensP.push({ descricao: `Taxa de entrega (${reg.nome})`, quantidade: 1, valor_unitario: num(reg.preco) });
   const totalP = Math.round(itensP.reduce((s, i) => s + i.valor_unitario * i.quantidade, 0) * 100) / 100;
   const payload = { nome: nomeCli(), telefone: telCli(), entrega: PED.ent, forma: PED.ent === 'convenio' ? 'crediario' : PED.pag, pagamento: pagamentoTxt(), obs,
     endereco: PED.ent === 'entrega' ? end : '', convenio: PED.ent === 'convenio' ? convEmp() : '', departamento: PED.ent === 'convenio' ? convDep() : '',
-    taxaTxt: PED.ent === 'entrega' ? 'a consultar' : '', itens: itensP, total: totalP };
+    taxaTxt: PED.ent !== 'entrega' ? '' : reg ? reais(num(reg.preco)) + ' (' + reg.nome + ')' : 'a consultar', itens: itensP, total: totalP };
   const bt = document.getElementById('ped-enviar'), btTxt = document.getElementById('ped-enviar-txt');
   if (PED.ent !== 'convenio' && PED.pag === 'pix' && !PED.pixOk) return mostrarPassoPix(totalP);
   const bPix = document.querySelector('#ped-ok [data-pixenviar]'); if (bPix) { bPix.disabled = true; bPix.textContent = 'Enviando pedido…'; }
@@ -1187,7 +1210,9 @@ function ligarPedido() {
   });
   obs.addEventListener('input', marcarTags);
   const cvEl = document.getElementById('ped-conv'); if (cvEl) cvEl.addEventListener('change', (e) => { atualizarTotal(); if (e.target.id === 'conv-emp' && e.target.value) setTimeout(() => document.getElementById('conv-dep').focus({ preventScroll: true }), 50); });
-  document.getElementById('ped-end').addEventListener('input', (e) => { if (e.target.id === 'end-cep') buscarCep(); else { atualizarTotal(); agendarTaxa(); } });
+  document.getElementById('ped-end').addEventListener('input', (e) => { if (e.target.id === 'end-cep') buscarCep(); else {
+    if (e.target.id === 'end-regiao') e.target.dataset.manual = e.target.value ? '1' : ''; else if (e.target.id === 'end-bairro' || e.target.id === 'end-cidade') autoRegiao(false);
+    atualizarTotal(); agendarTaxa(); } });
   document.getElementById('sec-pag').addEventListener('input', atualizarTotal); document.getElementById('sec-pag').addEventListener('change', atualizarTotal);
   document.getElementById('ped-nome').addEventListener('input', atualizarTotal);
   document.getElementById('ped-tel').addEventListener('input', (e) => { const v = mascaraTel(e.target.value); if (v !== e.target.value) e.target.value = v; atualizarTotal(); });
