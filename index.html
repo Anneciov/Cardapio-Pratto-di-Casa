@@ -336,6 +336,13 @@
   @media (max-width:640px){
     #capa{padding:12px 12px 18px;gap:12px}#capa .banner{min-height:0}.capa-topo .marca p{letter-spacing:.18em;font-size:10.5px}.capa-entrar{padding:9px 14px;font-size:13px}
     .capa-cta{flex-direction:column;align-items:center}.capa-btn{justify-content:center}.capa-info{justify-content:center;text-align:center}
+    /* botões lado a lado no celular */
+    .capa-topo{flex-wrap:wrap}.capa-links{width:100%;margin-left:0;flex-wrap:nowrap}.capa-links .capa-entrar{flex:1 1 0;justify-content:center;min-height:44px}
+    .capa-btns{width:100%;flex-wrap:nowrap;gap:8px}.capa-btns>a{flex:1 1 0;min-width:0;min-height:50px;justify-content:center;white-space:nowrap}
+    .capa-btn{padding:6px 6px 6px 14px;gap:8px;letter-spacing:.07em;font-size:15px}.capa-btn i{width:30px;height:30px}.capa-btn2{padding:0 12px;gap:6px;font-size:14.5px}.so-largo{display:none}
+  }
+  @media (max-width:390px){
+    .capa-btn{padding:6px 6px 6px 12px;gap:6px;letter-spacing:.03em;font-size:13.5px}.capa-btn i{width:28px;height:28px;font-size:14px}.capa-btn2{padding:0 10px;font-size:13.5px}.capa-links .capa-entrar{padding:9px 10px}
   }
   /* ===== banner (cartaz) do topo ===== */
   .banner{position:relative;z-index:1;margin:6px 18px 10px;border-radius:26px;overflow:hidden;min-height:480px;display:grid;grid-template-columns:1.05fr 1fr;isolation:isolate;outline:none;touch-action:pan-y;
@@ -587,9 +594,9 @@ function capaHTML(d) {
         <div class="bn-tag"><span>Feita na hora</span></div>${(d.hoje || []).length ? `<p class="bn-ing">${esc(d.hoje.join(' · '))}</p>` : ''}
         ${menor ? `<div class="bn-preco"><span class="bn-so">a partir de</span><b><small>R$</small>${esc(menor)}</b></div>` : ''}</div></section>`;
   return `<div class="capa-topo"><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div>
-      <div class="capa-links">${temAvulsos(d) ? '<a href="#monte" class="capa-entrar capa-monte">Monte seu pedido <span>→</span></a>' : ''}<a href="#cardapio" class="capa-entrar js-entrar">Cardápio <span>→</span></a></div></div>
+      <div class="capa-links">${temAvulsos(d) ? '<a href="#monte" class="capa-entrar capa-monte">Montar Pedido <span>→</span></a>' : ''}<a href="#cardapio" class="capa-entrar js-entrar">Cardápio <span>→</span></a></div></div>
     ${banner}
-    <div class="capa-cta"><div class="capa-btns"><a href="#cardapio" class="capa-btn js-entrar"><span>Ver cardápio de hoje</span><i>→</i></a>${temAvulsos(d) ? '<a href="#monte" class="capa-btn2">Monte seu pedido <i>→</i></a>' : ''}</div>
+    <div class="capa-cta"><div class="capa-btns"><a href="#cardapio" class="capa-btn js-entrar"><span>Ver cardápio<span class="so-largo"> de hoje</span></span><i>→</i></a>${temAvulsos(d) ? '<a href="#monte" class="capa-btn2">Montar Pedido <i>→</i></a>' : ''}</div>
       <div class="capa-info"><span class="data">${esc(dia)}</span><span>📍 ${esc(emp.endereco || '')}</span></div></div>`;
 }
 const ROTA = { capaPronta: false, menuAnimado: false };
