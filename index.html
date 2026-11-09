@@ -379,6 +379,7 @@
   .bn-tag::before{content:'';position:absolute;inset:0;background:#fff;clip-path:polygon(1% 14%,97% 0,100% 44%,95% 100%,3% 90%,0 52%);transform:rotate(-3deg);box-shadow:0 8px 18px rgba(0,0,0,.25)}
   .bn-tag span{position:relative;font:400 24px Anton,Oswald,sans-serif;color:#a51015;text-transform:uppercase;letter-spacing:.05em}
   .bn-ing{color:rgba(255,255,255,.85);font-size:14.5px;line-height:1.45;max-width:330px}
+  .bn-ing.bn-a{font-size:18px;font-weight:500;color:rgba(255,255,255,.92);white-space:nowrap;overflow:hidden;max-width:100%}
   .bn-preco{display:flex;align-items:flex-end;gap:6px;margin-top:2px}
   .bn-so{font:400 30px 'Kaushan Script',cursive;color:#ffd28a;transform:rotate(-10deg);margin-bottom:26px}
   .bn-preco b{display:inline-block;font:400 clamp(56px,7.6vw,84px)/1 Anton,Oswald,sans-serif;color:#fff;text-shadow:0 10px 24px rgba(0,0,0,.35);border-bottom:3px solid rgba(255,255,255,.75);padding-bottom:4px}
@@ -547,8 +548,13 @@ function bannerHTML(d) {
       `<button class="bn-dot${i ? '' : ' on'}" data-i="${i}" aria-label="Ver ${esc(p.nome)}"><i></i></button>`).join('')}</div><button class="bn-seta" data-dir="1" aria-label="Próximo prato">›</button></div>` : ''}
   </section>`;
 }
+// ingredientes do prato no cartaz: letra maior, sempre numa linha só (diminui só se não couber)
+function ajustarIngredientes() { document.querySelectorAll('.bn-ing.bn-a').forEach(p => { p.style.fontSize = ''; let f = parseFloat(getComputedStyle(p).fontSize) || 17; let n = 0;
+  while (p.scrollWidth > p.clientWidth + 1 && f > 12 && n++ < 30) { f -= 0.5; p.style.fontSize = f + 'px'; } }); }
 function iniciarBanner() {
   const b = document.getElementById('banner'); if (!b || !BANNER.slides.length) return;
+  requestAnimationFrame(ajustarIngredientes); if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajustarIngredientes);
+  if (!iniciarBanner.ok) { iniciarBanner.ok = true; addEventListener('resize', () => { clearTimeout(iniciarBanner.t); iniciarBanner.t = setTimeout(ajustarIngredientes, 150); }); }
   const reduzir = matchMedia('(prefers-reduced-motion: reduce)').matches; const M = !reduzir && window.Motion;
   const mola = (bounce, duration, extra) => ({ type: 'spring', bounce, duration, ...(extra || {}) });
   const conteudo = () => document.getElementById('bn-conteudo');
@@ -569,7 +575,7 @@ function iniciarBanner() {
   // monta o próximo prato já invisível e troca tudo de uma vez (sem um quadro com o prato novo "cheio" antes da animação)
   const trocar = (p) => { const tmp = document.createElement('div'); tmp.innerHTML = slideHTML(p);
     if (M) tmp.querySelectorAll('.bn-a, .bn-pop').forEach(el => { el.style.opacity = '0'; });
-    conteudo().replaceChildren(...tmp.childNodes); };
+    conteudo().replaceChildren(...tmp.childNodes); ajustarIngredientes(); };
   const marcar = () => b.querySelectorAll('.bn-dot').forEach((dot, k) => { dot.classList.remove('on'); if (k === BANNER.i) { void dot.offsetWidth; dot.classList.add('on'); } });
   const ir = async (k) => { const n = BANNER.slides.length; if (n < 2) return;
     if (BANNER.ocupado && Date.now() - BANNER.ocupado < 2500) return; BANNER.ocupado = Date.now();
@@ -578,7 +584,7 @@ function iniciarBanner() {
       if (M) M.animate(b.querySelector('.bn-gigante'), { x: [40 * dir, 0] }, mola(.15, .9)); }
     catch (e) { console.warn('[banner]', e); } finally { BANNER.ocupado = 0; } };
   const auto = () => { clearTimeout(BANNER.timer); if (BANNER.slides.length < 2 || reduzir || document.hidden || document.body.classList.contains('na-capa') === false) return;
-    BANNER.timer = setTimeout(async () => { await ir(BANNER.i + 1); auto(); }, 3500); };
+    BANNER.timer = setTimeout(async () => { await ir(BANNER.i + 1); auto(); }, 5000); };
   const pausar = (sim) => { b.classList.toggle('pausado', sim); if (sim) clearTimeout(BANNER.timer); else auto(); };
   b.addEventListener('click', (e) => { const s = e.target.closest('.bn-seta'), d = e.target.closest('.bn-dot');
     if (s) { ir(BANNER.i + Number(s.dataset.dir)); auto(); } if (d) { ir(Number(d.dataset.i)); auto(); } });
