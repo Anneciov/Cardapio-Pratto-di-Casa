@@ -6595,6 +6595,23 @@ class Component extends DCLogic {
     '.cx-pagbt.conta{border-color:rgba(251,146,60,.3);background:rgba(251,146,60,.055)}.cx-pagbt.conta:hover:not(:disabled){background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.7)}',
     '@media (max-width:1280px){.cx-pgrid{grid-template-columns:repeat(6,1fr)}.cx-pagbt:nth-child(-n+3){grid-column:span 2}.cx-pagbt:nth-child(4),.cx-pagbt:nth-child(5){grid-column:span 3}}',
     '@media (max-width:560px){.cx-pgrid{grid-template-columns:repeat(2,1fr)}.cx-pagbt:nth-child(n){grid-column:auto}.cx-pagbt.conta{grid-column:1/-1}}',
+    '/* produtos numa linha só + teclado novo */',
+    '.cx-prod{padding:10px 12px}.cx-prod-top{flex-wrap:wrap;gap:8px;margin-bottom:0}.cx-prod-top>.cx-btn2{margin-left:0}',
+    '.cx-pcs{flex-wrap:nowrap;gap:6px}',
+    '.cx-pc{display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 12px 0 10px}.cx-pc svg{flex-shrink:0;opacity:.85}.cx-pc.on svg{opacity:1;color:#5eead4}',
+    '.cx-prod-top .cx-pbusca-w{flex:1 1 160px;min-width:140px}',
+    '.cx-pbusca-w .cx-pbusca{min-height:38px;padding:6px 46px 6px 36px;font-size:14px;border-radius:999px}.cx-pbusca-w svg{left:12px}',
+    '.cx-pbusca-w kbd{position:absolute;right:10px;top:50%;transform:translateY(-50%);margin:0;pointer-events:none}',
+    '.cx-pnovo{display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 14px 0 11px;border-radius:999px}',
+    '.cx-pres{top:calc(100% + 4px)}',
+    '.cx-teclado{padding:10px;gap:8px;background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.07);border-radius:18px}',
+    '.cx-k{display:flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.045));box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 1px 2px rgba(0,0,0,.35);color:#f1f7f9;font-family:inherit;font-weight:500;font-size:clamp(22px,3.6vh,32px);font-variant-numeric:tabular-nums}',
+    '.cx-k:hover{background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.07))}.cx-k:active{transform:scale(.97);background:rgba(255,255,255,.05)}',
+    '.cx-k.fn{background:rgba(255,255,255,.025);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07);color:#9fc4d0;font-size:clamp(20px,3vh,26px)}.cx-k.fn:hover{background:rgba(255,255,255,.07);color:#fff}',
+    '.cx-k.limpa{color:#f3a08f}.cx-k.limpa:hover{background:rgba(248,113,113,.12);color:#fecaca}',
+    '.cx-k.ok{background:linear-gradient(180deg,#22c55e,#16a34a);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 10px 24px -14px rgba(34,197,94,.95);color:#fff;font-weight:700;font-size:clamp(15px,2.2vh,18px);letter-spacing:.02em}.cx-k.ok:hover{filter:brightness(1.08)}',
+    '.cx-k svg{flex-shrink:0}',
+    '@media (max-width:1400px){.cx-pnovo span{display:none}.cx-pnovo{padding:0;width:38px;justify-content:center;color:#5eead4;border-color:rgba(45,212,191,.4)}.cx-pnovo svg{width:18px;height:18px}.cx-pc{padding:0 10px 0 9px}}',
     '@media (prefers-reduced-motion:reduce){.cx-ov *{transition:none!important;animation:none!important}}'
   ].join('');
   /* ============ CAIXA (PDV): venda paga na hora ou lançada na conta do cliente; lê a comanda da balança (EAN-13) ============ */
@@ -6645,9 +6662,15 @@ class Component extends DCLogic {
     this._cxPMarca(); };
   _cxPMarca=()=>{ const r=this._cxEl('cx-pres'); if(!r) return; r.querySelectorAll('.cx-prow').forEach(el=>{ const on=Number(el.dataset.k)===this._cxPSel; el.classList.toggle('prim',on); if(on&&el.scrollIntoView) el.scrollIntoView({block:'nearest'}); }); };
   _cxPLimpa=()=>{ const i=this._cxEl('cx-pbusca'), r=this._cxEl('cx-pres'); if(i) i.value=''; if(r) r.innerHTML=''; this._cxPRes=[]; this._cxPSel=-1; this._cxPCat=''; this._cxPCatsDesenhar(); };
+  _cxPIco=(c)=>{ const n=this._cxNorm(c), P=!n?'M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M13 13h7v7h-7z'
+    :/prato|marmit|refei|comida/.test(n)?'M3 11h18 M5 11a7 7 0 0014 0 M9 7.5c0-1.2 1-1.6 1-2.8 M13 7.5c0-1.2 1-1.6 1-2.8'
+    :/bebid|suco|refri|agua/.test(n)?'M6 3h12l-1.6 18H7.6z M6.6 8.5h10.8'
+    :/doce|bala|sobrem|chocol/.test(n)?'M12 3a6 6 0 100 12 6 6 0 000-12z M12 15v6 M9 7.5a3 3 0 013-1.5'
+    :/salgad|lanche|pao/.test(n)?'M4 15c0-5 4-9 8-9s8 4 8 9z M3 15h18v3H3z':'M3 12l9-9h8v8l-9 9z M15.5 8.5h.01';
+    return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+P+'"></path></svg>'; };
   _cxPCatsDesenhar=()=>{ const el=this._cxEl('cx-pcats-bt'), E=this._cxEsc; if(!el) return; const ord=(c)=>(c==='Pratos'?'0':'1')+c, at=this._cxPCat||'';
     const cs=[...new Set(this._cxCatalogo().map(p=>p.categoria).filter(Boolean))].sort((a,b)=>ord(a).localeCompare(ord(b)));
-    el.innerHTML=['',...cs].map(c=>'<button class="cx-pc'+(c===at?' on':'')+'" data-cx="pcat" data-c="'+E(c)+'" aria-pressed="'+(c===at)+'">'+(c?E(c):'Todos')+'</button>').join(''); };
+    el.innerHTML=['',...cs].map(c=>'<button class="cx-pc'+(c===at?' on':'')+'" data-cx="pcat" data-c="'+E(c)+'" aria-pressed="'+(c===at)+'">'+this._cxPIco(c)+'<span>'+(c?E(c):'Todos')+'</span></button>').join(''); };
   _cxPExec=(k)=>{ const x=(this._cxPRes||[])[k]; if(!x) return;
     if(x.tipo==='prod') return this._cxPegaProd(x.p);
     if(x.tipo==='livre') return this._cxPegaProd({nome:x.nome,preco:0});
@@ -6732,7 +6755,8 @@ class Component extends DCLogic {
     b.innerHTML=this._cxHtmlVenda(); this._cxPCatsDesenhar(); this._cxAtualizar(); this._cxFoco(); };
   _cxAba=(a)=>{ this._cx.aba=a; this._cxDesenhar(); };
   _cxHtmlVenda=()=>{ const E=this._cxEsc;
-    const teclas=['7','8','9','⌫','4','5','6','×','1','2','3','C','0','00',',','OK'].map(k=>'<button class="cx-k'+(k==='OK'?' ok':(/[0-9,]/.test(k)?'':' fn'))+'" data-cx="tecla" data-k="'+k+'"'+(k==='×'?' title="Multiplicar: 3 × valor"':'')+'>'+(k==='OK'?'Enter':k)+'</button>').join('');
+    const TIC={'⌫':['<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12z M17 9l-6 6 M11 9l6 6"></path></svg>','Apagar o último número'],'OK':['<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 5v7a3 3 0 01-3 3H5 M9 11l-4 4 4 4"></path></svg><span>Enter</span>','Adicionar (Enter)'],'C':['C','Limpar o visor'],'×':['×','Multiplicar: 3 × valor']};
+    const teclas=['7','8','9','⌫','4','5','6','×','1','2','3','C','0','00',',','OK'].map(k=>{ const ic=TIC[k]; return '<button class="cx-k'+(k==='OK'?' ok':(/[0-9,]/.test(k)?'':' fn'))+(k==='C'?' limpa':'')+'" data-cx="tecla" data-k="'+k+'"'+(ic?' title="'+ic[1]+'" aria-label="'+ic[1]+'"':'')+'>'+(ic?ic[0]:k)+'</button>'; }).join('');
     return '<div class="cx-venda">'+
       '<section class="cx-esq">'+
         '<div class="cx-visor">'+
@@ -6743,8 +6767,9 @@ class Component extends DCLogic {
           '<div class="cx-dicas"><span><kbd>Enter</kbd> adiciona</span><span><kbd>3*</kbd> multiplica</span><span><kbd>Del</kbd> apaga o último</span><span><kbd>F6</kbd> produto</span><span><kbd>F8</kbd> cliente</span><span><kbd>Enter</kbd> vazio = cobrar</span></div>'+
         '</div>'+
         '<div id="cx-cfg"></div>'+
-        '<div class="cx-prod"><div class="cx-prod-top"><span class="cx-lbl">Produtos <kbd>F6</kbd></span><div id="cx-pcats-bt" class="cx-pcs" role="group" aria-label="Seções de produtos"></div><button class="cx-btn2 sm" data-cx="prodnovo">+ Cadastrar produto</button></div>'+
-          '<div class="cx-pbusca-w"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 18a7 7 0 100-14 7 7 0 000 14z M20 20l-4-4"></path></svg><input id="cx-pbusca" class="cx-campo cx-pbusca" autocomplete="off" spellcheck="false" placeholder="Buscar produto · ex.: refri, suco, trident" aria-label="Buscar produto" aria-controls="cx-pres"></div>'+
+        '<div class="cx-prod"><div class="cx-prod-top"><div id="cx-pcats-bt" class="cx-pcs" role="group" aria-label="Seções de produtos"></div>'+
+          '<div class="cx-pbusca-w"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 18a7 7 0 100-14 7 7 0 000 14z M20 20l-4-4"></path></svg><input id="cx-pbusca" class="cx-campo cx-pbusca" autocomplete="off" spellcheck="false" placeholder="Pesquisar" aria-label="Pesquisar produto (F6)" aria-controls="cx-pres"><kbd>F6</kbd></div>'+
+          '<button class="cx-btn2 sm cx-pnovo" data-cx="prodnovo" title="Cadastrar produto" aria-label="Cadastrar produto"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14 M5 12h14"></path></svg><span>Cadastrar</span></button></div>'+
           '<div id="cx-pres" class="cx-res cx-pres" role="listbox" aria-label="Produtos"></div></div>'+
         '<div class="cx-teclado">'+teclas+'</div>'+
       '</section>'+
