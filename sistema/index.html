@@ -6724,6 +6724,19 @@ class Component extends DCLogic {
     '.cx-teclado{flex:none;grid-template-rows:repeat(4,clamp(38px,6.4vh,64px))}',
     '@media (max-height:720px){.cx-msg.info{display:none}.cx-atalhos{min-height:84px}.cx-teclado{grid-template-rows:repeat(4,clamp(34px,6vh,64px))}}',
     '@media (max-width:1150px){.cx-pc svg{display:none}.cx-pc{padding:0 10px}.cx-prod-top .cx-pbusca-w{min-width:110px}}',
+    '/* visor novo */',
+    '.cx-visor-top{gap:8px}.cx-vlbl{display:inline-flex;align-items:center;gap:8px;min-width:0}.cx-vlbl[hidden]{display:none}',
+    '.cx-vlbl .cx-ht{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+    '.cx-bal{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;min-height:30px;padding:0 11px 0 9px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.035);color:#b5d0d9;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,color .15s ease}',
+    '.cx-bal svg{color:#5eead4}.cx-bal:hover{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.45);color:#fff}.cx-bal:focus-visible{outline:2px solid #2dd4bf;outline-offset:2px}',
+    '.cx-ent-w{position:relative}.cx-ent-ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#5eead4;background:rgba(45,212,191,.1);box-shadow:inset 0 0 0 1px rgba(45,212,191,.2);pointer-events:none;transition:color .15s ease,background-color .15s ease}',
+    '.cx-ent-w .cx-entrada{padding-left:58px;padding-right:96px;border-radius:14px}',
+    '.cx-ent-k{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#94bccb;font-size:11.5px;font-weight:600;pointer-events:none;opacity:.55;transition:opacity .15s ease,color .15s ease,border-color .15s ease}',
+    '.cx-ent-w:focus-within .cx-ent-k{opacity:1}.cx-ent-w:focus-within .cx-ent-ic{background:rgba(45,212,191,.16)}',
+    '.cx-ent-w.tem .cx-ent-k{opacity:1;color:#bbf7d0;border-color:rgba(74,222,128,.45);background:rgba(34,197,94,.12)}',
+    '.cx-prev{display:flex;align-items:baseline;gap:8px;padding-left:2px}',
+    '.cx-pend{padding:3px 3px 3px 11px}.cx-pend button{display:flex;align-items:center;justify-content:center;width:24px;height:24px}',
+    '@media (max-height:720px){.cx-ent-ic{width:28px;height:28px;left:9px}.cx-ent-w .cx-entrada{padding-left:48px}}',
     '@media (prefers-reduced-motion:reduce){.cx-ov *{transition:none!important;animation:none!important}}'
   ].join('');
   /* ============ CAIXA (PDV): venda paga na hora ou lançada na conta do cliente; lê a comanda da balança (EAN-13) ============ */
@@ -6879,8 +6892,8 @@ class Component extends DCLogic {
     return '<div class="cx-venda">'+
       '<section class="cx-esq">'+
         '<div class="cx-visor">'+
-          '<div class="cx-visor-top"><span class="cx-lbl" id="cx-vlbl">Bipe a comanda ou digite o valor</span><span id="cx-pend" class="cx-pend" hidden><span>Item:</span><b></b><button data-cx="pendx" aria-label="Tirar o nome do item" title="Tirar o nome">×</button></span><button class="cx-link" data-cx="cfg">⚙ Balança</button></div>'+
-          '<input id="cx-entrada" class="cx-entrada" autocomplete="off" spellcheck="false" inputmode="decimal" data-numpad="off" placeholder="0,00" aria-label="Código da comanda ou valor">'+
+          '<div class="cx-visor-top"><span class="cx-vlbl" id="cx-vlbl"><span class="cx-hic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7V5h3 M17 5h3v2 M20 17v2h-3 M7 19H4v-2 M8 9v6 M11 9v6 M14 9v6 M17 9v6"></path></svg></span><span class="cx-ht">Bipe a comanda ou digite o valor</span></span><span id="cx-pend" class="cx-pend" hidden><span>Item:</span><b></b><button data-cx="pendx" aria-label="Tirar o nome do item" title="Tirar o nome"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12 M18 6L6 18"></path></svg></button></span><button class="cx-bal" data-cx="cfg" title="Configurar balança e etiquetas"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18 M7 21h10 M5 7h14 M5 7l-3 7a3.5 3.5 0 006 0z M19 7l-3 7a3.5 3.5 0 006 0z"></path></svg><span>Balança</span></button></div>'+
+          '<div class="cx-ent-w" id="cx-ent-w"><span class="cx-ent-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a9 9 0 100-18 9 9 0 000 18z M15 9.5c-.5-1-1.6-1.5-3-1.5-1.7 0-3 .8-3 2s1.3 1.7 3 2 3 .8 3 2-1.3 2-3 2c-1.4 0-2.5-.5-3-1.5 M12 6.5v11"></path></svg></span><input id="cx-entrada" class="cx-entrada" autocomplete="off" spellcheck="false" inputmode="decimal" data-numpad="off" placeholder="0,00" aria-label="Código da comanda ou valor"><span class="cx-ent-k" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 5v7a3 3 0 01-3 3H5 M9 11l-4 4 4 4"></path></svg>Enter</span></div>'+
           '<div class="cx-prev" id="cx-prev">R$ 0,00</div>'+
           '<div class="cx-msg" id="cx-msg" role="status" aria-live="polite"></div>'+
           '<div class="cx-dicas"><span><kbd>Enter</kbd> adiciona</span><span><kbd>3*</kbd> multiplica</span><span><kbd>Del</kbd> apaga o último</span><span><kbd>F6</kbd> produto</span><span><kbd>F8</kbd> cliente</span><span><kbd>Enter</kbd> vazio = cobrar</span></div>'+
@@ -6985,7 +6998,7 @@ class Component extends DCLogic {
     else valor=num/100;
     if(!(valor>0)) return {tipo:'erro',msg:'Comanda com valor zerado.'};
     return {tipo:'comanda',qtd:1,valor,codigo:c,desc:desc+' · comanda '+cod}; };
-  _cxPrev=()=>{ const p=this._cxEl('cx-prev'), i=this._cxEl('cx-entrada'); if(!p||!i) return; this._cxPendTag(); const r=this._cxLer(i.value);
+  _cxPrev=()=>{ const p=this._cxEl('cx-prev'), i=this._cxEl('cx-entrada'); if(!p||!i) return; this._cxPendTag(); const ew=this._cxEl('cx-ent-w'); if(ew) ew.classList.toggle('tem',!!i.value.trim()); const r=this._cxLer(i.value);
     p.classList.remove('erro','cmd','lendo');
     if(!r){ const pd=this._cx.pend; p.textContent=pd?pd+' · digite o valor':'R$ 0,00'; return; }
     if(r.tipo==='mult'){ p.textContent=r.qtd+' × …'; return; }
