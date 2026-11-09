@@ -6650,6 +6650,25 @@ class Component extends DCLogic {
     '.cx-vz-a:hover{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.45);color:#fff}.cx-vz-a svg{color:#5eead4}.cx-vz-a kbd{margin-left:2px}',
     '.cx-pag-h{margin-bottom:0}.cx-pags.ativo .cx-pag-h .cx-opc{color:#fbbf24}',
     '@media (max-height:760px){.cx-vz-ic{width:48px;height:48px;border-radius:15px;margin-bottom:4px}.cx-vz-acoes{margin-top:8px}}',
+    '/* barra de cima + Cobrar */',
+    '.cx-top{gap:16px}.cx-tabs{flex:0 1 auto;margin-right:auto;flex-wrap:nowrap;gap:2px;padding:4px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:14px}',
+    '.cx-tab{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 12px;border:none;border-radius:10px;color:#a3c3ce;font-family:inherit;font-size:14px;font-weight:600;transition:background-color .15s ease,color .15s ease,box-shadow .15s ease}',
+    '.cx-tab svg{opacity:.75;flex-shrink:0}.cx-tab kbd{margin-left:2px;opacity:.8}',
+    '.cx-tab:hover{background:rgba(255,255,255,.06);color:#fff}.cx-tab:active{transform:scale(.98)}',
+    '.cx-tab.on{background:linear-gradient(180deg,rgba(45,212,191,.2),rgba(45,212,191,.1));color:#fff;box-shadow:inset 0 0 0 1px rgba(45,212,191,.45),0 6px 16px -10px rgba(45,212,191,.8)}.cx-tab.on svg{opacity:1;color:#5eead4}',
+    '.cx-topdir{gap:10px}',
+    '.cx-relogio{display:flex;align-items:center;gap:9px;padding:5px 14px 5px 10px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);color:#5eead4}',
+    '.cx-relogio>div{display:flex;flex-direction:column;line-height:1.1}.cx-relogio .cx-hora{font-size:16px;color:#eef7f9}.cx-relogio small{font-size:11px;color:#7fa9b7;text-transform:capitalize}',
+    '.cx-sair{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 12px;border-radius:12px;background:rgba(248,113,113,.07);border-color:rgba(248,113,113,.32)}.cx-sair:hover{background:rgba(248,113,113,.16);border-color:rgba(248,113,113,.6);color:#fecaca}',
+    '.cx-pgrid{gap:8px}',
+    '.cx-pagbt{--c:94,234,212;gap:7px;padding:10px 6px 9px;font-size:13px;font-weight:600;color:#e3eff2;transition:transform .12s ease,background-color .15s ease,border-color .15s ease,box-shadow .15s ease}',
+    '.cx-pagbt[data-pag=dinheiro]{--c:74,222,128}.cx-pagbt[data-pag=pix]{--c:45,212,191}.cx-pagbt[data-pag=debito]{--c:96,165,250}.cx-pagbt[data-pag=credito]{--c:167,139,250}.cx-pagbt[data-pag=vr]{--c:251,191,36}.cx-pagbt.conta{--c:251,146,60}',
+    '.cx-pagbt svg{width:36px;height:36px;padding:8px;box-sizing:border-box;border-radius:11px;flex-shrink:0;color:rgb(var(--c));background:rgba(var(--c),.12);box-shadow:inset 0 0 0 1px rgba(var(--c),.22)}',
+    '.cx-pagbt kbd{top:7px;left:7px;font-size:9.5px;padding:0 5px;opacity:.75}',
+    '.cx-pagbt:hover:not(:disabled){transform:translateY(-2px);background:rgba(var(--c),.08);border-color:rgba(var(--c),.55);box-shadow:0 10px 22px -16px rgba(var(--c),.9)}.cx-pagbt:active:not(:disabled){transform:translateY(0) scale(.98)}',
+    '.cx-pagbt.conta{padding:8px 14px;gap:12px;justify-content:center;background:rgba(251,146,60,.05);border-color:rgba(251,146,60,.28)}.cx-pagbt.conta small{color:#fdba74}',
+    '.cx-pagbt:disabled{opacity:.42;cursor:not-allowed}.cx-pagbt:disabled svg{filter:grayscale(.7)}',
+    '.cx-pags.vazio .cx-pag-h .cx-opc{color:#8fb3c0;font-style:italic}',
     '@media (prefers-reduced-motion:reduce){.cx-ov *{transition:none!important;animation:none!important}}'
   ].join('');
   /* ============ CAIXA (PDV): venda paga na hora ou lançada na conta do cliente; lê a comanda da balança (EAN-13) ============ */
@@ -6783,10 +6802,13 @@ class Component extends DCLogic {
 
   // ── Desenho ──
   _cxDesenhar=()=>{ if(!this._cxOv) return; const a=this._cx.aba;
-    const tab=(id,rot,k)=>'<button class="cx-tab'+(a===id?' on':'')+'" data-cx="aba" data-aba="'+id+'">'+rot+'<kbd>'+k+'</kbd></button>';
+    const TI={venda:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.4 11h10.2L20 8H6.2 M9 20a1 1 0 100-2 1 1 0 000 2z M17 20a1 1 0 100-2 1 1 0 000 2z"></path></svg>',clientes:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20a7 7 0 0114 0 M9 11a4 4 0 100-8 4 4 0 000 8z M17 11a3.5 3.5 0 000-7 M22 20a6 6 0 00-4-5.6"></path></svg>',hoje:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10 M10 20V4 M16 20v-7 M22 20H2"></path></svg>'};
+    const tab=(id,rot,k)=>'<button class="cx-tab'+(a===id?' on':'')+'" data-cx="aba" data-aba="'+id+'"'+(a===id?' aria-current="page"':'')+'>'+TI[id]+'<span>'+rot+'</span><kbd>'+k+'</kbd></button>';
     this._cxEl('cx-top').innerHTML='<div class="cx-marca"><span class="cx-logo">Pc</span><div><b>Caixa</b><small>Pratto di Casa'+(this._cxDemo()?' · demonstração':'')+'</small></div></div>'+
       '<nav class="cx-tabs">'+tab('venda','Venda','F2')+tab('clientes','Clientes','F3')+tab('hoje','Vendas de hoje','F4')+'</nav>'+
-      '<div class="cx-topdir"><span id="cx-hora" class="cx-hora">'+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'</span><button class="cx-sair" data-cx="sair">Sair do caixa<kbd>Esc</kbd></button></div>';
+      '<div class="cx-topdir"><div class="cx-relogio"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a9 9 0 100-18 9 9 0 000 18z M12 7v5l3 2"></path></svg><div><span id="cx-hora" class="cx-hora">'+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'</span>'+
+        '<small>'+new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'}).replace('.','')+'</small></div></div>'+
+        '<button class="cx-sair" data-cx="sair"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h3a2 2 0 012 2v12a2 2 0 01-2 2h-3 M10 17l5-5-5-5 M15 12H3"></path></svg><span>Sair do caixa</span><kbd>Esc</kbd></button></div>';
     const b=this._cxEl('cx-body'); b.className='cx-body'+(a==='venda'?' fixo':'');
     if(a==='clientes'){ b.innerHTML=this._cxHtmlClientes(); this._cxListaCli(); setTimeout(()=>{ const i=this._cxOv&&this._cxOv.querySelector('form [name=nome]'); if(i) i.focus(); },30); return; }
     if(a==='hoje'){ b.innerHTML=this._cxHtmlHoje(); return; }
@@ -6838,7 +6860,7 @@ class Component extends DCLogic {
   _cxHtmlCliente=()=>{ const c=this._cx.cliente, E=this._cxEsc;
     if(this._cx.modo==='ok') return c?'<div class="cx-cli sel"><div class="cx-av">'+E(c.name.slice(0,1).toUpperCase())+'</div><div class="cx-cli-tx"><b>'+E(c.name)+'</b><small>'+E(this.typeLabel(c.type))+'</small></div></div>':'';
     if(!c) return '<div class="cx-cli"><div class="cx-cli-h"><span class="cx-hic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20a8 8 0 0116 0 M12 11a4 4 0 100-8 4 4 0 000 8z"></path></svg></span><span class="cx-ht">Cliente</span><span class="cx-opc">opcional · obrigatório para lançar na conta</span></div>'+
-      '<div class="cx-busca-w"><div class="cx-cbusca"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 18a7 7 0 100-14 7 7 0 000 14z M20 20l-4-4"></path></svg><input id="cx-busca" class="cx-campo" placeholder="Consumidor sem cadastro · buscar por nome ou telefone" aria-label="Buscar cliente (F8)" autocomplete="off" spellcheck="false"><kbd>F8</kbd></div><button class="cx-btn2 cx-cnovo" data-cx="novocli"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20a7 7 0 0112.5-4.3 M10 11a4 4 0 100-8 4 4 0 000 8z M19 14v6 M16 17h6"></path></svg><span>Cadastrar</span></button></div><div id="cx-busca-res" class="cx-res"></div></div>';
+      '<div class="cx-busca-w"><div class="cx-cbusca"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 18a7 7 0 100-14 7 7 0 000 14z M20 20l-4-4"></path></svg><input id="cx-busca" class="cx-campo" placeholder="Buscar por nome ou telefone" aria-label="Buscar cliente (F8)" autocomplete="off" spellcheck="false"><kbd>F8</kbd></div><button class="cx-btn2 cx-cnovo" data-cx="novocli"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20a7 7 0 0112.5-4.3 M10 11a4 4 0 100-8 4 4 0 000 8z M19 14v6 M16 17h6"></path></svg><span>Cadastrar</span></button></div><div id="cx-busca-res" class="cx-res"></div></div>';
     const inf=this._cxCobranca(c);
     return '<div class="cx-cli sel"><div class="cx-av">'+E(c.name.slice(0,1).toUpperCase())+'</div><div class="cx-cli-tx"><b>'+E(c.name)+'</b><small>'+E(this.typeLabel(c.type))+
       (inf.emp?' · a empresa '+E(inf.emp.name)+' paga':'')+' · saldo em aberto '+this.brl(inf.saldo)+'</small></div><button class="cx-btn2 cx-troca" data-cx="tirarcli"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h12l-3-3 M17 17H5l3 3"></path></svg><span>Trocar</span></button></div>'; };
@@ -6870,7 +6892,7 @@ class Component extends DCLogic {
         '<div class="cx-acoes">'+voltar+confirmar('Lançar na conta')+'</div></div>'; return; }
     const pagar=cx.modo==='pagar';
     const bt=(id,n,rot,ic)=>'<button class="cx-pagbt" data-cx="pag" data-pag="'+id+'"'+(tem?'':' disabled')+'><kbd>'+n+'</kbd><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="'+ic+'"></path></svg>'+rot+'</button>';
-    p.innerHTML='<div class="cx-pags'+(pagar?' ativo':'')+'"><div class="cx-cli-h cx-pag-h"><span class="cx-hic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h20v12H2z M2 10h20 M6 15h4"></path></svg></span><span class="cx-ht">Cobrar</span><span class="cx-opc">'+(pagar?'escolha a forma · teclas 1 a 6 · Esc volta':'forma de pagamento')+'</span></div><div class="cx-pgrid">'+
+    p.innerHTML='<div class="cx-pags'+(pagar?' ativo':'')+(tem?'':' vazio')+'"><div class="cx-cli-h cx-pag-h"><span class="cx-hic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h20v12H2z M2 10h20 M6 15h4"></path></svg></span><span class="cx-ht">Cobrar</span><span class="cx-opc">'+(pagar?'escolha a forma · teclas 1 a 6 · Esc volta':(tem?'forma de pagamento':'adicione itens para cobrar'))+'</span></div><div class="cx-pgrid">'+
       bt('dinheiro',1,'Dinheiro','M2 7h20v10H2z M12 12m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0-5 0 M6 10v4 M18 10v4')+
       bt('pix',2,'PIX','M12 3l9 9-9 9-9-9z M8.5 12h7')+
       bt('debito',3,'Débito','M2 6h20v12H2z M2 10h20 M6 15h4')+
