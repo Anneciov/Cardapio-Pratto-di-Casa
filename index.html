@@ -268,6 +268,15 @@
   .end-status{font:500 12.5px/1.35 Inter;color:var(--suave);padding-bottom:12px}.end-status.busca{color:var(--laranja2)}.end-status.ok{color:#4ade80}.end-status.erro{color:#f87171}
   .ped-end .ped-nota{margin:8px 0 0}
   .ped-sem span{font-style:italic}
+  .ped-ok{position:absolute;inset:0;z-index:6;overflow:auto;display:flex;align-items:center;justify-content:center;padding:28px 20px;background:var(--quadro);animation:entraExtra .3s ease}.ped-ok[hidden]{display:none}
+  .ok-cx{width:100%;max-width:420px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:stretch}
+  .ok-ico{width:72px;height:72px;margin:0 auto 4px;border-radius:50%;display:grid;place-items:center;background:#22c55e;color:#06210f;box-shadow:0 0 0 10px rgba(34,197,94,.15)}.ok-ico svg{width:38px;height:38px}
+  .ok-cx h3{font:700 30px Oswald;text-transform:uppercase;letter-spacing:.03em}.ok-ref{font:600 15px Inter;color:var(--suave)}.ok-ref b{font-family:'Space Mono',monospace;color:var(--laranja2);font-size:18px}
+  .ok-cx>p{font-size:15px;line-height:1.5;color:var(--texto)}.ok-cx .pix-box{text-align:left}
+  .ok-wa{display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:14px;background:#25d366;color:#062b14;font:700 15px Inter;text-decoration:none}.ok-wa:hover{filter:brightness(1.05)}
+  .ok-fechar{min-height:48px;border-radius:14px;border:1.5px solid var(--linha);background:transparent;color:var(--texto);font:700 15px Inter;cursor:pointer}.ok-fechar:hover{border-color:var(--suave)}
+  .ok-wa:focus-visible,.ok-fechar:focus-visible{outline:2px solid var(--laranja);outline-offset:2px}
+  .ped-enviar.enviando{opacity:.7;pointer-events:none}
   .ped-nome-l{margin-bottom:14px}.ped-pagx{margin-top:12px}.ped-pagx[hidden],.taxa-box[hidden],#pag-opcoes[hidden],#pag-conv[hidden]{display:none}
   .pag-semtroco{display:flex;align-items:center;gap:9px;min-height:46px;font:600 13.5px Inter;color:var(--texto);cursor:pointer}.pag-semtroco input{width:20px;height:20px;accent-color:var(--laranja)}
   .end-f input:disabled{opacity:.45}
@@ -753,6 +762,9 @@ const focarEndereco = () => { const f = endFaltando()[0] || 'num'; const e = doc
 // ── nome do cliente, pagamento e taxa de entrega (R$ por km, definido no sistema) ──
 const NOME_KEY = 'pdc_nome_cliente';
 const nomeCli = () => { const e = document.getElementById('ped-nome'); return e ? e.value.trim() : ''; };
+const TEL_KEY = 'pdc_tel_cliente', PEDIDO_URL = 'https://avqytrvpmomtxehjzosq.supabase.co/functions/v1/pedido-site';
+const telCli = () => { const e = document.getElementById('ped-tel'); return e ? e.value.replace(/\D/g, '') : ''; };
+const mascaraTel = (v) => { const d = String(v).replace(/\D/g, '').slice(0, 11); return d.length <= 2 ? d : d.length <= 6 ? `(${d.slice(0, 2)}) ${d.slice(2)}` : d.length <= 10 ? `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}` : `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`; };
 const RESTAURANTE = { lat: -23.3558064, lon: -46.8782986 }; // R. Alexandrino Pinto da Silva, 262 - Centro, Cajamar
 const taxaKm = () => num(DADOS && DADOS.taxaKm != null ? DADOS.taxaKm : '2,00');
 const normTxt = (s) => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
@@ -812,6 +824,7 @@ function pagamentoTxt() {
 function faltaEnvio() {
   const f = faltaPedido(); if (f) return f;
   if (!nomeCli()) return { msg: 'o seu nome', err: 'Digite o seu nome.', sec: 'sec-entrega' };
+  if (telCli().length < 10) return { msg: 'o seu WhatsApp', err: 'Digite o seu WhatsApp com DDD.', sec: 'sec-entrega' };
   if (!PED.ent) return { msg: 'entrega ou retirada', err: 'Escolha se é para entregar, retirar ou convênio.', sec: 'sec-entrega' };
   if (PED.ent === 'convenio' && !convEmp()) return { msg: 'a empresa', err: 'Escolha a empresa do convênio.', sec: 'sec-entrega' };
   if (PED.ent === 'entrega' && endFaltando().length) { const f = endFaltando(); return { msg: END_NOMES[f[0]], err: 'Falta preencher ' + f.map(k => END_NOMES[k]).join(', ') + ' do endereço.', sec: 'sec-entrega' }; }
@@ -822,7 +835,7 @@ function marcarEntrega() {
   document.querySelectorAll('#ped [data-ent]').forEach(b => { const on = b.dataset.ent === PED.ent; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
   document.getElementById('ped-end').hidden = PED.ent !== 'entrega';
   const cv = document.getElementById('ped-conv'); if (cv) { cv.hidden = PED.ent !== 'convenio'; document.getElementById('conv-dep-l').hidden = !convEmp(); }
-  const n = document.getElementById('n-ent'), ok = !!nomeCli() && !!PED.ent && (PED.ent === 'retirar' || (PED.ent === 'convenio' ? !!convEmp() : !endFaltando().length));
+  const n = document.getElementById('n-ent'), ok = !!nomeCli() && telCli().length >= 10 && !!PED.ent && (PED.ent === 'retirar' || (PED.ent === 'convenio' ? !!convEmp() : !endFaltando().length));
   n.classList.toggle('ok', ok); n.innerHTML = ok ? ICO_OK : '6';
 }
 // ── fim entrega ──
@@ -867,7 +880,7 @@ function pedidoHTML() {
         <textarea id="ped-obs" maxlength="300" rows="3"></textarea>
         <div class="ped-cnt"><span id="ped-obs-n">0</span>/300</div></section>
       <section class="ped-sec" id="sec-entrega"><div class="ped-h"><span class="ped-n" id="n-ent">6</span><h4>Entrega ou retirada</h4><span class="ped-req">obrigatório</span></div>
-        <label class="end-f ped-nome-l"><span>Seu nome</span><input id="ped-nome" autocomplete="name" maxlength="60" placeholder="Como podemos te chamar?"></label>
+        <div class="end-grid ped-nome-l"><label class="end-f"><span>Seu nome</span><input id="ped-nome" autocomplete="name" maxlength="60" placeholder="Como podemos te chamar?"></label><label class="end-f"><span>Seu WhatsApp</span><input id="ped-tel" type="tel" inputmode="tel" autocomplete="tel" maxlength="16" placeholder="(11) 90000-0000"></label></div>
         <div class="ped-lista${convenios().length ? ' ped-ent3' : ''}" role="radiogroup">
           <button type="button" class="ped-op" data-ent="entrega" role="radio" aria-checked="false"><i class="ped-ind ped-radio"></i><span>Entregar no meu endereço</span></button>
           <button type="button" class="ped-op" data-ent="retirar" role="radio" aria-checked="false"><i class="ped-ind ped-radio"></i><span>Vou retirar no local</span></button>${convenios().length ? `<button type="button" class="ped-op" data-ent="convenio" role="radio" aria-checked="false"><i class="ped-ind ped-radio"></i><span>Convênio (empresa)</span></button>` : ''}</div>
@@ -902,6 +915,7 @@ function pedidoHTML() {
     </div>
     <div class="ped-rodape"><div class="ped-total"><small id="ped-resumo">Escolha o tamanho</small><b id="ped-total">R$ 0,00</b></div>
       <button type="button" class="ped-enviar" id="ped-enviar"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4z"/></svg><span id="ped-enviar-txt">Enviar pedido</span></button></div>
+    <div class="ped-ok" id="ped-ok" hidden role="status" aria-live="polite"></div>
     <div class="ped-erro" id="ped-erro" role="alert"></div>
   </div></div>`;
 }
@@ -990,10 +1004,38 @@ function enviarPedido() {
   if (PED.ent === 'entrega') salvarEndereco(); if (PED.ent === 'convenio') salvarConvenio();
   try { localStorage.setItem(NOME_KEY, nomeCli()); } catch (_) {}
   const msg = 'Olá! Quero fazer um pedido 😊\n\n*Nome:* ' + nomeCli() + '\n\n' + [itens.map(bloco).join('\n\n'), porcTxt].filter(Boolean).join('\n\n') + entrega + (obs ? `\n\nObservação: ${obs}` : '') + `\n\n*Pagamento:* ${pagamentoTxt()}` + (total ? `\n\n*Total: ${reais(total)}*` : '');
-  const url = linkWA(msg);
-  if (url === '#') return erroPedido('WhatsApp do restaurante não informado.', '');
-  window.open(url, '_blank', 'noopener') || (location.href = url);
-  PED.itens = []; PED.porc = {}; PED.monte = {}; document.getElementById('pag-troco').value = ''; document.getElementById('pag-semtroco').checked = false; fecharPedido();
+  const comRef = (ref) => msg.replace('😊\n\n', '😊\n\n*Pedido nº ' + ref + '*\n');
+  const itensP = itens.map(it => { const p = precoPedido(d, it.tam, it.prato); const ex = it.extras || [];
+    return { descricao: [nomeItem(it), it.prato, it.semGuarn ? 'sem guarnição' : it.guarn.join(' e '), ex.length ? '+ ' + ex.join(' e ') : ''].filter(Boolean).join(' · '), quantidade: it.qtd, valor_unitario: Math.round((p.valor + ex.length * valorExtra(d)) * 100) / 100 }; });
+  GRUPOS.forEach(([g]) => listaGrupo(d, g).forEach(p => { const n = (PED[g] || {})[p.nome]; if (n) itensP.push({ descricao: p.nome + (g === 'porc' ? ' (porção)' : ''), quantidade: n, valor_unitario: num(p.preco) }); }));
+  if (PED.ent === 'entrega' && tx && tx.status === 'ok') itensP.push({ descricao: `Taxa de entrega (≈ ${String(tx.km).replace('.', ',')} km)`, quantidade: 1, valor_unitario: tx.valor });
+  const totalP = Math.round(itensP.reduce((s, i) => s + i.valor_unitario * i.quantidade, 0) * 100) / 100;
+  const payload = { nome: nomeCli(), telefone: telCli(), entrega: PED.ent, forma: PED.ent === 'convenio' ? 'crediario' : PED.pag, pagamento: pagamentoTxt(), obs,
+    endereco: PED.ent === 'entrega' ? end : '', convenio: PED.ent === 'convenio' ? convEmp() : '', departamento: PED.ent === 'convenio' ? convDep() : '',
+    taxaTxt: PED.ent === 'entrega' && !(tx && tx.status === 'ok') ? 'a combinar' : '', itens: itensP, total: totalP };
+  const bt = document.getElementById('ped-enviar'), btTxt = document.getElementById('ped-enviar-txt');
+  if (bt.dataset.enviando) return; bt.dataset.enviando = '1'; bt.classList.add('enviando'); btTxt.textContent = 'Enviando pedido…';
+  const fim = () => { delete bt.dataset.enviando; bt.classList.remove('enviando'); atualizarTotal(); };
+  fetch(PEDIDO_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+    .then(r => r.json().catch(() => ({})).then(j => ({ ok: r.ok, j })))
+    .then(({ ok, j }) => {
+      if (!ok || !j.ok) { fim(); return erroPedido(j.error || 'Não foi possível enviar o pedido. Tente de novo.', ''); }
+      try { localStorage.setItem(TEL_KEY, telCli()); } catch (_) {}
+      const urlWa = linkWA(comRef(j.ref)), pix = PED.ent !== 'convenio' && PED.pag === 'pix';
+      PED.itens = []; PED.porc = {}; PED.monte = {}; PED.tam = ''; PED.prato = ''; PED.guarn = []; PED.extras = [];
+      document.getElementById('pag-troco').value = ''; document.getElementById('pag-semtroco').checked = false; document.getElementById('ped-obs').value = '';
+      fim(); mostrarOk(j.ref, urlWa, pix, totalP);
+    })
+    .catch(() => { fim(); if (confirm('Sem internet para registrar o pedido agora. Quer enviar pelo WhatsApp?')) { const u = linkWA(msg); if (u !== '#') window.open(u, '_blank', 'noopener') || (location.href = u); } });
+}
+function mostrarOk(ref, urlWa, pix, total) {
+  const el = document.getElementById('ped-ok');
+  el.innerHTML = `<div class="ok-cx"><div class="ok-ico">${ICO_OK}</div><h3>Pedido enviado!</h3><p class="ok-ref">Nº <b>${esc(ref)}</b></p>
+    <p>Seu pedido já chegou no Pratto di Casa. Total: <b>${reais(total)}</b>.</p>
+    ${pix ? `<div class="pix-box">Chave PIX (CNPJ) <b>${PIX_CNPJ}</b> <button type="button" class="pix-copiar" data-pix="${PIX_CNPJ.replace(/\D/g, '')}">Copiar</button><p>Depois de pagar, mande o <b>comprovante</b> no WhatsApp.</p></div>` : ''}
+    <a class="ok-wa" href="${esc(urlWa)}" target="_blank" rel="noopener">${pix ? 'Mandar comprovante no WhatsApp' : 'Falar no WhatsApp (opcional)'}</a>
+    <button type="button" class="ok-fechar" data-fechar>Fechar</button></div>`;
+  el.hidden = false; el.scrollTop = 0;
 }
 function abrirPedido(tam, prato, guarn, especial) {
   const d = DADOS; if (!d) return;
@@ -1004,7 +1046,8 @@ function abrirPedido(tam, prato, guarn, especial) {
   if (guarn && (d.guarnicoes || []).includes(guarn)) PED.guarn = [guarn];
   if (especial && !PED.prato) { const e = (d.hoje || []).find(n => ehEspecial(d, n)); if (e) PED.prato = e; }
   const obs = document.getElementById('ped-obs'); obs.value = ''; marcarTags();
-  carregarEndereco(); carregarConvenio(); const nm = document.getElementById('ped-nome'); if (!nm.value) { try { nm.value = localStorage.getItem(NOME_KEY) || ''; } catch (_) {} } agendarTaxa();
+  carregarEndereco(); carregarConvenio(); const nm = document.getElementById('ped-nome'); if (!nm.value) { try { nm.value = localStorage.getItem(NOME_KEY) || ''; } catch (_) {} }
+  const tl = document.getElementById('ped-tel'); if (!tl.value) { try { tl.value = mascaraTel(localStorage.getItem(TEL_KEY) || ''); } catch (_) {} } document.getElementById('ped-ok').hidden = true; agendarTaxa();
   renderOpcoes();
   const fundo = document.getElementById('ped'); const caixa = fundo.querySelector('.ped'); caixa.style.transform = '';
   fundo.hidden = false; document.body.classList.add('sem-rolagem'); fundo.querySelector('.ped-corpo').scrollTop = 0;
@@ -1059,6 +1102,7 @@ function ligarPedido() {
   document.getElementById('ped-end').addEventListener('input', (e) => { if (e.target.id === 'end-cep') buscarCep(); else { atualizarTotal(); agendarTaxa(); } });
   document.getElementById('sec-pag').addEventListener('input', atualizarTotal); document.getElementById('sec-pag').addEventListener('change', atualizarTotal);
   document.getElementById('ped-nome').addEventListener('input', atualizarTotal);
+  document.getElementById('ped-tel').addEventListener('input', (e) => { const v = mascaraTel(e.target.value); if (v !== e.target.value) e.target.value = v; atualizarTotal(); });
   // no celular: puxar o topo para baixo fecha
   const caixa = f.querySelector('.ped'); let y0 = null;
   caixa.querySelectorAll('.ped-alca, .ped-topo').forEach(el => el.addEventListener('pointerdown', (e) => { if (e.target.closest('button')) return; y0 = e.clientY; caixa.style.transition = 'none'; }));

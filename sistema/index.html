@@ -5352,6 +5352,7 @@ class Component extends DCLogic {
     }
     fecha(); return r.itens.length?r:null; };
   waImportarPedido=async(m)=>{ if(this._demo||!sb||!this.state.authed||!m||m.direcao!=='entrada') return; if(!/^Olá! Quero fazer um pedido/i.test(String(m.corpo||'').trim())) return;
+    if(/Pedido nº\s*S-/i.test(String(m.corpo||''))) return; // já gravado pelo cardápio online
     if(Date.now()-(Date.parse(m.created_at||'')||0)>36*3600e3) return; // histórico antigo não entra
     if(!this._waPedFeitos){ let l=[]; try{ l=JSON.parse(localStorage.getItem('pdc_wa_pedidos')||'[]'); }catch(e){} this._waPedFeitos=new Set(l); this._waPedEmCurso=new Set(); }
     if(this._waPedFeitos.has(m.id)||this._waPedEmCurso.has(m.id)) return; this._waPedEmCurso.add(m.id);
@@ -5761,6 +5762,7 @@ class Component extends DCLogic {
     // ao entrar no sistema, publica o cardápio do dia para a página dos clientes
     clearTimeout(this._pubT); this._pubT = setTimeout(() => { if (!this.state.arte) this.setState({ arte: this.arteDados() }); setTimeout(this.publicarCardapio, 300); }, 2500);
     // outro aparelho mudou o cardápio? confere a cada 45 s e quando a janela volta ao foco
+    if (!this._pedIv) this._pedIv = setInterval(() => { if (this.state.authed && !this._demo) this.loadPedidos(); }, 20000); // pedidos do site aparecem sozinhos
     if (!this._syncIv) { this._syncIv = setInterval(() => { if (!document.hidden) this.sincronizarArte(); }, 45000); addEventListener('focus', () => this.sincronizarArte()); }
     await Promise.all([
       this.loadClientesEmpresas(), this.loadPedidos(), this.loadPacotes(), this.loadDoacoes(),
@@ -5861,7 +5863,7 @@ class Component extends DCLogic {
       pronto: !!o.pronto,
       motoboyId: o.motoboy_id || null,
       motoboyName: o.rest_motoboys ? o.rest_motoboys.nome : null,
-      items: ((o.rest_pedido_itens||[]).map(i=>i.quantidade+'x '+i.descricao).join(', ') || '—') + (o.origem==='whatsapp' ? ' — ' + ['📍 '+(o.endereco_entrega||'sem endereço'), o.telefone_contato?'📞 '+o.telefone_contato:'', o.observacoes||''].filter(Boolean).join(' · ') : ''),
+      items: ((o.rest_pedido_itens||[]).map(i=>i.quantidade+'x '+i.descricao).join(', ') || '—') + ((o.origem==='whatsapp'||o.origem==='site') ? ' — ' + ['📍 '+(o.endereco_entrega||'sem endereço'), o.telefone_contato?'📞 '+o.telefone_contato:'', o.observacoes||''].filter(Boolean).join(' · ') : ''),
       total: Number(o.total) || 0,
       payment: o.forma_pagamento || 'dinheiro',
       status: o.status === 'entregue' ? 'entregue' : 'aberto',
@@ -5871,6 +5873,10 @@ class Component extends DCLogic {
       kind: o.origem === 'balcao' ? 'balcao' : undefined,
       date: this.fmtDateBR(o.data),
     }; });
+    // pedido novo do cardápio online: aviso com som
+    const novosOnline = (data||[]).filter(o => (o.origem==='site'||o.origem==='whatsapp') && o.status!=='entregue');
+    if (this._pedOnlineIds) { const nv = novosOnline.filter(o => !this._pedOnlineIds.has(o.id)); if (nv.length) { this.showToast('Novo pedido do cardápio online: '+(nv[0].nome_cliente||'cliente')+' — veja em Pedidos.'); if (this.waTocarAlerta) this.waTocarAlerta(); } }
+    this._pedOnlineIds = new Set(novosOnline.map(o => o.id));
     this._cliKey = null;
     this.setState({ orders });
     if (this._dashDia !== today) this.loadDashStats();
