@@ -6624,6 +6624,32 @@ class Component extends DCLogic {
     '.cx-tot-v.pulo{animation:cxTotPulo .32s ease-out}@keyframes cxTotPulo{40%{transform:scale(1.05)}}',
     '.cx-total.vazio{border-color:rgba(255,255,255,.08)}.cx-total.vazio::before{opacity:.25}.cx-total.vazio .cx-tot-ic{color:#6f9d88;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}',
     '.cx-total.vazio b.cx-tot-v{color:#56806e}.cx-total.vazio .cx-tot-v small{color:#56806e}',
+    '/* blocos Cliente e Cupom */',
+    '.cx-cli-h,.cx-cupom-top{display:flex;align-items:center;gap:8px;min-width:0}.cx-cli-h{margin-bottom:8px}.cx-cupom-top{margin-bottom:6px}',
+    '.cx-hic{width:26px;height:26px;flex-shrink:0;border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(45,212,191,.1);color:#5eead4;box-shadow:inset 0 0 0 1px rgba(45,212,191,.2)}',
+    '.cx-ht{font-size:14px;font-weight:600;color:#e6f3f6}',
+    '.cx-cli-h .cx-opc{margin-left:0;font-size:12px;color:#7fa9b7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+    '.cx-cli .cx-busca-w{margin-top:0}',
+    '.cx-cbusca{position:relative;flex:1;min-width:0}.cx-cbusca svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#8fb8c6;pointer-events:none}',
+    '.cx-cbusca .cx-campo{min-height:42px;padding:8px 46px 8px 38px;border-radius:999px;font-size:14px}',
+    '.cx-cbusca kbd{position:absolute;right:10px;top:50%;transform:translateY(-50%);margin:0;pointer-events:none}',
+    '.cx-cnovo{display:inline-flex;align-items:center;gap:7px;min-height:42px;padding:0 15px 0 12px;border-radius:999px}.cx-cnovo svg,.cx-troca svg{color:#5eead4}',
+    '.cx-troca{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:8px 13px 8px 11px}',
+    '.cx-qtd{font-size:11.5px;font-weight:600;color:#a7e3d8;background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.25);padding:2px 9px;border-radius:999px}.cx-qtd:empty{display:none}',
+    '.cx-limpar{display:inline-flex;align-items:center;gap:6px;margin-left:auto;min-height:32px;padding:0 12px 0 10px;border-radius:999px;border:1px solid rgba(248,113,113,.3);background:transparent;color:#fca5a5;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,color .15s ease}',
+    '.cx-limpar:hover{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.6);color:#fecaca}.cx-limpar[hidden]{display:none}',
+    '.cx-itens{display:flex;flex-direction:column}.cx-item{flex-shrink:0;padding:8px}',
+    '.cx-n{width:22px;height:22px;flex-shrink:0;border-radius:7px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);color:#7fa9b7;font-size:11px}',
+    '.cx-desc b{font-size:14px}.cx-qbt button{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:8px}',
+    '.cx-x{display:flex;align-items:center;justify-content:center;color:#f19a8e}',
+    '.cx-vazio{flex:1;justify-content:center;gap:5px;color:#86aebb}',
+    '.cx-vz-ic{width:64px;height:64px;border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;color:#5eead4;background:radial-gradient(circle at 30% 25%,rgba(45,212,191,.22),rgba(45,212,191,.04));box-shadow:inset 0 0 0 1px rgba(45,212,191,.25)}',
+    '.cx-vazio>b{font-size:15px;font-weight:600;color:#e6f3f6}.cx-vazio>span{font-size:13px;color:#86aebb}',
+    '.cx-vz-acoes{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:12px}',
+    '.cx-vz-a{display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:0 13px 0 11px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.035);color:#cfe3ea;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;transition:background-color .15s ease,border-color .15s ease,color .15s ease}',
+    '.cx-vz-a:hover{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.45);color:#fff}.cx-vz-a svg{color:#5eead4}.cx-vz-a kbd{margin-left:2px}',
+    '.cx-pag-h{margin-bottom:0}.cx-pags.ativo .cx-pag-h .cx-opc{color:#fbbf24}',
+    '@media (max-height:760px){.cx-vz-ic{width:48px;height:48px;border-radius:15px;margin-bottom:4px}.cx-vz-acoes{margin-top:8px}}',
     '@media (prefers-reduced-motion:reduce){.cx-ov *{transition:none!important;animation:none!important}}'
   ].join('');
   /* ============ CAIXA (PDV): venda paga na hora ou lançada na conta do cliente; lê a comanda da balança (EAN-13) ============ */
@@ -6787,7 +6813,7 @@ class Component extends DCLogic {
       '</section>'+
       '<section class="cx-dir">'+
         '<div id="cx-cliente"></div>'+
-        '<div class="cx-cupom"><div class="cx-cupom-top"><span class="cx-lbl">Cupom</span><span class="cx-qtd" id="cx-qtd"></span><button class="cx-link" data-cx="limpar">Cancelar venda</button></div><div id="cx-itens" class="cx-itens"></div></div>'+
+        '<div class="cx-cupom"><div class="cx-cupom-top"><span class="cx-hic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-2-1.5L14 21l-2-1.5L10 21l-2-1.5L6 21z M9 8h6 M9 12h6 M9 16h3"></path></svg></span><span class="cx-ht">Cupom</span><span class="cx-qtd" id="cx-qtd"></span><button class="cx-limpar" id="cx-limpar" data-cx="limpar" hidden><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18 M8 6V4h8v2 M19 6l-1 14H6L5 6 M10 11v6 M14 11v6"></path></svg><span>Cancelar venda</span></button></div><div id="cx-itens" class="cx-itens"></div></div>'+
         '<div class="cx-total vazio"><div class="cx-tot-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-2-1.5L14 21l-2-1.5L10 21l-2-1.5L6 21z M9 8h6 M9 12h6 M9 16h3"></path></svg></div><div class="cx-tot-tx"><span>Total a pagar</span><small id="cx-total-sub" role="status" aria-atomic="true">Nenhum item no cupom</small></div><b id="cx-total" class="cx-tot-v"><small>R$</small>0,00</b></div>'+
         '<div id="cx-pag"></div>'+
       '</section></div>'; };
@@ -6795,24 +6821,27 @@ class Component extends DCLogic {
     const c=this._cxEl('cx-cliente'); if(c) c.innerHTML=this._cxHtmlCliente();
     const it=this._cxEl('cx-itens'); if(it){ it.innerHTML=this._cxHtmlItens(); it.scrollTop=it.scrollHeight; }
     const n=cx.itens.reduce((a,x)=>a+x.qtd,0);
-    const q=this._cxEl('cx-qtd'); if(q) q.textContent=n?(n+(n===1?' item':' itens')):'';
+    const q=this._cxEl('cx-qtd'); if(q) q.textContent=n?(n+(n===1?' item':' itens')):''; const lp=this._cxEl('cx-limpar'); if(lp) lp.hidden=!cx.itens.length;
     const t=this._cxEl('cx-total'); if(t){ const v=this._cxTotal(), tx=this.brl(v).replace(/^R\$\s*/,''); const box=t.closest('.cx-total'); if(box) box.classList.toggle('vazio',!(v>0));
       if(t.dataset.v!==tx){ t.innerHTML='<small>R$</small>'+tx; if(t.dataset.v!=null&&v>0){ t.classList.remove('pulo'); void t.offsetWidth; t.classList.add('pulo'); } t.dataset.v=tx; } }
     const ts=this._cxEl('cx-total-sub'); if(ts){ const s=n?(n+(n===1?' item':' itens')+' no cupom'):'Nenhum item no cupom'; if(ts.textContent!==s) ts.textContent=s; }
     this._cxRenderPag(); this._cxPrev(); };
   _cxHtmlItens=()=>{ const L=this._cx.itens, E=this._cxEsc, ok=this._cx.modo==='ok';
-    if(!L.length) return '<div class="cx-vazio"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5h3 M17 5h3v2 M20 17v2h-3 M7 19H4v-2 M8 9v6 M11 9v6 M14 9v6 M17 9v6"></path></svg>Bipe a comanda, digite o valor<br>ou busque um produto (F6).</div>';
+    if(!L.length) return '<div class="cx-vazio"><div class="cx-vz-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7V5h3 M17 5h3v2 M20 17v2h-3 M7 19H4v-2 M8 9v6 M11 9v6 M14 9v6 M17 9v6"></path></svg></div><b>Cupom vazio</b><span>Comece a venda de um destes jeitos:</span><div class="cx-vz-acoes">'+
+      '<button class="cx-vz-a" data-cx="vz-valor"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6v12 M7 6v12 M11 6v12 M14 6v12 M18 6v12 M21 6v12"></path></svg><span>Bipe a comanda</span></button>'+
+      '<button class="cx-vz-a" data-cx="vz-valor"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18v12H3z M7 10h.01 M11 10h.01 M15 10h.01 M7 14h10"></path></svg><span>Digite o valor</span></button>'+
+      '<button class="cx-vz-a" data-cx="vz-prod"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 18a7 7 0 100-14 7 7 0 000 14z M20 20l-4-4"></path></svg><span>Buscar produto</span><kbd>F6</kbd></button></div></div>';
     return L.map((x,i)=>'<div class="cx-item'+(i===L.length-1&&!ok?' novo':'')+'"><span class="cx-n">'+(i+1)+'</span>'+
       '<div class="cx-desc"><b>'+E(x.desc)+'</b><small>'+x.qtd+' × '+this.brl(x.valor)+'</small></div>'+
       (ok||x.codigo?'':'<div class="cx-qbt"><button data-cx="menos" data-i="'+i+'" aria-label="Diminuir quantidade">−</button><button data-cx="mais" data-i="'+i+'" aria-label="Aumentar quantidade">+</button></div>')+
-      '<b class="cx-vt">'+this.brl(x.valor*x.qtd)+'</b>'+(ok?'':'<button class="cx-x" data-cx="tirar" data-i="'+i+'" aria-label="Remover item" title="Remover">×</button>')+'</div>').join(''); };
+      '<b class="cx-vt">'+this.brl(x.valor*x.qtd)+'</b>'+(ok?'':'<button class="cx-x" data-cx="tirar" data-i="'+i+'" aria-label="Remover item" title="Remover"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12 M18 6L6 18"></path></svg></button>')+'</div>').join(''); };
   _cxHtmlCliente=()=>{ const c=this._cx.cliente, E=this._cxEsc;
     if(this._cx.modo==='ok') return c?'<div class="cx-cli sel"><div class="cx-av">'+E(c.name.slice(0,1).toUpperCase())+'</div><div class="cx-cli-tx"><b>'+E(c.name)+'</b><small>'+E(this.typeLabel(c.type))+'</small></div></div>':'';
-    if(!c) return '<div class="cx-cli"><div class="cx-lbl">Cliente <kbd>F8</kbd> <span class="cx-opc">opcional · obrigatório para lançar na conta</span></div>'+
-      '<div class="cx-busca-w"><input id="cx-busca" class="cx-campo" placeholder="Consumidor sem cadastro · digite o nome para buscar" autocomplete="off" spellcheck="false"><button class="cx-btn2" data-cx="novocli">+ Cadastrar</button></div><div id="cx-busca-res" class="cx-res"></div></div>';
+    if(!c) return '<div class="cx-cli"><div class="cx-cli-h"><span class="cx-hic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20a8 8 0 0116 0 M12 11a4 4 0 100-8 4 4 0 000 8z"></path></svg></span><span class="cx-ht">Cliente</span><span class="cx-opc">opcional · obrigatório para lançar na conta</span></div>'+
+      '<div class="cx-busca-w"><div class="cx-cbusca"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 18a7 7 0 100-14 7 7 0 000 14z M20 20l-4-4"></path></svg><input id="cx-busca" class="cx-campo" placeholder="Consumidor sem cadastro · buscar por nome ou telefone" aria-label="Buscar cliente (F8)" autocomplete="off" spellcheck="false"><kbd>F8</kbd></div><button class="cx-btn2 cx-cnovo" data-cx="novocli"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20a7 7 0 0112.5-4.3 M10 11a4 4 0 100-8 4 4 0 000 8z M19 14v6 M16 17h6"></path></svg><span>Cadastrar</span></button></div><div id="cx-busca-res" class="cx-res"></div></div>';
     const inf=this._cxCobranca(c);
     return '<div class="cx-cli sel"><div class="cx-av">'+E(c.name.slice(0,1).toUpperCase())+'</div><div class="cx-cli-tx"><b>'+E(c.name)+'</b><small>'+E(this.typeLabel(c.type))+
-      (inf.emp?' · a empresa '+E(inf.emp.name)+' paga':'')+' · saldo em aberto '+this.brl(inf.saldo)+'</small></div><button class="cx-btn2" data-cx="tirarcli">Trocar</button></div>'; };
+      (inf.emp?' · a empresa '+E(inf.emp.name)+' paga':'')+' · saldo em aberto '+this.brl(inf.saldo)+'</small></div><button class="cx-btn2 cx-troca" data-cx="tirarcli"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h12l-3-3 M17 17H5l3 3"></path></svg><span>Trocar</span></button></div>'; };
   _cxCobranca=(c)=>{ let emp=null; if(c&&c.type==='Funcionario'&&c.payer==='Empresa'&&c.company) emp=this.state.clients.find(x=>x.type==='Empresa'&&x.name===c.company)||null;
     const quem=emp||c; return {emp,quem,saldo:quem?(quem.balance||0):0}; };
   _cxRenderPag=()=>{ const p=this._cxEl('cx-pag'); if(!p) return; const cx=this._cx, E=this._cxEsc, total=this._cxTotal(), tem=cx.itens.length>0;
@@ -6841,7 +6870,7 @@ class Component extends DCLogic {
         '<div class="cx-acoes">'+voltar+confirmar('Lançar na conta')+'</div></div>'; return; }
     const pagar=cx.modo==='pagar';
     const bt=(id,n,rot,ic)=>'<button class="cx-pagbt" data-cx="pag" data-pag="'+id+'"'+(tem?'':' disabled')+'><kbd>'+n+'</kbd><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="'+ic+'"></path></svg>'+rot+'</button>';
-    p.innerHTML='<div class="cx-pags'+(pagar?' ativo':'')+'"><div class="cx-lbl">'+(pagar?'Escolha a forma de pagamento · teclas 1 a 6 · Esc volta':'Cobrar · forma de pagamento')+'</div><div class="cx-pgrid">'+
+    p.innerHTML='<div class="cx-pags'+(pagar?' ativo':'')+'"><div class="cx-cli-h cx-pag-h"><span class="cx-hic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h20v12H2z M2 10h20 M6 15h4"></path></svg></span><span class="cx-ht">Cobrar</span><span class="cx-opc">'+(pagar?'escolha a forma · teclas 1 a 6 · Esc volta':'forma de pagamento')+'</span></div><div class="cx-pgrid">'+
       bt('dinheiro',1,'Dinheiro','M2 7h20v10H2z M12 12m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0-5 0 M6 10v4 M18 10v4')+
       bt('pix',2,'PIX','M12 3l9 9-9 9-9-9z M8.5 12h7')+
       bt('debito',3,'Débito','M2 6h20v12H2z M2 10h20 M6 15h4')+
@@ -7132,6 +7161,8 @@ class Component extends DCLogic {
     if(a==='aba') return this._cxAba(el.dataset.aba);
     if(a==='sair') return this.fecharCaixa();
     if(a==='tecla') return this._cxTeclaVirtual(el.dataset.k);
+    if(a==='vz-valor'){ this._cxFoco(); return; }
+    if(a==='vz-prod'){ const b=this._cxEl('cx-pbusca'); if(b) b.focus(); return; }
     if(a==='prodk') return this._cxPExec(Number(el.dataset.k));
     if(a==='pcat'){ const c=el.dataset.c||''; const b=this._cxEl('cx-pbusca'); this._cxPCat=this._cxPCat===c?'':c; this._cxPCatsDesenhar(); if(b){ b.focus(); this._cxBuscarProd(true); } return; }
     if(a==='prodnovo'){ const b=this._cxEl('cx-pbusca'); return this._cxProdForm(null,b?this._cxCap(b.value):'',this._cxPCat); }
