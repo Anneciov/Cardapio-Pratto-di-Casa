@@ -6448,14 +6448,22 @@ class Component extends DCLogic {
     '.cx-rap:hover{transform:translateY(-2px);background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.45)}.cx-rap:active{transform:scale(.97)}',
     '.cx-teclado{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:auto}',
     '.cx-prev{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
-    '.cx-nome-w{position:relative;margin-bottom:8px}.cx-nome{padding-right:42px}.cx-nome.cheio{border-color:rgba(251,191,36,.65);color:#fde68a;font-weight:600}',
-    '.cx-nome-x{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:none;border-radius:8px;background:none;color:#8fb8c6;font-size:20px;line-height:1;cursor:pointer}.cx-nome-x:hover{background:rgba(255,255,255,.08);color:#fff}',
-    '.cx-chs{display:flex;flex-direction:column;gap:6px}.cx-chg{display:flex;flex-wrap:wrap;align-items:center;gap:6px}',
-    '.cx-cht{font-size:11px;font-weight:700;color:#8fb8c6;min-width:56px}',
-    '.cx-ch{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid rgba(167,235,242,.18);background:rgba(255,255,255,.045);color:#e4f4f7;font:600 13px/1 inherit;cursor:pointer;transition:background-color .15s ease,border-color .15s ease}',
-    '.cx-ch small{font:700 11.5px "Space Mono",monospace;color:#5eead4}.cx-ch small:empty{display:none}',
-    '.cx-ch:hover{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.45)}.cx-ch.on{background:rgba(251,191,36,.16);border-color:#fbbf24;color:#fde68a}',
-    '.cx-ch.outro{border-style:dashed;color:#a9d3dc}.cx-ch:focus-visible,.cx-nome-x:focus-visible{outline:2px solid #2dd4bf;outline-offset:2px}',
+    '.cx-pend{display:inline-flex;align-items:center;gap:8px;max-width:72%;padding:4px 4px 4px 12px;border-radius:999px;background:rgba(251,191,36,.14);border:1px solid rgba(251,191,36,.55);color:#fde68a;font-size:13px;font-weight:600}.cx-pend[hidden],.cx-lbl[hidden]{display:none}',
+    '.cx-pend b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cx-pend button{flex-shrink:0;width:26px;height:26px;border-radius:50%;border:none;background:rgba(0,0,0,.28);color:#fde68a;font-size:16px;line-height:1;cursor:pointer}.cx-pend button:hover{background:rgba(0,0,0,.45)}',
+    '.cx-prod{position:relative;background:rgba(255,255,255,.035);border:1px solid rgba(167,235,242,.14);border-radius:16px;padding:12px 14px}',
+    '.cx-prod-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.cx-btn2.sm{padding:8px 12px;font-size:12.5px}',
+    '.cx-pbusca-w{position:relative}.cx-pbusca-w svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#8fb8c6;pointer-events:none}.cx-pbusca-w .cx-pbusca{padding-left:40px;min-height:46px;font-size:15px}',
+    '.cx-pres{left:14px;right:14px;max-height:min(380px,52vh);overflow-y:auto;border:1px solid rgba(84,172,191,.4)}',
+    '.cx-pcab{position:sticky;top:0;z-index:1;padding:7px 14px 5px;background:#03284a;font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:#8fd3df;border-bottom:1px solid rgba(167,235,242,.1)}',
+    '.cx-prow{display:flex;align-items:stretch;border-bottom:1px solid rgba(167,235,242,.08)}.cx-prow:hover,.cx-prow.prim{background:rgba(45,212,191,.13)}.cx-prow.prim{box-shadow:inset 3px 0 0 #2dd4bf}',
+    '.cx-pmain{flex:1;min-width:0;display:flex;align-items:center;gap:10px;min-height:44px;padding:8px 14px;background:none;border:none;color:#e4f4f7;text-align:left;font:inherit;cursor:pointer}',
+    '.cx-pmain b{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cx-ptx{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cx-prow.novo .cx-ptx{color:#5eead4;font-weight:600}',
+    '.cx-pcat{flex-shrink:0;font-size:11px;font-weight:600;color:#8fb8c6;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.07)}',
+    '.cx-pv{margin-left:auto;flex-shrink:0;font:700 13.5px "Space Mono",monospace;color:#5eead4;white-space:nowrap}.cx-pv.sem{font-family:inherit;font-size:12px;font-weight:600;color:#e3b341}',
+    '.cx-pedit{flex-shrink:0;width:44px;display:flex;align-items:center;justify-content:center;background:none;border:none;border-left:1px solid rgba(167,235,242,.08);color:#8fb8c6;cursor:pointer}.cx-pedit:hover{color:#fff;background:rgba(255,255,255,.07)}.cx-pedit.vazio{cursor:default}.cx-pedit.vazio:hover{background:none}',
+    '.cx-modal{position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(1,10,22,.72);backdrop-filter:blur(3px)}',
+    '.cx-pform{width:min(460px,100%);background:#04223f;box-shadow:0 30px 80px rgba(0,0,0,.6)}.cx-btn2.perigo{color:#fca5a5;border-color:rgba(248,113,113,.45)}.cx-btn2.perigo:hover{background:rgba(248,113,113,.14)}',
+    '.cx-pmain:focus-visible,.cx-pedit:focus-visible,.cx-pend button:focus-visible{outline:2px solid #2dd4bf;outline-offset:-2px}',
     '.cx-k{min-height:56px;border-radius:12px;border:1px solid rgba(167,235,242,.14);background:rgba(255,255,255,.06);color:#fff;font:700 22px/1 "Space Mono",monospace;cursor:pointer;transition:background-color .12s ease,transform .08s ease}',
     '.cx-k:hover{background:rgba(255,255,255,.12)}.cx-k:active{transform:scale(.95)}.cx-k.fn{color:#fbbf24;font-size:20px}',
     '.cx-k.ok{background:linear-gradient(135deg,#22c55e,#15803d);border-color:transparent;font-size:16px;font-family:inherit}.cx-k.ok:hover{filter:brightness(1.1)}',
@@ -6571,26 +6579,89 @@ class Component extends DCLogic {
   _cxLidasHoje=()=>{ try{ const j=JSON.parse(localStorage.getItem('pdc_caixa_comandas')||'{}'); return j.dia===this.todayISO()?(j.codigos||[]):[]; }catch(e){ return []; } };
   _cxGuardarLidas=(cods)=>{ if(!cods.length) return; try{ localStorage.setItem('pdc_caixa_comandas',JSON.stringify({dia:this.todayISO(),codigos:[...this._cxLidasHoje(),...cods].slice(-3000)})); }catch(e){} };
 
-  static CX_AVULSOS=[['Bebidas',[['Suco'],['Suco misto'],['Del Valle'],['Refrigerante 350ml','Refri 350ml'],['Refrigerante KS','Refri KS'],['Refrigerante 600ml','Refri 600ml'],['Refrigerante 1L','Refri 1L'],['Refrigerante 1,5L','Refri 1,5L'],['Refrigerante 2L','Refri 2L'],['Água 500ml']]],['Doces',[['Trident'],['Doces']]]];
-  // ── item com nome (bebidas, doces ou outro): escolhe o nome e digita o valor ──
-  _cxPrecos=()=>{ try{ return JSON.parse(localStorage.getItem('pdc_caixa_precos')||'{}')||{}; }catch(e){ return {}; } };
+  // ── Produtos do caixa (busca + cadastro; tabela rest_caixa_produtos) ──
+  static CX_PROD_PADRAO=[['Suco','Bebidas'],['Suco misto','Bebidas'],['Del Valle','Bebidas'],['Refrigerante 350ml','Bebidas'],['Refrigerante KS','Bebidas'],['Refrigerante 600ml','Bebidas'],
+    ['Refrigerante 1L','Bebidas'],['Refrigerante 1,5L','Bebidas'],['Refrigerante 2L','Bebidas'],['Água 500ml','Bebidas'],['Trident','Doces'],['Doces','Doces']];
+  _cxNorm=(s)=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  _cxCap=(s)=>{ s=String(s||'').trim().replace(/\s+/g,' '); return s.charAt(0).toUpperCase()+s.slice(1); };
   _cxValTxt=(v)=>Number(v).toFixed(2).replace('.',',');
-  _cxGuardarPreco=(n,v)=>{ try{ const p=this._cxPrecos(); p[n]=v; localStorage.setItem('pdc_caixa_precos',JSON.stringify(p)); }catch(e){}
-    if(this._cxOv) this._cxOv.querySelectorAll('[data-cx=avulso]').forEach(b=>{ if(b.dataset.n===n){ const s=b.querySelector('small'); if(s) s.textContent=this.brl(v); } }); };
-  _cxNomeTxt=()=>{ const n=this._cxEl('cx-nome'); const t=n?n.value.trim().replace(/\s+/g,' ').slice(0,60):''; if(!t) return '';
-    const p=Component.CX_AVULSOS.flatMap(g=>g[1].map(x=>x[0])).find(x=>x.toLowerCase()===t.toLowerCase()); return p||t.charAt(0).toUpperCase()+t.slice(1); };
-  _cxNomeMarca=()=>{ const n=this._cxEl('cx-nome'); if(!n||!this._cxOv) return; const v=this._cxNomeTxt().toLowerCase();
-    this._cxOv.querySelectorAll('[data-cx=avulso]').forEach(b=>{ const on=!!v&&b.dataset.n.toLowerCase()===v; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false'); });
-    const x=this._cxEl('cx-nome-x'); if(x) x.hidden=!n.value; n.classList.toggle('cheio',!!v); this._cxPrev(); };
-  _cxNomeLimpa=()=>{ const n=this._cxEl('cx-nome'); if(n) n.value=''; this._cxNomeMarca(); };
-  _cxNomePronto=()=>{ const i=this._cxEl('cx-entrada'), nm=this._cxNomeTxt(); if(!i) return; const p=nm?Number(this._cxPrecos()[nm]):0, r=this._cxLer(i.value);
-    if(r&&r.tipo==='valor'){ this._cxEnter(); return; }
-    if(p>0){ if(r&&r.tipo==='mult') i.value+=this._cxValTxt(p); else i.value=this._cxValTxt(p); }
-    this._cxPrev(); i.focus(); if(p>0&&!(r&&r.tipo==='mult')) i.select();
-    if(nm) this._cxMsg(p>0?nm+' · último valor '+this.brl(p)+'. Enter confirma ou digite outro valor.':nm+' · digite o valor e aperte Enter.','info'); };
-  _cxAvulso=(nome)=>{ const n=this._cxEl('cx-nome'); if(!n) return; if(this._cx.modo!=='entrada'&&this._cx.modo!=='ok') this._cxModo('entrada');
-    if(!nome){ n.value=''; this._cxNomeMarca(); n.focus(); this._cxMsg('Digite o nome do item, aperte Enter e depois o valor.','info'); return; }
-    n.value=nome; this._cxNomeMarca(); this._cxNomePronto(); };
+  _cxPreco=(t)=>{ t=String(t||'').trim().replace(/^R\$\s*/i,'').replace(/\s/g,''); if(!t) return 0; if(t.indexOf(',')>=0) t=t.replace(/\./g,'').replace(',','.');
+    const v=Number(t); return isFinite(v)&&v>=0?Math.round(v*100)/100:null; };
+  _cxCarregarProdutos=async()=>{
+    if(this._cxDemo()||!sb){ if(!this._cxProdutos) this._cxProdutos=Component.CX_PROD_PADRAO.map(([nome,categoria],i)=>({id:'d'+i,nome,categoria,preco:0})); return; }
+    const { data, error } = await sb.from('rest_caixa_produtos').select('id,nome,categoria,preco').order('nome');
+    if(error){ console.error('[caixa] produtos', error); this._cxProdutos=this._cxProdutos||[]; return; }
+    this._cxProdutos=(data||[]).map(p=>({...p,preco:Number(p.preco)||0}));
+    const b=this._cxEl('cx-pbusca'); if(b&&document.activeElement===b) this._cxBuscarProd(true); };
+  _cxCatalogo=()=>[...(this.state.balcaoItems||[]).map(it=>({id:'b:'+it.id,nome:it.name,categoria:'Balcão',preco:Number(it.price)||0,fixo:true})),...(this._cxProdutos||[])];
+  _cxBuscarProd=(abrir)=>{ const i=this._cxEl('cx-pbusca'), r=this._cxEl('cx-pres'), E=this._cxEsc; if(!i||!r) return;
+    if(!abrir&&document.activeElement!==i){ r.innerHTML=''; this._cxPRes=[]; return; }
+    const Q=this._cxCap(i.value), q=this._cxNorm(Q), cat=this._cxCatalogo();
+    const toks=q.split(' ').filter(Boolean), pal=(n)=>n.split(/[ \/-]/);
+    const nota=(p)=>{ const n=this._cxNorm(p.nome); return n.indexOf(q)===0?0:(toks.every(t=>pal(n).some(w=>w.indexOf(t)===0))?1:2); };
+    const ordCat=(c)=>(c==='Balcão'?'0':'1')+String(c);
+    const L=!q?cat.slice().sort((a,b)=>ordCat(a.categoria).localeCompare(ordCat(b.categoria))||a.nome.localeCompare(b.nome))
+      :cat.filter(p=>{ const n=this._cxNorm(p.nome); return toks.every(t=>n.includes(t))||this._cxNorm(p.categoria).indexOf(q)===0; }).sort((a,b)=>nota(a)-nota(b)||a.nome.localeCompare(b.nome)).slice(0,40);
+    const R=L.map(p=>({tipo:'prod',p}));
+    if(q&&!cat.some(p=>this._cxNorm(p.nome)===q)){ R.push({tipo:'livre',nome:Q}); R.push({tipo:'novo',nome:Q}); }
+    if(!q&&!R.length) R.push({tipo:'novo',nome:''});
+    this._cxPRes=R; this._cxPSel=q?0:-1; let cab=null;
+    const bt=(k,html)=>'<button class="cx-pmain" data-cx="prodk" data-k="'+k+'" tabindex="-1">'+html+'</button>';
+    r.innerHTML=R.map((x,k)=>{ if(x.tipo==='prod'){ const p=x.p; let h='';
+        if(!q&&p.categoria!==cab){ cab=p.categoria; h+='<div class="cx-pcab">'+E(cab)+'</div>'; }
+        return h+'<div class="cx-prow" data-k="'+k+'">'+bt(k,'<b>'+E(p.nome)+'</b>'+(q?'<span class="cx-pcat">'+E(p.categoria)+'</span>':'')+(p.preco>0?'<span class="cx-pv">'+this.brl(p.preco)+'</span>':'<span class="cx-pv sem">digitar valor</span>'))+
+          (p.fixo?'<span class="cx-pedit vazio" title="Marmita: o preço muda no cadastro de itens do balcão"></span>':'<button class="cx-pedit" data-cx="prodedit" data-id="'+E(p.id)+'" tabindex="-1" aria-label="Editar '+E(p.nome)+'" title="Editar ou excluir"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z M14 6l4 4"></path></svg></button>')+'</div>'; }
+      if(x.tipo==='livre') return '<div class="cx-prow extra" data-k="'+k+'">'+bt(k,'<span class="cx-ptx">Lançar “<b>'+E(x.nome)+'</b>” sem cadastrar</span><span class="cx-pv sem">digitar valor</span>')+'</div>';
+      return '<div class="cx-prow extra novo" data-k="'+k+'">'+bt(k,'<span class="cx-ptx">+ Cadastrar '+(x.nome?'“<b>'+E(x.nome)+'</b>”':'produto')+'</span>')+'</div>'; }).join('');
+    this._cxPMarca(); };
+  _cxPMarca=()=>{ const r=this._cxEl('cx-pres'); if(!r) return; r.querySelectorAll('.cx-prow').forEach(el=>{ const on=Number(el.dataset.k)===this._cxPSel; el.classList.toggle('prim',on); if(on&&el.scrollIntoView) el.scrollIntoView({block:'nearest'}); }); };
+  _cxPLimpa=()=>{ const i=this._cxEl('cx-pbusca'), r=this._cxEl('cx-pres'); if(i) i.value=''; if(r) r.innerHTML=''; this._cxPRes=[]; this._cxPSel=-1; };
+  _cxPExec=(k)=>{ const x=(this._cxPRes||[])[k]; if(!x) return;
+    if(x.tipo==='prod') return this._cxPegaProd(x.p);
+    if(x.tipo==='livre') return this._cxPegaProd({nome:x.nome,preco:0});
+    this._cxProdForm(null,x.nome); };
+  _cxPegaProd=(p)=>{ this._cxPLimpa(); if(this._cx.modo==='ok') this._cxNova(true); else if(this._cx.modo!=='entrada') this._cxModo('entrada');
+    const i=this._cxEl('cx-entrada'), r=i?this._cxLer(i.value):null;
+    if(r&&r.tipo==='valor'){ this._cx.pend=null; this._cxAdd({desc:p.nome,valor:r.valor,qtd:r.qtd,codigo:null}); i.value=''; this._cxPrev(); this._cxBip(true); return; }
+    if(p.preco>0){ this._cx.pend=null; this._cxAdd({desc:p.nome,valor:p.preco,qtd:r&&r.tipo==='mult'?r.qtd:1,codigo:null}); if(i) i.value=''; this._cxPrev(); this._cxBip(true); return; }
+    this._cx.pend=p.nome; this._cxPrev(); this._cxFoco(); this._cxMsg(p.nome+' · digite o valor e aperte Enter.','info'); };
+  _cxPendTag=()=>{ const t=this._cxEl('cx-pend'), l=this._cxEl('cx-vlbl'); if(!t) return; const n=(this._cx&&this._cx.pend)||''; t.hidden=!n; if(l) l.hidden=!!n; const b=t.querySelector('b'); if(b) b.textContent=n; };
+  _cxProdFechar=()=>{ const m=this._cxOv&&this._cxOv.querySelector('#cx-pmodal'); if(m) m.remove(); };
+  _cxProdForm=(id,nome)=>{ const E=this._cxEsc, L=this._cxProdutos||[], p=id?L.find(x=>String(x.id)===String(id)):null; if(id&&!p) return; this._cxPLimpa(); this._cxProdFechar();
+    const cats=[...new Set(['Bebidas','Doces','Outros',...L.map(x=>x.categoria).filter(Boolean)])];
+    const m=document.createElement('div'); m.className='cx-modal'; m.id='cx-pmodal';
+    m.innerHTML='<form class="cx-form cx-pform" data-cx-form="salvarprod" data-id="'+E(p?p.id:'')+'" autocomplete="off" role="dialog" aria-modal="true" aria-labelledby="cx-ptit">'+
+      '<div class="cx-h" id="cx-ptit">'+(p?'Editar produto':'Cadastrar produto')+'</div>'+
+      '<div class="cx-sub">Aparece na busca de produtos do caixa. Sem valor, o caixa pede o valor na hora da venda.</div>'+
+      '<label class="cx-f">Nome do produto *<input name="nome" class="cx-campo" required maxlength="60" value="'+E(p?p.nome:(nome||''))+'" placeholder="Ex.: Refrigerante 350ml"></label>'+
+      '<div class="cx-2"><label class="cx-f">Valor (R$)<input name="preco" class="cx-campo" inputmode="decimal" data-numpad="off" maxlength="10" value="'+(p&&p.preco>0?this._cxValTxt(p.preco):'')+'" placeholder="0,00"></label>'+
+      '<label class="cx-f">Categoria<input name="cat" class="cx-campo" list="cx-pcats" maxlength="30" value="'+E(p?p.categoria:'')+'" placeholder="Bebidas, Doces…"><datalist id="cx-pcats">'+cats.map(c=>'<option value="'+E(c)+'"></option>').join('')+'</datalist></label></div>'+
+      '<div class="cx-msg" id="cx-msgprod" role="status" aria-live="polite"></div>'+
+      '<div class="cx-acoes">'+(p?'<button type="button" class="cx-btn2 perigo" data-cx="prodexcluir" data-id="'+E(p.id)+'">Excluir</button>':'')+'<span style="flex:1"></span>'+
+        '<button type="button" class="cx-btn2" data-cx="prodfechar">Cancelar<kbd>Esc</kbd></button>'+
+        (p?'<button type="submit" class="cx-okbtn">Salvar</button>':'<button type="submit" class="cx-btn2">Só cadastrar</button><button type="submit" class="cx-okbtn" data-lancar="1">Cadastrar e lançar</button>')+'</div></form>';
+    this._cxOv.querySelector('.cx-app').appendChild(m);
+    setTimeout(()=>{ const f=m.querySelector(!p&&nome?'[name=preco]':'[name=nome]'); if(f){ f.focus(); if(f.select) f.select(); } },30); };
+  _cxSalvarProd=async(f,lancar)=>{ const m=this._cxEl('cx-msgprod'), erro=(t)=>{ if(m){ m.className='cx-msg erro'; m.textContent=t; } };
+    if(f.dataset.salvando) return;
+    const nome=this._cxCap(f.nome.value), cat=this._cxCap(f.cat.value)||'Outros', preco=this._cxPreco(f.preco.value), id=f.dataset.id||'';
+    if(!nome){ erro('Digite o nome do produto.'); return; }
+    if(preco==null){ erro('Valor inválido. Ex.: 6,00'); return; }
+    if(this._cxCatalogo().some(p=>String(p.id)!==id&&this._cxNorm(p.nome)===this._cxNorm(nome))){ erro('Já existe um produto com esse nome.'); return; }
+    const L=this._cxProdutos||(this._cxProdutos=[]); let prod;
+    if(this._cxDemo()){ if(id){ prod=L.find(x=>String(x.id)===id); Object.assign(prod,{nome,categoria:cat,preco}); } else { prod={id:'d'+Date.now(),nome,categoria:cat,preco}; L.push(prod); } }
+    else { f.dataset.salvando='1';
+      const q=id?sb.from('rest_caixa_produtos').update({nome,categoria:cat,preco}).eq('id',id):sb.from('rest_caixa_produtos').insert({nome,categoria:cat,preco});
+      const { data, error } = await q.select('id,nome,categoria,preco').single(); delete f.dataset.salvando;
+      if(error){ erro('Não salvou: '+error.message); return; }
+      prod={...data,preco:Number(data.preco)||0}; const j=L.findIndex(x=>String(x.id)===String(prod.id)); if(j>=0) L[j]=prod; else L.push(prod); }
+    this._cxProdFechar(); this._cxMsg('Produto '+(id?'atualizado':'cadastrado')+': '+nome+(preco>0?' · '+this.brl(preco):' · valor na hora'),'ok');
+    if(lancar) this._cxPegaProd(prod); else this._cxFoco(); };
+  _cxExcluirProd=async(id)=>{ const L=this._cxProdutos||[], p=L.find(x=>String(x.id)===String(id)); if(!p) return;
+    if(!confirm('Excluir o produto '+p.nome+'? As vendas já feitas não mudam.')) return;
+    if(!this._cxDemo()){ const { error } = await sb.from('rest_caixa_produtos').delete().eq('id',p.id); if(error){ const m=this._cxEl('cx-msgprod'); if(m){ m.className='cx-msg erro'; m.textContent='Não excluiu: '+error.message; } return; } }
+    this._cxProdutos=L.filter(x=>x!==p); this._cxProdFechar(); this._cxMsg('Produto excluído: '+p.nome,'info'); this._cxFoco(); };
+
   abrirCaixa=()=>{
     if(this._cxOv){ this._cxFoco(); return; }
     const ov=document.createElement('div'); this._cxOv=ov; ov.className='cx-ov';
@@ -6601,13 +6672,15 @@ class Component extends DCLogic {
     this._cxToastOrig=this.showToast;
     this.showToast=(m)=>{ this._cxMsg(String(m||''),/^(Erro|Não foi)/i.test(String(m))?'erro':'ok'); };
     ov.addEventListener('click',(e)=>{ const b=e.target.closest('[data-cx]'); if(b){ this._cxAcao(b.dataset.cx,b); return; }
-      if(this._cx.aba==='venda'&&!e.target.closest('input,select,textarea,button,label,form')) this._cxFoco(); });
+      if(this._cx.aba==='venda'&&!e.target.closest('input,select,textarea,button,label,form,.cx-modal,.cx-prod')) this._cxFoco(); });
     ov.addEventListener('submit',(e)=>{ e.preventDefault(); this._cxAcao(e.target.dataset.cxForm,e.target,e.submitter); });
     ov.addEventListener('input',(e)=>this._cxDigitou(e));
     ov.addEventListener('change',(e)=>{ if(e.target.name==='tipo') this._cxTipoCli(e.target.form); });
+    ov.addEventListener('focusin',(e)=>{ if(e.target.id==='cx-pbusca') this._cxBuscarProd(true); });
+    ov.addEventListener('focusout',()=>setTimeout(()=>{ const a=document.activeElement; if(!(a&&a.closest&&a.closest('.cx-prod'))){ const r=this._cxEl('cx-pres'); if(r) r.innerHTML=''; this._cxPRes=[]; } },150));
     this._cxTecla=(e)=>this._cxTeclado(e); document.addEventListener('keydown',this._cxTecla,true);
     this._cxRelogio=setInterval(()=>{ const r=this._cxEl('cx-hora'); if(r) r.textContent=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); },15000);
-    this._cxDesenhar(); };
+    this._cxDesenhar(); this._cxCarregarProdutos(); };
   fecharCaixa=(forcar)=>{
     if(!this._cxOv) return;
     if(!forcar&&this._cx.itens.length&&this._cx.modo!=='ok'&&!confirm('Tem uma venda em andamento. Sair do caixa mesmo assim? Os itens ficam guardados para quando voltar.')) return;
@@ -6626,24 +6699,21 @@ class Component extends DCLogic {
     if(a==='hoje'){ b.innerHTML=this._cxHtmlHoje(); return; }
     b.innerHTML=this._cxHtmlVenda(); this._cxAtualizar(); this._cxFoco(); };
   _cxAba=(a)=>{ this._cx.aba=a; this._cxDesenhar(); };
-  _cxHtmlVenda=()=>{ const E=this._cxEsc, precos=this._cxPrecos();
-    const rap=(this.state.balcaoItems||[]).map(it=>'<button class="cx-rap" data-cx="rapido" data-id="'+E(it.id)+'"><b>'+E(it.name)+'</b><span>'+this.brl(it.price||0)+'</span></button>').join('');
+  _cxHtmlVenda=()=>{ const E=this._cxEsc;
     const teclas=['7','8','9','⌫','4','5','6','×','1','2','3','C','0','00',',','OK'].map(k=>'<button class="cx-k'+(k==='OK'?' ok':(/[0-9,]/.test(k)?'':' fn'))+'" data-cx="tecla" data-k="'+k+'"'+(k==='×'?' title="Multiplicar: 3 × valor"':'')+'>'+(k==='OK'?'Enter':k)+'</button>').join('');
     return '<div class="cx-venda">'+
       '<section class="cx-esq">'+
         '<div class="cx-visor">'+
-          '<div class="cx-visor-top"><span class="cx-lbl">Bipe a comanda ou digite o valor</span><button class="cx-link" data-cx="cfg">⚙ Balança</button></div>'+
-          '<div class="cx-nome-w"><input id="cx-nome" class="cx-campo cx-nome" autocomplete="off" spellcheck="false" maxlength="60" placeholder="Nome do item (opcional) · ex.: Refrigerante 350ml" aria-label="Nome do item"><button id="cx-nome-x" class="cx-nome-x" data-cx="nome-limpa" aria-label="Limpar nome do item" title="Limpar" hidden>×</button></div>'+
+          '<div class="cx-visor-top"><span class="cx-lbl" id="cx-vlbl">Bipe a comanda ou digite o valor</span><span id="cx-pend" class="cx-pend" hidden><span>Item:</span><b></b><button data-cx="pendx" aria-label="Tirar o nome do item" title="Tirar o nome">×</button></span><button class="cx-link" data-cx="cfg">⚙ Balança</button></div>'+
           '<input id="cx-entrada" class="cx-entrada" autocomplete="off" spellcheck="false" inputmode="decimal" data-numpad="off" placeholder="0,00" aria-label="Código da comanda ou valor">'+
           '<div class="cx-prev" id="cx-prev">R$ 0,00</div>'+
           '<div class="cx-msg" id="cx-msg" role="status" aria-live="polite"></div>'+
-          '<div class="cx-dicas"><span><kbd>Enter</kbd> adiciona</span><span><kbd>3*</kbd> multiplica</span><span><kbd>Del</kbd> apaga o último</span><span><kbd>F8</kbd> cliente</span><span><kbd>Enter</kbd> vazio = cobrar</span></div>'+
+          '<div class="cx-dicas"><span><kbd>Enter</kbd> adiciona</span><span><kbd>3*</kbd> multiplica</span><span><kbd>Del</kbd> apaga o último</span><span><kbd>F6</kbd> produto</span><span><kbd>F8</kbd> cliente</span><span><kbd>Enter</kbd> vazio = cobrar</span></div>'+
         '</div>'+
         '<div id="cx-cfg"></div>'+
-        '<div class="cx-lbl cx-sec">Bebidas e doces · toque e digite o valor</div><div class="cx-chs">'+Component.CX_AVULSOS.map(([g,ls],gi)=>'<div class="cx-chg"><span class="cx-cht">'+E(g)+'</span>'+
-          ls.map(([n,curto])=>{ const p=Number(precos[n]); return '<button class="cx-ch" data-cx="avulso" data-n="'+E(n)+'" title="'+E(n)+'" aria-pressed="false">'+E(curto||n)+'<small>'+(p>0?this.brl(p):'')+'</small></button>'; }).join('')+
-          (gi===Component.CX_AVULSOS.length-1?'<button class="cx-ch outro" data-cx="avulso" data-n="">+ Outro item</button>':'')+'</div>').join('')+'</div>'+
-        (rap?'<div class="cx-lbl cx-sec">Itens rápidos</div><div class="cx-rapidos">'+rap+'</div>':'')+
+        '<div class="cx-prod"><div class="cx-prod-top"><span class="cx-lbl">Produtos <kbd>F6</kbd></span><button class="cx-btn2 sm" data-cx="prodnovo">+ Cadastrar produto</button></div>'+
+          '<div class="cx-pbusca-w"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 18a7 7 0 100-14 7 7 0 000 14z M20 20l-4-4"></path></svg><input id="cx-pbusca" class="cx-campo cx-pbusca" autocomplete="off" spellcheck="false" placeholder="Buscar produto · ex.: refri, suco, trident" aria-label="Buscar produto" aria-controls="cx-pres"></div>'+
+          '<div id="cx-pres" class="cx-res cx-pres" role="listbox" aria-label="Produtos"></div></div>'+
         '<div class="cx-teclado">'+teclas+'</div>'+
       '</section>'+
       '<section class="cx-dir">'+
@@ -6660,7 +6730,7 @@ class Component extends DCLogic {
     const t=this._cxEl('cx-total'); if(t) t.textContent=this.brl(this._cxTotal());
     this._cxRenderPag(); this._cxPrev(); };
   _cxHtmlItens=()=>{ const L=this._cx.itens, E=this._cxEsc, ok=this._cx.modo==='ok';
-    if(!L.length) return '<div class="cx-vazio"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5h3 M17 5h3v2 M20 17v2h-3 M7 19H4v-2 M8 9v6 M11 9v6 M14 9v6 M17 9v6"></path></svg>Bipe a comanda, digite o valor<br>ou toque num item rápido.</div>';
+    if(!L.length) return '<div class="cx-vazio"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5h3 M17 5h3v2 M20 17v2h-3 M7 19H4v-2 M8 9v6 M11 9v6 M14 9v6 M17 9v6"></path></svg>Bipe a comanda, digite o valor<br>ou busque um produto (F6).</div>';
     return L.map((x,i)=>'<div class="cx-item'+(i===L.length-1&&!ok?' novo':'')+'"><span class="cx-n">'+(i+1)+'</span>'+
       '<div class="cx-desc"><b>'+E(x.desc)+'</b><small>'+x.qtd+' × '+this.brl(x.valor)+'</small></div>'+
       (ok||x.codigo?'':'<div class="cx-qbt"><button data-cx="menos" data-i="'+i+'" aria-label="Diminuir quantidade">−</button><button data-cx="mais" data-i="'+i+'" aria-label="Aumentar quantidade">+</button></div>')+
@@ -6733,14 +6803,14 @@ class Component extends DCLogic {
     else valor=num/100;
     if(!(valor>0)) return {tipo:'erro',msg:'Comanda com valor zerado.'};
     return {tipo:'comanda',qtd:1,valor,codigo:c,desc:desc+' · comanda '+cod}; };
-  _cxPrev=()=>{ const p=this._cxEl('cx-prev'), i=this._cxEl('cx-entrada'); if(!p||!i) return; const r=this._cxLer(i.value);
+  _cxPrev=()=>{ const p=this._cxEl('cx-prev'), i=this._cxEl('cx-entrada'); if(!p||!i) return; this._cxPendTag(); const r=this._cxLer(i.value);
     p.classList.remove('erro','cmd','lendo');
-    if(!r){ const nm=this._cxNomeTxt(); p.textContent=nm?nm+' · digite o valor':'R$ 0,00'; return; }
+    if(!r){ const pd=this._cx.pend; p.textContent=pd?pd+' · digite o valor':'R$ 0,00'; return; }
     if(r.tipo==='mult'){ p.textContent=r.qtd+' × …'; return; }
     if(r.tipo==='erro'){ const lendo=/^[0-9]{8,12}$/.test(i.value.trim()); p.textContent=lendo?'lendo código…':'—'; p.classList.add(lendo?'lendo':'erro'); return; }
     if(r.tipo==='comanda') p.classList.add('cmd');
-    const nm=r.tipo==='valor'?this._cxNomeTxt():'';
-    p.textContent=(nm?nm+' · ':'')+(r.qtd>1?r.qtd+' × '+this.brl(r.valor)+' = ':'')+this.brl(r.valor*r.qtd)+(r.tipo==='comanda'?' · comanda':''); };
+    const pd=r.tipo==='valor'?this._cx.pend:'';
+    p.textContent=(pd?pd+' · ':'')+(r.qtd>1?r.qtd+' × '+this.brl(r.valor)+' = ':'')+this.brl(r.valor*r.qtd)+(r.tipo==='comanda'?' · comanda':''); };
   _cxMsg=(t,tipo)=>{ const m=this._cxEl('cx-msg'); if(!m){ if(t&&this._cxToastOrig) this._cxToastOrig(t); return; }
     m.className='cx-msg'+(t?' '+(tipo||'info'):''); m.textContent=t||''; clearTimeout(this._cxMsgT);
     if(t&&tipo!=='erro') this._cxMsgT=setTimeout(()=>{ if(m.textContent===t){ m.textContent=''; m.className='cx-msg'; } },4500); };
@@ -6751,15 +6821,15 @@ class Component extends DCLogic {
 
   // ── Itens ──
   _cxEnter=()=>{ const i=this._cxEl('cx-entrada'); if(!i) return; const raw=i.value;
-    if(!raw.trim()){ if(this._cxNomeTxt()){ this._cxMsg('Digite o valor de '+this._cxNomeTxt()+' e aperte Enter.','info'); i.focus(); return; } if(this._cx.itens.length) this._cxIrPagar(); else this._cxMsg('Bipe uma comanda, digite um valor ou toque num item rápido.','info'); return; }
+    if(!raw.trim()){ if(this._cx.pend){ this._cxMsg('Digite o valor de '+this._cx.pend+' e aperte Enter.','info'); return; } if(this._cx.itens.length) this._cxIrPagar(); else this._cxMsg('Bipe uma comanda, digite um valor ou busque um produto (F6).','info'); return; }
     const r=this._cxLer(raw); if(!r||r.tipo==='mult') return;
     if(r.tipo==='erro'){ this._cxMsg(r.msg,'erro'); this._cxBip(false); i.select(); return; }
     if(r.tipo==='comanda'){
       if(this._cx.itens.some(x=>x.codigo===r.codigo)){ this._cxMsg('Essa comanda já está nesta venda.','erro'); this._cxBip(false); i.value=''; this._cxPrev(); return; }
       if(this._cxLidasHoje().includes(r.codigo)&&!confirm('Esta comanda já foi cobrada hoje. Cobrar de novo?')){ i.value=''; this._cxPrev(); return; } }
     if(r.valor*r.qtd>2000&&!confirm('Valor alto: '+this.brl(r.valor*r.qtd)+'. Confirma?')){ i.select(); return; }
-    const nm=r.tipo==='valor'?this._cxNomeTxt():''; if(nm) this._cxGuardarPreco(nm,r.valor);
-    this._cxAdd({desc:nm||r.desc,valor:r.valor,qtd:r.qtd,codigo:r.codigo||null}); i.value=''; if(nm) this._cxNomeLimpa(); this._cxPrev(); this._cxBip(true); };
+    const pd=r.tipo==='valor'?this._cx.pend:''; if(pd) this._cx.pend=null;
+    this._cxAdd({desc:pd||r.desc,valor:r.valor,qtd:r.qtd,codigo:r.codigo||null}); i.value=''; this._cxPrev(); this._cxBip(true); };
   _cxAdd=(it)=>{ const cx=this._cx; if(cx.modo==='ok') this._cxNova(true);
     const L=cx.itens, j=it.codigo?-1:L.findIndex(x=>!x.codigo&&x.desc===it.desc&&x.valor===it.valor);
     if(j>=0){ L[j].qtd+=it.qtd; L.push(L.splice(j,1)[0]); } else L.push({id:Date.now()+Math.random(),...it});
@@ -6817,18 +6887,21 @@ class Component extends DCLogic {
   // ── Teclado ──
   _cxTeclado=(e)=>{ if(!this._cxOv||this._nfOv) return; const k=e.key, cx=this._cx, alvo=e.target, emCampo=alvo&&/^(INPUT|SELECT|TEXTAREA)$/.test(alvo.tagName);
     const para=()=>{ e.preventDefault(); e.stopPropagation(); };
+    if(this._cxOv.querySelector('#cx-pmodal')){ if(k==='Escape'){ para(); this._cxProdFechar(); this._cxFoco(); } return; }
     if(k==='F2'||k==='F3'||k==='F4'){ para(); this._cxAba({F2:'venda',F3:'clientes',F4:'hoje'}[k]); return; }
     if(cx.aba!=='venda'){ if(k==='Escape'){ para(); this._cxAba('venda'); } return; }
     if(alvo&&alvo.id==='cx-busca'){
       if(k==='Enter'){ para(); const L=this._cxRes||[]; if(L.length) this._cxPegaCli(L[0].id); else if(alvo.value.trim()) this._cxNovoCli(alvo.value.trim()); }
       else if(k==='Escape'){ para(); alvo.value=''; this._cxBuscar(); this._cxFoco(); }
       return; }
-    if(alvo&&alvo.id==='cx-nome'){
-      if(k==='Enter'){ para(); this._cxNomeMarca(); if(this._cxNomeTxt()) this._cxNomePronto(); else this._cxFoco(); }
-      else if(k==='Escape'){ para(); this._cxNomeLimpa(); this._cxFoco(); }
-      else if(k==='F8'){ para(); this._cxFocoCliente(); } else if(k==='F9'){ para(); this._cxIrPagar(); }
+    if(alvo&&alvo.id==='cx-pbusca'){ const R=this._cxPRes||[];
+      if(k==='ArrowDown'||k==='ArrowUp'){ para(); if(R.length){ const d=k==='ArrowDown'?1:-1, s=this._cxPSel; this._cxPSel=s<0?(d>0?0:R.length-1):(s+d+R.length)%R.length; this._cxPMarca(); } }
+      else if(k==='Enter'){ para(); if(this._cxPSel>=0&&R[this._cxPSel]) this._cxPExec(this._cxPSel); else if(!alvo.value.trim()) this._cxFoco(); }
+      else if(k==='Escape'){ para(); this._cxPLimpa(); this._cxFoco(); }
+      else if(k==='F8'){ para(); this._cxFocoCliente(); } else if(k==='F9'){ para(); this._cxIrPagar(); } else if(k==='F6'){ para(); }
       return; }
     if(alvo&&alvo.closest&&alvo.closest('#cx-cfg')){ if(k==='Escape'){ para(); this._cxCfg(false); } return; }
+    if(k==='F6'){ para(); const b=this._cxEl('cx-pbusca'); if(b){ b.focus(); b.select(); } return; }
     if(k==='F8'){ para(); this._cxFocoCliente(); return; }
     if(k==='F9'){ para(); this._cxIrPagar(); return; }
     if(cx.modo==='salvando'){ para(); return; }
@@ -6844,13 +6917,13 @@ class Component extends DCLogic {
       if(k==='Escape'){ para(); this._cxModo('entrada'); return; }
       if(k==='Enter'){ para(); this._cxEscolherPag('dinheiro'); return; }
       if(/^[0-9]$/.test(k)){ this._cxModo('entrada'); } }
-    if(k==='Escape'){ para(); const i=this._cxEl('cx-entrada'); if(i&&i.value){ i.value=''; this._cxPrev(); } else if(this._cxNomeTxt()) this._cxNomeLimpa(); else this.fecharCaixa(); return; }
+    if(k==='Escape'){ para(); const i=this._cxEl('cx-entrada'); if(i&&i.value){ i.value=''; this._cxPrev(); } else if(cx.pend){ cx.pend=null; this._cxPrev(); } else this.fecharCaixa(); return; }
     if(k==='Enter'&&(!emCampo||alvo.id==='cx-entrada')){ para(); this._cxEnter(); return; }
     if(k==='Delete'&&!(alvo&&alvo.id==='cx-entrada'&&alvo.value)){ para(); this._cxTirar(cx.itens.length-1); return; }
     if(!emCampo&&k.length===1&&/[0-9.,*xX]/.test(k)) this._cxFoco(); };
   _cxDigitou=(e)=>{ const id=e.target.id;
     if(id==='cx-entrada') this._cxPrev(); else if(id==='cx-recebido') this._cxTroco(); else if(id==='cx-busca') this._cxBuscar();
-    else if(id==='cx-nome') this._cxNomeMarca(); else if(id==='cx-busca2') this._cxListaCli(); else if(id==='cx-teste') this._cxTestar(); };
+    else if(id==='cx-pbusca') this._cxBuscarProd(true); else if(id==='cx-busca2') this._cxListaCli(); else if(id==='cx-teste') this._cxTestar(); };
 
   // ── Cliente na venda ──
   _cxBuscar=()=>{ const i=this._cxEl('cx-busca'), r=this._cxEl('cx-busca-res'), E=this._cxEsc; if(!i||!r) return; const q=i.value.trim().toLowerCase();
@@ -6988,8 +7061,13 @@ class Component extends DCLogic {
     if(a==='aba') return this._cxAba(el.dataset.aba);
     if(a==='sair') return this.fecharCaixa();
     if(a==='tecla') return this._cxTeclaVirtual(el.dataset.k);
-    if(a==='avulso') return this._cxAvulso(el.dataset.n);
-    if(a==='nome-limpa'){ this._cxNomeLimpa(); this._cxFoco(); return; }
+    if(a==='prodk') return this._cxPExec(Number(el.dataset.k));
+    if(a==='prodnovo'){ const b=this._cxEl('cx-pbusca'); return this._cxProdForm(null,b?this._cxCap(b.value):''); }
+    if(a==='prodedit') return this._cxProdForm(el.dataset.id);
+    if(a==='prodfechar'){ this._cxProdFechar(); this._cxFoco(); return; }
+    if(a==='prodexcluir') return this._cxExcluirProd(el.dataset.id);
+    if(a==='salvarprod') return this._cxSalvarProd(el,!!(sub&&sub.dataset.lancar));
+    if(a==='pendx'){ cx.pend=null; this._cxPrev(); this._cxFoco(); return; }
     if(a==='rapido'){ const it=(this.state.balcaoItems||[]).find(x=>String(x.id)===el.dataset.id); if(it){ this._cxAdd({desc:it.name,valor:Number(it.price)||0,qtd:1,codigo:null}); this._cxBip(true); } return; }
     if(a==='mais'||a==='menos'){ const x=cx.itens[Number(el.dataset.i)]; if(!x) return; x.qtd+=a==='mais'?1:-1; if(x.qtd<1) cx.itens.splice(Number(el.dataset.i),1); this._cxAtualizar(); this._cxFoco(); return; }
     if(a==='tirar') return this._cxTirar(Number(el.dataset.i));
