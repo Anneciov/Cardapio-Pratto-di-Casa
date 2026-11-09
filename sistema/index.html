@@ -6680,6 +6680,22 @@ class Component extends DCLogic {
     '.cx-total{padding-top:8px;padding-bottom:8px}.cx-tot-ic{width:36px;height:36px}',
     '@media (max-width:1280px){.cx-pgrid .cx-pagbt kbd{display:none}.cx-pgrid .cx-pagbt{gap:7px;padding-right:6px}}',
     '@media (max-width:560px){.cx-pgrid,.cx-pgrid[class]{grid-template-columns:repeat(2,minmax(0,1fr))}}',
+    '/* compacto 2: cliente numa linha, total e cobrar baixos */',
+    '.cx-cli:not(.sel){display:flex;align-items:center;gap:10px;padding:8px 10px}.cx-cli:not(.sel) .cx-cli-h{margin:0;flex-shrink:0}.cx-cli:not(.sel) .cx-opc{display:none}',
+    '.cx-cli:not(.sel) .cx-busca-w{flex:1;min-width:0;margin:0}',
+    '.cx-cbusca .cx-campo{min-height:36px;padding-top:5px;padding-bottom:5px}.cx-cnovo{min-height:36px}',
+    '.cx-cli.sel{padding:8px 12px}',
+    '.cx-cupom{padding:8px 12px}.cx-cupom-top{margin-bottom:4px}.cx-limpar{min-height:28px}',
+    '.cx-item{padding:4px 8px}.cx-qbt button{width:26px;height:26px}.cx-desc b{font-size:13.5px}',
+    '.cx-total{gap:10px;padding:6px 14px 6px 16px}.cx-total::before{top:10px;bottom:10px}',
+    '.cx-tot-ic{width:30px;height:30px;border-radius:9px}.cx-tot-ic svg{width:17px;height:17px}',
+    '.cx-tot-tx{flex-direction:row;align-items:baseline;gap:10px}.cx-total .cx-tot-tx span{font-size:13.5px}.cx-tot-tx small{font-size:12px}',
+    '.cx-total b.cx-tot-v{font-size:clamp(22px,3.4vh,28px)}',
+    '.cx-pags{padding:8px 10px}.cx-pag-h .cx-hic{width:24px;height:24px}',
+    '.cx-pgrid,.cx-pgrid[class]{gap:5px;margin-top:6px}',
+    '.cx-pgrid .cx-pagbt,.cx-pgrid .cx-pagbt.conta{min-height:36px;padding:3px 8px 3px 4px;gap:7px;font-size:12.5px;border-radius:10px}',
+    '.cx-pgrid .cx-pagbt svg{width:26px;height:26px;padding:5px;border-radius:7px}',
+    '.cx-pgrid .cx-pagbt.conta small{display:none}',
     '@media (prefers-reduced-motion:reduce){.cx-ov *{transition:none!important;animation:none!important}}'
   ].join('');
   /* ============ CAIXA (PDV): venda paga na hora ou lançada na conta do cliente; lê a comanda da balança (EAN-13) ============ */
