@@ -3355,10 +3355,10 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
             <div>Nº</div><div>Data</div><div>Cliente</div><div style="text-align:right">Total</div><div>Pagamento</div><div>Status</div>
           </div>
           <sc-for list="{{ orderRows }}" as="o" hint-placeholder-count="6">
-            <div class="pedido-linha" onclick="{{ o.onOpen }}" title="Ver itens do pedido" style="display:grid;grid-template-columns:.7fr .7fr 2fr 1fr 1fr 1.5fr;gap:12px;padding:6px 18px;min-height:40px;border-top:1px solid var(--border-soft);align-items:center;cursor:pointer">
+            <div class="pedido-linha" onclick="{{ o.onOpen }}" title="Ver itens do pedido" style="display:grid;grid-template-columns:.7fr .9fr 2fr 1fr 1fr 1.5fr;gap:12px;padding:2px 18px;min-height:34px;border-top:1px solid var(--border-soft);align-items:center;cursor:pointer">
               <div style="font-family:'Space Mono',monospace;font-size:13px;color:#9a9084">{{ o.id }}</div>
-              <div style="font-family:'Space Mono',monospace;font-size:13px;color:#9a9084">{{ o.date }}</div>
-              <div style="min-width:0;display:flex;align-items:baseline;gap:8px;white-space:nowrap"><span style="font-weight:500;font-size:14px;overflow:hidden;text-overflow:ellipsis">{{ o.clientName }}</span><span class="pedido-ver" style="font-size:11.5px;color:#9a9084;flex-shrink:0">{{ o.qtdItensLabel }} <span class="pedido-ver-seta">· ver detalhes →</span></span></div>
+              <div style="font-family:'Space Mono',monospace;font-size:12.5px;color:#9a9084;white-space:nowrap">{{ o.dataHora }}</div>
+              <div style="min-width:0;display:flex;align-items:baseline;gap:8px;white-space:nowrap"><span style="font-weight:500;font-size:14px;overflow:hidden;text-overflow:ellipsis">{{ o.clientName }}</span><sc-if value="{{ o.temOrigem }}" hint-placeholder-val="{{ false }}"><span style="{{ o.origemStyle }}">{{ o.origemLabel }}</span></sc-if><span class="pedido-ver" style="font-size:11.5px;color:#9a9084;flex-shrink:0">{{ o.qtdItensLabel }} <span class="pedido-ver-seta">· ver detalhes →</span></span></div>
               <div style="text-align:right;font-family:'Space Mono',monospace;font-size:14px">{{ o.totalFmt }}</div>
               <div><span style="{{ o.payStyle }}">{{ o.paymentLabel }}</span></div>
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="{{ o.statusStyle }}">{{ o.statusLabel }}</span><sc-if value="{{ o.isOpen }}" hint-placeholder-val="{{ false }}"><button onclick="{{ o.onDone }}" style="background:none;border:1px solid var(--border-input);border-radius:7px;padding:4px 9px;font-size:11px;cursor:pointer;color:#5f574d">Concluir</button></sc-if><sc-if value="{{ o.isReady }}" hint-placeholder-val="{{ false }}"><button onclick="{{ o.onDispatch }}" style="background:#26658C;color:#fff;border:none;border-radius:7px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap">Enviar ao motoboy</button></sc-if><button onclick="{{ o.onPrint }}" title="Imprimir" style="background:none;border:1px solid var(--border-input);border-radius:7px;padding:4px 7px;cursor:pointer;color:#5f574d;display:flex;align-items:center"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7 M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2 M6 14h12v8H6z"></path></svg></button></div>
@@ -4107,21 +4107,29 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   <!-- DETALHES DO PEDIDO -->
   <sc-if value="{{ pedidoAberto }}" hint-placeholder-val="{{ false }}">
     <div onclick="{{ fecharPedido }}" style="position:fixed;inset:0;background:rgba(10,18,30,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:55;padding:24px;animation:dcFadeIn .18s ease both">
-      <div onclick="{{ stop }}" role="dialog" aria-label="Detalhes do pedido" style="background:var(--bg-header);border:1px solid var(--border-card);border-radius:18px;width:100%;max-width:460px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;animation:slidein .25s ease both;box-shadow:0 4px 12px rgba(0,0,0,.15),0 32px 70px -12px rgba(0,0,0,.5)">
+      <div onclick="{{ stop }}" role="dialog" aria-label="Detalhes do pedido" style="background:var(--bg-header);border:1px solid var(--border-card);border-radius:18px;width:100%;max-width:540px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;animation:slidein .25s ease both;box-shadow:0 4px 12px rgba(0,0,0,.15),0 32px 70px -12px rgba(0,0,0,.5)">
         <div style="padding:18px 20px 16px 22px;border-bottom:1px solid var(--border-card);display:flex;align-items:flex-start;gap:12px">
           <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#2f7a9e,#26658C);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="19" height="19" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6a1 1 0 011 1v1H8V5a1 1 0 011-1z M8 6H6a1 1 0 00-1 1v13a1 1 0 001 1h12a1 1 0 001-1V7a1 1 0 00-1-1h-2 M9 12h6 M9 16h4"></path></svg></div>
           <div style="flex:1;min-width:0">
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-weight:700;font-size:17px">Pedido {{ pedDet.id }}</span><span style="{{ pedDet.statusStyle }}">{{ pedDet.statusLabel }}</span></div>
-            <div style="font-size:13px;color:#9a9084;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ pedDet.clientName }} · {{ pedDet.date }}</div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-weight:700;font-size:17px">Pedido {{ pedDet.id }}</span><span style="{{ pedDet.statusStyle }}">{{ pedDet.statusLabel }}</span><sc-if value="{{ pedDet.temOrigem }}" hint-placeholder-val="{{ false }}"><span style="{{ pedDet.origemStyle }}">{{ pedDet.origemLabel }}</span></sc-if></div>
+            <div style="font-size:13px;color:#9a9084;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ pedDet.clientName }} · {{ pedDet.dataHora }}</div>
           </div>
           <button onclick="{{ fecharPedido }}" title="Fechar" class="modal-close fx-btn" style="background:none;border:none;font-size:20px;cursor:pointer;color:#847a6e;line-height:1;padding:6px;border-radius:9px;display:flex"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12 M18 6L6 18"></path></svg></button>
         </div>
         <div style="padding:16px 22px 6px;overflow:auto;flex:1;min-height:0">
+          <sc-if value="{{ pedDet.temContato }}" hint-placeholder-val="{{ false }}"><div style="margin-bottom:14px;padding:4px 14px;border:1px solid var(--border-card);border-radius:12px;background:rgba(255,255,255,.02)">
+            <sc-if value="{{ pedDet.temTelefone }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.45;padding:7px 0;border-bottom:1px dashed var(--border-card)"><span style="font-size:11px;font-weight:700;color:#847a6e;text-transform:uppercase;letter-spacing:.06em;min-width:82px;padding-top:2px">WhatsApp</span><a href="{{ pedDet.waLink }}" target="_blank" rel="noopener" style="color:#4ade80;font-weight:600;text-decoration:none">{{ pedDet.telefoneFmt }} ↗</a></div></sc-if>
+            <sc-if value="{{ pedDet.temEndereco }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.45;padding:7px 0;border-bottom:1px dashed var(--border-card)"><span style="font-size:11px;font-weight:700;color:#847a6e;text-transform:uppercase;letter-spacing:.06em;min-width:82px;padding-top:2px">Entrega</span><span>{{ pedDet.endereco }}</span></div></sc-if>
+            <sc-if value="{{ pedDet.temConvDet }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.45;padding:7px 0;border-bottom:1px dashed var(--border-card)"><span style="font-size:11px;font-weight:700;color:#847a6e;text-transform:uppercase;letter-spacing:.06em;min-width:82px;padding-top:2px">Convênio</span><span>{{ pedDet.convenioDet }}</span></div></sc-if>
+            <sc-if value="{{ pedDet.temPagDet }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.45;padding:7px 0;border-bottom:1px dashed var(--border-card)"><span style="font-size:11px;font-weight:700;color:#847a6e;text-transform:uppercase;letter-spacing:.06em;min-width:82px;padding-top:2px">Pagamento</span><span>{{ pedDet.pagamentoDet }}</span></div></sc-if>
+            <sc-if value="{{ pedDet.temTaxaDet }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.45;padding:7px 0;border-bottom:1px dashed var(--border-card)"><span style="font-size:11px;font-weight:700;color:#847a6e;text-transform:uppercase;letter-spacing:.06em;min-width:82px;padding-top:2px">Taxa</span><span>{{ pedDet.taxaDet }}</span></div></sc-if>
+            <sc-if value="{{ pedDet.temObs }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.45;padding:7px 0;border-bottom:1px dashed var(--border-card);border-bottom:none"><span style="font-size:11px;font-weight:700;color:#847a6e;text-transform:uppercase;letter-spacing:.06em;min-width:82px;padding-top:2px">Observação</span><span style="color:#fbbf24">{{ pedDet.obsCliente }}</span></div></sc-if>
+          </div></sc-if>
           <div style="font-size:11.5px;font-weight:600;color:#847a6e;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Itens · {{ pedDet.qtdItensLabel }}</div>
           <sc-for list="{{ pedDet.itensLista }}" as="it" hint-placeholder-count="3">
             <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px dashed var(--border-card)">
               <span style="min-width:34px;text-align:center;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#fff;background:#26658C;border-radius:8px;padding:3px 6px;flex-shrink:0">{{ it.qtd }}×</span>
-              <span style="font-size:14px;line-height:1.4;padding-top:2px">{{ it.desc }}</span>
+              <span style="flex:1;font-size:14px;line-height:1.4;padding-top:2px">{{ it.desc }}</span><span style="font-family:'Space Mono',monospace;font-size:13px;color:#b3d6de;padding-top:3px;white-space:nowrap">{{ it.valorFmt }}</span>
             </div>
           </sc-for>
           <sc-if value="{{ pedDet.semItens }}" hint-placeholder-val="{{ false }}"><div style="padding:14px 0;color:#9a9084;font-size:13.5px">Nenhum item registrado neste pedido.</div></sc-if>
@@ -5175,6 +5183,9 @@ class Component extends DCLogic {
       this.setState({ waPendentes: pend, waEmAndamento: json.emAndamento || [], waConcluidos: json.concluidos || [] });
     } catch (e) { console.error('[whatsapp] falha ao buscar pedidos', e); }
   };
+  // quem pode ver Dashboard, Financeiro e Motoboys (coluna admin em rest_staff)
+  carregarPermissao = async () => { try { const { data: u } = await sb.auth.getUser(); const uid = u && u.user && u.user.id; if (!uid) return;
+    const { data, error } = await sb.from('rest_staff').select('admin').eq('user_id', uid).maybeSingle(); this.setState({ ehAdmin: !error && !!(data && data.admin), permOk: true }); } catch (e) { this.setState({ ehAdmin: false, permOk: true }); } };
   decidirPedidoWhatsapp = async (id, acao) => {
     if(this._demo){
       if(acao==='pronto'){ this.setState(s=>({ waEmAndamento:s.waEmAndamento.map(x=>x.id===id?{...x,pronto:true}:x) })); this.showToast('Prato marcado como pronto!'); return; }
@@ -5759,6 +5770,7 @@ class Component extends DCLogic {
 
   /* ================= LOAD ================= */
   loadAll = async () => {
+    this.carregarPermissao();
     // ao entrar no sistema, publica o cardápio do dia para a página dos clientes
     clearTimeout(this._pubT); this._pubT = setTimeout(() => { if (!this.state.arte) this.setState({ arte: this.arteDados() }); setTimeout(this.publicarCardapio, 300); }, 2500);
     // outro aparelho mudou o cardápio? confere a cada 45 s e quando a janela volta ao foco
@@ -5850,7 +5862,7 @@ class Component extends DCLogic {
 
   loadPedidos = async () => {
     const { data, error } = await sb.from('rest_pedidos')
-      .select('id,numero_ref,cliente_id,empresa_id,forma_pagamento,status,total,data,origem,nome_cliente,telefone_contato,endereco_entrega,observacoes,pronto,motoboy_id,rest_motoboys(nome),rest_pedido_itens(descricao,quantidade)')
+      .select('id,numero_ref,cliente_id,empresa_id,forma_pagamento,status,total,data,origem,nome_cliente,telefone_contato,endereco_entrega,observacoes,created_at,pronto,motoboy_id,rest_motoboys(nome),rest_pedido_itens(descricao,quantidade,valor_total)')
       .order('created_at', { ascending: false }).limit(200);
     if (error) { console.error(error); return; }
     const today = this.todayISO();
@@ -5863,7 +5875,9 @@ class Component extends DCLogic {
       pronto: !!o.pronto,
       motoboyId: o.motoboy_id || null,
       motoboyName: o.rest_motoboys ? o.rest_motoboys.nome : null,
-      items: ((o.rest_pedido_itens||[]).map(i=>i.quantidade+'x '+i.descricao).join(', ') || '—') + ((o.origem==='whatsapp'||o.origem==='site') ? ' — ' + ['📍 '+(o.endereco_entrega||'sem endereço'), o.telefone_contato?'📞 '+o.telefone_contato:'', o.observacoes||''].filter(Boolean).join(' · ') : ''),
+      items: (o.rest_pedido_itens||[]).map(i=>i.quantidade+'x '+i.descricao).join(', ') || '—',
+      origem: o.origem || 'manual', telefone: o.telefone_contato || '', endereco: o.endereco_entrega || '', obsRaw: o.observacoes || '', criado: o.created_at || '',
+      itensDet: (o.rest_pedido_itens||[]).map(i=>({ q:Number(i.quantidade)||0, d:i.descricao, v:Number(i.valor_total)||0 })),
       total: Number(o.total) || 0,
       payment: o.forma_pagamento || 'dinheiro',
       status: o.status === 'entregue' ? 'entregue' : 'aberto',
@@ -7248,6 +7262,9 @@ class Component extends DCLogic {
       });
     }
     // Caixa (PDV): logo abaixo do Dashboard
+    const ehAdmin=!!(this._demo||s.ehAdmin), RESTRITO=['dashboard','lancamento','historico','motoboys'];
+    if(!ehAdmin){ navItems=navItems.filter(n=>!RESTRITO.includes(n.id)&&n.id!=='financeiro');
+      if(s.permOk&&RESTRITO.includes(s.view)&&!this._redirPerm){ this._redirPerm=true; setTimeout(()=>{ this._redirPerm=false; this.setState({view:'pedidos'}); },0); } }
     { const ci=navItems.findIndex(n=>n.id==='dashboard'); navItems.splice(ci+1,0,{ id:'caixa', label:'Caixa', iconPath:'M3 10h18v10H3z M6 10V5h12v5 M7 14h2 M11 14h2 M15 14h2 M7 17h10', iconCor:'color:#2dd4bf', showIcon:true, isGroup:false, chevronPath:'', badge:null, onClick:()=>this.abrirCaixa(),
       style:'display:flex;align-items:center;gap:11px;padding:'+(collapsed?'11px 0':'10px 14px')+';justify-content:'+(collapsed?'center':'flex-start')+';border-radius:9px;cursor:pointer;font-size:14px;font-weight:600;color:#fff;background:linear-gradient(135deg,rgba(45,212,191,.22),rgba(38,101,140,.25));border:1px solid rgba(45,212,191,.35);margin:2px 0' }); }
     // Nota Fiscal (NFC-e): só no computador do balcão (sistema instalado)
@@ -7255,7 +7272,19 @@ class Component extends DCLogic {
       style:'display:flex;align-items:center;gap:11px;padding:'+(collapsed?'11px 0':'10px 14px')+';justify-content:'+(collapsed?'center':'flex-start')+';border-radius:9px;cursor:pointer;font-size:14px;font-weight:500;color:#b3d6de;background:transparent;margin-top:6px;border-top:1px solid rgba(167,235,242,.12)' });
 
 const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo','fde6d3;color:#b5701e'],pronto:['Pronto','e3f3e9;color:#2f8f57'],aguardando_motoboy:['Aguardando motoboy','fdf2dc;color:#a9791a'],em_rota:['Em rota','e7eef7;color:#26658C'],entregue:['Entregue','eef1ec;color:#3f7d5c']};
-    const mkOrderRow=(o)=>{ const flow=o.status==='entregue'?'entregue':(o.motoboyId?'em_rota':(o.pronto?'pronto':'aberto')); const fl=FLOW[flow]||FLOW.aberto; return {id:o.id,date:o.date,clientName:o.waClient||(this.clientName(o.clientId)!=='—'?this.clientName(o.clientId):this.clientName(o.empresaId)),items:o.items,totalFmt:brl(o.total),paymentLabel:this.payLabel(o.payment),payStyle:this.payStyle(o.payment),statusLabel:o.motoboyId?(fl[0]+' · '+o.motoboyName):fl[0],statusStyle:'display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:#'+fl[1],isOpen:flow==='aberto',isReady:flow==='pronto',onDone:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.concludeOrder(o.dbId); },onDispatch:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.setState({pedidoDetalhe:null}); this.openDispatchModal(o.dbId); },onPrint:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.openPrint(o); },onOpen:()=>this.setState({pedidoDetalhe:o.dbId}),...(()=>{ const itensLista=(o.items&&o.items!=='—'?o.items.split(/, (?=\d+x )/):[]).map(x=>{ const m=/^(\d+)x (.*)$/.exec(x.trim()); return m?{qtd:m[1],desc:m[2]}:{qtd:'1',desc:x.trim()}; }); const n=itensLista.reduce((a,i)=>a+(Number(i.qtd)||0),0); return { itensLista, semItens:itensLista.length===0, qtdItensLabel:n===0?'sem itens':(n===1?'1 item':n+' itens') }; })()}; };
+    const mkOrderRow0=(o)=>{ const flow=o.status==='entregue'?'entregue':(o.motoboyId?'em_rota':(o.pronto?'pronto':'aberto')); const fl=FLOW[flow]||FLOW.aberto; return {id:o.id,date:o.date,clientName:o.waClient||(this.clientName(o.clientId)!=='—'?this.clientName(o.clientId):this.clientName(o.empresaId)),items:o.items,totalFmt:brl(o.total),paymentLabel:this.payLabel(o.payment),payStyle:this.payStyle(o.payment),statusLabel:o.motoboyId?(fl[0]+' · '+o.motoboyName):fl[0],statusStyle:'display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:#'+fl[1],isOpen:flow==='aberto',isReady:flow==='pronto',onDone:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.concludeOrder(o.dbId); },onDispatch:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.setState({pedidoDetalhe:null}); this.openDispatchModal(o.dbId); },onPrint:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.openPrint(o); },onOpen:()=>this.setState({pedidoDetalhe:o.dbId}),...(()=>{ const itensLista=(o.items&&o.items!=='—'?o.items.split(/, (?=\d+x )/):[]).map(x=>{ const m=/^(\d+)x (.*)$/.exec(x.trim()); return m?{qtd:m[1],desc:m[2]}:{qtd:'1',desc:x.trim()}; }); const n=itensLista.reduce((a,i)=>a+(Number(i.qtd)||0),0); return { itensLista, semItens:itensLista.length===0, qtdItensLabel:n===0?'sem itens':(n===1?'1 item':n+' itens') }; })()}; };
+    // Pedidos: hora, origem (Online / WhatsApp / Balcão) e detalhes do cliente para a lista e o modal
+    const ORIG={site:['Online','background:rgba(255,122,26,.16);color:#ffa94d'],whatsapp:['WhatsApp','background:rgba(37,211,102,.16);color:#4ade80'],balcao:['Balcão','background:rgba(84,172,191,.16);color:#7fd0df']};
+    const mkOrderRow=(o)=>{ const r=mkOrderRow0(o); const cr=o.criado?new Date(o.criado):null; const hora=cr&&!isNaN(cr)?cr.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):''; const og=ORIG[o.origem]||null;
+      const ob=String(o.obsRaw||''); const pega=(rot)=>{ const i=ob.indexOf(rot+':'); if(i<0) return ''; const rest=ob.slice(i+rot.length+1); const c=rest.search(/ · (Pagamento|Taxa de entrega|Convênio):/); return (c>=0?rest.slice(0,c):rest).trim(); };
+      const ini=ob.search(/(^| · )(Pagamento|Taxa de entrega|Convênio):/); const obsCli=(ini<0?ob:ob.slice(0,ini)).trim();
+      const tel=String(o.telefone||'').replace(/\D/g,''); const t2=tel.length>11&&tel.indexOf('55')===0?tel.slice(2):tel; const telFmt=t2.length>=10?'('+t2.slice(0,2)+') '+t2.slice(2,-4)+'-'+t2.slice(-4):tel;
+      const itensDet=(o.itensDet||[]).map(i=>({qtd:String(i.q), desc:i.d, valorFmt:i.v?brl(i.v):''}));
+      const pg=pega('Pagamento'), tx=pega('Taxa de entrega'), cv=pega('Convênio');
+      return {...r, hora, dataHora:(o.date||'')+(hora?' · '+hora:''), temOrigem:!!og, origemLabel:og?og[0]:'', origemStyle:'display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.02em;flex-shrink:0;'+(og?og[1]:''),
+        telefoneFmt:telFmt, temTelefone:!!tel, waLink:tel?'https://wa.me/'+(t2.length<=11?'55'+t2:tel):'', endereco:o.endereco||'', temEndereco:!!o.endereco&&!/^Convênio:/.test(o.endereco),
+        pagamentoDet:pg, temPagDet:!!pg, taxaDet:tx, temTaxaDet:!!tx, convenioDet:cv, temConvDet:!!cv, obsCliente:obsCli, temObs:!!obsCli,
+        temContato:!!tel||!!o.endereco||!!cv, itensLista:itensDet.length?itensDet:(r.itensLista||[]).map(x=>({...x,valorFmt:''})) }; };
     const waPendentesRows=(s.waPendentes||[]).map(p=>({
       id:p.id,
       clientName:this.waNameOf(p),
@@ -7966,8 +7995,8 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       pageTitle:titles[s.view]?titles[s.view][0]:'', pageSub:titles[s.view]?titles[s.view][1]:'',
       hasAction:!!act, actionLabel:act?act[0]:'', primaryAction:act?()=>this.openModal(act[1]):null,
       isWhatsapp:s.view==='whatsapp', ...this.waRenderVals(s),
-      isDashboard:s.view==='dashboard', isClientes:s.view==='clientes', isEmpresas:s.view==='empresas', isLancamento:s.view==='lancamento', isPedidos:s.view==='pedidos',
-      isCrediario:s.view==='crediario', isEntregas:s.view==='entregas', isMotoboys:s.view==='motoboys', isEstoque:s.view==='estoque', isHistorico:s.view==='historico', isCozinha:s.view==='cozinha', isCardapio:s.view==='cardapio', isDoacoes:s.view==='doacoes',
+      isDashboard:s.view==='dashboard'&&ehAdmin, isClientes:s.view==='clientes', isEmpresas:s.view==='empresas', isLancamento:s.view==='lancamento'&&ehAdmin, isPedidos:s.view==='pedidos',
+      isCrediario:s.view==='crediario', isEntregas:s.view==='entregas', isMotoboys:s.view==='motoboys'&&ehAdmin, isEstoque:s.view==='estoque', isHistorico:s.view==='historico'&&ehAdmin, isCozinha:s.view==='cozinha', isCardapio:s.view==='cardapio', isDoacoes:s.view==='doacoes',
       balcaoCards, launchRows, totalBalcaoHojeFmt:brl(totalBalcaoHoje), balcaoCountHoje:todayBalcao.length, pessoasHoje,
       empresaCards, empresasCount:empresas.length, funcVinculadosCount:s.clients.filter(c=>c.type==='Funcionario'&&c.company).length, saldoEmpresasFmt:brl(empresas.reduce((a,e)=>a+e.balance,0)), noEmpresas:empresas.length===0,
       funcEmpresaName:s.selectedCompany||'',
