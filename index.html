@@ -514,6 +514,7 @@ const TAMANHO = { P:'Pequena', M:'Média', G:'Grande', F:'Fitness' };
 // ---------- Banner (cartaz) do topo: passa pelos pratos do dia que têm foto ----------
 let WA = '';
 const linkWA = (txt) => WA ? 'https://wa.me/' + WA + '?text=' + encodeURIComponent(txt) : '#';
+const linkWAvazio = () => WA ? 'https://wa.me/' + WA : '#'; // só abre a conversa, sem texto
 const SVG = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const ICONES = {
   hora: SVG('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
@@ -1063,8 +1064,8 @@ function mostrarOk(ref, urlWa, pix, total) {
   const el = document.getElementById('ped-ok');
   el.innerHTML = `<div class="ok-cx"><div class="ok-ico">${ICO_OK}</div><h3>Pedido enviado!</h3><p class="ok-ref">Nº <b>${esc(ref)}</b></p>
     <p>Seu pedido já chegou no Pratto di Casa. Total: <b>${reais(total)}</b>.</p>
-    ${pix ? `<div class="ok-aviso" role="note"><b>Atenção:</b> mande o <b>comprovante do PIX</b> no WhatsApp para confirmar o pedido.<a href="${esc(urlWa)}" target="_blank" rel="noopener">Abrir WhatsApp →</a></div>`
-      : `<a class="ok-link" href="${esc(urlWa)}" target="_blank" rel="noopener">Falar com o restaurante no WhatsApp (opcional)</a>`}
+    ${pix ? `<div class="ok-aviso" role="note"><b>Atenção:</b> mande o <b>comprovante do PIX</b> no WhatsApp para confirmar o pedido.<a href="${esc(linkWAvazio())}" target="_blank" rel="noopener">Abrir WhatsApp →</a></div>`
+      : `<a class="ok-link" href="${esc(linkWAvazio())}" target="_blank" rel="noopener">Falar com o restaurante no WhatsApp (opcional)</a>`}
     <button type="button" class="ok-fechar" data-fechar>Fechar</button></div>`;
   el.hidden = false; el.scrollTop = 0;
 }

@@ -2645,6 +2645,26 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   .cdp-card:hover .cdp-img{transform:translateX(-50%) scale(1.07) rotate(-6deg)}
   .cdp-addfoto:hover{color:#54ACBF!important;border-color:#54ACBF!important}
   @media (prefers-reduced-motion:reduce){.cdp-card,.cdp-card .cdp-img,.cdp-bolha{transition:none}}
+  .lp-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:22px;align-items:start}
+  @media (max-width:880px){.lp-grid{grid-template-columns:1fr}}
+  .lp-h{font-size:12px;font-weight:700;color:#8fb7c4;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}.lp-h span{font-weight:500;text-transform:none;letter-spacing:0;color:#7d8f99;margin-left:6px}
+  .lp-h em{font-style:normal;font-weight:600;text-transform:none;letter-spacing:0;color:#9fb3bb;margin-left:6px;font-size:11.5px;background:rgba(255,255,255,.07);padding:2px 9px;border-radius:20px}
+  .lp-cat{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .lp-card{position:relative;border:1px solid var(--border-card);border-radius:16px;background:var(--bg-card);padding:12px;display:flex;flex-direction:column;gap:10px;transition:border-color .15s ease,transform .15s ease,box-shadow .15s ease}
+  .lp-card:hover{border-color:rgba(84,172,191,.55);transform:translateY(-2px);box-shadow:0 14px 26px -18px rgba(0,0,0,.7)}
+  .lp-topo{display:flex;align-items:center;gap:10px;background:none;border:none;padding:0;cursor:pointer;text-align:left;color:var(--text-primary);font-family:inherit;min-height:52px}
+  .lp-ico{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;flex-shrink:0;color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+  .lp-nome{font-size:14.5px;font-weight:700;line-height:1.25}
+  .lp-badge{position:absolute;top:-9px;right:-9px;min-width:28px;height:28px;padding:0 8px;border-radius:14px;background:#2f8f57;color:#fff;font:700 13px 'Space Mono',monospace;display:grid;place-items:center;box-shadow:0 0 0 3px var(--bg-header)}
+  .lp-preco{display:flex;align-items:center;border:1px solid var(--border-input);border-radius:11px;background:var(--bg-page);overflow:hidden}.lp-preco>span{padding:0 2px 0 11px;color:#8a9aa3;font:13px 'Space Mono',monospace}
+  .lp-add{height:42px;border:none;border-radius:11px;background:#26658C;color:#fff;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit;transition:filter .15s ease,transform .08s ease}.lp-add:hover{filter:brightness(1.15)}.lp-add:active{transform:scale(.97)}
+  .lp-lado{position:sticky;top:0;background:rgba(255,255,255,.025);border:1px solid var(--border-card);border-radius:18px;padding:16px}
+  .lp-q{width:34px;height:34px;border-radius:10px;border:1px solid var(--border-input);background:var(--bg-card);color:var(--text-primary);font-size:17px;cursor:pointer;line-height:1}.lp-q:hover{border-color:#54ACBF}
+  .lp-vazio{border:1px dashed var(--border-input);border-radius:14px;padding:22px 16px;text-align:center;color:#9a9084;font-size:13px;margin-bottom:14px;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .lp-pags{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+  .lp-enviar{width:100%;height:56px;border:none;border-radius:14px;background:linear-gradient(135deg,#34a46a,#25623f);color:#fff;font:700 16px inherit;cursor:pointer;box-shadow:0 12px 24px -12px rgba(52,164,106,.8);transition:filter .15s ease}.lp-enviar:hover{filter:brightness(1.08)}
+  .lp-drop:hover{background:var(--bg-accent-soft)}
+  .lp-topo:focus-visible,.lp-add:focus-visible,.lp-q:focus-visible,.lp-enviar:focus-visible{outline:2px solid #A7EBF2;outline-offset:2px}
   .pedido-linha{transition:background .15s ease}
   .pedido-linha:hover{background:var(--bg-accent-soft)}
   .pedido-linha .pedido-ver-seta{opacity:0;transition:opacity .15s ease}
@@ -4150,7 +4170,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   <!-- MODAL -->
   <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
     <div onclick="{{ closeModal }}" style="position:fixed;inset:0;background:rgba(28,24,20,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:50;padding:24px">
-      <div onclick="{{ stop }}" style="background:var(--bg-header);border-radius:18px;width:100%;max-width:520px;max-height:90vh;overflow:auto;animation:slidein .25s ease both;box-shadow:0 4px 12px rgba(0,0,0,.15), 0 32px 70px -12px rgba(0,0,0,.5)">
+      <div onclick="{{ stop }}" style="background:var(--bg-header);border-radius:18px;width:100%;max-width:{{ modalMaxW }};max-height:92vh;overflow:auto;animation:slidein .25s ease both;box-shadow:0 4px 12px rgba(0,0,0,.15), 0 32px 70px -12px rgba(0,0,0,.5)">
         <div style="padding:20px 22px 20px 26px;border-bottom:1px solid var(--border-card);display:flex;align-items:center"><div style="font-weight:600;font-size:17px">{{ modalTitle }}</div><button onclick="{{ closeModal }}" class="modal-close fx-btn" style="margin-left:auto;background:none;border:none;font-size:20px;cursor:pointer;color:#847a6e;line-height:1;padding:6px;border-radius:9px;display:flex">×</button></div>
         <div style="padding:24px 26px">
 
@@ -4375,82 +4395,73 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           </sc-if>
 
           <sc-if value="{{ isOrderForm }}" hint-placeholder-val="{{ false }}">
-            <div>
-              <label style="{{ lbl }}">Cliente — busque por nome</label>
-              <sc-if value="{{ orderClientPicked }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;align-items:center;gap:10px;border:1px solid #26658C;border-radius:9px;padding:11px 14px;margin-bottom:14px;background:var(--bg-accent-soft)">
-                  <div style="flex:1"><div style="font-weight:600;font-size:14px">{{ orderPickedName }}</div><div style="font-size:12px;color:#5f574d">{{ orderPickedType }}</div></div>
-                  <button onclick="{{ clearOrderClient }}" style="background:none;border:1px solid var(--border-input);border-radius:8px;padding:6px 11px;font-size:12px;cursor:pointer;color:#5f574d">Trocar</button>
-                </div>
-              </sc-if>
-              <sc-if value="{{ orderHasClientOrders }}" hint-placeholder-val="{{ false }}">
-                <div style="margin-bottom:14px;background:var(--bg-card);border:1px solid var(--border-card);border-radius:10px;overflow:hidden">
-                  <div style="padding:9px 14px;background:var(--bg-tablehead);font-size:11.5px;font-weight:600;color:#847a6e;text-transform:uppercase;letter-spacing:.05em">Pedidos de hoje</div>
-                  <sc-for list="{{ orderClientOrders }}" as="oh" hint-placeholder-count="2">
-                    <div style="display:flex;align-items:center;gap:8px;padding:9px 14px;border-top:1px solid var(--border-soft)">
-                      <div style="font-size:12.5px;font-family:'Space Mono',monospace;color:#847a6e;flex-shrink:0">{{ oh.id }}</div>
-                      <div style="flex:1;font-size:12.5px;color:var(--text-primary)">{{ oh.items }}</div>
-                      <div style="font-family:'Space Mono',monospace;font-size:12.5px;font-weight:600;color:#26658C;flex-shrink:0">{{ oh.totalFmt }}</div>
-                      <div style="font-size:11px;color:#847a6e;flex-shrink:0">{{ oh.payLabel }}</div>
+            <div class="lp-grid">
+              <div>
+                <div class="lp-h">Itens <span>toque para adicionar · o preço pode ser trocado</span></div>
+                <div class="lp-cat">
+                  <sc-for list="{{ orderCatalog }}" as="it" hint-placeholder-count="6">
+                    <div class="lp-card">
+                      <button type="button" class="lp-topo" onclick="{{ it.onAdd }}" title="Adicionar"><span class="lp-ico" style="{{ it.iconBg }}"><svg width="26" height="26" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ it.iconPath }}"></path></svg></span><span class="lp-nome">{{ it.label }}</span></button>
+                      <sc-if value="{{ it.temQtd }}" hint-placeholder-val="{{ false }}"><span class="lp-badge" title="Quantidade no pedido">{{ it.qtdNoPedido }}</span></sc-if>
+                      <div class="lp-preco"><span>R$</span><input value="{{ it.price }}" oninput="{{ it.onPrice }}" type="text" inputmode="decimal" data-numpad-label="Preço" style="width:100%;min-width:0;border:none;padding:9px 8px 9px 4px;font-size:15px;font-family:'Space Mono',monospace;outline:none;background:transparent;color:var(--text-primary)"></div>
+                      <button type="button" class="lp-add" onclick="{{ it.onAdd }}">+ Adicionar</button>
                     </div>
                   </sc-for>
                 </div>
-              </sc-if>
-              <sc-if value="{{ orderClientEmpty }}" hint-placeholder-val="{{ true }}">
-                <input value="{{ orderClientSearch }}" oninput="{{ setOrderClientSearch }}" placeholder="Digite o nome do funcionário, empresa ou cliente…" style="{{ inp }}">
-                <sc-if value="{{ showClientDrop }}" hint-placeholder-val="{{ false }}">
-                  <div style="border:1px solid var(--border-input);border-radius:9px;margin-top:-8px;margin-bottom:14px;overflow:hidden;max-height:210px;overflow-y:auto">
-                    <sc-for list="{{ clientDropRows }}" as="c" hint-placeholder-count="3">
-                      <div onclick="{{ c.onPick }}" style="display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;border-bottom:1px solid var(--border-soft)">
-                        <div style="flex:1"><div style="font-weight:600;font-size:13.5px">{{ c.name }}</div><div style="font-size:11.5px;color:#9a9084">{{ c.linkLabel }}</div></div>
-                        <span style="{{ c.typeStyle }}">{{ c.typeLabel }}</span>
-                      </div>
-                    </sc-for>
-                    <sc-if value="{{ noClientDrop }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 14px;font-size:13px;color:#9a9084">Nenhum encontrado. Cadastre em Clientes ou Empresas.</div></sc-if>
+                <div class="lp-h" style="margin-top:18px">Outro item</div>
+                <div style="display:flex;gap:8px">
+                  <input value="{{ orderCustomName }}" oninput="{{ setOrderCustomName }}" placeholder="Nome do item…" style="flex:1.4;min-width:0;padding:12px 13px;border:1px solid var(--border-input);border-radius:12px;font-size:14px;background:var(--bg-card);color:var(--text-primary)">
+                  <div class="lp-preco" style="flex:1;min-width:0;background:var(--bg-card)"><span>R$</span><input value="{{ orderCustomPrice }}" oninput="{{ setOrderCustomPrice }}" type="text" inputmode="decimal" data-numpad-label="Valor do item" placeholder="0,00" style="flex:1;min-width:0;border:none;padding:12px 10px 12px 4px;font-size:14px;font-family:'Space Mono',monospace;outline:none;background:transparent;color:var(--text-primary)"></div>
+                  <button type="button" onclick="{{ addCustomOrderItem }}" class="lp-add" style="padding:0 18px;height:auto">Adicionar</button>
+                </div>
+              </div>
+              <div class="lp-lado">
+                <div class="lp-h">Cliente <em>opcional</em></div>
+                <sc-if value="{{ orderClientPicked }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;align-items:center;gap:10px;border:1px solid #26658C;border-radius:12px;padding:11px 14px;margin-bottom:14px;background:var(--bg-accent-soft)">
+                    <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:14.5px">{{ orderPickedName }}</div><div style="font-size:12px;color:#8fb7c4">{{ orderPickedType }}</div></div>
+                    <button type="button" onclick="{{ clearOrderClient }}" style="background:none;border:1px solid var(--border-input);border-radius:9px;padding:7px 12px;font-size:12.5px;cursor:pointer;color:var(--text-primary)">Trocar</button>
                   </div>
                 </sc-if>
-              </sc-if>
-
-              <label style="{{ lbl }}">Itens — toque para adicionar (valores editáveis)</label>
-              <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px">
-                <sc-for list="{{ orderCatalog }}" as="it" hint-placeholder-count="4">
-                  <div style="border:1px solid var(--border-card);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-                    <div style="font-size:13px;font-weight:600">{{ it.label }}</div>
-                    <div style="display:flex;align-items:center;gap:6px">
-                      <div style="display:flex;align-items:center;flex:1;border:1px solid var(--border-input);border-radius:8px;overflow:hidden;background:var(--bg-card)"><span style="padding:0 2px 0 10px;color:#847a6e;font-family:'Space Mono',monospace;font-size:13px">R$</span><input value="{{ it.price }}" oninput="{{ it.onPrice }}" type="text" inputmode="decimal" data-numpad-label="Preço" style="width:100%;min-width:0;border:none;padding:8px 8px 8px 4px;font-size:14px;font-family:'Space Mono',monospace;outline:none;background:transparent;color:var(--text-primary)"></div>
-                      <button onclick="{{ it.onAdd }}" style="background:#26658C;color:#fff;border:none;border-radius:8px;padding:8px 13px;font-size:13px;font-weight:600;cursor:pointer;flex-shrink:0">+ Add</button>
-                    </div>
+                <sc-if value="{{ orderHasClientOrders }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-bottom:14px;border:1px solid var(--border-card);border-radius:12px;overflow:hidden">
+                    <div style="padding:8px 12px;background:var(--bg-tablehead);font-size:11px;font-weight:700;color:#8fb7c4;text-transform:uppercase;letter-spacing:.06em">Pedidos de hoje</div>
+                    <sc-for list="{{ orderClientOrders }}" as="oh" hint-placeholder-count="2"><div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--border-soft);font-size:12.5px"><span style="font-family:'Space Mono',monospace;color:#847a6e">{{ oh.id }}</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ oh.items }}</span><span style="font-family:'Space Mono',monospace;font-weight:700;color:#7fc4d3">{{ oh.totalFmt }}</span></div></sc-for>
                   </div>
-                </sc-for>
-              </div>
-              <div style="display:flex;gap:8px;margin-bottom:14px">
-                <input value="{{ orderCustomName }}" oninput="{{ setOrderCustomName }}" placeholder="Outro item…" style="flex:1.4;padding:11px 13px;border:1px solid var(--border-input);border-radius:9px;font-size:14px;background:var(--bg-card);color:var(--text-primary)">
-                <div style="display:flex;align-items:center;flex:1;border:1px solid var(--border-input);border-radius:9px;background:var(--bg-card);overflow:hidden"><span style="padding:0 2px 0 12px;color:#847a6e;font-family:'Space Mono',monospace">R$</span><input value="{{ orderCustomPrice }}" oninput="{{ setOrderCustomPrice }}" type="text" inputmode="decimal" data-numpad-label="Valor do item" placeholder="0,00" style="flex:1;border:none;padding:11px 10px 11px 4px;font-size:14px;font-family:'Space Mono',monospace;outline:none;background:transparent;color:var(--text-primary)"></div>
-                <button onclick="{{ addCustomOrderItem }}" style="background:#26658C;color:#fff;border:none;border-radius:9px;padding:0 16px;font-size:14px;font-weight:600;cursor:pointer">Add</button>
-              </div>
-
-              <sc-if value="{{ orderHasItems }}" hint-placeholder-val="{{ false }}">
-                <div style="border:1px solid var(--border-card);border-radius:11px;overflow:hidden;margin-bottom:14px">
-                  <sc-for list="{{ orderItemRows }}" as="r" hint-placeholder-count="2">
-                    <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid var(--border-soft)">
-                      <div style="flex:1;min-width:0"><div style="font-weight:500;font-size:13.5px">{{ r.name }}</div><div style="font-size:11.5px;color:#9a9084;font-family:'Space Mono',monospace">{{ r.unitFmt }} cada</div></div>
-                      <div style="display:flex;align-items:center;gap:6px">
-                        <button onclick="{{ r.onDec }}" style="width:28px;height:28px;border-radius:7px;border:1px solid var(--border-input);background:var(--bg-card);color:#5f574d;font-size:16px;cursor:pointer;line-height:1">−</button>
-                        <span style="min-width:22px;text-align:center;font-family:'Space Mono',monospace;font-weight:700">{{ r.qty }}</span>
-                        <button onclick="{{ r.onInc }}" style="width:28px;height:28px;border-radius:7px;border:1px solid var(--border-input);background:var(--bg-card);color:#5f574d;font-size:16px;cursor:pointer;line-height:1">+</button>
+                </sc-if>
+                <sc-if value="{{ orderClientEmpty }}" hint-placeholder-val="{{ true }}">
+                  <div style="position:relative;margin-bottom:14px"><input value="{{ orderClientSearch }}" oninput="{{ setOrderClientSearch }}" placeholder="Buscar funcionário, empresa ou cliente…" style="width:100%;padding:12px 14px;border:1px solid var(--border-input);border-radius:12px;font-size:14px;background:var(--bg-card);color:var(--text-primary)">
+                    <sc-if value="{{ showClientDrop }}" hint-placeholder-val="{{ false }}">
+                      <div style="position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:5;border:1px solid var(--border-input);border-radius:12px;overflow:hidden;max-height:240px;overflow-y:auto;background:var(--bg-header);box-shadow:0 16px 30px -12px rgba(0,0,0,.6)">
+                        <sc-for list="{{ clientDropRows }}" as="c" hint-placeholder-count="3"><div onclick="{{ c.onPick }}" class="lp-drop" style="display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;border-bottom:1px solid var(--border-soft)"><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13.5px">{{ c.name }}</div><div style="font-size:11.5px;color:#9a9084">{{ c.linkLabel }}</div></div><span style="{{ c.typeStyle }}">{{ c.typeLabel }}</span></div></sc-for>
+                        <sc-if value="{{ noClientDrop }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 14px;font-size:13px;color:#9a9084">Nenhum encontrado. Cadastre em Clientes ou Empresas.</div></sc-if>
                       </div>
-                      <div style="width:78px;text-align:right;font-family:'Space Mono',monospace;font-size:13.5px;font-weight:600">{{ r.lineFmt }}</div>
-                      <button onclick="{{ r.onRemove }}" title="Remover" style="background:none;border:none;cursor:pointer;color:#b06a5a;display:flex"><svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16 M9 7V5h6v2 M6 7l1 13h10l1-13"></path></svg></button>
-                    </div>
-                  </sc-for>
-                  <div style="display:flex;justify-content:space-between;align-items:center;padding:13px;background:var(--bg-tablehead)"><span style="font-size:13px;font-weight:600;color:#5f574d;text-transform:uppercase;letter-spacing:.05em">Total do pedido</span><span style="font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:#26658C">{{ orderTotalFmt }}</span></div>
-                </div>
-              </sc-if>
-              <sc-if value="{{ orderNoItems }}" hint-placeholder-val="{{ true }}"><div style="border:1px dashed var(--border-input);border-radius:11px;padding:16px;text-align:center;color:#9a9084;font-size:13px;margin-bottom:14px">Nenhum item ainda. Toque nos botões acima.</div></sc-if>
-
-              <label style="{{ lbl }}">Forma de pagamento</label>
-              <sc-raw-select value="{{ orderPayment }}" onchange="{{ setOrderPayment }}" style="{{ inp }}"><option value="dinheiro">Dinheiro</option><option value="pix">PIX</option><option value="credito">Cartão de crédito</option><option value="debito">Cartão de débito</option><option value="vr">Vale Refeição</option><option value="crediario">Crediário (conta mensal)</option></sc-raw-select>
-              <button onclick="{{ submitOrderDynamic }}" style="{{ btn }}">Lançar pedido · {{ orderTotalFmt }}</button>
+                    </sc-if>
+                  </div>
+                </sc-if>
+                <div class="lp-h">Pedido</div>
+                <sc-if value="{{ orderHasItems }}" hint-placeholder-val="{{ false }}">
+                  <div style="border:1px solid var(--border-card);border-radius:14px;overflow:hidden;margin-bottom:14px">
+                    <sc-for list="{{ orderItemRows }}" as="r" hint-placeholder-count="2">
+                      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border-soft)">
+                        <div style="flex:1;min-width:90px"><div style="font-weight:600;font-size:14px;line-height:1.25">{{ r.name }}</div><div style="font-size:11.5px;color:#9a9084;font-family:'Space Mono',monospace">{{ r.unitFmt }} cada</div></div>
+                        <div style="display:flex;align-items:center;gap:6px">
+                          <button type="button" onclick="{{ r.onDec }}" aria-label="Menos" class="lp-q">−</button>
+                          <span style="min-width:24px;text-align:center;font-family:'Space Mono',monospace;font-weight:700;font-size:15px">{{ r.qty }}</span>
+                          <button type="button" onclick="{{ r.onInc }}" aria-label="Mais" class="lp-q">+</button>
+                        </div>
+                        <div style="min-width:70px;text-align:right;font-family:'Space Mono',monospace;font-size:13.5px;font-weight:700;white-space:nowrap">{{ r.lineFmt }}</div>
+                        <button type="button" onclick="{{ r.onRemove }}" title="Remover" aria-label="Remover" style="background:none;border:none;cursor:pointer;color:#e08b7a;display:flex;padding:4px"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16 M9 7V5h6v2 M6 7l1 13h10l1-13"></path></svg></button>
+                      </div>
+                    </sc-for>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg-tablehead)"><span style="font-size:12.5px;font-weight:700;color:#8fb7c4;text-transform:uppercase;letter-spacing:.06em">Total</span><span style="font-family:'Space Mono',monospace;font-size:24px;font-weight:700;color:#fff">{{ orderTotalFmt }}</span></div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ orderNoItems }}" hint-placeholder-val="{{ true }}"><div class="lp-vazio"><svg width="30" height="30" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 13H6z M9 8V6a3 3 0 016 0v2"></path></svg>Nenhum item ainda. Toque num item ao lado.</div></sc-if>
+                <div class="lp-h">Forma de pagamento</div>
+                <div class="lp-pags"><sc-for list="{{ orderPagOpts }}" as="pg" hint-placeholder-count="6"><button type="button" onclick="{{ pg.onClick }}" style="{{ pg.style }}">{{ pg.label }}</button></sc-for></div>
+                <button type="button" onclick="{{ submitOrderDynamic }}" class="lp-enviar">Lançar pedido · {{ orderTotalFmt }}</button>
+              </div>
             </div>
           </sc-if>
 
@@ -4615,37 +4626,68 @@ class Component extends DCLogic {
     const nativeSet=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set;
     const setVal=(el,v)=>{ nativeSet.call(el,v); el.dispatchEvent(new Event('input',{bubbles:true})); };
     const pad=document.createElement('div');
-    pad.id='pdc-numpad';
-    pad.style.cssText='position:fixed;left:50%;bottom:0;transform:translate(-50%,120%);width:min(440px,100%);z-index:99998;background:#16130f;border:1px solid #2c2721;border-bottom:none;border-radius:20px 20px 0 0;box-shadow:0 -24px 70px rgba(0,0,0,.55);padding:16px 16px 22px;transition:transform .3s cubic-bezier(.22,1,.36,1);font-family:inherit';
-    const keyCss='display:flex;align-items:center;justify-content:center;height:58px;border-radius:13px;border:1px solid #2f2a23;background:#211d18;color:#f3ede2;font-size:23px;font-weight:600;font-family:"Space Mono",monospace;cursor:pointer;user-select:none;transition:background .1s,transform .06s';
+    pad.id='pdc-numpad'; pad.setAttribute('role','dialog'); pad.setAttribute('aria-label','Teclado numérico');
+    if(!document.getElementById('pdc-np-css')){ const st=document.createElement('style'); st.id='pdc-np-css'; st.textContent=[
+      '#pdc-numpad{position:fixed;left:50%;bottom:0;transform:translate(-50%,120%);width:min(460px,100%);z-index:99998;background:linear-gradient(180deg,#10304d 0%,#0a1f35 100%);border:1px solid rgba(167,235,242,.18);border-bottom:none;border-radius:24px 24px 0 0;box-shadow:0 -28px 80px rgba(0,0,0,.55);padding:10px 16px max(18px,env(safe-area-inset-bottom));transition:transform .32s cubic-bezier(.22,1,.36,1);font-family:inherit;color:#eef7fa}',
+      '#pdc-numpad .np-alca{width:42px;height:4px;border-radius:4px;background:rgba(255,255,255,.22);margin:0 auto 10px}',
+      '#pdc-numpad .np-topo{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}',
+      '#pdc-numpad .np-cap{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#7fc4d3}',
+      '#pdc-numpad .np-disp{font:700 36px/1.1 "Space Mono",monospace;color:#fff;letter-spacing:-.01em;margin-top:2px;transition:transform .12s ease}',
+      '#pdc-numpad .np-disp.pulo{transform:scale(1.04)}',
+      '#pdc-numpad .np-limpar,#pdc-numpad .np-x{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#cfeef4;border-radius:12px;height:40px;padding:0 14px;font:600 13px inherit;cursor:pointer;transition:background .15s}',
+      '#pdc-numpad .np-x{width:40px;padding:0;font-size:20px;line-height:1}',
+      '#pdc-numpad .np-limpar:hover,#pdc-numpad .np-x:hover{background:rgba(255,255,255,.12)}',
+      '#pdc-numpad .np-rapidos{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}',
+      '#pdc-numpad .np-chip{height:38px;border-radius:12px;border:1px solid rgba(127,196,211,.35);background:rgba(84,172,191,.12);color:#a7ebf2;font:700 13px inherit;cursor:pointer;transition:background .12s,transform .08s}',
+      '#pdc-numpad .np-chip:hover{background:rgba(84,172,191,.22)}#pdc-numpad .np-chip:active{transform:scale(.95)}',
+      '#pdc-numpad .np-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}',
+      '#pdc-numpad .np-k{display:flex;align-items:center;justify-content:center;height:62px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.055);color:#eef7fa;font:600 26px "Space Mono",monospace;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:background .12s,transform .08s,border-color .12s}',
+      '#pdc-numpad .np-k:hover{background:rgba(255,255,255,.1);border-color:rgba(167,235,242,.3)}',
+      '#pdc-numpad .np-k:active,#pdc-numpad .np-k.np-on{transform:scale(.95);background:rgba(84,172,191,.3);border-color:rgba(167,235,242,.5)}',
+      '#pdc-numpad .np-k.np-back{color:#f6c66a}#pdc-numpad .np-k.np-zz{font-size:21px;color:#a7ebf2}',
+      '#pdc-numpad .np-ok{width:100%;margin-top:10px;height:56px;border:none;border-radius:16px;background:linear-gradient(135deg,#3aa9c0,#26658C);color:#fff;font:700 16px inherit;cursor:pointer;box-shadow:0 10px 24px -10px rgba(58,169,192,.8);transition:filter .15s,transform .08s}',
+      '#pdc-numpad .np-ok:hover{filter:brightness(1.08)}#pdc-numpad .np-ok:active{transform:scale(.98)}',
+      '#pdc-numpad button:focus-visible{outline:2px solid #a7ebf2;outline-offset:2px}',
+      '@media (prefers-reduced-motion:reduce){#pdc-numpad,#pdc-numpad .np-k,#pdc-numpad .np-disp{transition:none}}'].join(''); document.head.appendChild(st); }
     const keys=['7','8','9','4','5','6','1','2','3',',','0','back'];
     pad.innerHTML=
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'+
-        '<div><div id="pdc-np-cap" style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7d7466">Valor</div>'+
-        '<div id="pdc-np-disp" style="font-size:30px;font-weight:700;font-family:\'Space Mono\',monospace;color:#e8b04b;line-height:1.1">R$ 0,00</div></div>'+
-        '<button id="pdc-np-clear" style="background:none;border:1px solid #3a342c;color:#b3d6de;border-radius:10px;padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer">Limpar</button>'+
-      '</div>'+
-      '<div id="pdc-np-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px"></div>'+
-      '<button id="pdc-np-ok" style="width:100%;margin-top:11px;height:54px;border:none;border-radius:13px;background:#26658C;color:#fff;font-size:16px;font-weight:700;cursor:pointer">Concluir</button>';
+      '<div class="np-alca"></div>'+
+      '<div class="np-topo"><div style="flex:1;min-width:0"><div id="pdc-np-cap" class="np-cap">Valor</div><div id="pdc-np-disp" class="np-disp" aria-live="polite">R$ 0,00</div></div>'+
+        '<button type="button" id="pdc-np-clear" class="np-limpar">Limpar</button><button type="button" id="pdc-np-x" class="np-x" aria-label="Fechar teclado">×</button></div>'+
+      '<div id="pdc-np-rapidos" class="np-rapidos">'+[1,5,10,20].map(n=>'<button type="button" class="np-chip" data-mais="'+n+'">+ R$ '+n+'</button>').join('')+'</div>'+
+      '<div id="pdc-np-grid" class="np-grid"></div>'+
+      '<button type="button" id="pdc-np-ok" class="np-ok">Concluir</button>';
     document.body.appendChild(pad);
     const grid=pad.querySelector('#pdc-np-grid');
-    keys.forEach(k=>{ const b=document.createElement('div'); b.style.cssText=keyCss; b.dataset.k=k;
-      b.innerHTML = k==='back'?'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#e8b04b" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5H8L2 12l6 7h13a1 1 0 001-1V6a1 1 0 00-1-1z"/><path d="M17 9l-5 6M12 9l5 6"/></svg>':k;
+    keys.forEach(k=>{ const b=document.createElement('button'); b.type='button'; b.className='np-k'+(k==='back'?' np-back':k===','?' np-zz':''); b.dataset.k=k; b.setAttribute('aria-label',k==='back'?'Apagar':k===','?'Dois zeros':k);
+      b.innerHTML = k==='back'?'<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H8L2 12l6 7h13a1 1 0 001-1V6a1 1 0 00-1-1z"/><path d="M17 9l-5 6M12 9l5 6"/></svg>':k;
       grid.appendChild(b); });
+    pad.addEventListener('mousedown',(e)=>{ if(e.target.closest('button')) e.preventDefault(); }); // não tira o foco do campo
     this._numpad=pad; this._numTarget=null;
     const fmt=(raw)=>{ if(!raw) return 'R$ 0,00'; const n=parseFloat(raw.replace(',','.')); if(isNaN(n)) return 'R$ '+raw; return n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); };
     const isInt=()=> this._numTarget && (this._numTarget.getAttribute('inputmode')==='numeric');
-    const refresh=()=>{ const d=pad.querySelector('#pdc-np-disp'); if(!this._numTarget) return; const v=this._numTarget.value||''; d.textContent = isInt()?(v||'0'):fmt(v); };
-    grid.addEventListener('click',(e)=>{ const b=e.target.closest('[data-k]'); if(!b||!this._numTarget) return; const t=this._numTarget; let v=t.value||''; const k=b.dataset.k;
-      if(!isInt()){ let dg=String(v).replace(/\D/g,'').replace(/^0+/,'');
+    const refresh=()=>{ const d=pad.querySelector('#pdc-np-disp'); if(!this._numTarget) return; const v=this._numTarget.value||''; d.textContent = isInt()?(v||'0'):fmt(v);
+      d.classList.remove('pulo'); void d.offsetWidth; d.classList.add('pulo'); setTimeout(()=>d.classList.remove('pulo'),120);
+      pad.querySelector('#pdc-np-ok').textContent = isInt()?'Concluir':('Concluir · '+fmt(v)); };
+    this._npRefresh=refresh;
+    // valor em centavos, aceitando 18,25 / 18.25 / 1.234,50 (o campo pode vir do sistema com ponto)
+    const centavos=(v)=>{ const s=String(v==null?'':v).trim(); if(!s) return 0; const n=s.indexOf(',')>=0?parseFloat(s.replace(/\./g,'').replace(',','.')):parseFloat(s); return isNaN(n)?0:Math.round(n*100); };
+    const press=(k)=>{ if(!this._numTarget) return; const t=this._numTarget; let v=t.value||''; if(navigator.vibrate) try{ navigator.vibrate(8); }catch(e){}
+      if(!isInt()){ const c0=centavos(v); let dg=c0?String(c0):'';
         if(k==='back') dg=dg.slice(0,-1); else if(k===','){ if(dg) dg=dg+'00'; } else dg=dg+k;
         dg=dg.replace(/^0+/,'').slice(0,9); setVal(t, dg?(Number(dg)/100).toFixed(2).replace('.',','):''); refresh(); return; }
-      if(k==='back'){ v=v.slice(0,-1); }
-      else if(k===','){ if(!isInt()&&v.indexOf(',')<0) v=(v||'0')+','; }
-      else { if(!isInt()&&v.indexOf(',')>=0 && v.split(',')[1].length>=2) {} else v=v+k; }
-      setVal(t,v); refresh();
-    });
+      if(k==='back'){ v=v.slice(0,-1); } else if(k!==','){ v=v+k; }
+      setVal(t,v); refresh(); };
+    grid.addEventListener('click',(e)=>{ const b=e.target.closest('[data-k]'); if(b) press(b.dataset.k); });
+    pad.querySelector('#pdc-np-rapidos').addEventListener('click',(e)=>{ const b=e.target.closest('[data-mais]'); if(!b||!this._numTarget||isInt()) return; const t=this._numTarget;
+      setVal(t,((centavos(t.value)+Number(b.dataset.mais)*100)/100).toFixed(2).replace('.',',')); refresh(); });
+    // teclado do computador também funciona enquanto o teclado da tela está aberto
+    document.addEventListener('keydown',(e)=>{ if(!this._numTarget) return; const k=e.key; let tecla=null;
+      if(/^[0-9]$/.test(k)) tecla=k; else if(k==='Backspace') tecla='back'; else if(k===','||k==='.') tecla=',';
+      else if(k==='Enter'||k==='Escape'||k==='Tab'){ if(k!=='Tab') e.preventDefault(); this._closeNumpad(); return; }
+      if(tecla===null) return; e.preventDefault(); press(tecla); const b=grid.querySelector('[data-k="'+tecla+'"]'); if(b){ b.classList.add('np-on'); setTimeout(()=>b.classList.remove('np-on'),110); } });
     pad.querySelector('#pdc-np-clear').addEventListener('click',()=>{ if(this._numTarget){ setVal(this._numTarget,''); refresh(); } });
+    pad.querySelector('#pdc-np-x').addEventListener('click',()=>this._closeNumpad());
     pad.querySelector('#pdc-np-ok').addEventListener('click',()=>this._closeNumpad());
     document.addEventListener('focusin',(e)=>{ const el=e.target;
       if(el&&el.tagName==='INPUT'&&(el.getAttribute('inputmode')==='decimal'||el.getAttribute('inputmode')==='numeric')&&el.getAttribute('data-numpad')!=='off'){ this._openNumpad(el); }
@@ -4659,6 +4701,7 @@ class Component extends DCLogic {
     const lab=el.getAttribute('data-numpad-label'); cap.textContent = lab || (el.getAttribute('inputmode')==='numeric'?'Quantidade':'Valor');
     const d=this._numpad.querySelector('#pdc-np-disp'); const v=el.value||''; const n=parseFloat(v.replace(',','.'));
     d.textContent = el.getAttribute('inputmode')==='numeric'?(v||'0'):(isNaN(n)?'R$ 0,00':n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}));
+    this._numpad.querySelector('#pdc-np-rapidos').style.display = dec?'':'none'; if(this._npRefresh) this._npRefresh();
     this._numpad.style.transform='translate(-50%,0)'; }
   _closeNumpad(){ if(!this._numpad) return; this._numpad.style.transform='translate(-50%,120%)'; if(this._numTarget) this._numTarget.removeAttribute('readonly'); this._numTarget=null; }
 
@@ -7233,7 +7276,7 @@ class Component extends DCLogic {
   addCustomOrderItem=()=>{ const n=(this.state.orderCustomName||'').trim(); if(!n){ this.showToast('Informe o nome do item.'); return; } const p=this.num(this.state.orderCustomPrice); this.addOrderItem('custom-'+Date.now(),n,p); this.setState({orderCustomName:'',orderCustomPrice:''}); };
   setOrderPayment=(e)=>this.setState({orderPayment:e.target.value});
 
-  submitOrderDynamic=async()=>{ const s=this.state; if(!s.orderClientId){ this.showToast('Selecione o cliente.'); return; } if(!s.orderItems.length){ this.showToast('Adicione ao menos um item.'); return; }
+  submitOrderDynamic=async()=>{ const s=this.state; if(!s.orderClientId&&s.orderPayment==='crediario'){ this.showToast('Para lançar no crediário, escolha o cliente.'); return; } if(!s.orderItems.length){ this.showToast('Adicione ao menos um item.'); return; }
     const total=s.orderItems.reduce((a,i)=>a+i.price*i.qty,0); const pay=s.orderPayment; const cid=s.orderClientId;
     const c=s.clients.find(x=>x.id===cid); const isEmp=c&&c.type==='Empresa';
     const { data: pedido, error } = await sb.from('rest_pedidos').insert({
@@ -8016,7 +8059,17 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const clientTypeChips=[['all','Todos'],['PF','Pessoa Física'],['Empresa','Empresa'],['Funcionario','Funcionário']].map(([v,l])=>({label:l,style:chip(s.clientType===v),onClick:()=>this.setState({clientType:v})}));
     const orderFilterChips=[['all','Todos'],['aberto','Em aberto'],['entregue','Entregue']].map(([v,l])=>({label:l,style:chip(s.orderFilter===v),onClick:()=>this.setState({orderFilter:v})}));
 
-    const orderCatalog=s.balcaoItems.map(it=>({label:it.name,price:it.price,priceFmt:brl(it.price),onPrice:this.setItemPrice(it.id),onAdd:()=>this.addOrderItem('cat-'+it.id,it.name,it.price)}));
+    // ícone de cada item do Lançar pedido (prato, bebida, fitness ou outro)
+    const ICO_ITEM=(n)=>{ const t=String(n||'').toLowerCase();
+      if(/fitness|salada|light/.test(t)) return ['M5 19c0-8 6-14 15-14 0 9-6 15-14 15 M5 19l7-7','background:linear-gradient(135deg,#3fae6a,#257a49)'];
+      if(/coca|refri|lata|guaran|suco|água|agua|bebida|cerveja|garrafa/.test(t)) return ['M7 3h10l-1.6 18H8.6z M6.6 8h10.8 M12 3V1.5','background:linear-gradient(135deg,#e0723a,#b04a1c)'];
+      if(/doce|sobremesa|pudim|bolo|mousse/.test(t)) return ['M4 21h16 M5 21v-6h14v6 M7 15c0-3 2-5 5-5s5 2 5 5 M12 10V7','background:linear-gradient(135deg,#c06aa8,#8a3b74)'];
+      if(/marmita|prato|pf|executivo|feijoada|porção|porcao/.test(t)) return ['M12 5.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13z M12 8.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7z M3 4v6 M5 4v16 M3 10h4 M7 4v6 M21 4c-1.8 1-2.5 3-2.5 6H21v10','background:linear-gradient(135deg,#3aa9c0,#26658C)'];
+      return ['M5 8h14l-1 13H6z M9 8V6a3 3 0 016 0v2','background:linear-gradient(135deg,#7a8ea0,#4d6072)']; };
+    const orderCatalog=s.balcaoItems.map(it=>{ const ic=ICO_ITEM(it.name); const naCesta=(s.orderItems||[]).find(x=>x.key==='cat-'+it.id); const q=naCesta?naCesta.qty:0;
+      return {label:it.name,price:(Number(it.price)||0).toFixed(2).replace('.',','),priceFmt:brl(it.price),onPrice:this.setItemPrice(it.id),onAdd:()=>this.addOrderItem('cat-'+it.id,it.name,it.price),iconPath:ic[0],iconBg:ic[1],temQtd:q>0,qtdNoPedido:q}; });
+    const orderPagOpts=[['dinheiro','Dinheiro'],['pix','PIX'],['debito','Débito'],['credito','Crédito'],['vr','Vale-refeição'],['crediario','Crediário']].map(([v,l])=>{ const on=(s.orderPayment||'dinheiro')===v;
+      return {label:l, onClick:()=>this.setState({orderPayment:v}), style:'min-height:46px;border-radius:12px;font-size:13px;font-weight:'+(on?'700':'600')+';cursor:pointer;font-family:inherit;transition:background .15s ease,border-color .15s ease;border:1px solid '+(on?'#54ACBF':'var(--border-input)')+';background:'+(on?'#26658C':'var(--bg-card)')+';color:'+(on?'#fff':'var(--text-primary)')}; });
     const oClientSel=s.clients.find(c=>c.id===s.orderClientId);
     const oSearch=(s.orderClientSearch||'').toLowerCase();
     const clientDropRows=s.clients.filter(c=>c.name.toLowerCase().includes(oSearch)).slice(0,6).map(c=>({name:c.name,typeLabel:this.typeLabel(c.type),typeStyle:this.typeStyle(c.type),linkLabel:c.type==='Funcionario'?('vínculo: '+(c.company||'—')):(c.type==='Empresa'?'empresa':'cliente'),onPick:()=>this.pickOrderClient(c.id)}));
@@ -8071,7 +8124,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       modalOpen:!!s.modal&&s.modal!=='menuPreview', modalTitle:modalTitles[s.modal]||'', closeModal:()=>this.setState({modal:null,selectedClient:null,selectedStock:null,selectedCompany:null,dispatchOrderId:null,cardapioForm:null,adicionalForm:null}), stop:(e)=>e.stopPropagation(),
       isWa:s.modal==='wa', waName:s.waName, waPhone:s.waPhone, waMsg:s.waMsg, waLinkUrl:s.waLinkUrl, copyWaMsg:this.copyWaMsg, openWaLink:s.waLinkUrl?()=>window.open(s.waLinkUrl,'_blank'):null,
       isStatement:s.modal==='statement', isPaymentForm:s.modal==='payment', isBaixaForm:s.modal==='baixa', isClientForm:s.modal==='client', isEmpresaForm:s.modal==='empresa', isFuncEmpresaForm:s.modal==='funcEmpresa', isDoacaoForm:s.modal==='doacao', isOrderForm:s.modal==='order', isDeliveryForm:s.modal==='delivery', isMotoboyForm:s.modal==='motoboy', isStockForm:s.modal==='stock',
-      orderCatalog, clientDropRows, noClientDrop:clientDropRows.length===0, showClientDrop:!s.orderClientId&&(s.orderClientSearch||'').trim().length>=1, orderClientSearch:s.orderClientSearch, setOrderClientSearch:this.setOrderClientSearch, orderClientPicked:!!oClientSel, orderClientEmpty:!oClientSel, orderPickedName:oClientSel?oClientSel.name:'', orderPickedType:oClientSel?this.typeLabel(oClientSel.type):'', clearOrderClient:this.clearOrderClient, orderClientOrders:oClientSel?s.orders.filter(o=>(o.clientId===oClientSel.id||o.empresaId===oClientSel.id)&&o.today).map(o=>({id:o.id,items:o.items,totalFmt:brl(o.total),payLabel:this.payLabel(o.payment),status:o.status})):[], orderHasClientOrders:!!(oClientSel&&s.orders.some(o=>(o.clientId===oClientSel.id||o.empresaId===oClientSel.id)&&o.today)),
+      orderCatalog, orderPagOpts, modalMaxW:s.modal==='order'?'1000px':'520px', clientDropRows, noClientDrop:clientDropRows.length===0, showClientDrop:!s.orderClientId&&(s.orderClientSearch||'').trim().length>=1, orderClientSearch:s.orderClientSearch, setOrderClientSearch:this.setOrderClientSearch, orderClientPicked:!!oClientSel, orderClientEmpty:!oClientSel, orderPickedName:oClientSel?oClientSel.name:'', orderPickedType:oClientSel?this.typeLabel(oClientSel.type):'', clearOrderClient:this.clearOrderClient, orderClientOrders:oClientSel?s.orders.filter(o=>(o.clientId===oClientSel.id||o.empresaId===oClientSel.id)&&o.today).map(o=>({id:o.id,items:o.items,totalFmt:brl(o.total),payLabel:this.payLabel(o.payment),status:o.status})):[], orderHasClientOrders:!!(oClientSel&&s.orders.some(o=>(o.clientId===oClientSel.id||o.empresaId===oClientSel.id)&&o.today)),
       orderItemRows, orderHasItems:s.orderItems.length>0, orderNoItems:s.orderItems.length===0, orderTotalFmt:brl(orderTotal), orderPayment:s.orderPayment, setOrderPayment:this.setOrderPayment, orderCustomName:s.orderCustomName, orderCustomPrice:s.orderCustomPrice, setOrderCustomName:this.setOrderCustomName, setOrderCustomPrice:this.setOrderCustomPrice, addCustomOrderItem:this.addCustomOrderItem, submitOrderDynamic:this.submitOrderDynamic,
       clientOptions:s.clients, motoboyOptions:s.motoboys,
       stmtName:sel?sel.name:'', stmtType:sel?this.typeLabel(sel.type):'', stmtBalance:sel?brl(sel.balance):'', stmtRows, stmtEmpty:stmtRows.length===0, chargeCurrent:sel?()=>this.chargeClient(sel.id):null, payCurrent:sel?()=>this.setState({modal:'payment'}):null,
