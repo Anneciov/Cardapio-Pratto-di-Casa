@@ -277,6 +277,14 @@
   .ok-fechar{min-height:48px;border-radius:14px;border:1.5px solid var(--linha);background:transparent;color:var(--texto);font:700 15px Inter;cursor:pointer}.ok-fechar:hover{border-color:var(--suave)}
   .ok-wa:focus-visible,.ok-fechar:focus-visible{outline:2px solid var(--laranja);outline-offset:2px}
   .ped-enviar.enviando{opacity:.7;pointer-events:none}
+  button.ok-wa{border:none;cursor:pointer;width:100%}button.ok-wa:disabled{opacity:.7;cursor:default}
+  .ok-ico.pix{background:linear-gradient(135deg,#32bcad,#1f8f84);color:#fff;font:800 20px Inter;letter-spacing:.04em;box-shadow:0 0 0 10px rgba(50,188,173,.15)}
+  .pix-chave{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;border-radius:16px;border:1.5px solid rgba(255,122,26,.45);background:rgba(255,122,26,.08)}
+  .pix-chave span{font:600 12.5px Inter;color:var(--suave)}.pix-chave b{font:700 20px 'Space Mono',monospace;letter-spacing:.02em}
+  .pix-chave .pix-copiar-g{min-height:46px;padding:0 22px;font:700 15px Inter;background:var(--laranja);color:#1a0d02;border-color:transparent;margin:2px 0 0}.pix-chave .pix-copiar-g:hover{background:var(--laranja2);color:#1a0d02}
+  .pix-passos{text-align:left;margin:2px 0 0 22px;font-size:14px;line-height:1.7;color:var(--texto)}
+  .ok-aviso{text-align:left;padding:14px;border-radius:14px;border:1.5px solid rgba(251,191,36,.5);background:rgba(251,191,36,.1);font-size:14px;line-height:1.5;color:#fde68a}
+  .ok-aviso a{display:block;margin-top:8px;color:#4ade80;font-weight:700;text-decoration:none}.ok-link{font:600 13.5px Inter;color:#4ade80;text-decoration:none}
   .ped-nome-l{margin-bottom:14px}.ped-pagx{margin-top:12px}.ped-pagx[hidden],.taxa-box[hidden],#pag-opcoes[hidden],#pag-conv[hidden]{display:none}
   .pag-semtroco{display:flex;align-items:center;gap:9px;min-height:46px;font:600 13.5px Inter;color:var(--texto);cursor:pointer}.pag-semtroco input{width:20px;height:20px;accent-color:var(--laranja)}
   .end-f input:disabled{opacity:.45}
@@ -989,7 +997,7 @@ function erroPedido(msg, secao) {
 function enviarPedido() {
   const d = DADOS; const falta = faltaEnvio();
   if (falta) { if (falta.sec === 'sec-entrega' && PED.ent === 'entrega') setTimeout(focarEndereco, 350); return erroPedido(falta.err || ('Escolha ' + falta.msg + '.'), falta.sec); }
-  if (!confirmaGuarn('Enviar')) return;
+  if (!PED.pixOk && !confirmaGuarn('Enviar')) return;
   const atual = itemAtual(); const itens = [...PED.itens, ...(atual ? [atual] : [])];
   if (!itens.length && !qtdPorc()) return erroPedido('Escolha o tamanho.', 'sec-tam');
   const porcTxt = avulsosTxt();
@@ -1014,8 +1022,10 @@ function enviarPedido() {
     endereco: PED.ent === 'entrega' ? end : '', convenio: PED.ent === 'convenio' ? convEmp() : '', departamento: PED.ent === 'convenio' ? convDep() : '',
     taxaTxt: PED.ent === 'entrega' && !(tx && tx.status === 'ok') ? 'a combinar' : '', itens: itensP, total: totalP };
   const bt = document.getElementById('ped-enviar'), btTxt = document.getElementById('ped-enviar-txt');
+  if (PED.ent !== 'convenio' && PED.pag === 'pix' && !PED.pixOk) return mostrarPassoPix(totalP);
+  const bPix = document.querySelector('#ped-ok [data-pixenviar]'); if (bPix) { bPix.disabled = true; bPix.textContent = 'Enviando pedido…'; }
   if (bt.dataset.enviando) return; bt.dataset.enviando = '1'; bt.classList.add('enviando'); btTxt.textContent = 'Enviando pedido…';
-  const fim = () => { delete bt.dataset.enviando; bt.classList.remove('enviando'); atualizarTotal(); };
+  const fim = () => { delete bt.dataset.enviando; bt.classList.remove('enviando'); PED.pixOk = false; const bp = document.querySelector('#ped-ok [data-pixenviar]'); if (bp) { bp.disabled = false; bp.textContent = 'Enviar pedido'; } atualizarTotal(); };
   fetch(PEDIDO_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
     .then(r => r.json().catch(() => ({})).then(j => ({ ok: r.ok, j })))
     .then(({ ok, j }) => {
@@ -1028,12 +1038,22 @@ function enviarPedido() {
     })
     .catch(() => { fim(); if (confirm('Sem internet para registrar o pedido agora. Quer enviar pelo WhatsApp?')) { const u = linkWA(msg); if (u !== '#') window.open(u, '_blank', 'noopener') || (location.href = u); } });
 }
+// PIX: antes de enviar, mostra a chave para copiar e pagar; o pedido só vai quando tocar em "Enviar pedido"
+function mostrarPassoPix(total) {
+  const el = document.getElementById('ped-ok');
+  el.innerHTML = `<div class="ok-cx"><div class="ok-ico pix">PIX</div><h3>Pague com PIX</h3><p>Total do pedido: <b>${reais(total)}</b></p>
+    <div class="pix-chave"><span>Chave PIX (CNPJ)</span><b>${PIX_CNPJ}</b><button type="button" class="pix-copiar pix-copiar-g" data-pix="${PIX_CNPJ.replace(/\D/g, '')}">Copiar chave PIX</button></div>
+    <ol class="pix-passos"><li>Copie a chave PIX</li><li>Pague no app do seu banco</li><li>Toque em <b>Enviar pedido</b></li></ol>
+    <button type="button" class="ok-wa" data-pixenviar>Enviar pedido</button>
+    <button type="button" class="ok-fechar" data-pixvoltar>Voltar</button></div>`;
+  el.hidden = false; el.scrollTop = 0;
+}
 function mostrarOk(ref, urlWa, pix, total) {
   const el = document.getElementById('ped-ok');
   el.innerHTML = `<div class="ok-cx"><div class="ok-ico">${ICO_OK}</div><h3>Pedido enviado!</h3><p class="ok-ref">Nº <b>${esc(ref)}</b></p>
     <p>Seu pedido já chegou no Pratto di Casa. Total: <b>${reais(total)}</b>.</p>
-    ${pix ? `<div class="pix-box">Chave PIX (CNPJ) <b>${PIX_CNPJ}</b> <button type="button" class="pix-copiar" data-pix="${PIX_CNPJ.replace(/\D/g, '')}">Copiar</button><p>Depois de pagar, mande o <b>comprovante</b> no WhatsApp.</p></div>` : ''}
-    <a class="ok-wa" href="${esc(urlWa)}" target="_blank" rel="noopener">${pix ? 'Mandar comprovante no WhatsApp' : 'Falar no WhatsApp (opcional)'}</a>
+    ${pix ? `<div class="ok-aviso" role="note"><b>Atenção:</b> mande o <b>comprovante do PIX</b> no WhatsApp para confirmar o pedido.<a href="${esc(urlWa)}" target="_blank" rel="noopener">Abrir WhatsApp →</a></div>`
+      : `<a class="ok-link" href="${esc(urlWa)}" target="_blank" rel="noopener">Falar com o restaurante no WhatsApp (opcional)</a>`}
     <button type="button" class="ok-fechar" data-fechar>Fechar</button></div>`;
   el.hidden = false; el.scrollTop = 0;
 }
@@ -1090,6 +1110,8 @@ function ligarPedido() {
     else if (e.target.closest('[data-extra]')) { const n = e.target.closest('[data-extra]').dataset.extra; PED.extras = PED.extras.includes(n) ? PED.extras.filter(x => x !== n) : [...PED.extras, n]; renderOpcoes(); }
     else if (e.target.closest('[data-porc]')) { const b = e.target.closest('[data-porc]'), n = b.dataset.porc, gr = PED[b.dataset.g || 'porc']; gr[n] = Math.min(20, Math.max(0, (gr[n] || 0) + Number(b.dataset.d))); if (!gr[n]) delete gr[n]; renderPorcoes(); atualizarTotal(); }
     else if (e.target.closest('[data-aba]')) irParaAba(e.target.closest('[data-aba]').dataset.aba);
+    else if (e.target.closest('[data-pixenviar]')) { PED.pixOk = true; enviarPedido(); }
+    else if (e.target.closest('[data-pixvoltar]')) { document.getElementById('ped-ok').hidden = true; }
     else if (e.target.closest('#ped-mais')) adicionarPrato();
     else if (e.target.closest('[data-pag]')) { PED.pag = e.target.closest('[data-pag]').dataset.pag; atualizarTotal(); if (PED.pag === 'dinheiro') setTimeout(() => { const x = document.getElementById('pag-troco'); if (!x.value && !x.disabled) x.focus({ preventScroll: true }); }, 60); }
     else if (e.target.closest('[data-ent]')) { PED.ent = e.target.closest('[data-ent]').dataset.ent; atualizarTotal(); agendarTaxa();
@@ -1111,7 +1133,7 @@ function ligarPedido() {
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !f.hidden) fecharPedido(); });
 }
 // qualquer botão "Pedir" da página abre o montador do pedido
-document.addEventListener('click', async (e) => { const b = e.target.closest('.pix-copiar'); if (!b) return; try { await navigator.clipboard.writeText(b.dataset.pix); } catch (_) { const t = document.createElement('textarea'); t.value = b.dataset.pix; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (_) {} t.remove(); } b.textContent = 'Copiado!'; setTimeout(() => { b.textContent = 'Copiar'; }, 1800); });
+document.addEventListener('click', async (e) => { const b = e.target.closest('.pix-copiar'); if (!b) return; try { await navigator.clipboard.writeText(b.dataset.pix); } catch (_) { const t = document.createElement('textarea'); t.value = b.dataset.pix; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (_) {} t.remove(); } if (!b.dataset.t0) b.dataset.t0 = b.textContent; b.textContent = 'Copiado!'; setTimeout(() => { b.textContent = b.dataset.t0; }, 1800); });
 document.addEventListener('click', (e) => { const el = e.target.closest('[data-pedir]'); if (!el || !DADOS) return; e.preventDefault(); abrirPedido(el.dataset.pedir || '', el.dataset.prato || '', el.dataset.g || '', !!el.dataset.especial);
   if (el.dataset.monte) { PED.tam = ''; PED.prato = ''; PED.aba = 'monte'; renderOpcoes(); }
   if (el.dataset.porcao) { const n = el.dataset.porcao, g = el.dataset.grupo || 'porc'; PED[g][n] = (PED[g][n] || 0) + 1; PED.tam = ''; PED.prato = ''; PED.aba = 'monte'; renderOpcoes();
