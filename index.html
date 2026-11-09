@@ -193,6 +193,12 @@
   .ped-aba{min-height:46px;border-radius:12px;border:1.5px solid var(--linha);background:rgba(255,255,255,.04);color:var(--suave);font:700 14.5px Inter;cursor:pointer;transition:background .18s ease,border-color .18s ease,color .18s ease}
   .ped-aba:hover{color:var(--texto)}.ped-aba.on{border-color:var(--laranja);background:rgba(255,122,26,.14);color:#fff}.ped-aba:focus-visible{outline:2px solid var(--laranja);outline-offset:2px}
   .grupo-t{font:700 15px Oswald;letter-spacing:.12em;text-transform:uppercase;color:var(--suave);margin:18px 0 10px}
+  .mp-foto{width:64px;height:64px;border-radius:14px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,.05);box-shadow:0 8px 18px -10px rgba(0,0,0,.8);transition:transform .25s ease}
+  .item:hover .mp-foto{transform:scale(1.06)}
+  .mp-foto.vazio,.porc-foto.vazio{display:grid;place-items:center;color:rgba(255,169,77,.55);border:1px dashed rgba(255,255,255,.14);box-shadow:none}.mp-foto.vazio svg{width:28px;height:28px}
+  .porc-foto{width:52px;height:52px;border-radius:12px;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,.05)}.porc-foto.vazio svg{width:22px;height:22px}
+  .porc:has(.porc-foto){padding-left:8px}
+  @media (prefers-reduced-motion:reduce){.mp-foto{transition:none}.item:hover .mp-foto{transform:none}}
   .porc-lista{display:grid;gap:8px}
   .porc{display:flex;align-items:center;gap:12px;padding:10px 10px 10px 14px;border-radius:14px;border:1.5px solid var(--linha);background:rgba(255,255,255,.035);transition:border-color .2s ease,background .2s ease}
   .porc.on{border-color:var(--laranja);background:rgba(255,122,26,.1)}
@@ -603,12 +609,15 @@ function mostrarCardapio() {
   else if (M) M.animate(cena, { opacity: [0, 1], y: [30, 0] }, { type: 'spring', bounce: .2, duration: .6 });
 }
 // ── guia "Monte seu pedido": página separada (#monte) só com itens avulsos e porções ──
+// foto do item (a mesma colada no sistema, em "Montar o cardápio de hoje"); sem foto mostra um prato desenhado
+const ICO_PRATO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="3.5"/><path d="M3 4v6M5 4v16M3 10h4M7 4v6M21 4c-1.8 1-2.5 3-2.5 6h2.5v10"/></svg>';
+const fotoAvulso = (d, nome, cls, tam) => { const f = fotoDe(d, nome); return f ? `<img class="${cls}" src="${esc(f)}" alt="" width="${tam}" height="${tam}" loading="lazy" decoding="async">` : `<span class="${cls} vazio">${ICO_PRATO}</span>`; };
 function montePagHTML(d) {
   if (!temAvulsos(d)) return '';
   const emp = d.empresa || PADRAO.empresa; const partes = (emp.nome || 'Pratto di Casa').split(' '); const ult = partes.pop();
   return `<main class="quadro"><header><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div><div class="data">Monte seu pedido</div><a class="inicio" href="#inicio" aria-label="Voltar ao início">‹ Início</a></header>
     <section class="bloco"><div class="titulo"><h3>Monte seu <em>pedido</em></h3></div><p class="dica">Toque no item para colocar no pedido</p>
-    ${GRUPOS.map(([g, tit]) => { const ls = listaGrupo(d, g); return ls.length ? `<h4 class="grupo-t">${tit}</h4><div class="lista">${ls.map(p => `<div class="item" data-pedir="" data-porcao="${esc(p.nome)}" data-grupo="${g}" role="button" tabindex="0" title="Pedir ${esc(p.nome)}"><span class="nome">${esc(p.nome)}</span>${p.preco ? `<span class="porc-preco">R$ ${esc(p.preco)}</span>` : ''}</div>`).join('')}</div>` : ''; }).join('')}
+    ${GRUPOS.map(([g, tit]) => { const ls = listaGrupo(d, g); return ls.length ? `<h4 class="grupo-t">${tit}</h4><div class="lista">${ls.map(p => `<div class="item" data-pedir="" data-porcao="${esc(p.nome)}" data-grupo="${g}" role="button" tabindex="0" title="Pedir ${esc(p.nome)}">${fotoAvulso(d, p.nome, 'mp-foto', 64)}<span class="nome">${esc(p.nome)}</span>${p.preco ? `<span class="porc-preco">R$ ${esc(p.preco)}</span>` : ''}</div>`).join('')}</div>` : ''; }).join('')}
     <div class="mp-acoes"><button type="button" class="capa-btn mp-btn" data-pedir="" data-monte="1"><span>Montar meu pedido</span><i>→</i></button></div></section></main>`;
 }
 function mostrarMonte() { document.body.classList.remove('na-capa'); window.scrollTo(0, 0); if (BANNER.parar) BANNER.parar(); }
@@ -688,7 +697,7 @@ function avulsosTxt() {
 function renderPorcoes() {
   document.getElementById('ped-porcoes').innerHTML = GRUPOS.map(([g, tit, nota]) => { const ps = listaGrupo(DADOS, g); if (!ps.length) return ''; const n0 = qtdGrupo(g);
     return `<section class="ped-sec" id="sec-${g}">${cabecalho('+', tit, n0 > 0, '<span class="ped-opc">opcional</span>')}<p class="ped-nota">${nota}</p>
-    <div class="porc-lista">${ps.map(p => { const n = (PED[g] || {})[p.nome] || 0; return `<div class="porc${n ? ' on' : ''}"><div class="porc-t"><b>${esc(p.nome)}</b><span>${p.preco ? reais(num(p.preco)) : ''}</span></div>
+    <div class="porc-lista">${ps.map(p => { const n = (PED[g] || {})[p.nome] || 0; return `<div class="porc${n ? ' on' : ''}">${fotoAvulso(DADOS, p.nome, 'porc-foto', 52)}<div class="porc-t"><b>${esc(p.nome)}</b><span>${p.preco ? reais(num(p.preco)) : ''}</span></div>
       <div class="porc-q"><button type="button" data-porc="${esc(p.nome)}" data-g="${g}" data-d="-1" aria-label="Menos ${esc(p.nome)}"${n ? '' : ' disabled'}>−</button><b aria-live="polite">${n}</b><button type="button" data-porc="${esc(p.nome)}" data-g="${g}" data-d="1" aria-label="Mais ${esc(p.nome)}">+</button></div></div>`; }).join('')}</div></section>`; }).join('');
 }
 function mostrarAba(aba) {
@@ -1089,7 +1098,8 @@ async function iniciar() {
   document.getElementById('capa').innerHTML = capaHTML(d); document.getElementById('pag-monte').innerHTML = montePagHTML(d);
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   if (new URLSearchParams(location.search).has('cardapio')) history.replaceState(null, '', location.pathname + location.search + '#cardapio');
-  else if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  else if (new URLSearchParams(location.search).has('monte')) history.replaceState(null, '', location.pathname + location.search + '#monte');
+  else if (location.hash && location.hash !== '#monte') history.replaceState(null, '', location.pathname + location.search); // link direto para Monte seu pedido
   window.scrollTo(0, 0); rota(); addEventListener('hashchange', rota);
 }
 iniciar();
