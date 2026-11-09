@@ -6737,6 +6737,10 @@ class Component extends DCLogic {
     '.cx-prev{display:flex;align-items:baseline;gap:8px;padding-left:2px}',
     '.cx-pend{padding:3px 3px 3px 11px}.cx-pend button{display:flex;align-items:center;justify-content:center;width:24px;height:24px}',
     '@media (max-height:720px){.cx-ent-ic{width:28px;height:28px;left:9px}.cx-ent-w .cx-entrada{padding-left:48px}}',
+    '/* teclado: espaco entre teclas em qualquer altura */',
+    '.cx-teclado,.cx-teclado[class]{gap:7px;grid-template-rows:repeat(4,clamp(44px,6.4vh,64px))}',
+    '.cx-teclado .cx-k{min-height:0;height:100%}',
+    '@media (max-height:720px){.cx-teclado,.cx-teclado[class]{gap:6px;grid-template-rows:repeat(4,44px)}.cx-atalhos{min-height:72px}}',
     '@media (prefers-reduced-motion:reduce){.cx-ov *{transition:none!important;animation:none!important}}'
   ].join('');
   /* ============ CAIXA (PDV): venda paga na hora ou lançada na conta do cliente; lê a comanda da balança (EAN-13) ============ */
