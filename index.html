@@ -339,7 +339,8 @@
   .mp-gt span{margin-left:auto;font:600 12px Inter;letter-spacing:0;text-transform:none;color:var(--suave);background:rgba(255,255,255,.06);padding:3px 10px;border-radius:20px}
   .mp-lista{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .mp-card{display:flex;align-items:center;gap:12px;padding:10px 12px 10px 10px;border-radius:18px;background:rgba(255,255,255,.035);border:1.5px solid var(--linha);transition:border-color .2s ease,background .2s ease}
-  .mp-card.on{border-color:var(--laranja);background:rgba(255,122,26,.09)}.mp-card.pulo{animation:mpPulo .3s ease}
+  .mp-card.on{border-color:var(--laranja);background:rgba(255,122,26,.09)}.mp-card{flex-wrap:wrap}.mp-obs{display:none;flex-basis:100%}.mp-card.on .mp-obs{display:block}
+  .porc{flex-wrap:wrap}.porc-obs{flex-basis:100%;width:100%;min-height:42px;border-radius:11px;border:1.5px solid var(--linha);background:rgba(0,0,0,.28);color:var(--texto);font:500 14px Inter;padding:9px 12px;outline:none;transition:border-color .2s ease}.porc-obs:focus{border-color:var(--laranja)}.porc-obs::placeholder{color:#6b737d}.mp-card.pulo{animation:mpPulo .3s ease}
   @keyframes mpPulo{40%{transform:scale(1.02)}}
   .mp-card .mp-foto{width:72px;height:72px;border-radius:16px}
   .mp-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.mp-info b{font:600 16px/1.25 Inter}.mp-info .porc-preco{font-size:17px}
@@ -685,7 +686,7 @@ function montePagHTML(d) {
   const card = (g, p) => `<div class="mp-card" data-mpcard="${esc(g)}|${esc(p.nome)}">${fotoAvulso(d, p.nome, 'mp-foto', 72)}
     <div class="mp-info"><b>${esc(p.nome)}</b>${p.preco ? `<span class="porc-preco">R$ ${esc(p.preco)}</span>` : ''}</div>
     <div class="mp-ctrl"><button type="button" class="mp-add" data-mp="1" data-g="${esc(g)}" data-n="${esc(p.nome)}" aria-label="Adicionar ${esc(p.nome)}">+ Adicionar</button>
-      <div class="mp-step"><button type="button" data-mp="-1" data-g="${esc(g)}" data-n="${esc(p.nome)}" aria-label="Menos ${esc(p.nome)}">−</button><b aria-live="polite">0</b><button type="button" data-mp="1" data-g="${esc(g)}" data-n="${esc(p.nome)}" aria-label="Mais ${esc(p.nome)}">+</button></div></div></div>`;
+      <div class="mp-step"><button type="button" data-mp="-1" data-g="${esc(g)}" data-n="${esc(p.nome)}" aria-label="Menos ${esc(p.nome)}">−</button><b aria-live="polite">0</b><button type="button" data-mp="1" data-g="${esc(g)}" data-n="${esc(p.nome)}" aria-label="Mais ${esc(p.nome)}">+</button></div></div>${g === 'porc' ? `<input class="mp-obs porc-obs" data-obs="${esc(p.nome)}" maxlength="80" placeholder="Observação (ex.: sem cenoura)" aria-label="Observação da porção ${esc(p.nome)}" value="${esc((PED.porcObs || {})[p.nome] || '')}">` : ''}</div>`;
   return `<main class="quadro mp-quadro"><header><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div><div class="data">Monte seu pedido</div><a class="inicio" href="#inicio" aria-label="Voltar ao início">‹ Início</a></header>
     <section class="bloco"><div class="titulo"><h3>Monte seu <em>pedido</em></h3></div>
     <ol class="mp-como"><li><b>Escolha</b><span> os itens e as porções</span></li><li><b>Confira</b><span> e diga entrega ou retirada</span></li><li><b>Envie</b><span> — chega direto na cozinha</span></li></ol>
@@ -693,10 +694,12 @@ function montePagHTML(d) {
     </section></main>`;
 }
 // quantidades da página Monte seu pedido (usam o mesmo pedido do carrinho)
+document.addEventListener('input', (e) => { const el = e.target.closest && e.target.closest('[data-obs]'); if (!el) return; PED.porcObs = PED.porcObs || {}; PED.porcObs[el.dataset.obs] = el.value.slice(0, 80);
+  document.querySelectorAll('[data-obs]').forEach(o => { if (o !== el && o.dataset.obs === el.dataset.obs) o.value = el.value; }); });
 function atualizarMontePag() {
   const pag = document.getElementById('pag-monte'); if (!pag || !DADOS) return;
   pag.querySelectorAll('[data-mpcard]').forEach(c => { const [g, n] = c.dataset.mpcard.split('|'); const q = ((PED[g] || {})[n]) || 0;
-    c.classList.toggle('on', q > 0); c.querySelector('.mp-step b').textContent = q; });
+    c.classList.toggle('on', q > 0); c.querySelector('.mp-step b').textContent = q; const ob = c.querySelector('[data-obs]'); if (ob) { if (!q && PED.porcObs) delete PED.porcObs[n]; ob.value = (PED.porcObs || {})[n] || ''; } });
   let bar = document.getElementById('mp-barra'); if (!bar) { document.body.insertAdjacentHTML('beforeend', '<div class="mp-barra" id="mp-barra" hidden><div class="mp-barra-info"><small id="mp-barra-qtd">0 itens</small><b id="mp-barra-total">R$ 0,00</b></div><button type="button" class="mp-barra-btn" data-pedir="" data-monte="1">Continuar <span aria-hidden="true">→</span></button></div>'); bar = document.getElementById('mp-barra'); }
   const n = qtdPorc(), tot = totPorc();
   bar.hidden = n === 0; document.body.classList.toggle('mp-com-barra', n > 0);
@@ -779,13 +782,13 @@ const qtdPorc = () => qtdGrupo('monte') + qtdGrupo('porc');
 const totPorc = () => GRUPOS.reduce((s, [g]) => s + listaGrupo(DADOS, g).reduce((x, p) => x + ((PED[g] || {})[p.nome] || 0) * num(p.preco), 0), 0);
 function avulsosTxt() {
   return GRUPOS.map(([g, , , tit]) => { const sel = listaGrupo(DADOS, g).filter(p => (PED[g] || {})[p.nome]);
-    return sel.length ? `*${tit}:*\n` + sel.map(p => { const n = PED[g][p.nome]; return `${n}× ${p.nome}${p.preco ? ' — ' + reais(n * num(p.preco)) : ''}`; }).join('\n') : ''; }).filter(Boolean).join('\n\n');
+    return sel.length ? `*${tit}:*\n` + sel.map(p => { const n = PED[g][p.nome]; const ob = g === 'porc' ? ((PED.porcObs || {})[p.nome] || '').trim() : ''; return `${n}× ${p.nome}${p.preco ? ' — ' + reais(n * num(p.preco)) : ''}${ob ? '\n   Obs.: ' + ob : ''}`; }).join('\n') : ''; }).filter(Boolean).join('\n\n');
 }
 function renderPorcoes() {
   document.getElementById('ped-porcoes').innerHTML = GRUPOS.map(([g, tit, nota]) => { const ps = listaGrupo(DADOS, g); if (!ps.length) return ''; const n0 = qtdGrupo(g);
     return `<section class="ped-sec" id="sec-${g}">${cabecalho('+', tit, n0 > 0, '<span class="ped-opc">opcional</span>')}<p class="ped-nota">${nota}</p>
     <div class="porc-lista">${ps.map(p => { const n = (PED[g] || {})[p.nome] || 0; return `<div class="porc${n ? ' on' : ''}">${fotoAvulso(DADOS, p.nome, 'porc-foto', 52)}<div class="porc-t"><b>${esc(p.nome)}</b><span>${p.preco ? reais(num(p.preco)) : ''}</span></div>
-      <div class="porc-q"><button type="button" data-porc="${esc(p.nome)}" data-g="${g}" data-d="-1" aria-label="Menos ${esc(p.nome)}"${n ? '' : ' disabled'}>−</button><b aria-live="polite">${n}</b><button type="button" data-porc="${esc(p.nome)}" data-g="${g}" data-d="1" aria-label="Mais ${esc(p.nome)}">+</button></div></div>`; }).join('')}</div></section>`; }).join('');
+      <div class="porc-q"><button type="button" data-porc="${esc(p.nome)}" data-g="${g}" data-d="-1" aria-label="Menos ${esc(p.nome)}"${n ? '' : ' disabled'}>−</button><b aria-live="polite">${n}</b><button type="button" data-porc="${esc(p.nome)}" data-g="${g}" data-d="1" aria-label="Mais ${esc(p.nome)}">+</button></div>${g === 'porc' && n ? `<input class="porc-obs" data-obs="${esc(p.nome)}" maxlength="80" placeholder="Observação (ex.: sem cenoura)" aria-label="Observação da porção ${esc(p.nome)}" value="${esc((PED.porcObs || {})[p.nome] || '')}">` : ''}</div>`; }).join('')}</div></section>`; }).join('');
 }
 function mostrarAba(aba) {
   const tem = !!DADOS && temAvulsos(DADOS); const ab = tem ? aba : 'prato'; PED.aba = ab; const el = document.getElementById('ped-abas'); el.hidden = true;
@@ -1072,7 +1075,7 @@ function enviarPedido() {
   const comRef = (ref) => msg.replace('😊\n\n', '😊\n\n*Pedido nº ' + ref + '*\n');
   const itensP = itens.map(it => { const p = precoPedido(d, it.tam, it.prato); const ex = it.extras || [];
     return { descricao: [nomeItem(it), it.prato, it.semGuarn ? 'sem guarnição' : it.guarn.join(' e '), ex.length ? '+ ' + ex.join(' e ') : ''].filter(Boolean).join(' · '), quantidade: it.qtd, valor_unitario: Math.round((p.valor + ex.length * valorExtra(d)) * 100) / 100 }; });
-  GRUPOS.forEach(([g]) => listaGrupo(d, g).forEach(p => { const n = (PED[g] || {})[p.nome]; if (n) itensP.push({ descricao: p.nome + (g === 'porc' ? ' (porção)' : ''), quantidade: n, valor_unitario: num(p.preco) }); }));
+  GRUPOS.forEach(([g]) => listaGrupo(d, g).forEach(p => { const n = (PED[g] || {})[p.nome]; if (n) itensP.push({ descricao: p.nome + (g === 'porc' ? ' (porção)' + (((PED.porcObs || {})[p.nome] || '').trim() ? ' · Obs: ' + PED.porcObs[p.nome].trim() : '') : ''), quantidade: n, valor_unitario: num(p.preco) }); }));
   if (PED.ent === 'entrega' && tx && tx.status === 'ok') itensP.push({ descricao: `Taxa de entrega (≈ ${String(tx.km).replace('.', ',')} km)`, quantidade: 1, valor_unitario: tx.valor });
   const totalP = Math.round(itensP.reduce((s, i) => s + i.valor_unitario * i.quantidade, 0) * 100) / 100;
   const payload = { nome: nomeCli(), telefone: telCli(), entrega: PED.ent, forma: PED.ent === 'convenio' ? 'crediario' : PED.pag, pagamento: pagamentoTxt(), obs,
@@ -1093,7 +1096,7 @@ function enviarPedido() {
       if (!ok || !j.ok) { fim(); return erroPedido((j.error || 'Não foi possível registrar o pedido pelo site.') + (waAberto ? ' Sua mensagem já foi para o WhatsApp.' : ' Tente de novo.'), ''); }
       try { localStorage.setItem(TEL_KEY, telCli()); } catch (_) {}
       const urlWa = linkWA(comRef(j.ref)), pix = PED.ent !== 'convenio' && PED.pag === 'pix';
-      PED.itens = []; PED.porc = {}; PED.monte = {}; PED.tam = ''; PED.prato = ''; PED.guarn = []; PED.extras = [];
+      PED.itens = []; PED.porc = {}; PED.monte = {}; PED.porcObs = {}; PED.tam = ''; PED.prato = ''; PED.guarn = []; PED.extras = [];
       document.getElementById('pag-troco').value = ''; document.getElementById('pag-semtroco').checked = false; document.getElementById('ped-obs').value = '';
       fim(); mostrarOk(j.ref, urlWa, pix, totalP);
       if (eraPix && !waAberto && urlWa !== '#') { try { sessionStorage.setItem('pdc_pedido_ok', JSON.stringify({ ref: j.ref, url: urlWa, pix: true, total: totalP, t: Date.now() })); } catch (_) {} location.href = urlWa; }
