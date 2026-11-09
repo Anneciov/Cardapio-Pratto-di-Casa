@@ -6669,6 +6669,17 @@ class Component extends DCLogic {
     '.cx-pagbt.conta{padding:8px 14px;gap:12px;justify-content:center;background:rgba(251,146,60,.05);border-color:rgba(251,146,60,.28)}.cx-pagbt.conta small{color:#fdba74}',
     '.cx-pagbt:disabled{opacity:.42;cursor:not-allowed}.cx-pagbt:disabled svg{filter:grayscale(.7)}',
     '.cx-pags.vazio .cx-pag-h .cx-opc{color:#8fb3c0;font-style:italic}',
+    '/* Cobrar compacto: botoes em linha, mais espaco pro cupom */',
+    '.cx-pgrid,.cx-pgrid[class]{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}',
+    '.cx-pgrid .cx-pagbt,.cx-pgrid .cx-pagbt.conta{grid-column:auto;flex-direction:row;justify-content:flex-start;align-items:center;gap:9px;min-height:44px;padding:5px 10px 5px 6px;font-size:13px;line-height:1.15;text-align:left;white-space:nowrap;overflow:hidden}',
+    '.cx-pgrid .cx-pagbt svg{width:30px;height:30px;padding:6px;border-radius:9px}',
+    '.cx-pgrid .cx-pagbt kbd{position:static;order:3;margin-left:auto;flex-shrink:0}',
+    '.cx-pgrid .cx-pagbt.conta>span{min-width:0;overflow:hidden}.cx-pgrid .cx-pagbt.conta small{font-size:11px;overflow:hidden;text-overflow:ellipsis}',
+    '.cx-pags{padding:10px 12px}',
+    '.cx-cupom{flex:1 1 0;min-height:160px}',
+    '.cx-total{padding-top:8px;padding-bottom:8px}.cx-tot-ic{width:36px;height:36px}',
+    '@media (max-width:1280px){.cx-pgrid .cx-pagbt kbd{display:none}.cx-pgrid .cx-pagbt{gap:7px;padding-right:6px}}',
+    '@media (max-width:560px){.cx-pgrid,.cx-pgrid[class]{grid-template-columns:repeat(2,minmax(0,1fr))}}',
     '@media (prefers-reduced-motion:reduce){.cx-ov *{transition:none!important;animation:none!important}}'
   ].join('');
   /* ============ CAIXA (PDV): venda paga na hora ou lançada na conta do cliente; lê a comanda da balança (EAN-13) ============ */
@@ -6898,7 +6909,7 @@ class Component extends DCLogic {
       bt('debito',3,'Débito','M2 6h20v12H2z M2 10h20 M6 15h4')+
       bt('credito',4,'Crédito','M2 6h20v12H2z M2 10h20 M15 15h3')+
       bt('vr',5,'Vale-refeição','M4 4h16v16H4z M8 9h8 M8 13h5')+
-      '<button class="cx-pagbt conta" data-cx="pag" data-pag="crediario"'+(tem?'':' disabled')+'><kbd>6</kbd><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20a8 8 0 0116 0 M12 11a4 4 0 100-8 4 4 0 000 8"></path></svg><span>Lançar na conta do cliente<small>'+(this._cx.cliente?'paga no fim do mês':'escolha o cliente (F8)')+'</small></span></button>'+
+      '<button class="cx-pagbt conta" data-cx="pag" data-pag="crediario"'+(tem?'':' disabled')+'><kbd>6</kbd><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20a8 8 0 0116 0 M12 11a4 4 0 100-8 4 4 0 000 8"></path></svg><span>Conta do cliente<small>'+(this._cx.cliente?'paga no fim do mês':'escolha o cliente (F8)')+'</small></span></button>'+
       '</div></div>'; };
 
   // ── Leitura: valor digitado ou comanda da balança ──
