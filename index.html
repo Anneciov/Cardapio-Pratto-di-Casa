@@ -1025,25 +1025,30 @@ function enviarPedido() {
   if (PED.ent !== 'convenio' && PED.pag === 'pix' && !PED.pixOk) return mostrarPassoPix(totalP);
   const bPix = document.querySelector('#ped-ok [data-pixenviar]'); if (bPix) { bPix.disabled = true; bPix.textContent = 'Enviando pedido…'; }
   if (bt.dataset.enviando) return; bt.dataset.enviando = '1'; bt.classList.add('enviando'); btTxt.textContent = 'Enviando pedido…';
+  // PIX: o "Enviar pedido" já abre o WhatsApp (com o nº do pedido) para mandar o comprovante; a tela "Pedido enviado" fica esperando a volta
+  const eraPix = !!PED.pixOk; let waAberto = false;
+  if (eraPix) { payload.ref = 'S-' + Array.from(crypto.getRandomValues(new Uint8Array(6))).map(x => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[x % 32]).join('');
+    const u = linkWA(comRef(payload.ref)); if (u !== '#') { const w = window.open(u, '_blank'); if (w) { try { w.opener = null; } catch (_) {} waAberto = true; } } }
   const fim = () => { delete bt.dataset.enviando; bt.classList.remove('enviando'); PED.pixOk = false; const bp = document.querySelector('#ped-ok [data-pixenviar]'); if (bp) { bp.disabled = false; bp.textContent = 'Enviar pedido'; } atualizarTotal(); };
   fetch(PEDIDO_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
     .then(r => r.json().catch(() => ({})).then(j => ({ ok: r.ok, j })))
     .then(({ ok, j }) => {
-      if (!ok || !j.ok) { fim(); return erroPedido(j.error || 'Não foi possível enviar o pedido. Tente de novo.', ''); }
+      if (!ok || !j.ok) { fim(); return erroPedido((j.error || 'Não foi possível registrar o pedido pelo site.') + (waAberto ? ' Sua mensagem já foi para o WhatsApp.' : ' Tente de novo.'), ''); }
       try { localStorage.setItem(TEL_KEY, telCli()); } catch (_) {}
       const urlWa = linkWA(comRef(j.ref)), pix = PED.ent !== 'convenio' && PED.pag === 'pix';
       PED.itens = []; PED.porc = {}; PED.monte = {}; PED.tam = ''; PED.prato = ''; PED.guarn = []; PED.extras = [];
       document.getElementById('pag-troco').value = ''; document.getElementById('pag-semtroco').checked = false; document.getElementById('ped-obs').value = '';
       fim(); mostrarOk(j.ref, urlWa, pix, totalP);
+      if (eraPix && !waAberto && urlWa !== '#') { try { sessionStorage.setItem('pdc_pedido_ok', JSON.stringify({ ref: j.ref, url: urlWa, pix: true, total: totalP, t: Date.now() })); } catch (_) {} location.href = urlWa; }
     })
-    .catch(() => { fim(); if (confirm('Sem internet para registrar o pedido agora. Quer enviar pelo WhatsApp?')) { const u = linkWA(msg); if (u !== '#') window.open(u, '_blank', 'noopener') || (location.href = u); } });
+    .catch(() => { fim(); if (waAberto) return mostrarOk(payload.ref, linkWA(comRef(payload.ref)), true, totalP); if (confirm('Sem internet para registrar o pedido agora. Quer enviar pelo WhatsApp?')) { const u = linkWA(msg); if (u !== '#') window.open(u, '_blank', 'noopener') || (location.href = u); } });
 }
 // PIX: antes de enviar, mostra a chave para copiar e pagar; o pedido só vai quando tocar em "Enviar pedido"
 function mostrarPassoPix(total) {
   const el = document.getElementById('ped-ok');
   el.innerHTML = `<div class="ok-cx"><div class="ok-ico pix">PIX</div><h3>Pague com PIX</h3><p>Total do pedido: <b>${reais(total)}</b></p>
     <div class="pix-chave"><span>Chave PIX (CNPJ)</span><b>${PIX_CNPJ}</b><button type="button" class="pix-copiar pix-copiar-g" data-pix="${PIX_CNPJ.replace(/\D/g, '')}">Copiar chave PIX</button></div>
-    <ol class="pix-passos"><li>Copie a chave PIX</li><li>Pague no app do seu banco</li><li>Toque em <b>Enviar pedido</b></li></ol>
+    <ol class="pix-passos"><li>Copie a chave PIX</li><li>Pague no app do seu banco</li></ol>
     <button type="button" class="ok-wa" data-pixenviar>Enviar pedido</button>
     <button type="button" class="ok-fechar" data-pixvoltar>Voltar</button></div>`;
   el.hidden = false; el.scrollTop = 0;
@@ -1259,6 +1264,9 @@ async function iniciar() {
   else if (new URLSearchParams(location.search).has('monte')) history.replaceState(null, '', location.pathname + location.search + '#monte');
   else if (location.hash && location.hash !== '#monte') history.replaceState(null, '', location.pathname + location.search); // link direto para Monte seu pedido
   window.scrollTo(0, 0); rota(); addEventListener('hashchange', rota);
+  // voltou do WhatsApp (quando o celular abriu na mesma aba): mostra "Pedido enviado"
+  try { const s = JSON.parse(sessionStorage.getItem('pdc_pedido_ok') || 'null'); sessionStorage.removeItem('pdc_pedido_ok');
+    if (s && Date.now() - s.t < 1800000 && DADOS) { abrirPedido(''); mostrarOk(s.ref, s.url, s.pix, s.total); } } catch (_) {}
 }
 iniciar();
 </script>

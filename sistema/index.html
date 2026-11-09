@@ -5363,13 +5363,13 @@ class Component extends DCLogic {
     }
     fecha(); return r.itens.length?r:null; };
   waImportarPedido=async(m)=>{ if(this._demo||!sb||!this.state.authed||!m||m.direcao!=='entrada') return; if(!/^Olá! Quero fazer um pedido/i.test(String(m.corpo||'').trim())) return;
-    if(/Pedido nº\s*S-/i.test(String(m.corpo||''))) return; // já gravado pelo cardápio online
     if(Date.now()-(Date.parse(m.created_at||'')||0)>36*3600e3) return; // histórico antigo não entra
     if(!this._waPedFeitos){ let l=[]; try{ l=JSON.parse(localStorage.getItem('pdc_wa_pedidos')||'[]'); }catch(e){} this._waPedFeitos=new Set(l); this._waPedEmCurso=new Set(); }
     if(this._waPedFeitos.has(m.id)||this._waPedEmCurso.has(m.id)) return; this._waPedEmCurso.add(m.id);
     const marca=()=>{ this._waPedFeitos.add(m.id); this._lsSet('pdc_wa_pedidos', JSON.stringify([...this._waPedFeitos].slice(-300))); };
     try{ const p=this.waLerPedido(m.corpo); if(!p){ marca(); return; }
-      const ref='WA-'+String(m.id).slice(-6).toUpperCase();
+      const mRef=String(m.corpo||'').match(/Pedido nº\s*(S-[A-Z0-9]{6})/i); // pedido do site: só entra se o site não conseguiu gravar
+      const ref=mRef?mRef[1].toUpperCase():'WA-'+String(m.id).slice(-6).toUpperCase();
       const { data:ja, error:e1 } = await sb.from('rest_pedidos').select('id').eq('numero_ref',ref).limit(1); if(e1) return; if(ja&&ja.length){ marca(); return; }
       const pg=p.pagamento||''; const forma=p.convenio?'crediario':/^dinheiro/i.test(pg)?'dinheiro':/^pix/i.test(pg)?'pix':/débito/i.test(pg)?'debito':/crédito/i.test(pg)?'credito':'dinheiro';
       const emp=p.convenio?(this.state.clients||[]).find(c=>c.type==='Empresa'&&String(c.name||'').trim().toLowerCase()===p.convenio.toLowerCase()):null;
