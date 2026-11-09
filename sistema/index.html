@@ -3930,6 +3930,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:14px;align-items:end">
               <div><label style="{{ mcdLbl }}">Valores normais (P · M · G)</label><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px"><input value="{{ arte.pP }}" oninput="{{ arteSet.pP }}" inputmode="decimal" placeholder="P" title="Pequena" style="{{ mcdInp }}"><input value="{{ arte.pM }}" oninput="{{ arteSet.pM }}" inputmode="decimal" placeholder="M" title="Média" style="{{ mcdInp }}"><input value="{{ arte.pG }}" oninput="{{ arteSet.pG }}" inputmode="decimal" placeholder="G" title="Grande" style="{{ mcdInp }}"></div></div>
               <div><label style="{{ mcdLbl }}">Fitness</label><input value="{{ arte.pFit }}" oninput="{{ arteSet.pFit }}" inputmode="decimal" placeholder="28,00" style="{{ mcdInp }}"></div>
+              <div><label style="{{ mcdLbl }}">Entrega (R$ por km)</label><input value="{{ mcdTaxaKm }}" oninput="{{ arteSet.taxaKm }}" inputmode="decimal" placeholder="2,00" title="Taxa de entrega do site: distância em km × este valor" style="{{ mcdInp }}"></div>
               <div style="grid-column:span 2;min-width:0"><label style="{{ mcdLbl }}">Especiais (P · M · G)</label><div style="display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr;gap:6px"><input value="{{ arte.espNome }}" oninput="{{ arteSet.espNome }}" placeholder="Feijoada / Rabada / Virado / À parmegiana" style="{{ mcdInp }}"><input value="{{ arte.eP }}" oninput="{{ arteSet.eP }}" inputmode="decimal" placeholder="P" style="{{ mcdInp }}"><input value="{{ arte.eM }}" oninput="{{ arteSet.eM }}" inputmode="decimal" placeholder="M" style="{{ mcdInp }}"><input value="{{ arte.eG }}" oninput="{{ arteSet.eG }}" inputmode="decimal" placeholder="G" style="{{ mcdInp }}"></div></div>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;align-items:center">
@@ -4765,7 +4766,7 @@ class Component extends DCLogic {
   agendarPublicacao=()=>{ clearTimeout(this._pubT); this._pubT=setTimeout(this.publicarCardapio,2000); };
   // ── "Montar o cardápio de hoje" igual em todos os aparelhos: a cópia mais nova vem do cardápio publicado (arteSync) ──
   arteDoJson=(j)=>{ if(j.arteSync&&j.arteSync.v===2) return j.arteSync; const N=(l)=>(l||[]).join('\n'), P=(l)=>(l||[]).map(o=>o.nome+(o.preco?' | '+o.preco:'')).join('\n'); const pr=j.precos||{}, es=j.especial||{};
-    return { ...this.arteOriginal(), v:2, hoje:N(j.hoje), guarnicoes:N(j.guarnicoes), fitness:N(j.fitness), fitnessObs:j.fitnessObs||'', gExtra:j.guarnExtra==null?'1,00':j.guarnExtra,
+    return { ...this.arteOriginal(), v:2, hoje:N(j.hoje), guarnicoes:N(j.guarnicoes), fitness:N(j.fitness), fitnessObs:j.fitnessObs||'', gExtra:j.guarnExtra==null?'1,00':j.guarnExtra, taxaKm:j.taxaKm==null?'2,00':j.taxaKm,
       pP:pr.P||'', pM:pr.M||'', pG:pr.G||'', pFit:pr.fitness||'', espNome:es.nome||'', eP:es.P||'', eM:es.M||'', eG:es.G||'', fotos:j.fotos||{}, porcoes:P(j.porcoes), monte:P(j.monte), atualizado:j.atualizado }; };
   sincronizarArte=async()=>{ if(this._demo||!sb) return null; if(Date.now()-(this._arteEdit||0)<4000) return null;
     try{ const u=sb.storage.from('cardapio').getPublicUrl('cardapio-hoje.json').data.publicUrl; const r=await fetch(u+'?v='+Date.now(),{cache:'no-store'}); if(!r.ok) return null; const j=await r.json();
@@ -4776,7 +4777,7 @@ class Component extends DCLogic {
     }catch(e){ console.warn('[cardápio sync]',e); return null; } };
   // ── fim sync ──
   publicarCardapio=async()=>{ if(this._demo||!sb) return; const novo=await this.sincronizarArte(); const a=novo||this.state.arte; if(!a) return; const L=this.mcdSplit;
-    const dados={ v:1, atualizado:new Date().toISOString(), empresa:{...Component.EMPRESA, whatsapp:Component.WHATSAPP_CARDAPIO}, hoje:L(a.hoje), guarnicoes:L(a.guarnicoes), fitness:L(a.fitness), fitnessObs:a.fitnessObs||'', guarnExtra:a.gExtra==null?'1,00':String(a.gExtra).trim(), convenios:this.listaConvenios(), porcoes:L(a.porcoes).map(x=>this.mcdPorcao(x)).filter(x=>x.nome), monte:L(a.monte).map(x=>this.mcdPorcao(x)).filter(x=>x.nome),
+    const dados={ v:1, atualizado:new Date().toISOString(), empresa:{...Component.EMPRESA, whatsapp:Component.WHATSAPP_CARDAPIO}, hoje:L(a.hoje), guarnicoes:L(a.guarnicoes), fitness:L(a.fitness), fitnessObs:a.fitnessObs||'', guarnExtra:a.gExtra==null?'1,00':String(a.gExtra).trim(), taxaKm:a.taxaKm==null?'2,00':String(a.taxaKm).trim(), convenios:this.listaConvenios(), porcoes:L(a.porcoes).map(x=>this.mcdPorcao(x)).filter(x=>x.nome), monte:L(a.monte).map(x=>this.mcdPorcao(x)).filter(x=>x.nome),
       precos:{ P:a.pP||'', M:a.pM||'', G:a.pG||'', fitness:a.pFit||'' }, especial:{ nome:a.espNome||'', P:a.eP||'', M:a.eM||'', G:a.eG||'' }, fotos:a.fotos||{},
       // os mesmos pratos cadastrados no sistema (com foto, ingredientes e valor do tamanho), para o site ficar igual ao "Ver Cardápio"
       pratos:this.pratosParaSite(), arteSync:{ ...a } };
@@ -5241,7 +5242,7 @@ class Component extends DCLogic {
     const carregar = async () => {
       try {
         const [st, ms] = await Promise.all([this.waLocalFetch('GET', '/status'), this.waLocalFetch('GET', '/mensagens')]);
-        this.setState({ waLocalOffline: false, waConexao: st.conexao, waMsgs: ms.mensagens || [], waContatos: ms.contatos || {} }); setTimeout(this.waBuscarFotos, 300);
+        this.setState({ waLocalOffline: false, waConexao: st.conexao, waMsgs: ms.mensagens || [], waContatos: ms.contatos || {} }); setTimeout(this.waBuscarFotos, 300); this.waImportarPedidos(ms.mensagens);
       } catch (e) {
         if (e && /inválido/i.test(e.message || '')) { this._lsSet('pdc_wa_local_token', ''); this.setState({ waLocalToken: '' }); this._waFonte && this._waFonte.close(); this._waFonte = null; setTimeout(() => this.waIniciar(), 0); return; }
         this.setState({ waLocalOffline: true });
@@ -5327,8 +5328,53 @@ class Component extends DCLogic {
     });
   };
   waParar = () => { if (this._waSync) { clearInterval(this._waSync); this._waSync = null; } if (this._waCanal && sb) sb.removeChannel(this._waCanal); this._waCanal = null; if (this._waFonte) { this._waFonte.close(); this._waFonte = null; } if (this._waProcura && !this.state.authed) { clearInterval(this._waProcura); this._waProcura = null; } };
+  // ── pedidos do cardápio online que chegam pelo WhatsApp entram sozinhos em Pedidos ──
+  waLerPedido=(corpo)=>{ const L=String(corpo||'').split('\n').map(x=>x.trim()); if(!/^Olá! Quero fazer um pedido/i.test(L[0]||'')) return null;
+    const v=(s)=>this.num(String(s||'').replace(/[^\d,]/g,''));
+    const r={ nome:'', itens:[], endereco:'', convenio:'', departamento:'', pagamento:'', obs:'', total:0, taxa:0, taxaTxt:'' }; let cur=null, grupo='';
+    const fecha=()=>{ if(cur){ const q=cur.q||1, unit=cur.preco+cur.extra; r.itens.push({ descricao:[cur.nome, cur.prato, cur.guarn, cur.extras?'+ '+cur.extras:''].filter(Boolean).join(' · '), quantidade:q, valor_unitario:unit, valor_total:unit*q }); cur=null; } };
+    for(const l of L){ let m;
+      if(!l){ fecha(); grupo=''; continue; }
+      if((m=l.match(/^\*Nome:\*\s*(.+)$/))){ r.nome=m[1].trim(); continue; }
+      if((m=l.match(/^\*(?:\d+\)\s*)?(Prato [^*]+)\*(?:\s*—\s*R\$\s*([\d.,]+))?/))){ fecha(); cur={ nome:m[1].trim(), preco:v(m[2]), extra:0, q:1 }; continue; }
+      if(cur){ if((m=l.match(/^(?:Prato|Proteína):\s*(.+)$/))){ cur.prato=m[1]; continue; } if((m=l.match(/^Guarnições extras:\s*(.+?)\s*\(\+R\$\s*([\d.,]+)/))){ cur.extras=m[1]; cur.extra=v(m[2]); continue; }
+        if((m=l.match(/^Guarnições:\s*(.+)$/))){ cur.guarn=m[1]; continue; } if((m=l.match(/^Quantidade:\s*(\d+)/))){ cur.q=parseInt(m[1],10)||1; continue; } }
+      if((m=l.match(/^\*(Monte seu pedido|Porções):\*$/))){ fecha(); grupo=m[1]; continue; }
+      if(grupo&&(m=l.match(/^(\d+)×\s*(.+?)(?:\s*—\s*R\$\s*([\d.,]+))?$/))){ const q=parseInt(m[1],10)||1, tot=v(m[3]); r.itens.push({ descricao:m[2].trim()+(grupo==='Porções'?' (porção)':''), quantidade:q, valor_unitario:q?tot/q:0, valor_total:tot }); continue; }
+      if((m=l.match(/^\*Entregar em:\*\s*(.+)$/))){ fecha(); r.endereco=m[1].trim(); continue; }
+      if((m=l.match(/^\*Taxa de entrega(?:\s*\(([^)]*)\))?:\*\s*(.+)$/))){ const val=/R\$/.test(m[2])?v(m[2]):0; r.taxa=val; r.taxaTxt=m[2].trim(); if(val) r.itens.push({ descricao:'Taxa de entrega'+(m[1]?' ('+m[1]+')':''), quantidade:1, valor_unitario:val, valor_total:val }); continue; }
+      if(/^\*Vou retirar no local\*$/.test(l)){ fecha(); r.endereco='Retirada no local'; continue; }
+      if((m=l.match(/^\*Convênio:\*\s*(.+)$/))){ fecha(); r.convenio=m[1].trim(); continue; }
+      if((m=l.match(/^Departamento:\s*(.+)$/))){ r.departamento=m[1].trim(); continue; }
+      if((m=l.match(/^Observação:\s*(.+)$/))){ r.obs=m[1].trim(); continue; }
+      if((m=l.match(/^\*Pagamento:\*\s*(.+)$/))){ r.pagamento=m[1].trim(); continue; }
+      if((m=l.match(/^\*Total:\s*R\$\s*([\d.,]+)\*$/))){ r.total=v(m[1]); continue; }
+    }
+    fecha(); return r.itens.length?r:null; };
+  waImportarPedido=async(m)=>{ if(this._demo||!sb||!this.state.authed||!m||m.direcao!=='entrada') return; if(!/^Olá! Quero fazer um pedido/i.test(String(m.corpo||'').trim())) return;
+    if(Date.now()-(Date.parse(m.created_at||'')||0)>36*3600e3) return; // histórico antigo não entra
+    if(!this._waPedFeitos){ let l=[]; try{ l=JSON.parse(localStorage.getItem('pdc_wa_pedidos')||'[]'); }catch(e){} this._waPedFeitos=new Set(l); this._waPedEmCurso=new Set(); }
+    if(this._waPedFeitos.has(m.id)||this._waPedEmCurso.has(m.id)) return; this._waPedEmCurso.add(m.id);
+    const marca=()=>{ this._waPedFeitos.add(m.id); this._lsSet('pdc_wa_pedidos', JSON.stringify([...this._waPedFeitos].slice(-300))); };
+    try{ const p=this.waLerPedido(m.corpo); if(!p){ marca(); return; }
+      const ref='WA-'+String(m.id).slice(-6).toUpperCase();
+      const { data:ja, error:e1 } = await sb.from('rest_pedidos').select('id').eq('numero_ref',ref).limit(1); if(e1) return; if(ja&&ja.length){ marca(); return; }
+      const pg=p.pagamento||''; const forma=p.convenio?'crediario':/^dinheiro/i.test(pg)?'dinheiro':/^pix/i.test(pg)?'pix':/débito/i.test(pg)?'debito':/crédito/i.test(pg)?'credito':'dinheiro';
+      const emp=p.convenio?(this.state.clients||[]).find(c=>c.type==='Empresa'&&String(c.name||'').trim().toLowerCase()===p.convenio.toLowerCase()):null;
+      const total=p.total||p.itens.reduce((a,i)=>a+i.valor_total,0);
+      const obs=[p.obs, pg?'Pagamento: '+pg:'', (!p.taxa&&p.taxaTxt)?'Taxa de entrega: '+p.taxaTxt:'', p.convenio?'Convênio: '+p.convenio+(p.departamento?' · '+p.departamento:'')+' — lançar na conta da empresa':''].filter(Boolean).join(' · ');
+      const nome=p.nome||m.nome_contato||(this.state.waContatos||{})[m.telefone]||'';
+      const { data:ped, error } = await sb.from('rest_pedidos').insert({ numero_ref:ref, origem:'whatsapp', status:'aberto', total, forma_pagamento:forma, nome_cliente:nome||null, telefone_contato:m.telefone||null, endereco_entrega:p.endereco||null, observacoes:obs||null, empresa_id:emp?emp.id:null }).select('id').single();
+      if(error){ console.error('[pedido whatsapp]', error); return; }
+      const { error:e2 } = await sb.from('rest_pedido_itens').insert(p.itens.map(i=>({ pedido_id:ped.id, descricao:i.descricao, quantidade:i.quantidade, valor_unitario:i.valor_unitario, valor_total:i.valor_total })));
+      if(e2) console.error('[pedido whatsapp itens]', e2);
+      marca(); this.showToast('Pedido do WhatsApp de '+(nome||m.telefone)+' entrou em Pedidos.'); this.loadPedidos();
+    } catch(e){ console.error('[pedido whatsapp]', e); } finally { this._waPedEmCurso.delete(m.id); } };
+  waImportarPedidos=(lista)=>{ (lista||[]).filter(x=>x&&x.direcao==='entrada').slice(-60).forEach(x=>this.waImportarPedido(x)); };
+  // ── fim pedidos whatsapp ──
   waNovaMsg = (m) => {
     if (!m) return;
+    this.waImportarPedido(m);
     this.setState(s => ({ waMsgs: s.waMsgs.some(x => x.id === m.id) ? s.waMsgs : [...s.waMsgs, m] }));
     if (this.state.waLocalToken && !(m.telefone in (this.state.waFotos || {}))) setTimeout(this.waBuscarFotos, 500);
     if (m.direcao !== 'entrada') { if (m.telefone === this.state.waSel) this.waRolar(); return; }
@@ -5802,7 +5848,7 @@ class Component extends DCLogic {
 
   loadPedidos = async () => {
     const { data, error } = await sb.from('rest_pedidos')
-      .select('id,numero_ref,cliente_id,empresa_id,forma_pagamento,status,total,data,origem,nome_cliente,pronto,motoboy_id,rest_motoboys(nome),rest_pedido_itens(descricao,quantidade)')
+      .select('id,numero_ref,cliente_id,empresa_id,forma_pagamento,status,total,data,origem,nome_cliente,telefone_contato,endereco_entrega,observacoes,pronto,motoboy_id,rest_motoboys(nome),rest_pedido_itens(descricao,quantidade)')
       .order('created_at', { ascending: false }).limit(200);
     if (error) { console.error(error); return; }
     const today = this.todayISO();
@@ -5815,7 +5861,7 @@ class Component extends DCLogic {
       pronto: !!o.pronto,
       motoboyId: o.motoboy_id || null,
       motoboyName: o.rest_motoboys ? o.rest_motoboys.nome : null,
-      items: (o.rest_pedido_itens||[]).map(i=>i.quantidade+'x '+i.descricao).join(', ') || '—',
+      items: ((o.rest_pedido_itens||[]).map(i=>i.quantidade+'x '+i.descricao).join(', ') || '—') + (o.origem==='whatsapp' ? ' — ' + ['📍 '+(o.endereco_entrega||'sem endereço'), o.telefone_contato?'📞 '+o.telefone_contato:'', o.observacoes||''].filter(Boolean).join(' · ') : ''),
       total: Number(o.total) || 0,
       payment: o.forma_pagamento || 'dinheiro',
       status: o.status === 'entregue' ? 'entregue' : 'aberto',
@@ -7954,8 +8000,8 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       noCardapio:s.cardapio.length===0, cardapioTotal:String(s.cardapio.length), cardapioAvailFmt:String(cardapioAvail),
       cardapioCategories, cardapioCategoryOpen, cardapioHubOpen, cardapioCategoryLabel, ...cdpVals, ...mcdVals, ...mvVals,
       arteAberta:!!s.arteAberta, arte:s.arte||{}, abrirArte:this.abrirArte, fecharArte:this.fecharArte, arteRecarregar:this.arteRecarregar, baixarArte:this.baixarArte, copiarArte:this.copiarArte,
-      mcdGExtra:(s.arte||{}).gExtra==null?'1,00':(s.arte||{}).gExtra,
-      arteSet:['hoje','guarnicoes','fitness','fitnessObs','gExtra','pP','pM','pG','pFit','espNome','eP','eM','eG'].reduce((o,k)=>{ o[k]=this.setArte(k); return o; },{}),
+      mcdGExtra:(s.arte||{}).gExtra==null?'1,00':(s.arte||{}).gExtra, mcdTaxaKm:(s.arte||{}).taxaKm==null?'2,00':(s.arte||{}).taxaKm,
+      arteSet:['hoje','guarnicoes','fitness','fitnessObs','gExtra','taxaKm','pP','pM','pG','pFit','espNome','eP','eM','eG'].reduce((o,k)=>{ o[k]=this.setArte(k); return o; },{}),
       arteLbl:'display:block;font-size:11.5px;font-weight:700;color:#847a6e;text-transform:uppercase;letter-spacing:.05em;margin:10px 0 6px',
       arteInp:'width:100%;box-sizing:border-box;padding:9px 11px;border:1px solid var(--border-input);border-radius:9px;font-size:14px;margin-bottom:8px;background:var(--bg-card);color:var(--text-primary);font-family:inherit',
       arteTa:'width:100%;box-sizing:border-box;padding:9px 11px;border:1px solid var(--border-input);border-radius:9px;font-size:14px;line-height:1.45;margin-bottom:6px;background:var(--bg-card);color:var(--text-primary);font-family:inherit;resize:vertical',
