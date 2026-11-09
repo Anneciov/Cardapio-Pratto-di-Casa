@@ -292,7 +292,7 @@
   .end-f input:disabled{opacity:.45}
   .pix-box{padding:14px;border-radius:14px;border:1.5px solid rgba(255,122,26,.45);background:rgba(255,122,26,.08);font:600 14px Inter;line-height:1.5}.pix-box>b{font-family:'Space Mono',monospace;letter-spacing:.02em}.pix-box p{margin:8px 0 0;font-size:12.5px;color:var(--suave)}.pix-box p b{color:var(--texto)}
   .taxa-box{margin-top:12px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--linha);font:600 14px Inter}.taxa-box.ok{border-color:rgba(74,222,128,.45)}.taxa-box b{color:var(--laranja2)}
-  .taxa-box small{display:block;margin-top:2px;font:500 12.5px Inter;color:var(--suave)}.taxa-box.calc{color:var(--laranja2)}.taxa-box.erro{color:#fbbf24}
+  .taxa-box small{display:block;margin-top:2px;font:500 12.5px Inter;color:var(--suave)}.taxa-box.calc{color:var(--laranja2)}.taxa-box.erro{color:#fbbf24}.taxa-box.consultar{border-color:rgba(255,122,26,.4)}
   .ped-obs-l{display:block;font:600 13.5px Inter;color:var(--texto);margin:6px 0 8px}.ped-obs-l small{display:block;font:500 12px Inter;color:var(--suave);margin-top:3px}
   .ped-cnt{text-align:right;font-size:11.5px;color:var(--suave);margin-top:4px}
   /* rodapé */
@@ -847,8 +847,8 @@ async function distanciaKm(a, b) {
   const rad = (x) => x * Math.PI / 180, dLa = rad(b.lat - a.lat), dLo = rad(b.lon - a.lon); const h = Math.sin(dLa / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLo / 2) ** 2;
   return 2 * 6371 * Math.asin(Math.sqrt(h)) * 1.35; // em linha reta + 35% (ruas)
 }
-const valorTaxa = () => (PED.ent === 'entrega' && PED.taxa && PED.taxa.status === 'ok') ? PED.taxa.valor : 0;
-function agendarTaxa() { clearTimeout(agendarTaxa.t); agendarTaxa.t = setTimeout(calcularTaxa, 900); }
+const valorTaxa = () => 0; // taxa de entrega: a consultar (não é cobrada no site)
+function agendarTaxa() { PED.taxa = null; }
 async function calcularTaxa() {
   if (PED.ent !== 'entrega' || endFaltando().length) { if (PED.taxa) { PED.taxa = null; atualizarTotal(); } return; }
   const chave = [endCampo('rua'), endCampo('bairro'), endCampo('cidade')].join('|'); if (PED.taxa && PED.taxa.chave === chave) return;
@@ -858,8 +858,8 @@ async function calcularTaxa() {
   else { const km = Math.max(0.5, Math.round((await distanciaKm(RESTAURANTE, p)) * 10) / 10); if (!PED.taxa || PED.taxa.chave !== chave) return; PED.taxa = { chave, status: 'ok', km, valor: Math.round(km * taxaKm() * 100) / 100 }; }
   atualizarTotal();
 }
-function mostrarTaxa() { const el = document.getElementById('taxa-box'); if (!el) return; const t = PED.ent === 'entrega' ? PED.taxa : null; el.hidden = !t; el.className = 'taxa-box' + (t ? ' ' + t.status : '');
-  el.innerHTML = !t ? '' : t.status === 'calc' ? 'Calculando a taxa de entrega…' : t.status === 'ok' ? `Taxa de entrega: <b>${reais(t.valor)}</b><small>≈ ${String(t.km).replace('.', ',')} km × ${reais(taxaKm())} por km</small>` : 'Não deu para calcular a distância — a taxa de entrega é combinada no WhatsApp.'; }
+function mostrarTaxa() { const el = document.getElementById('taxa-box'); if (!el) return; const on = PED.ent === 'entrega'; el.hidden = !on; el.className = 'taxa-box consultar';
+  el.innerHTML = on ? 'Taxa de entrega: <b>a consultar</b><small>O restaurante informa o valor da entrega pelo WhatsApp.</small>' : ''; }
 function totalGeral() { const d = DADOS; const p = PED.tam ? precoPedido(d, PED.tam, PED.prato) : { valor: 0 };
   return PED.itens.reduce((s, it) => s + valorItem(it), 0) + (p.valor + (PED.tam ? PED.extras.length * valorExtra(d) : 0)) * PED.qtd + totPorc() + valorTaxa(); }
 function faltaPag() {
@@ -1064,7 +1064,7 @@ function enviarPedido() {
       it.prato ? `${fit ? 'Proteína' : 'Prato'}: ${it.prato}` : '', it.semGuarn ? 'Guarnições: sem guarnição' : it.guarn.length ? `Guarnições: ${it.guarn.join(' e ')}` : '', (it.extras || []).length ? `Guarnições extras: ${it.extras.join(' e ')} (+${reais(it.extras.length * valorExtra(d))} cada prato)` : '',
       `Quantidade: ${it.qtd}`].filter(Boolean).join('\n'); };
   const total = itens.reduce((s, it) => s + valorItem(it), 0) + totPorc() + valorTaxa();
-  const end = enderecoTxt(); const tx = PED.taxa; const taxaTxt = PED.ent !== 'entrega' ? '' : (tx && tx.status === 'ok') ? `\n*Taxa de entrega (≈ ${String(tx.km).replace('.', ',')} km):* ${reais(tx.valor)}` : '\n*Taxa de entrega:* a combinar';
+  const end = enderecoTxt(); const tx = PED.taxa; const taxaTxt = PED.ent !== 'entrega' ? '' : (tx && tx.status === 'ok') ? `\n*Taxa de entrega (≈ ${String(tx.km).replace('.', ',')} km):* ${reais(tx.valor)}` : '\n*Taxa de entrega:* a consultar';
   const entrega = PED.ent === 'entrega' ? `\n\n*Entregar em:* ${end}${taxaTxt}` : PED.ent === 'convenio' ? `\n\n*Convênio:* ${convEmp()}${convDep() ? '\nDepartamento: ' + convDep() : ''}` : '\n\n*Vou retirar no local*';
   if (PED.ent === 'entrega') salvarEndereco(); if (PED.ent === 'convenio') salvarConvenio();
   try { localStorage.setItem(NOME_KEY, nomeCli()); } catch (_) {}
@@ -1077,7 +1077,7 @@ function enviarPedido() {
   const totalP = Math.round(itensP.reduce((s, i) => s + i.valor_unitario * i.quantidade, 0) * 100) / 100;
   const payload = { nome: nomeCli(), telefone: telCli(), entrega: PED.ent, forma: PED.ent === 'convenio' ? 'crediario' : PED.pag, pagamento: pagamentoTxt(), obs,
     endereco: PED.ent === 'entrega' ? end : '', convenio: PED.ent === 'convenio' ? convEmp() : '', departamento: PED.ent === 'convenio' ? convDep() : '',
-    taxaTxt: PED.ent === 'entrega' && !(tx && tx.status === 'ok') ? 'a combinar' : '', itens: itensP, total: totalP };
+    taxaTxt: PED.ent === 'entrega' ? 'a consultar' : '', itens: itensP, total: totalP };
   const bt = document.getElementById('ped-enviar'), btTxt = document.getElementById('ped-enviar-txt');
   if (PED.ent !== 'convenio' && PED.pag === 'pix' && !PED.pixOk) return mostrarPassoPix(totalP);
   const bPix = document.querySelector('#ped-ok [data-pixenviar]'); if (bPix) { bPix.disabled = true; bPix.textContent = 'Enviando pedido…'; }
