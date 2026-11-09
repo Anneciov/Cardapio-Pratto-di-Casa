@@ -293,6 +293,13 @@
   /* ===== capa (página de abertura) ===== */
   #capa{position:relative;z-index:2;min-height:100vh;min-height:100svh;max-width:1180px;margin:0 auto;padding:18px 20px 22px;display:flex;flex-direction:column;gap:16px}
   body.na-capa .cena,body.na-capa .pedir{display:none}
+  body:not(.na-monte) .cena-monte,body.na-monte .cena:not(.cena-monte),body.na-monte .pedir{display:none}
+  .capa-links{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.capa-links .capa-entrar{margin-left:0}
+  .capa-monte{background:linear-gradient(135deg,var(--laranja2),var(--laranja));color:#1a0d02!important;border-color:transparent!important;font-weight:700}
+  .capa-btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .capa-btn2{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 22px;border-radius:50px;border:1.5px solid rgba(255,122,26,.6);color:var(--laranja2);font:700 15px Inter;text-decoration:none;transition:background .2s ease}
+  .capa-btn2:hover{background:rgba(255,122,26,.12)}.capa-btn2:focus-visible,.capa-monte:focus-visible{outline:2px solid var(--laranja);outline-offset:3px}
+  .mp-acoes{display:flex;justify-content:center;margin-top:22px}.mp-btn{border:none;cursor:pointer;font:inherit}
   body:not(.na-capa) #capa{display:none}
   #capa .banner{flex:1;margin:0;min-height:540px}
   .capa-topo{display:flex;align-items:center;gap:14px}
@@ -442,6 +449,7 @@
 <body class="na-capa">
 <div class="bokeh" aria-hidden="true"></div>
 <div id="capa" aria-label="Início"></div>
+<div class="cena cena-monte" id="pag-monte"></div>
 <div class="cena"><main class="quadro" id="quadro"><div class="carregando"><i></i>Carregando o cardápio de hoje…</div></main></div>
 <a class="pedir" id="pedir" data-pedir="" href="#" target="_blank" rel="noopener" aria-label="Pedir pelo WhatsApp">
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.4A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4zm4.5 9.7c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 01-1.9-1.2 7.3 7.3 0 01-1.3-1.7c-.1-.2 0-.4.1-.5l.4-.5c.1-.1.1-.3.2-.4a.4.4 0 000-.4l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5a.9.9 0 00-.6.3 2.6 2.6 0 00-.8 1.9 4.5 4.5 0 001 2.4 10.2 10.2 0 003.9 3.4c1.5.6 2 .7 2.7.6a2.3 2.3 0 001.5-1.1 1.9 1.9 0 00.1-1.1c0-.1-.2-.2-.4-.3z"/></svg>
@@ -567,9 +575,9 @@ function capaHTML(d) {
         <div class="bn-tag"><span>Feita na hora</span></div>${(d.hoje || []).length ? `<p class="bn-ing">${esc(d.hoje.join(' · '))}</p>` : ''}
         ${menor ? `<div class="bn-preco"><span class="bn-so">a partir de</span><b><small>R$</small>${esc(menor)}</b></div>` : ''}</div></section>`;
   return `<div class="capa-topo"><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div>
-      <a href="#cardapio" class="capa-entrar js-entrar">Cardápio <span>→</span></a></div>
+      <div class="capa-links">${temAvulsos(d) ? '<a href="#monte" class="capa-entrar capa-monte">Monte seu pedido <span>→</span></a>' : ''}<a href="#cardapio" class="capa-entrar js-entrar">Cardápio <span>→</span></a></div></div>
     ${banner}
-    <div class="capa-cta"><a href="#cardapio" class="capa-btn js-entrar"><span>Ver cardápio de hoje</span><i>→</i></a>
+    <div class="capa-cta"><div class="capa-btns"><a href="#cardapio" class="capa-btn js-entrar"><span>Ver cardápio de hoje</span><i>→</i></a>${temAvulsos(d) ? '<a href="#monte" class="capa-btn2">Monte seu pedido <i>→</i></a>' : ''}</div>
       <div class="capa-info"><span class="data">${esc(dia)}</span><span>📍 ${esc(emp.endereco || '')}</span></div></div>`;
 }
 const ROTA = { capaPronta: false, menuAnimado: false };
@@ -594,7 +602,17 @@ function mostrarCardapio() {
   if (!ROTA.menuAnimado) { ROTA.menuAnimado = true; animar(); ligarAtalhos(); }
   else if (M) M.animate(cena, { opacity: [0, 1], y: [30, 0] }, { type: 'spring', bounce: .2, duration: .6 });
 }
-const rota = () => (location.hash === '#cardapio' ? mostrarCardapio() : mostrarCapa());
+// ── guia "Monte seu pedido": página separada (#monte) só com itens avulsos e porções ──
+function montePagHTML(d) {
+  if (!temAvulsos(d)) return '';
+  const emp = d.empresa || PADRAO.empresa; const partes = (emp.nome || 'Pratto di Casa').split(' '); const ult = partes.pop();
+  return `<main class="quadro"><header><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div><div class="data">Monte seu pedido</div><a class="inicio" href="#inicio" aria-label="Voltar ao início">‹ Início</a></header>
+    <section class="bloco"><div class="titulo"><h3>Monte seu <em>pedido</em></h3></div><p class="dica">Toque no item para colocar no pedido</p>
+    ${GRUPOS.map(([g, tit]) => { const ls = listaGrupo(d, g); return ls.length ? `<h4 class="grupo-t">${tit}</h4><div class="lista">${ls.map(p => `<div class="item" data-pedir="" data-porcao="${esc(p.nome)}" data-grupo="${g}" role="button" tabindex="0" title="Pedir ${esc(p.nome)}"><span class="nome">${esc(p.nome)}</span>${p.preco ? `<span class="porc-preco">R$ ${esc(p.preco)}</span>` : ''}</div>`).join('')}</div>` : ''; }).join('')}
+    <div class="mp-acoes"><button type="button" class="capa-btn mp-btn" data-pedir="" data-monte="1"><span>Montar meu pedido</span><i>→</i></button></div></section></main>`;
+}
+function mostrarMonte() { document.body.classList.remove('na-capa'); window.scrollTo(0, 0); if (BANNER.parar) BANNER.parar(); }
+const rota = () => { const h = location.hash; document.body.classList.toggle('na-monte', h === '#monte'); return h === '#cardapio' ? mostrarCardapio() : h === '#monte' ? mostrarMonte() : mostrarCapa(); };
 // ---------- Monte seu pedido: tamanho, prato do dia, até 2 guarnições, quantidade e observação → WhatsApp ----------
 let DADOS = null;
 const MAX_GUARN = 2;
@@ -674,7 +692,7 @@ function renderPorcoes() {
       <div class="porc-q"><button type="button" data-porc="${esc(p.nome)}" data-g="${g}" data-d="-1" aria-label="Menos ${esc(p.nome)}"${n ? '' : ' disabled'}>−</button><b aria-live="polite">${n}</b><button type="button" data-porc="${esc(p.nome)}" data-g="${g}" data-d="1" aria-label="Mais ${esc(p.nome)}">+</button></div></div>`; }).join('')}</div></section>`; }).join('');
 }
 function mostrarAba(aba) {
-  const tem = !!DADOS && temAvulsos(DADOS); const ab = tem ? aba : 'prato'; PED.aba = ab; const el = document.getElementById('ped-abas'); el.hidden = !tem;
+  const tem = !!DADOS && temAvulsos(DADOS); const ab = tem ? aba : 'prato'; PED.aba = ab; const el = document.getElementById('ped-abas'); el.hidden = true;
   el.querySelectorAll('[data-aba]').forEach(b => { const on = b.dataset.aba === ab; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
   document.getElementById('aba-prato').hidden = ab !== 'prato'; document.getElementById('aba-monte').hidden = ab !== 'monte'; document.getElementById('ped-passos').style.visibility = ab === 'monte' ? 'hidden' : '';
 }
@@ -950,6 +968,7 @@ function ligarPedido() {
 // qualquer botão "Pedir" da página abre o montador do pedido
 document.addEventListener('click', async (e) => { const b = e.target.closest('.pix-copiar'); if (!b) return; try { await navigator.clipboard.writeText(b.dataset.pix); } catch (_) { const t = document.createElement('textarea'); t.value = b.dataset.pix; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (_) {} t.remove(); } b.textContent = 'Copiado!'; setTimeout(() => { b.textContent = 'Copiar'; }, 1800); });
 document.addEventListener('click', (e) => { const el = e.target.closest('[data-pedir]'); if (!el || !DADOS) return; e.preventDefault(); abrirPedido(el.dataset.pedir || '', el.dataset.prato || '', el.dataset.g || '', !!el.dataset.especial);
+  if (el.dataset.monte) { PED.tam = ''; PED.prato = ''; PED.aba = 'monte'; renderOpcoes(); }
   if (el.dataset.porcao) { const n = el.dataset.porcao, g = el.dataset.grupo || 'porc'; PED[g][n] = (PED[g][n] || 0) + 1; PED.tam = ''; PED.prato = ''; PED.aba = 'monte'; renderOpcoes();
     setTimeout(() => { const s = document.getElementById('sec-' + g); if (s) s.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200); } });
 document.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.item[data-pedir], li[data-pedir], .fitbox')) { e.preventDefault(); e.target.click(); } });
@@ -979,7 +998,7 @@ function montar(d) {
       </article>`; }).join('')}</div></section>` : '';
   return `
   <header class="entra"><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div><div class="data"><span class="dl">Cardápio de hoje · </span>${esc(dia)}</div><a class="inicio" href="#inicio" aria-label="Voltar ao início">‹ Início</a></header>
-  <nav class="atalhos" aria-label="Seções do cardápio">${[['sec-pratos', 'Pratos', pratos.length], ['sec-hoje', 'Hoje tem', hoje.length], ['sec-acomp', 'Guarnições', (d.guarnicoes || []).length + (d.fitness || []).length], ['sec-porcoes', 'Monte seu pedido', temAvulsos(d)], ['sec-valores', 'Valores', tams.length], ['sec-local', 'Como chegar', emp.endereco]].filter(x => x[2]).map(([id, n]) => `<a href="#${id}" data-ir="${id}">${n}</a>`).join('')}</nav>
+  <nav class="atalhos" aria-label="Seções do cardápio">${[['sec-pratos', 'Pratos', pratos.length], ['sec-hoje', 'Hoje tem', hoje.length], ['sec-acomp', 'Guarnições', (d.guarnicoes || []).length + (d.fitness || []).length], ['sec-valores', 'Valores', tams.length], ['sec-local', 'Como chegar', emp.endereco]].filter(x => x[2]).map(([id, n]) => `<a href="#${id}" data-ir="${id}">${n}</a>`).join('')}</nav>
   ${cards}
   ${hoje.length ? `<section class="bloco entra" id="sec-hoje"><div class="titulo"><h3>Hoje <em>tem</em></h3></div><p class="dica">Toque no prato para pedir</p><div class="lista">${hoje.map((n, i) => { const f = fotoDe(d, n);
       return `<div class="item" data-pedir="" data-prato="${esc(n)}" role="button" tabindex="0" title="Pedir ${esc(n)}"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="nome">${esc(n)}</span>${f ? `<img class="mini" src="${esc(f)}" alt="" loading="lazy">` : ''}</div>`; }).join('')}</div></section>` : ''}
@@ -987,7 +1006,6 @@ function montar(d) {
     ${(d.guarnicoes || []).length ? `<div><div class="titulo"><h3>Guarni<em>ções</em></h3></div><p class="dica">Toque numa guarnição para já começar o pedido com ela · até 2 por prato</p><ul class="pontos clicaveis">${d.guarnicoes.map(n => `<li data-pedir="" data-g="${esc(n)}" role="button" tabindex="0">${esc(n)}<span class="mais">+</span></li>`).join('')}</ul></div>` : ''}
     ${(d.fitness || []).length ? `<div class="fitbox" data-pedir="F" role="button" tabindex="0" title="Pedir prato fitness"><div class="titulo"><h3><em>Fit</em>ness</h3></div><ul class="pontos">${d.fitness.map(n => `<li>${esc(n)}</li>`).join('')}</ul>${d.fitnessObs ? `<div class="obs">(${esc(d.fitnessObs)})</div>` : ''}${valor(pr.fitness) ? `<div class="fitpreco">Fitness <b>R$ ${esc(pr.fitness)}</b><span class="vai">Pedir →</span></div>` : ''}</div>` : ''}
   </div></section>
-  ${temAvulsos(d) ? `<section class="bloco entra" id="sec-porcoes"><div class="titulo"><h3>Monte seu <em>pedido</em></h3></div><p class="dica">Toque no item para colocar no pedido — junto com o prato ou sozinho</p>${GRUPOS.map(([g, tit]) => { const ls = listaGrupo(d, g); return ls.length ? `<h4 class="grupo-t">${tit}</h4><div class="lista">${ls.map(p => `<div class="item" data-pedir="" data-porcao="${esc(p.nome)}" data-grupo="${g}" role="button" tabindex="0" title="Pedir ${esc(p.nome)}"><span class="nome">${esc(p.nome)}</span>${p.preco ? `<span class="porc-preco">R$ ${esc(p.preco)}</span>` : ''}</div>`).join('')}</div>` : ''; }).join('')}</section>` : ''}
   ${tams.length ? `<section class="bloco entra" id="sec-valores"><div class="titulo"><h3><em>Valores</em></h3></div><p class="dica">Toque no tamanho para montar o seu pedido</p><div class="precos">${[...tams, ...(valor(pr.fitness) ? [['F', 'Fitness']] : [])].map(([k, n]) => {
       const info = k === 'F' ? ((d.fitness || []).filter(x => !/prote/i.test(x)).join(', ') + ' + 1 proteína') : `Prato do dia + ${MAX_GUARN} guarnições`;
       const v = k === 'F' ? pr.fitness : pr[k];
@@ -1068,7 +1086,7 @@ async function iniciar() {
   if (!d) { // sem cardápio publicado (ou sem internet): não mostra cardápio antigo, só o caminho para pedir
     document.body.classList.remove('na-capa'); montar(PADRAO); q.innerHTML = '<div class="aviso"><div style="font:700 30px Oswald;color:#f3f4f6;margin-bottom:10px">PRATTO DI <span style="color:#ff7a1a">CASA</span></div>O cardápio de hoje ainda não foi publicado.<br>Chame a gente no WhatsApp que passamos os pratos do dia! 😊</div>'; return; }
   DADOS = d; q.innerHTML = montar(d);
-  document.getElementById('capa').innerHTML = capaHTML(d);
+  document.getElementById('capa').innerHTML = capaHTML(d); document.getElementById('pag-monte').innerHTML = montePagHTML(d);
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   if (new URLSearchParams(location.search).has('cardapio')) history.replaceState(null, '', location.pathname + location.search + '#cardapio');
   else if (location.hash) history.replaceState(null, '', location.pathname + location.search);
