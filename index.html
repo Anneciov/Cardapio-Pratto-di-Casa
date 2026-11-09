@@ -682,6 +682,7 @@ function montePagHTML(d) {
   if (!temAvulsos(d)) return '';
   const emp = d.empresa || PADRAO.empresa; const partes = (emp.nome || 'Pratto di Casa').split(' '); const ult = partes.pop();
   const ICO_G = { monte: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16M5 11a7 7 0 0014 0M9 4c0 2 2 2 2 4M13 3c0 2 2 2 2 4"/></svg>',
+    bebi: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10l-1.6 18H8.6z M6.6 8h10.8 M12 3V1.5"/></svg>',
     porc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9h14l-1.5 11h-11z M8 9l1-5M12 9V3M16 9l-1-5"/></svg>' };
   const card = (g, p) => `<div class="mp-card" data-mpcard="${esc(g)}|${esc(p.nome)}">${fotoAvulso(d, p.nome, 'mp-foto', 72)}
     <div class="mp-info"><b>${esc(p.nome)}</b>${p.preco ? `<span class="porc-preco">R$ ${esc(p.preco)}</span>` : ''}</div>
@@ -715,7 +716,7 @@ const rota = () => { const h = location.hash; document.body.classList.toggle('na
 // ---------- Monte seu pedido: tamanho, prato do dia, até 2 guarnições, quantidade e observação → WhatsApp ----------
 let DADOS = null;
 const MAX_GUARN = 2;
-const PED = { tam: '', prato: '', guarn: [], qtd: 1, itens: [], ent: '', extras: [], querExtra: null, semGuarn: false, porc: {}, monte: {}, aba: 'prato', pag: '', taxa: null }; // itens = pratos já adicionados ao pedido
+const PED = { tam: '', prato: '', guarn: [], qtd: 1, itens: [], ent: '', extras: [], querExtra: null, semGuarn: false, porc: {}, monte: {}, bebi: {}, aba: 'prato', pag: '', taxa: null }; // itens = pratos já adicionados ao pedido
 const num = (v) => Number(String(v || '').replace(/\./g, '').replace(',', '.')) || 0;
 const reais = (n) => 'R$ ' + n.toFixed(2).replace('.', ',');
 const PROTEINAS_FIT = ['Carne', 'Frango', 'Omelete'];
@@ -773,12 +774,12 @@ function adicionarPrato() {
 // ── fim vários pratos ──
 // ── porções (pede junto com o prato ou sozinhas) ──
 // guia "Monte seu pedido": itens avulsos e porções, com preço definido no sistema
-const GRUPOS = [['monte', 'Itens', 'Escolha os itens que quiser — cada um com seu preço.', 'Monte seu pedido'], ['porc', 'Porções', 'Peça junto com o prato ou só a porção.', 'Porções']];
-const listaGrupo = (d, g) => ((g === 'monte' ? d.monte : d.porcoes) || []).filter(p => p && p.nome);
+const GRUPOS = [['monte', 'Itens', 'Escolha os itens que quiser — cada um com seu preço.', 'Monte seu pedido'], ['porc', 'Porções', 'Peça junto com o prato ou só a porção.', 'Porções'], ['bebi', 'Bebidas', 'Para acompanhar o pedido.', 'Bebidas']];
+const listaGrupo = (d, g) => ((g === 'monte' ? d.monte : g === 'bebi' ? d.bebidas : d.porcoes) || []).filter(p => p && p.nome);
 const porcoesDe = (d) => listaGrupo(d, 'porc');
 const temAvulsos = (d) => GRUPOS.some(([g]) => listaGrupo(d, g).length);
 const qtdGrupo = (g) => Object.values(PED[g] || {}).reduce((s, n) => s + n, 0);
-const qtdPorc = () => qtdGrupo('monte') + qtdGrupo('porc');
+const qtdPorc = () => qtdGrupo('monte') + qtdGrupo('porc') + qtdGrupo('bebi');
 const totPorc = () => GRUPOS.reduce((s, [g]) => s + listaGrupo(DADOS, g).reduce((x, p) => x + ((PED[g] || {})[p.nome] || 0) * num(p.preco), 0), 0);
 function avulsosTxt() {
   return GRUPOS.map(([g, , , tit]) => { const sel = listaGrupo(DADOS, g).filter(p => (PED[g] || {})[p.nome]);
@@ -1096,7 +1097,7 @@ function enviarPedido() {
       if (!ok || !j.ok) { fim(); return erroPedido((j.error || 'Não foi possível registrar o pedido pelo site.') + (waAberto ? ' Sua mensagem já foi para o WhatsApp.' : ' Tente de novo.'), ''); }
       try { localStorage.setItem(TEL_KEY, telCli()); } catch (_) {}
       const urlWa = linkWA(comRef(j.ref)), pix = PED.ent !== 'convenio' && PED.pag === 'pix';
-      PED.itens = []; PED.porc = {}; PED.monte = {}; PED.porcObs = {}; PED.tam = ''; PED.prato = ''; PED.guarn = []; PED.extras = [];
+      PED.itens = []; PED.porc = {}; PED.monte = {}; PED.bebi = {}; PED.porcObs = {}; PED.tam = ''; PED.prato = ''; PED.guarn = []; PED.extras = [];
       document.getElementById('pag-troco').value = ''; document.getElementById('pag-semtroco').checked = false; document.getElementById('ped-obs').value = '';
       fim(); mostrarOk(j.ref, urlWa, pix, totalP);
       if (eraPix && !waAberto && urlWa !== '#') { try { sessionStorage.setItem('pdc_pedido_ok', JSON.stringify({ ref: j.ref, url: urlWa, pix: true, total: totalP, t: Date.now() })); } catch (_) {} location.href = urlWa; }

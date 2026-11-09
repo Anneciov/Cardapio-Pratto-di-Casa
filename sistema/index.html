@@ -4826,7 +4826,7 @@ class Component extends DCLogic {
   // ── "Montar o cardápio de hoje" igual em todos os aparelhos: a cópia mais nova vem do cardápio publicado (arteSync) ──
   arteDoJson=(j)=>{ if(j.arteSync&&j.arteSync.v===2) return j.arteSync; const N=(l)=>(l||[]).join('\n'), P=(l)=>(l||[]).map(o=>o.nome+(o.preco?' | '+o.preco:'')).join('\n'); const pr=j.precos||{}, es=j.especial||{};
     return { ...this.arteOriginal(), v:2, hoje:N(j.hoje), guarnicoes:N(j.guarnicoes), fitness:N(j.fitness), fitnessObs:j.fitnessObs||'', gExtra:j.guarnExtra==null?'1,00':j.guarnExtra, taxaKm:j.taxaKm==null?'2,00':j.taxaKm,
-      pP:pr.P||'', pM:pr.M||'', pG:pr.G||'', pFit:pr.fitness||'', espNome:es.nome||'', eP:es.P||'', eM:es.M||'', eG:es.G||'', fotos:j.fotos||{}, porcoes:P(j.porcoes), monte:P(j.monte), atualizado:j.atualizado }; };
+      pP:pr.P||'', pM:pr.M||'', pG:pr.G||'', pFit:pr.fitness||'', espNome:es.nome||'', eP:es.P||'', eM:es.M||'', eG:es.G||'', fotos:j.fotos||{}, porcoes:P(j.porcoes), monte:P(j.monte), bebidas:P(j.bebidas), atualizado:j.atualizado }; };
   sincronizarArte=async()=>{ if(this._demo||!sb) return null; if(Date.now()-(this._arteEdit||0)<4000) return null;
     try{ const u=sb.storage.from('cardapio').getPublicUrl('cardapio-hoje.json').data.publicUrl; const r=await fetch(u+'?v='+Date.now(),{cache:'no-store'}); if(!r.ok) return null; const j=await r.json();
       const loc=this.state.arte||this.arteDados(); const tl=Date.parse(loc.atualizado||'')||0;
@@ -4836,7 +4836,7 @@ class Component extends DCLogic {
     }catch(e){ console.warn('[cardápio sync]',e); return null; } };
   // ── fim sync ──
   publicarCardapio=async()=>{ if(this._demo||!sb) return; const novo=await this.sincronizarArte(); const a=novo||this.state.arte; if(!a) return; const L=this.mcdSplit;
-    const dados={ v:1, atualizado:new Date().toISOString(), empresa:{...Component.EMPRESA, whatsapp:Component.WHATSAPP_CARDAPIO}, hoje:L(a.hoje), guarnicoes:L(a.guarnicoes), fitness:L(a.fitness), fitnessObs:a.fitnessObs||'', guarnExtra:a.gExtra==null?'1,00':String(a.gExtra).trim(), taxaKm:a.taxaKm==null?'2,00':String(a.taxaKm).trim(), convenios:this.listaConvenios(), porcoes:L(a.porcoes).map(x=>this.mcdPorcao(x)).filter(x=>x.nome), monte:L(a.monte).map(x=>this.mcdPorcao(x)).filter(x=>x.nome),
+    const dados={ v:1, atualizado:new Date().toISOString(), empresa:{...Component.EMPRESA, whatsapp:Component.WHATSAPP_CARDAPIO}, hoje:L(a.hoje), guarnicoes:L(a.guarnicoes), fitness:L(a.fitness), fitnessObs:a.fitnessObs||'', guarnExtra:a.gExtra==null?'1,00':String(a.gExtra).trim(), taxaKm:a.taxaKm==null?'2,00':String(a.taxaKm).trim(), convenios:this.listaConvenios(), porcoes:L(a.porcoes).map(x=>this.mcdPorcao(x)).filter(x=>x.nome), monte:L(a.monte).map(x=>this.mcdPorcao(x)).filter(x=>x.nome), bebidas:L(a.bebidas).map(x=>this.mcdPorcao(x)).filter(x=>x.nome),
       precos:{ P:a.pP||'', M:a.pM||'', G:a.pG||'', fitness:a.pFit||'' }, especial:{ nome:a.espNome||'', P:a.eP||'', M:a.eM||'', G:a.eG||'' }, fotos:a.fotos||{},
       // os mesmos pratos cadastrados no sistema (com foto, ingredientes e valor do tamanho), para o site ficar igual ao "Ver Cardápio"
       pratos:this.pratosParaSite(), arteSync:{ ...a } };
@@ -4938,7 +4938,7 @@ class Component extends DCLogic {
     const PY=FY+FH+44, PH=1040-PY; const colW=(W-120-40)/2, X1=60, X2=60+colW+40;
     caixa(X1-6,PY-6,W-108,PH+12,22); ctx.fillStyle='rgba(255,255,255,.025)'; ctx.fill(); ctx.strokeStyle='rgba(212,169,90,.22)'; ctx.lineWidth=1; ctx.stroke();
     ctx.strokeStyle='rgba(212,169,90,.22)'; ctx.beginPath(); ctx.moveTo(W/2,PY+26); ctx.lineTo(W/2,PY+PH-26); ctx.stroke();
-    const colunas=[[['HOJE',linhas(d.hoje),''],['PORÇÕES',linhas(d.porcoes).map(x=>this.mcdPorcaoTxt(x)),''],['MONTE SEU PEDIDO',linhas(d.monte).map(x=>this.mcdPorcaoTxt(x)),'']],[['GUARNIÇÕES',linhas(d.guarnicoes),''],['FITNESS',linhas(d.fitness),d.fitnessObs||'']]].map(c=>c.filter(s=>s[1].length));
+    const colunas=[[['HOJE',linhas(d.hoje),''],['PORÇÕES',linhas(d.porcoes).map(x=>this.mcdPorcaoTxt(x)),''],['MONTE SEU PEDIDO',linhas(d.monte).map(x=>this.mcdPorcaoTxt(x)),''],['BEBIDAS',linhas(d.bebidas).map(x=>this.mcdPorcaoTxt(x)),'']],[['GUARNIÇÕES',linhas(d.guarnicoes),''],['FITNESS',linhas(d.fitness),d.fitnessObs||'']]].map(c=>c.filter(s=>s[1].length));
     let fs=31, mont=[];
     for(;fs>=17;fs--){ let ok=true; mont=colunas.map(col=>{ let h=0; const secs=col.map(sc=>{ ctx.font='500 '+fs+'px '+SERIF; const ls=[]; sc[1].forEach(l=>quebra(l,colW-70).forEach((q,k)=>ls.push({t:q,cont:k>0})));
           ctx.font='italic 500 '+Math.round(fs*.8)+'px '+SERIF; const obs=sc[2]?quebra('('+sc[2]+')',colW-60):[]; h+=fs*1.1+22+ls.length*fs*1.3+obs.length*fs*1.05+fs*.9; return {titulo:sc[0],ls,obs}; });
@@ -4988,7 +4988,7 @@ class Component extends DCLogic {
     const dia=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit'});
     let txt='*'+emp.nome+'* 🍽️\n_Cardápio de hoje — '+dia+'_\n';
     const sec=(titulo,ls)=>{ if(ls.length){ txt+='\n*'+titulo+'*\n'; ls.forEach(x=>{ txt+='• '+x+'\n'; }); } };
-    sec('HOJE',L(a.hoje)); sec('GUARNIÇÕES',L(a.guarnicoes)); { const gx=a.gExtra==null?'1,00':String(a.gExtra).trim(); if(gx&&L(a.guarnicoes).length) txt+='_(guarnição extra R$ '+gx+' cada)_\n'; } sec('FITNESS',L(a.fitness)); if(a.fitnessObs&&L(a.fitness).length) txt+='_('+a.fitnessObs+')_\n'; sec('PORÇÕES',L(a.porcoes).map(x=>this.mcdPorcaoTxt(x))); sec('MONTE SEU PEDIDO',L(a.monte).map(x=>this.mcdPorcaoTxt(x)));
+    sec('HOJE',L(a.hoje)); sec('GUARNIÇÕES',L(a.guarnicoes)); { const gx=a.gExtra==null?'1,00':String(a.gExtra).trim(); if(gx&&L(a.guarnicoes).length) txt+='_(guarnição extra R$ '+gx+' cada)_\n'; } sec('FITNESS',L(a.fitness)); if(a.fitnessObs&&L(a.fitness).length) txt+='_('+a.fitnessObs+')_\n'; sec('PORÇÕES',L(a.porcoes).map(x=>this.mcdPorcaoTxt(x))); sec('MONTE SEU PEDIDO',L(a.monte).map(x=>this.mcdPorcaoTxt(x))); sec('BEBIDAS',L(a.bebidas).map(x=>this.mcdPorcaoTxt(x)));
     const pr=(p,m,g)=>[['P',p],['M',m],['G',g]].filter(x=>String(x[1]||'').trim()).map(x=>x[0]+' R$ '+x[1]).join('  ·  ');
     txt+='\n*VALORES*\n'+pr(a.pP,a.pM,a.pG)+'\n'; if(String(a.pFit||'').trim()) txt+='Fitness R$ '+a.pFit+'\n';
     if(String(a.espNome||'').trim()&&pr(a.eP,a.eM,a.eG)) txt+='\n*'+a.espNome+'*\n'+pr(a.eP,a.eM,a.eG)+'\n';
@@ -5442,7 +5442,7 @@ class Component extends DCLogic {
       if((m=l.match(/^\*(?:\d+\)\s*)?(Prato [^*]+)\*(?:\s*—\s*R\$\s*([\d.,]+))?/))){ fecha(); cur={ nome:m[1].trim(), preco:v(m[2]), extra:0, q:1 }; continue; }
       if(cur){ if((m=l.match(/^(?:Prato|Proteína):\s*(.+)$/))){ cur.prato=m[1]; continue; } if((m=l.match(/^Guarnições extras:\s*(.+?)\s*\(\+R\$\s*([\d.,]+)/))){ cur.extras=m[1]; cur.extra=v(m[2]); continue; }
         if((m=l.match(/^Guarnições:\s*(.+)$/))){ cur.guarn=m[1]; continue; } if((m=l.match(/^Quantidade:\s*(\d+)/))){ cur.q=parseInt(m[1],10)||1; continue; } }
-      if((m=l.match(/^\*(Monte seu pedido|Porções):\*$/))){ fecha(); grupo=m[1]; continue; }
+      if((m=l.match(/^\*(Monte seu pedido|Porções|Bebidas):\*$/))){ fecha(); grupo=m[1]; continue; }
       if(grupo&&(m=l.match(/^(\d+)×\s*(.+?)(?:\s*—\s*R\$\s*([\d.,]+))?$/))){ const q=parseInt(m[1],10)||1, tot=v(m[3]); r.itens.push({ descricao:m[2].trim()+(grupo==='Porções'?' (porção)':''), quantidade:q, valor_unitario:q?tot/q:0, valor_total:tot }); continue; }
       if((m=l.match(/^\*Entregar em:\*\s*(.+)$/))){ fecha(); r.endereco=m[1].trim(); continue; }
       if((m=l.match(/^\*Taxa de entrega(?:\s*\(([^)]*)\))?:\*\s*(.+)$/))){ const val=/R\$/.test(m[2])?v(m[2]):0; r.taxa=val; r.taxaTxt=m[2].trim(); if(val) r.itens.push({ descricao:'Taxa de entrega'+(m[1]?' ('+m[1]+')':''), quantidade:1, valor_unitario:val, valor_total:val }); continue; }
@@ -7474,8 +7474,8 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       cdpAtivosTxt:cdpAtivos+(cdpAtivos===1?' disponível hoje':' disponíveis hoje'),
       cdpSemFotoTxt:cdpSemFoto?(' · '+cdpSemFoto+(cdpSemFoto===1?' prato sem foto — copie a foto e, com o mouse em cima do prato, aperte Ctrl+V':' pratos sem foto — copie a foto e, com o mouse em cima do prato, aperte Ctrl+V')):'' };
     const arteAtual=s.arte||{}; const spl=this.mcdSplit; const mcdH=this.mcdHist();
-    const mcdCols=[['hoje','Hoje','pratos principais do dia','Ex.: Bife a rolê'],['guarnicoes','Guarnições','acompanhamentos do dia','Ex.: Purê de batata'],['fitness','Fitness','o que vai no prato fitness','Ex.: Arroz integral'],['porcoes','Porções','porções à parte, com preço','Ex.: Batata frita'],['monte','Monte seu pedido','itens avulsos, com preço','Ex.: Arroz']].map(([k,titulo,sub,ph])=>{
-      const ehP=k==='porcoes'||k==='monte', nm=(tx)=>ehP?this.mcdPorcao(tx).nome:tx, mostra=(tx)=>ehP?this.mcdPorcaoTxt(tx):tx;
+    const mcdCols=[['hoje','Hoje','pratos principais do dia','Ex.: Bife a rolê'],['guarnicoes','Guarnições','acompanhamentos do dia','Ex.: Purê de batata'],['fitness','Fitness','o que vai no prato fitness','Ex.: Arroz integral'],['porcoes','Porções','porções à parte, com preço','Ex.: Batata frita'],['monte','Monte seu pedido','itens avulsos, com preço','Ex.: Arroz'],['bebidas','Bebidas','bebidas, com preço','Ex.: Coca-Cola lata']].map(([k,titulo,sub,ph])=>{
+      const ehP=k==='porcoes'||k==='monte'||k==='bebidas', nm=(tx)=>ehP?this.mcdPorcao(tx).nome:tx, mostra=(tx)=>ehP?this.mcdPorcaoTxt(tx):tx;
       const ls=spl(arteAtual[k]); const low=ls.map(x=>x.toLowerCase()); const lowN=ls.map(x=>nm(x).toLowerCase()); const sug=(mcdH[k]||[]).filter(x=>!low.includes(x.toLowerCase())&&!lowN.includes(nm(x).toLowerCase())).slice(0,12);
       return { titulo, sub, ph, vazio:ls.length===0, temItens:ls.length>0, contagem:ls.length, itens:ls.map((tx,i)=>{ const f=((arteAtual.fotos||{})[this.mcdChaveFoto(nm(tx))])||(k==='hoje'?fotoPratoSite(tx):''); return { t:mostra(tx), remover:()=>this.mcdDel(k,i), foto:f, temFoto:!!f, semFoto:!f, abrirFoto:()=>this.abrirFotoItem(nm(tx)) }; }), sugestoes:sug.map(tx=>({ t:mostra(tx), add:()=>ehP?this.mcdAddPorcaoLinha(tx,k):this.mcdAdd(k,tx) })), temSug:sug.length>0,
         novo:(s.mcdNovo||{})[k]||'', setNovo:(e)=>{ const v=e.target.value; this.setState(st=>({ mcdNovo:{ ...(st.mcdNovo||{}), [k]:v } })); },
