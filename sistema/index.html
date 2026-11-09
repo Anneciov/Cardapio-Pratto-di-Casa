@@ -6704,6 +6704,17 @@ class Component extends DCLogic {
     '.cx-teclado{flex:0 1 auto;min-height:0;margin-top:auto;grid-template-rows:repeat(4,clamp(44px,8.2vh,78px));gap:6px;padding:8px;border-radius:16px}',
     '.cx-k{border-radius:11px;font-size:clamp(20px,3vh,27px)}.cx-k.fn{font-size:clamp(18px,2.6vh,23px)}.cx-k.ok{font-size:clamp(14px,2vh,17px)}',
     '.cx-k svg{max-width:22px;max-height:22px}',
+    '/* atalhos de produtos no espaco livre */',
+    '.cx-atalhos{flex:1 1 0;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));grid-auto-rows:min-content;align-content:start;gap:6px;padding:8px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:16px;scrollbar-width:thin;scrollbar-color:rgba(94,234,212,.35) transparent}',
+    '.cx-atalhos:empty{display:none}',
+    '.cx-at{display:flex;align-items:center;gap:9px;min-height:46px;padding:6px 10px 6px 7px;border-radius:11px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.035);color:#e6f2f5;font-family:inherit;text-align:left;cursor:pointer;min-width:0;transition:background-color .15s ease,border-color .15s ease,transform .1s ease}',
+    '.cx-at:hover{background:rgba(45,212,191,.09);border-color:rgba(45,212,191,.4)}.cx-at:active{transform:scale(.97)}',
+    '.cx-at:focus-visible{outline:2px solid #2dd4bf;outline-offset:1px}',
+    '.cx-at-ic{width:30px;height:30px;flex-shrink:0;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#5eead4;background:rgba(45,212,191,.1);box-shadow:inset 0 0 0 1px rgba(45,212,191,.18)}',
+    '.cx-at.beb .cx-at-ic{color:#60a5fa;background:rgba(96,165,250,.1);box-shadow:inset 0 0 0 1px rgba(96,165,250,.2)}.cx-at.doc .cx-at-ic{color:#f9a8d4;background:rgba(244,114,182,.1);box-shadow:inset 0 0 0 1px rgba(244,114,182,.2)}',
+    '.cx-at-tx{display:flex;flex-direction:column;gap:1px;min-width:0}',
+    '.cx-at-tx b{font-size:13px;font-weight:600;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+    '.cx-at-tx small{font-family:"Space Mono",monospace;font-size:11.5px;color:#6ee7d5}.cx-at-tx small.sem{font-family:inherit;color:#e8b04a;font-size:11px}',
     '@media (prefers-reduced-motion:reduce){.cx-ov *{transition:none!important;animation:none!important}}'
   ].join('');
   /* ============ CAIXA (PDV): venda paga na hora ou lançada na conta do cliente; lê a comanda da balança (EAN-13) ============ */
@@ -6762,7 +6773,11 @@ class Component extends DCLogic {
     return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+P+'"></path></svg>'; };
   _cxPCatsDesenhar=()=>{ const el=this._cxEl('cx-pcats-bt'), E=this._cxEsc; if(!el) return; const ord=(c)=>(c==='Pratos'?'0':'1')+c, at=this._cxPCat||'';
     const cs=[...new Set(this._cxCatalogo().map(p=>p.categoria).filter(Boolean))].sort((a,b)=>ord(a).localeCompare(ord(b)));
-    el.innerHTML=['',...cs].map(c=>'<button class="cx-pc'+(c===at?' on':'')+'" data-cx="pcat" data-c="'+E(c)+'" aria-pressed="'+(c===at)+'">'+this._cxPIco(c)+'<span>'+(c?E(c):'Todos')+'</span></button>').join(''); };
+    el.innerHTML=['',...cs].map(c=>'<button class="cx-pc'+(c===at?' on':'')+'" data-cx="pcat" data-c="'+E(c)+'" aria-pressed="'+(c===at)+'">'+this._cxPIco(c)+'<span>'+(c?E(c):'Todos')+'</span></button>').join(''); this._cxAtalhosDesenhar(); };
+  _cxAtalhosDesenhar=()=>{ const el=this._cxEl('cx-atalhos'), E=this._cxEsc; if(!el) return; const fc=this._cxPCat||'', ordCat=(c)=>(c==='Pratos'?'0':'1')+String(c);
+    const L=this._cxCatalogo().filter(p=>!fc||p.categoria===fc).sort((a,b)=>ordCat(a.categoria).localeCompare(ordCat(b.categoria))||a.nome.localeCompare(b.nome));
+    el.innerHTML=L.map(p=>{ const n=this._cxNorm(p.categoria), cl=/bebid/.test(n)?' beb':(/doce/.test(n)?' doc':'');
+      return '<button class="cx-at'+cl+'" data-cx="patalho" data-id="'+E(p.id)+'" title="'+E(p.nome)+'"><span class="cx-at-ic">'+this._cxPIco(p.categoria)+'</span><span class="cx-at-tx"><b>'+E(p.nome)+'</b>'+(p.preco>0?'<small>'+this.brl(p.preco)+'</small>':'<small class="sem">digitar valor</small>')+'</span></button>'; }).join(''); };
   _cxPExec=(k)=>{ const x=(this._cxPRes||[])[k]; if(!x) return;
     if(x.tipo==='prod') return this._cxPegaProd(x.p);
     if(x.tipo==='livre') return this._cxPegaProd({nome:x.nome,preco:0});
@@ -6866,6 +6881,7 @@ class Component extends DCLogic {
           '<div class="cx-pbusca-w"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 18a7 7 0 100-14 7 7 0 000 14z M20 20l-4-4"></path></svg><input id="cx-pbusca" class="cx-campo cx-pbusca" autocomplete="off" spellcheck="false" placeholder="Pesquisar" aria-label="Pesquisar produto (F6)" aria-controls="cx-pres"><kbd>F6</kbd></div>'+
           '<button class="cx-btn2 sm cx-pnovo" data-cx="prodnovo" title="Cadastrar produto" aria-label="Cadastrar produto"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14 M5 12h14"></path></svg><span>Cadastrar</span></button></div>'+
           '<div id="cx-pres" class="cx-res cx-pres" role="listbox" aria-label="Produtos"></div></div>'+
+        '<div id="cx-atalhos" class="cx-atalhos" role="group" aria-label="Produtos rápidos"></div>'+
         '<div class="cx-teclado">'+teclas+'</div>'+
       '</section>'+
       '<section class="cx-dir">'+
@@ -7221,7 +7237,8 @@ class Component extends DCLogic {
     if(a==='vz-valor'){ this._cxFoco(); return; }
     if(a==='vz-prod'){ const b=this._cxEl('cx-pbusca'); if(b) b.focus(); return; }
     if(a==='prodk') return this._cxPExec(Number(el.dataset.k));
-    if(a==='pcat'){ const c=el.dataset.c||''; const b=this._cxEl('cx-pbusca'); this._cxPCat=this._cxPCat===c?'':c; this._cxPCatsDesenhar(); if(b){ b.focus(); this._cxBuscarProd(true); } return; }
+    if(a==='pcat'){ const c=el.dataset.c||''; const b=this._cxEl('cx-pbusca'); this._cxPCat=this._cxPCat===c?'':c; this._cxPCatsDesenhar(); if(b&&b.value.trim()){ b.focus(); this._cxBuscarProd(true); } else this._cxFoco(); return; }
+    if(a==='patalho'){ const p=this._cxCatalogo().find(x=>String(x.id)===el.dataset.id); if(!p) return; const c=this._cxPCat; this._cxPegaProd(p); this._cxPCat=c; this._cxPCatsDesenhar(); return; }
     if(a==='prodnovo'){ const b=this._cxEl('cx-pbusca'); return this._cxProdForm(null,b?this._cxCap(b.value):'',this._cxPCat); }
     if(a==='prodedit') return this._cxProdForm(el.dataset.id);
     if(a==='prodfechar'){ this._cxProdFechar(); this._cxFoco(); return; }
