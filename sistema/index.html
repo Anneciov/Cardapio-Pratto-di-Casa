@@ -6612,6 +6612,18 @@ class Component extends DCLogic {
     '.cx-k.ok{background:linear-gradient(180deg,#22c55e,#16a34a);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 10px 24px -14px rgba(34,197,94,.95);color:#fff;font-weight:700;font-size:clamp(15px,2.2vh,18px);letter-spacing:.02em}.cx-k.ok:hover{filter:brightness(1.08)}',
     '.cx-k svg{flex-shrink:0}',
     '@media (max-width:1400px){.cx-pnovo span{display:none}.cx-pnovo{padding:0;width:38px;justify-content:center;color:#5eead4;border-color:rgba(45,212,191,.4)}.cx-pnovo svg{width:18px;height:18px}.cx-pc{padding:0 10px 0 9px}}',
+    '/* bloco Total */',
+    '.cx-total{position:relative;overflow:hidden;align-items:center;gap:14px;padding:clamp(10px,1.4vh,14px) 18px clamp(10px,1.4vh,14px) 20px;background:radial-gradient(120% 160% at 100% 0%,rgba(34,197,94,.15),transparent 58%),rgba(255,255,255,.028);border:1px solid rgba(74,222,128,.22);border-radius:16px;transition:border-color .2s ease}',
+    '.cx-total::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;background:linear-gradient(180deg,#4ade80,#2dd4bf);transition:opacity .2s ease}',
+    '.cx-tot-ic{width:42px;height:42px;flex-shrink:0;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(74,222,128,.12);color:#4ade80;box-shadow:inset 0 0 0 1px rgba(74,222,128,.25);transition:color .2s ease,background-color .2s ease}',
+    '.cx-tot-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}',
+    '.cx-total .cx-tot-tx span{font-family:inherit;font-size:14px;font-weight:600;letter-spacing:.01em;text-transform:none;color:#dcf7e7}',
+    '.cx-tot-tx small{font-size:12.5px;color:#8dbca6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+    '.cx-total b.cx-tot-v{display:flex;align-items:baseline;gap:7px;font:700 clamp(28px,4.6vh,40px)/1 "Space Mono",monospace;color:#4ade80;font-variant-numeric:tabular-nums;letter-spacing:-.01em;transform-origin:right center;transition:color .2s ease}',
+    '.cx-tot-v small{font-size:.46em;font-weight:700;color:#86efac;opacity:.8}',
+    '.cx-tot-v.pulo{animation:cxTotPulo .32s ease-out}@keyframes cxTotPulo{40%{transform:scale(1.05)}}',
+    '.cx-total.vazio{border-color:rgba(255,255,255,.08)}.cx-total.vazio::before{opacity:.25}.cx-total.vazio .cx-tot-ic{color:#6f9d88;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}',
+    '.cx-total.vazio b.cx-tot-v{color:#56806e}.cx-total.vazio .cx-tot-v small{color:#56806e}',
     '@media (prefers-reduced-motion:reduce){.cx-ov *{transition:none!important;animation:none!important}}'
   ].join('');
   /* ============ CAIXA (PDV): venda paga na hora ou lançada na conta do cliente; lê a comanda da balança (EAN-13) ============ */
@@ -6776,7 +6788,7 @@ class Component extends DCLogic {
       '<section class="cx-dir">'+
         '<div id="cx-cliente"></div>'+
         '<div class="cx-cupom"><div class="cx-cupom-top"><span class="cx-lbl">Cupom</span><span class="cx-qtd" id="cx-qtd"></span><button class="cx-link" data-cx="limpar">Cancelar venda</button></div><div id="cx-itens" class="cx-itens"></div></div>'+
-        '<div class="cx-total"><span>Total</span><b id="cx-total">R$ 0,00</b></div>'+
+        '<div class="cx-total vazio"><div class="cx-tot-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-2-1.5L14 21l-2-1.5L10 21l-2-1.5L6 21z M9 8h6 M9 12h6 M9 16h3"></path></svg></div><div class="cx-tot-tx"><span>Total a pagar</span><small id="cx-total-sub" role="status" aria-atomic="true">Nenhum item no cupom</small></div><b id="cx-total" class="cx-tot-v"><small>R$</small>0,00</b></div>'+
         '<div id="cx-pag"></div>'+
       '</section></div>'; };
   _cxAtualizar=()=>{ if(!this._cxOv||this._cx.aba!=='venda') return; const cx=this._cx;
@@ -6784,7 +6796,9 @@ class Component extends DCLogic {
     const it=this._cxEl('cx-itens'); if(it){ it.innerHTML=this._cxHtmlItens(); it.scrollTop=it.scrollHeight; }
     const n=cx.itens.reduce((a,x)=>a+x.qtd,0);
     const q=this._cxEl('cx-qtd'); if(q) q.textContent=n?(n+(n===1?' item':' itens')):'';
-    const t=this._cxEl('cx-total'); if(t) t.textContent=this.brl(this._cxTotal());
+    const t=this._cxEl('cx-total'); if(t){ const v=this._cxTotal(), tx=this.brl(v).replace(/^R\$\s*/,''); const box=t.closest('.cx-total'); if(box) box.classList.toggle('vazio',!(v>0));
+      if(t.dataset.v!==tx){ t.innerHTML='<small>R$</small>'+tx; if(t.dataset.v!=null&&v>0){ t.classList.remove('pulo'); void t.offsetWidth; t.classList.add('pulo'); } t.dataset.v=tx; } }
+    const ts=this._cxEl('cx-total-sub'); if(ts){ const s=n?(n+(n===1?' item':' itens')+' no cupom'):'Nenhum item no cupom'; if(ts.textContent!==s) ts.textContent=s; }
     this._cxRenderPag(); this._cxPrev(); };
   _cxHtmlItens=()=>{ const L=this._cx.itens, E=this._cxEsc, ok=this._cx.modo==='ok';
     if(!L.length) return '<div class="cx-vazio"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5h3 M17 5h3v2 M20 17v2h-3 M7 19H4v-2 M8 9v6 M11 9v6 M14 9v6 M17 9v6"></path></svg>Bipe a comanda, digite o valor<br>ou busque um produto (F6).</div>';
