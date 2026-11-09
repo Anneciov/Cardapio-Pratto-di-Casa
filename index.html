@@ -330,6 +330,32 @@
   .capa-btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   .capa-btn2{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 22px;border-radius:50px;border:1.5px solid rgba(255,122,26,.6);color:var(--laranja2);font:700 15px Inter;text-decoration:none;transition:background .2s ease}
   .capa-btn2:hover{background:rgba(255,122,26,.12)}.capa-btn2:focus-visible,.capa-monte:focus-visible{outline:2px solid var(--laranja);outline-offset:3px}
+  .mp-quadro{overflow:visible}
+  .mp-como{list-style:none;counter-reset:mp;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:2px 0 22px;padding:0}
+  .mp-como li{counter-increment:mp;display:flex;flex-direction:column;gap:6px;padding:12px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid var(--linha);font-size:12.5px;line-height:1.35;color:var(--suave)}
+  .mp-como li::before{content:counter(mp);width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:rgba(255,122,26,.16);border:1px solid rgba(255,122,26,.5);color:var(--laranja2);font:700 12px Inter}.mp-como b{color:var(--texto)}
+  .mp-grupo+.mp-grupo{margin-top:24px}
+  .mp-gt{display:flex;align-items:center;gap:10px;font:700 17px Oswald;letter-spacing:.1em;text-transform:uppercase;margin:0 0 12px}.mp-gt i{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:rgba(255,122,26,.14);color:var(--laranja2)}.mp-gt i svg{width:20px;height:20px}
+  .mp-gt span{margin-left:auto;font:600 12px Inter;letter-spacing:0;text-transform:none;color:var(--suave);background:rgba(255,255,255,.06);padding:3px 10px;border-radius:20px}
+  .mp-lista{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .mp-card{display:flex;align-items:center;gap:12px;padding:10px 12px 10px 10px;border-radius:18px;background:rgba(255,255,255,.035);border:1.5px solid var(--linha);transition:border-color .2s ease,background .2s ease}
+  .mp-card.on{border-color:var(--laranja);background:rgba(255,122,26,.09)}.mp-card.pulo{animation:mpPulo .3s ease}
+  @keyframes mpPulo{40%{transform:scale(1.02)}}
+  .mp-card .mp-foto{width:72px;height:72px;border-radius:16px}
+  .mp-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.mp-info b{font:600 16px/1.25 Inter}.mp-info .porc-preco{font-size:17px}
+  .mp-ctrl{flex-shrink:0}.mp-step{display:none;align-items:center;gap:4px;padding:3px;border-radius:999px;background:rgba(0,0,0,.3);border:1px solid rgba(255,122,26,.4)}
+  .mp-card.on .mp-step{display:flex}.mp-card.on .mp-add{display:none}
+  .mp-step button{width:36px;height:36px;border-radius:50%;border:none;background:rgba(255,255,255,.08);color:var(--texto);font:700 19px Inter;cursor:pointer}.mp-step button:last-child{background:var(--laranja);color:#1a0d02}
+  .mp-step b{min-width:22px;text-align:center;font:700 16px Inter}
+  .mp-add{min-height:44px;padding:0 16px;border-radius:999px;border:1.5px solid rgba(255,122,26,.6);background:transparent;color:var(--laranja2);font:700 14px Inter;cursor:pointer;white-space:nowrap;transition:background .15s ease}.mp-add:hover{background:rgba(255,122,26,.12)}
+  .mp-add:focus-visible,.mp-step button:focus-visible,.mp-barra-btn:focus-visible{outline:2px solid var(--laranja);outline-offset:2px}
+  .mp-barra{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;width:min(760px,calc(100% - 24px));display:flex;align-items:center;gap:14px;padding:10px 10px 10px 20px;border-radius:20px;background:rgba(22,25,30,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,122,26,.45);box-shadow:0 18px 40px -12px rgba(0,0,0,.8);animation:mpSobe .3s ease}
+  .mp-barra[hidden],body:not(.na-monte) .mp-barra{display:none}@keyframes mpSobe{from{transform:translate(-50%,24px);opacity:0}}
+  .mp-barra-info{flex:1;min-width:0;display:flex;flex-direction:column}.mp-barra-info small{font:600 12.5px Inter;color:var(--suave)}.mp-barra-info b{font:700 24px Oswald;color:var(--laranja2)}
+  .mp-barra-btn{min-height:52px;padding:0 24px;border:none;border-radius:15px;background:linear-gradient(135deg,var(--laranja2),var(--laranja));color:#1a0d02;font:700 16px Inter;cursor:pointer;box-shadow:0 10px 22px -10px rgba(255,122,26,.9)}
+  body.na-monte.mp-com-barra .cena-monte{padding-bottom:130px}
+  @media (max-width:640px){.mp-lista{grid-template-columns:1fr}.mp-como{gap:6px;margin-bottom:18px}.mp-como li{flex-direction:row;align-items:center;justify-content:center;gap:7px;padding:9px 6px;font-size:13px}.mp-como li span{display:none}.mp-card .mp-foto{width:64px;height:64px}.mp-add{padding:0 13px}}
+  @media (prefers-reduced-motion:reduce){.mp-card.pulo,.mp-barra{animation:none}}
   .mp-acoes{display:flex;justify-content:center;margin-top:22px}.mp-btn{border:none;cursor:pointer;font:inherit}
   body:not(.na-capa) #capa{display:none}
   #capa .banner{flex:1;margin:0;min-height:540px}
@@ -654,12 +680,34 @@ const fotoAvulso = (d, nome, cls, tam) => { const f = fotoDe(d, nome); return f 
 function montePagHTML(d) {
   if (!temAvulsos(d)) return '';
   const emp = d.empresa || PADRAO.empresa; const partes = (emp.nome || 'Pratto di Casa').split(' '); const ult = partes.pop();
-  return `<main class="quadro"><header><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div><div class="data">Monte seu pedido</div><a class="inicio" href="#inicio" aria-label="Voltar ao início">‹ Início</a></header>
-    <section class="bloco"><div class="titulo"><h3>Monte seu <em>pedido</em></h3></div><p class="dica">Toque no item para colocar no pedido</p>
-    ${GRUPOS.map(([g, tit]) => { const ls = listaGrupo(d, g); return ls.length ? `<h4 class="grupo-t">${tit}</h4><div class="lista">${ls.map(p => `<div class="item" data-pedir="" data-porcao="${esc(p.nome)}" data-grupo="${g}" role="button" tabindex="0" title="Pedir ${esc(p.nome)}">${fotoAvulso(d, p.nome, 'mp-foto', 64)}<span class="nome">${esc(p.nome)}</span>${p.preco ? `<span class="porc-preco">R$ ${esc(p.preco)}</span>` : ''}</div>`).join('')}</div>` : ''; }).join('')}
-    <div class="mp-acoes"><button type="button" class="capa-btn mp-btn" data-pedir="" data-monte="1"><span>Montar meu pedido</span><i>→</i></button></div></section></main>`;
+  const ICO_G = { monte: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16M5 11a7 7 0 0014 0M9 4c0 2 2 2 2 4M13 3c0 2 2 2 2 4"/></svg>',
+    porc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9h14l-1.5 11h-11z M8 9l1-5M12 9V3M16 9l-1-5"/></svg>' };
+  const card = (g, p) => `<div class="mp-card" data-mpcard="${esc(g)}|${esc(p.nome)}">${fotoAvulso(d, p.nome, 'mp-foto', 72)}
+    <div class="mp-info"><b>${esc(p.nome)}</b>${p.preco ? `<span class="porc-preco">R$ ${esc(p.preco)}</span>` : ''}</div>
+    <div class="mp-ctrl"><button type="button" class="mp-add" data-mp="1" data-g="${esc(g)}" data-n="${esc(p.nome)}" aria-label="Adicionar ${esc(p.nome)}">+ Adicionar</button>
+      <div class="mp-step"><button type="button" data-mp="-1" data-g="${esc(g)}" data-n="${esc(p.nome)}" aria-label="Menos ${esc(p.nome)}">−</button><b aria-live="polite">0</b><button type="button" data-mp="1" data-g="${esc(g)}" data-n="${esc(p.nome)}" aria-label="Mais ${esc(p.nome)}">+</button></div></div></div>`;
+  return `<main class="quadro mp-quadro"><header><div class="marca"><h1>${esc(partes.join(' '))} <b>${esc(ult)}</b></h1><p>Comida caseira · Cajamar</p></div><div class="data">Monte seu pedido</div><a class="inicio" href="#inicio" aria-label="Voltar ao início">‹ Início</a></header>
+    <section class="bloco"><div class="titulo"><h3>Monte seu <em>pedido</em></h3></div>
+    <ol class="mp-como"><li><b>Escolha</b><span> os itens e as porções</span></li><li><b>Confira</b><span> e diga entrega ou retirada</span></li><li><b>Envie</b><span> — chega direto na cozinha</span></li></ol>
+    ${GRUPOS.map(([g, tit]) => { const ls = listaGrupo(d, g); return ls.length ? `<div class="mp-grupo"><h4 class="mp-gt"><i>${ICO_G[g] || ''}</i>${tit}<span>${ls.length} opç${ls.length > 1 ? 'ões' : 'ão'}</span></h4><div class="mp-lista">${ls.map(p => card(g, p)).join('')}</div></div>` : ''; }).join('')}
+    </section></main>`;
 }
-function mostrarMonte() { document.body.classList.remove('na-capa'); window.scrollTo(0, 0); if (BANNER.parar) BANNER.parar(); }
+// quantidades da página Monte seu pedido (usam o mesmo pedido do carrinho)
+function atualizarMontePag() {
+  const pag = document.getElementById('pag-monte'); if (!pag || !DADOS) return;
+  pag.querySelectorAll('[data-mpcard]').forEach(c => { const [g, n] = c.dataset.mpcard.split('|'); const q = ((PED[g] || {})[n]) || 0;
+    c.classList.toggle('on', q > 0); c.querySelector('.mp-step b').textContent = q; });
+  let bar = document.getElementById('mp-barra'); if (!bar) { document.body.insertAdjacentHTML('beforeend', '<div class="mp-barra" id="mp-barra" hidden><div class="mp-barra-info"><small id="mp-barra-qtd">0 itens</small><b id="mp-barra-total">R$ 0,00</b></div><button type="button" class="mp-barra-btn" data-pedir="" data-monte="1">Continuar <span aria-hidden="true">→</span></button></div>'); bar = document.getElementById('mp-barra'); }
+  const n = qtdPorc(), tot = totPorc();
+  bar.hidden = n === 0; document.body.classList.toggle('mp-com-barra', n > 0);
+  document.getElementById('mp-barra-qtd').textContent = n + (n > 1 ? ' itens' : ' item') + ' no pedido';
+  document.getElementById('mp-barra-total').textContent = reais(tot);
+}
+document.addEventListener('click', (e) => { const b = e.target.closest('#pag-monte [data-mp]'); if (!b) return; e.preventDefault();
+  const g = b.dataset.g, n = b.dataset.n; PED[g] = PED[g] || {}; PED[g][n] = Math.min(20, Math.max(0, (PED[g][n] || 0) + Number(b.dataset.mp))); if (!PED[g][n]) delete PED[g][n];
+  if (navigator.vibrate) try { navigator.vibrate(8); } catch (_) {}
+  atualizarMontePag(); const c = b.closest('.mp-card'); if (c && Number(b.dataset.mp) > 0) { c.classList.remove('pulo'); void c.offsetWidth; c.classList.add('pulo'); } });
+function mostrarMonte() { document.body.classList.remove('na-capa'); window.scrollTo(0, 0); if (BANNER.parar) BANNER.parar(); atualizarMontePag(); }
 const rota = () => { const h = location.hash; document.body.classList.toggle('na-monte', h === '#monte'); return h === '#cardapio' ? mostrarCardapio() : h === '#monte' ? mostrarMonte() : mostrarCapa(); };
 // ---------- Monte seu pedido: tamanho, prato do dia, até 2 guarnições, quantidade e observação → WhatsApp ----------
 let DADOS = null;
@@ -1094,7 +1142,7 @@ function abrirPedido(tam, prato, guarn, especial) {
 }
 function fecharPedido() {
   const f = document.getElementById('ped'); if (!f || f.hidden) return; const M = !semMovimento() && window.Motion;
-  const fim = () => { f.hidden = true; document.body.classList.remove('sem-rolagem'); };
+  const fim = () => { f.hidden = true; document.body.classList.remove('sem-rolagem'); atualizarMontePag(); };
   if (M) { Promise.race([M.animate(f.querySelector('.ped'), { y: 120, opacity: 0 }, { duration: .22 }), new Promise(r => setTimeout(r, 300))]).then(fim); } else fim();
 }
 function marcarTags() { const v = (document.getElementById('ped-obs').value || '').toLowerCase();
