@@ -2667,13 +2667,15 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   .lp-topo:focus-visible,.lp-add:focus-visible,.lp-q:focus-visible,.lp-enviar:focus-visible{outline:2px solid #A7EBF2;outline-offset:2px}
   .pedido-linha{transition:background .15s ease}
   .pedido-linha:hover{background:var(--bg-accent-soft)}
-  .ped-grid{display:grid;grid-template-columns:80px 108px minmax(140px,1.6fr) minmax(118px,1fr) 100px 92px 96px 150px;gap:10px;align-items:center}
+  .ped-grid{display:grid;grid-template-columns:80px 108px minmax(140px,1.6fr) minmax(118px,1fr) 100px 92px 96px 218px;gap:10px;align-items:center}
   .ped-grid>*{min-width:0}
   .ped-acoes{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:4px 6px}
+  .ped-cred{background:rgba(232,131,58,.12);border:1px solid rgba(232,131,58,.55);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;cursor:pointer;color:#e8833a;white-space:nowrap;font-family:inherit;transition:background .15s ease}
+  .ped-cred:hover{background:rgba(232,131,58,.24)}.ped-cred:focus-visible{outline:2px solid #54acbf;outline-offset:2px}
   .ped-ico{width:24px;height:24px;border-radius:6px!important;padding:0!important;display:inline-flex!important;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s ease,border-color .15s ease}
   .ped-ico:hover{background:var(--bg-accent-soft)!important}.ped-ico.perigo:hover{background:rgba(224,103,92,.14)!important;border-color:#e0675c!important}
   .ped-ico:focus-visible{outline:2px solid #54acbf;outline-offset:2px}
-  @media (max-width:1150px){.ped-grid{grid-template-columns:76px 104px minmax(130px,1fr) 96px 88px 92px 146px}.ped-grid>:nth-child(4){display:none}}
+  @media (max-width:1150px){.ped-grid{grid-template-columns:76px 104px minmax(130px,1fr) 96px 88px 92px 206px}.ped-grid>:nth-child(4){display:none}}
   .pedido-linha .pedido-ver-seta{opacity:0;transition:opacity .15s ease}
   .pedido-linha:hover .pedido-ver-seta{opacity:1}
   .wa-robo-btn:hover{transform:scale(1.12) rotate(-6deg);background:var(--wa-verde-suave)!important}
@@ -3388,7 +3390,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
               <div title="{{ o.clientName }}" style="min-width:0;font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.clientName }}</div><div style="min-width:0;display:flex;align-items:center;gap:7px;white-space:nowrap"><sc-if value="{{ o.temOrigem }}" hint-placeholder-val="{{ false }}"><span style="{{ o.origemStyle }}">{{ o.origemLabel }}</span></sc-if><span class="pedido-ver" style="font-size:11.5px;color:#9a9084;flex-shrink:0">{{ o.qtdItensLabel }}</span></div>
               <div style="text-align:right;font-family:'Space Mono',monospace;font-size:14px">{{ o.totalFmt }}</div>
               <div><span style="{{ o.payStyle }}">{{ o.paymentLabel }}</span></div>
-              <div><span style="{{ o.statusStyle }};white-space:nowrap">{{ o.statusLabel }}</span></div><div class="ped-acoes"><sc-if value="{{ o.isOpen }}" hint-placeholder-val="{{ false }}"><button onclick="{{ o.onDone }}" style="background:none;border:1px solid var(--border-input);border-radius:6px;padding:2px 8px;font-size:11px;cursor:pointer;color:#5f574d">Concluir</button></sc-if><sc-if value="{{ o.isReady }}" hint-placeholder-val="{{ false }}"><button onclick="{{ o.onDispatch }}" style="background:#26658C;color:#fff;border:none;border-radius:7px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap">Enviar ao motoboy</button></sc-if><button onclick="{{ o.onPrint }}" title="Imprimir" aria-label="Imprimir pedido" class="ped-ico" style="background:none;border:1px solid var(--border-input);border-radius:8px;cursor:pointer;color:#5f574d"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7 M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2 M6 14h12v8H6z"></path></svg></button><sc-if value="{{ o.podeExcluir }}" hint-placeholder-val="{{ false }}"><button onclick="{{ o.onDelete }}" title="Excluir pedido" aria-label="Excluir pedido" class="ped-ico perigo" style="background:none;border:1px solid rgba(220,80,70,.45);border-radius:8px;cursor:pointer;color:#e0675c"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18 M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2 M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6 M10 11v6 M14 11v6"></path></svg></button></sc-if></div>
+              <div><span style="{{ o.statusStyle }};white-space:nowrap">{{ o.statusLabel }}</span></div><div class="ped-acoes"><sc-if value="{{ o.isOpen }}" hint-placeholder-val="{{ false }}"><button onclick="{{ o.onDone }}" style="background:none;border:1px solid var(--border-input);border-radius:6px;padding:2px 8px;font-size:11px;cursor:pointer;color:#5f574d">Concluir</button></sc-if><sc-if value="{{ o.isReady }}" hint-placeholder-val="{{ false }}"><button onclick="{{ o.onDispatch }}" style="background:#26658C;color:#fff;border:none;border-radius:7px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap">Enviar ao motoboy</button></sc-if><sc-if value="{{ o.credBt }}" hint-placeholder-val="{{ false }}"><button onclick="{{ o.onCred }}" title="Passar para o crediário do cliente" class="ped-cred">Crediário</button></sc-if><button onclick="{{ o.onPrint }}" title="Imprimir" aria-label="Imprimir pedido" class="ped-ico" style="background:none;border:1px solid var(--border-input);border-radius:8px;cursor:pointer;color:#5f574d"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7 M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2 M6 14h12v8H6z"></path></svg></button><sc-if value="{{ o.podeExcluir }}" hint-placeholder-val="{{ false }}"><button onclick="{{ o.onDelete }}" title="Excluir pedido" aria-label="Excluir pedido" class="ped-ico perigo" style="background:none;border:1px solid rgba(220,80,70,.45);border-radius:8px;cursor:pointer;color:#e0675c"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18 M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2 M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6 M10 11v6 M14 11v6"></path></svg></button></sc-if></div>
             </div>
           </sc-for>
           <sc-if value="{{ noOrderResults }}" hint-placeholder-val="{{ false }}"><div style="padding:20px 22px;color:#9a9084;font-size:14px;border-top:1px solid var(--border-soft)">Nenhum pedido encontrado.</div></sc-if>
@@ -4166,6 +4168,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
         </div>
         <div style="display:flex;gap:8px;padding:14px 22px 18px;border-top:1px solid var(--border-card);flex-wrap:wrap">
           <button onclick="{{ pedDet.onPrint }}" style="flex:1;min-width:120px;display:flex;align-items:center;justify-content:center;gap:7px;background:none;border:1px solid var(--border-input);border-radius:10px;padding:10px 12px;font-size:13.5px;font-weight:600;cursor:pointer;color:var(--text-primary);font-family:inherit"><svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7 M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2 M6 14h12v8H6z"></path></svg>Imprimir</button>
+          <sc-if value="{{ pedDet.podeCred }}" hint-placeholder-val="{{ false }}"><button onclick="{{ pedDet.onCred }}" style="flex:1;min-width:120px;display:flex;align-items:center;justify-content:center;gap:7px;background:rgba(232,131,58,.12);border:1px solid rgba(232,131,58,.55);border-radius:10px;padding:10px 12px;font-size:13.5px;font-weight:600;cursor:pointer;color:#e8833a;font-family:inherit"><svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h15a3 3 0 013 3v8a2 2 0 01-2 2H5a2 2 0 01-2-2z M3 7l12-4v4 M17 14h.01"></path></svg>Passar para o crediário</button></sc-if>
           <sc-if value="{{ pedDet.isOpen }}" hint-placeholder-val="{{ false }}"><button onclick="{{ pedDet.onDone }}" style="flex:1;min-width:120px;background:#25623f;color:#fff;border:none;border-radius:10px;padding:10px 12px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit">Concluir pedido</button></sc-if>
           <sc-if value="{{ pedDet.isReady }}" hint-placeholder-val="{{ false }}"><button onclick="{{ pedDet.onDispatch }}" style="flex:1;min-width:120px;background:#26658C;color:#fff;border:none;border-radius:10px;padding:10px 12px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit">Enviar ao motoboy</button></sc-if>
         </div>
@@ -7644,6 +7647,82 @@ class Component extends DCLogic {
     this.showToast(it.name+' de '+this.brl(price)+' lançado na conta.');
     this.loadPedidos(); this.loadClientesEmpresas(); };
 
+  // ── passar pedido para o crediário (botão na lista de Pedidos) ──
+  escolherClienteCred=(o)=>new Promise((fim)=>{ const ant=document.getElementById('pdc-cred'); if(ant) ant.remove();
+    const el=(tag,css,txt)=>{ const e=document.createElement(tag); if(css) e.style.cssText=css; if(txt!=null) e.textContent=txt; return e; };
+    const norm=(x)=>String(x||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
+    const dig=(x)=>String(x||'').replace(/\D/g,''); const u8=(x)=>dig(x).slice(-8);
+    const cn=this.clientName(o.clientId); const nomePed=String(o.waClient||(cn!=='—'?cn:'')||'').trim();
+    const telPed=dig(o.telefone).replace(/^55(?=\d{10,11}$)/,'');
+    const todos=(this.state.clients||[]).slice().sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'pt-BR'));
+    let sel=o.clientId||o.empresaId||null;
+    if(!sel&&telPed.length>=8){ const c=todos.find(c=>u8(c.phone)===u8(telPed)); if(c) sel=c.id; }
+    if(!sel&&nomePed){ const c=todos.filter(c=>norm(c.name)===norm(nomePed)); if(c.length===1) sel=c[0].id; }
+    const fundo=el('div','position:fixed;inset:0;z-index:99990;background:rgba(2,10,20,.62);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px;animation:pdcConfIn .16s ease'); fundo.id='pdc-cred';
+    const cx=el('div','width:min(480px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-card);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.55);padding:22px 22px 18px;font-family:inherit');
+    cx.setAttribute('role','dialog'); cx.setAttribute('aria-modal','true'); cx.setAttribute('aria-labelledby','pdc-cred-t');
+    const topo=el('div','display:flex;align-items:center;gap:12px;margin-bottom:14px');
+    const ic=el('div','width:44px;height:44px;flex-shrink:0;border-radius:14px;display:flex;align-items:center;justify-content:center;background:rgba(232,131,58,.14);color:#e8833a');
+    ic.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h15a3 3 0 013 3v8a2 2 0 01-2 2H5a2 2 0 01-2-2z M3 7l12-4v4 M17 14h.01"/></svg>';
+    const tt=el('div'); const t=el('div','font-size:18px;font-weight:700','Passar para o crediário'); t.id='pdc-cred-t';
+    tt.append(t, el('div','font-size:13px;color:#9a9084;margin-top:2px','O valor entra na conta do cliente e o pedido fica como Crediário.')); topo.append(ic,tt);
+    const res=el('div','display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid var(--border-soft);border-radius:12px;padding:10px 14px;background:var(--bg-page);margin-bottom:14px');
+    const rl=el('div','min-width:0'); rl.append(el('div','font-family:\'Space Mono\',monospace;font-size:12.5px;color:#9a9084',o.id||''), el('div','font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis',nomePed||'Cliente sem nome'));
+    if(telPed) rl.append(el('div','font-size:12.5px;color:#9a9084',telPed.length>=10?'('+telPed.slice(0,2)+') '+telPed.slice(2,-4)+'-'+telPed.slice(-4):telPed));
+    res.append(rl, el('div','font-family:\'Space Mono\',monospace;font-size:18px;font-weight:700;white-space:nowrap',this.brl(o.total||0)));
+    const lb=el('label','font-size:12px;font-weight:600;color:#9a9084;margin-bottom:6px','Cliente da conta'); lb.htmlFor='pdc-cred-q';
+    const q=el('input','width:100%;box-sizing:border-box;min-height:42px;padding:8px 14px;border-radius:11px;border:1px solid var(--border-input);background:var(--bg-page);color:var(--text-primary);font:15px inherit;outline:none');
+    q.id='pdc-cred-q'; q.type='search'; q.autocomplete='off'; q.spellcheck=false; q.placeholder='Buscar por nome ou telefone'; q.value=nomePed;
+    const lista=el('div','margin-top:8px;flex:1 1 auto;min-height:60px;max-height:260px;overflow-y:auto;border:1px solid var(--border-soft);border-radius:12px'); lista.setAttribute('role','listbox'); lista.setAttribute('aria-label','Clientes');
+    const bts=el('div','display:flex;gap:10px;justify-content:flex-end;margin-top:16px');
+    const no=el('button','min-height:44px;padding:0 18px;border-radius:11px;border:1px solid var(--border-input);background:none;color:var(--text-primary);font:600 14px inherit;cursor:pointer','Cancelar');
+    const sim=el('button','min-height:44px;padding:0 18px;border-radius:11px;border:none;background:#e8833a;color:#fff;font:700 14px inherit;cursor:pointer;box-shadow:0 8px 20px -8px rgba(232,131,58,.8)','');
+    no.type=sim.type='button'; bts.append(no,sim);
+    let novo=null;
+    const atualiza=()=>{ const c=todos.find(x=>x.id===sel); sim.disabled=!(c||novo); sim.style.opacity=sim.disabled?'.45':'1'; sim.style.cursor=sim.disabled?'not-allowed':'pointer';
+      sim.textContent=c?'Lançar na conta de '+String(c.name).split(' ')[0]:(novo?'Cadastrar e lançar':'Escolha o cliente'); };
+    const desenha=()=>{ const t=norm(q.value), d=dig(q.value); lista.innerHTML='';
+      let L=todos.filter(c=>!t||norm(c.name).includes(t)||(d.length>=4&&dig(c.phone).includes(d)));
+      if(t&&!L.length){ const pals=t.split(' ').filter(p=>p.length>=3); L=todos.filter(c=>pals.some(p=>norm(c.name).split(' ').includes(p))); }
+      const s=todos.find(x=>x.id===sel); if(s&&!L.includes(s)) L.unshift(s); L=L.slice(0,40);
+      L.forEach(c=>{ const on=c.id===sel; const b=el('button','width:100%;display:flex;align-items:center;gap:10px;padding:9px 12px;border:none;border-bottom:1px solid var(--border-soft);background:'+(on?'rgba(232,131,58,.14)':'none')+';color:var(--text-primary);font:inherit;text-align:left;cursor:pointer');
+        b.type='button'; b.setAttribute('role','option'); b.setAttribute('aria-selected',on?'true':'false');
+        const ck=el('span','width:18px;height:18px;flex-shrink:0;border-radius:50%;border:2px solid '+(on?'#e8833a':'var(--border-input)')+';background:'+(on?'#e8833a':'none')+';box-sizing:border-box');
+        const tx=el('div','flex:1;min-width:0'); tx.append(el('div','font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis',c.name||'—'));
+        const sub=[c.type==='Empresa'?'Empresa':(c.company||''), c.phone||''].filter(Boolean).join(' · '); if(sub) tx.append(el('div','font-size:12px;color:#9a9084;white-space:nowrap;overflow:hidden;text-overflow:ellipsis',sub));
+        b.append(ck,tx); if(c.balance>0) b.append(el('span','font-family:\'Space Mono\',monospace;font-size:12px;color:#e8833a;white-space:nowrap','deve '+this.brl(c.balance)));
+        b.onclick=()=>{ sel=c.id; novo=null; desenha(); }; lista.append(b); });
+      const nm=String(q.value||'').trim();
+      if(/[a-z]/.test(norm(nm))&&!todos.some(c=>norm(c.name)===norm(nm))){
+        const on=!!novo; const b=el('button','width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;border:none;background:'+(on?'rgba(232,131,58,.14)':'none')+';color:#e8833a;font:600 14px inherit;text-align:left;cursor:pointer');
+        b.type='button'; b.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20a7 7 0 0112.5-4.3 M10 11a4 4 0 100-8 4 4 0 000 8z M19 14v6 M16 17h6"/></svg>';
+        b.append(el('span','',(on?'✓ ':'')+'Cadastrar "'+nm+'" como cliente novo'));
+        b.onclick=()=>{ novo={nome:nm,tel:telPed}; sel=null; desenha(); }; lista.append(b); }
+      if(!lista.children.length) lista.append(el('div','padding:14px;font-size:13px;color:#9a9084','Digite o nome do cliente.'));
+      atualiza(); };
+    q.addEventListener('input',()=>{ novo=null; desenha(); });
+    cx.append(topo,res,lb,q,lista,bts); fundo.append(cx);
+    if(!document.getElementById('pdc-conf-css')){ const st=el('style'); st.id='pdc-conf-css'; st.textContent='@keyframes pdcConfIn{from{opacity:0}}#pdc-conf button:focus-visible{outline:2px solid #54acbf;outline-offset:2px}@media (prefers-reduced-motion:reduce){#pdc-conf{animation:none!important}}'; document.head.append(st); }
+    const sai=(v)=>{ document.removeEventListener('keydown',tecla,true); fundo.remove(); fim(v); };
+    const ok=()=>{ if(sim.disabled) return; sai(sel?{id:sel}:{nome:novo.nome,tel:novo.tel}); };
+    const tecla=(e)=>{ if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); sai(null); } else if(e.key==='Enter'&&e.target===q){ e.preventDefault(); ok(); } };
+    no.onclick=()=>sai(null); sim.onclick=ok; fundo.addEventListener('click',(e)=>{ if(e.target===fundo) sai(null); });
+    desenha(); document.addEventListener('keydown',tecla,true); (document.querySelector('div[data-theme]')||document.body).append(fundo); setTimeout(()=>{ q.focus(); q.select(); },30); });
+  passarCrediario=async(o)=>{ if(!o||o.payment==='crediario') return; const r=await this.escolherClienteCred(o); if(!r) return;
+    const total=Number(o.total)||0, ref=o.id||'';
+    const itens=(o.itensDet&&o.itensDet.length?o.itensDet.map(i=>i.q+'x '+i.d).join(', '):(o.items&&o.items!=='—'?o.items:''));
+    let cid=r.id||null, nome=r.nome||'';
+    if(this._demo){ const c=(this.state.clients||[]).find(x=>x.id===cid); this.setState(s=>({ pedidoDetalhe:null, orders:(s.orders||[]).map(x=>x.dbId===o.dbId?{...x,payment:'crediario',clientId:cid||x.clientId}:x) })); this.showToast('Pedido '+ref+' lançado no crediário de '+(c?c.name:nome)+'.'); return; }
+    if(!cid){ const { data, error } = await sb.from('rest_clientes').insert({ nome, tipo_cliente:'PF', telefone:r.tel||null }).select('id').single();
+      if(error){ this.showToast('Erro ao cadastrar o cliente: '+error.message); return; } cid=data.id; }
+    const c=(this.state.clients||[]).find(x=>x.id===cid); const isEmp=!!(c&&c.type==='Empresa'); if(c) nome=c.name;
+    const { error } = await sb.from('rest_pedidos').update({ forma_pagamento:'crediario', cliente_id:isEmp?null:cid, empresa_id:isEmp?cid:null }).eq('id', o.dbId);
+    if(error){ this.showToast('Erro: '+error.message); return; }
+    await this.addClientBalance(cid, total);
+    await this.logCrediario(isEmp?null:cid, isEmp?cid:null, 'debito', total, 'Pedido '+ref+(itens?': '+itens:''));
+    this.setState({ pedidoDetalhe:null }); this.showToast('Pedido '+ref+' lançado no crediário de '+nome+' ('+this.brl(total)+').');
+    this.loadPedidos(); this.loadClientesEmpresas(); if(this.loadCrediarioHistory) this.loadCrediarioHistory(); };
+
   // ── excluir pedido (lixeira da lista de Pedidos; só admin) ──
   confirmarExclusao=(o,ref,cliente)=>new Promise((fim)=>{ const ant=document.getElementById('pdc-conf'); if(ant) ant.remove();
     const itens=(o.itensDet&&o.itensDet.length?o.itensDet.map(i=>i.q+'× '+i.d):String(o.items&&o.items!=='—'?o.items:'').split(/, (?=\d+x )/).filter(Boolean)).slice(0,5);
@@ -7672,7 +7751,7 @@ class Component extends DCLogic {
     if(!(await this.confirmarExclusao(o, ref, cn&&cn!=='—'?cn:''))) return;
     if(this._demo){ this.setState(s=>({ orders:(s.orders||[]).filter(x=>x.dbId!==o.dbId), pedidoDetalhe:null })); this.showToast('Pedido '+ref+' excluído.'); return; }
     const { error } = await sb.from('rest_pedidos').delete().eq('id', o.dbId); if(error){ this.showToast('Não excluiu: '+error.message); return; }
-    if(o.payment==='crediario'&&o.origem!=='site'&&(o.clientId||o.empresaId)) await this.addClientBalance(o.clientId||o.empresaId, -(o.total||0)); // pedido do site (convênio) não mexe no saldo
+    if(o.payment==='crediario'&&(o.origem!=='site'||o.clientId)&&(o.clientId||o.empresaId)) await this.addClientBalance(o.clientId||o.empresaId, -(o.total||0)); // pedido do site (convênio) não mexe no saldo
     this.setState({ pedidoDetalhe:null }); this.showToast('Pedido '+ref+' excluído.'); this.loadPedidos(); this.loadClientesEmpresas(); };
   removeBalcao=async(o)=>{
     await sb.from('rest_pedidos').delete().eq('id', o.dbId);
@@ -7735,7 +7814,7 @@ class Component extends DCLogic {
       style:'display:flex;align-items:center;gap:11px;padding:'+(collapsed?'11px 0':'10px 14px')+';justify-content:'+(collapsed?'center':'flex-start')+';border-radius:9px;cursor:pointer;font-size:14px;font-weight:500;color:#b3d6de;background:transparent;margin-top:6px;border-top:1px solid rgba(167,235,242,.12)' });
 
 const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo','fde6d3;color:#b5701e'],pronto:['Pronto','e3f3e9;color:#2f8f57'],aguardando_motoboy:['Aguardando motoboy','fdf2dc;color:#a9791a'],em_rota:['Em rota','e7eef7;color:#26658C'],entregue:['Entregue','eef1ec;color:#3f7d5c']};
-    const mkOrderRow0=(o)=>{ const flow=o.status==='entregue'?'entregue':(o.motoboyId?'em_rota':(o.pronto?'pronto':'aberto')); const fl=FLOW[flow]||FLOW.aberto; return {id:o.id,date:o.date,clientName:o.waClient||(this.clientName(o.clientId)!=='—'?this.clientName(o.clientId):this.clientName(o.empresaId)),items:o.items,totalFmt:brl(o.total),paymentLabel:this.payLabel(o.payment),payStyle:this.payStyle(o.payment),statusLabel:o.motoboyId?(fl[0]+' · '+o.motoboyName):fl[0],statusStyle:'display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:#'+fl[1],isOpen:flow==='aberto',isReady:flow==='pronto',onDone:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.concludeOrder(o.dbId); },onDispatch:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.setState({pedidoDetalhe:null}); this.openDispatchModal(o.dbId); },onPrint:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.openPrint(o); },podeExcluir:ehAdmin,onDelete:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.excluirPedido(o); },onOpen:()=>this.setState({pedidoDetalhe:o.dbId}),...(()=>{ const itensLista=(o.items&&o.items!=='—'?o.items.split(/, (?=\d+x )/):[]).map(x=>{ const m=/^(\d+)x (.*)$/.exec(x.trim()); return m?{qtd:m[1],desc:m[2]}:{qtd:'1',desc:x.trim()}; }); const n=itensLista.reduce((a,i)=>a+(Number(i.qtd)||0),0); return { itensLista, semItens:itensLista.length===0, qtdItensLabel:n===0?'sem itens':(n===1?'1 item':n+' itens') }; })()}; };
+    const mkOrderRow0=(o)=>{ const flow=o.status==='entregue'?'entregue':(o.motoboyId?'em_rota':(o.pronto?'pronto':'aberto')); const fl=FLOW[flow]||FLOW.aberto; return {id:o.id,date:o.date,clientName:o.waClient||(this.clientName(o.clientId)!=='—'?this.clientName(o.clientId):this.clientName(o.empresaId)),items:o.items,totalFmt:brl(o.total),paymentLabel:this.payLabel(o.payment),payStyle:this.payStyle(o.payment),statusLabel:o.motoboyId?(fl[0]+' · '+o.motoboyName):fl[0],statusStyle:'display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:#'+fl[1],isOpen:flow==='aberto',isReady:flow==='pronto',onDone:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.concludeOrder(o.dbId); },onDispatch:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.setState({pedidoDetalhe:null}); this.openDispatchModal(o.dbId); },onPrint:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.openPrint(o); },credBt:flow==='aberto'&&o.payment!=='crediario',podeCred:o.payment!=='crediario',onCred:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.passarCrediario(o); },podeExcluir:ehAdmin,onDelete:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.excluirPedido(o); },onOpen:()=>this.setState({pedidoDetalhe:o.dbId}),...(()=>{ const itensLista=(o.items&&o.items!=='—'?o.items.split(/, (?=\d+x )/):[]).map(x=>{ const m=/^(\d+)x (.*)$/.exec(x.trim()); return m?{qtd:m[1],desc:m[2]}:{qtd:'1',desc:x.trim()}; }); const n=itensLista.reduce((a,i)=>a+(Number(i.qtd)||0),0); return { itensLista, semItens:itensLista.length===0, qtdItensLabel:n===0?'sem itens':(n===1?'1 item':n+' itens') }; })()}; };
     // Pedidos: hora, origem (Online / WhatsApp / Balcão) e detalhes do cliente para a lista e o modal
     const ORIG={site:['Online','background:rgba(255,122,26,.16);color:#ffa94d'],whatsapp:['WhatsApp','background:rgba(37,211,102,.16);color:#4ade80'],balcao:['Balcão','background:rgba(84,172,191,.16);color:#7fd0df']};
     const mkOrderRow=(o)=>{ const r=mkOrderRow0(o); const cr=o.criado?new Date(o.criado):null; const hora=cr&&!isNaN(cr)?cr.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):''; const og=ORIG[o.origem]||null;
