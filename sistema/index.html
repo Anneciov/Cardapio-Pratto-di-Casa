@@ -2684,9 +2684,9 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   .pm-oseta{position:absolute;right:14px;bottom:14px;opacity:.55;transition:transform .15s ease,opacity .15s ease}.pm-op:hover .pm-oseta{opacity:1;transform:translateX(3px)}
   .pm-op1{background:linear-gradient(160deg,#2f78a3,#26658C);border-color:transparent;color:#fff}.pm-op1 .pm-oic{background:rgba(255,255,255,.16);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}.pm-op1 .pm-otx span{opacity:.85}
   .pm-rod{display:flex;align-items:center;gap:6px;font-size:11.5px;color:#9a9084;margin-top:18px;padding-top:14px;border-top:1px solid var(--border-soft);line-height:1.5}.pm-rod svg{flex-shrink:0}
-  .pm-full{position:fixed;inset:0;max-width:none;width:auto;max-height:none;border-radius:0;border:0;display:flex;flex-direction:column;padding:18px 28px 16px;z-index:71}
+  .pm-full{height:calc(100vh - 40px);display:flex;flex-direction:column;overflow:hidden}
   .pm-full .pm-ajuda,.pm-full .pm-rod{display:none}.pm-full .pm-head{margin-bottom:14px}
-  .pm-full .pm-prev-area{flex:1 1 auto;min-height:0;max-height:none!important;padding:24px!important}.pm-full .pm-prev-area iframe{zoom:1.45}
+  .pm-full .pm-prev-area{flex:1 1 auto;min-height:0;max-height:none!important;overflow:hidden!important;align-items:center!important}
   @media (max-width:760px){.pm-cfg{grid-template-columns:1fr}.pm-ops{grid-template-columns:1fr}.pm-op{min-height:0;flex-direction:row;align-items:center}.pm-box{padding:20px}}
   @media (prefers-reduced-motion:reduce){.pm-op,.pm-oseta{transition:none}}
   .pedido-linha{transition:background .15s ease}
@@ -7697,7 +7697,14 @@ class Component extends DCLogic {
     this.loadPedidos(); this.loadClientesEmpresas(); };
 
   // ── Pedidos: filtro de mês, páginas e altura da tabela ──
-  _pedAltura=()=>{ const t=document.querySelector('.ped-tabela'); if(!t) return; const rod=document.querySelector('.ped-rod');
+  // prévia da impressão: mostra o cupom/etiqueta inteiro, ajustando o tamanho ao espaço da janela
+  _pmAjusta=()=>{ const f=document.querySelector('.pm-prev-area iframe'); if(!f) return; const a=f.parentElement;
+    if(!f.dataset.lig){ f.dataset.lig='1'; f.addEventListener('load',()=>{ f.dataset.h=''; this._pmAjusta(); }); }
+    let h=0; try{ const d=f.contentDocument; if(d&&d.body){ d.documentElement.style.overflow='hidden'; h=Math.ceil(Math.max(d.body.getBoundingClientRect().height,d.body.scrollHeight))+6; } }catch(_){}
+    if(h>0&&f.dataset.h!==String(h)){ f.dataset.h=String(h); f.style.height=h+'px'; }
+    const H=parseFloat(f.style.height)||300, W=parseFloat(getComputedStyle(f).width)||222;
+    const z=Math.max(.35,Math.min(1.8,(a.clientHeight-28)/H,(a.clientWidth-28)/W)).toFixed(3); if(f.style.zoom!==z) f.style.zoom=z; };
+  _pedAltura=()=>{ this._pmAjusta(); const t=document.querySelector('.ped-tabela'); if(!t) return; const rod=document.querySelector('.ped-rod');
     const top=t.getBoundingClientRect().top+window.scrollY; const h=Math.max(260,Math.floor(window.innerHeight-top-(rod?rod.offsetHeight:0)-20));
     if(t.style.height!==h+'px'){ t.style.height=h+'px'; t.style.maxHeight='none'; } };
   _pedAlturaLiga=()=>{ if(this._pedAltOn) return; this._pedAltOn=1; let raf=0; const ag=()=>{ if(raf) return; raf=requestAnimationFrame(()=>{ raf=0; this._pedAltura(); }); };
