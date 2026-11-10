@@ -5092,9 +5092,11 @@ class Component extends DCLogic {
   }
   async _termicaEnviar(bytes){
     const porta=await this._termicaPorta(false);
-    const abrindo=porta.open({baudRate:9600}); let esgotou=false;
-    await Promise.race([abrindo, new Promise((_,rej)=>setTimeout(()=>{ esgotou=true; rej(new Error('A impressora não respondeu.')); },12000))])
-      .catch(e=>{ if(esgotou) abrindo.then(()=>porta.close()).catch(()=>{}); else if(e&&e.name==='InvalidStateError'){ return porta.close().catch(()=>{}).then(()=>porta.open({baudRate:9600})); } throw e; });
+    const abrir1=()=>{ const abrindo=porta.open({baudRate:9600}); let esgotou=false;
+      return Promise.race([abrindo, new Promise((_,rej)=>setTimeout(()=>{ esgotou=true; rej(new Error('A impressora não respondeu.')); },12000))])
+        .catch(e=>{ if(esgotou){ abrindo.then(()=>porta.close()).catch(()=>{}); throw e; } if(e&&e.name==='InvalidStateError') return porta.close().catch(()=>{}).then(()=>porta.open({baudRate:9600})); throw e; }); };
+    // o Bluetooth costuma falhar na 1a tentativa (impressora acordando): tenta 3 vezes
+    for(let t=1;;t++){ try{ await abrir1(); break; }catch(e){ if(t<3&&e&&e.name==='NetworkError'){ await new Promise(r=>setTimeout(r,1500)); continue; } throw e; } }
     try{
       const w=porta.writable.getWriter();
       // Mini impressoras Bluetooth têm buffer pequeno e sem controle de fluxo: envia em pedaços de 128 bytes com pausa,
@@ -5142,7 +5144,8 @@ class Component extends DCLogic {
       rodape:(s)=>{ k.al(1); k.fonte('B'); k.ln(s); k.fonte('A'); k.al(0); },
       enviar:async(oQue)=>{ cmd(27,100,3); // avança só 3 linhas para destacar o papel
         try{ await this._termicaEnviar(new Uint8Array(B)); this.showToast(oQue+' impresso pelo Bluetooth ('+(c58?'58':'80')+' mm).'); }
-        catch(e){ if(e&&e.name==='NotFoundError') return; this.showToast('Não foi possível imprimir pelo Bluetooth: '+((e&&e.message)||e)+' Confira se a impressora está ligada, perto do computador e desconectada do celular; se continuar, use "Trocar impressora".'); } },
+        catch(e){ if(e&&e.name==='NotFoundError') return; const net=e&&(e.name==='NetworkError'||/open serial port|não respondeu/i.test(e.message||''));
+          this.showToast(net?'Não foi possível conectar na impressora Bluetooth. Ligue a impressora, deixe perto do computador e desconecte do celular. Se continuar, clique em "Trocar impressora" (no Caixa: "Escolher impressora") e escolha a outra porta "Serial Padrão por link Bluetooth" (o Windows cria duas).':'Não foi possível imprimir pelo Bluetooth: '+((e&&e.message)||e)+' Confira se a impressora está ligada, perto do computador e desconectada do celular; se continuar, use "Trocar impressora".',12000); } },
     };
     cmd(27,64); k.fonte('A'); // inicializa
     return k;
@@ -8369,7 +8372,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const pessoasHoje=new Set(todayBalcao.map(o=>o.clientId)).size;
 
     const toastMsg=s.toast||'';
-    const isToastError=/^Erro/i.test(toastMsg);
+    const isToastError=/^(Erro|Não foi)/i.test(toastMsg);
     const isToastWarning=!isToastError && /Informe |Selecione |Nenhum |expirada|sem WhatsApp|Adicione ao menos|já foi/i.test(toastMsg);
     const isToastInfo=!isToastError && !isToastWarning && /modo demonstração/i.test(toastMsg);
     const isToastSuccess=!isToastError && !isToastWarning && !isToastInfo;
