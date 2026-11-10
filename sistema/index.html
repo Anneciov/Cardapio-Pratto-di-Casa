@@ -2669,14 +2669,25 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   .pedido-linha:hover{background:var(--bg-accent-soft)}
   .ped-grid{display:grid;grid-template-columns:80px 108px minmax(130px,1.6fr) minmax(110px,1fr) 100px 92px 96px 196px;gap:10px;align-items:center;min-width:min-content}
   .ped-grid>*{min-width:0}
+  .ped-tabela{overscroll-behavior:contain}
+  .ped-tabela::-webkit-scrollbar{width:12px;height:12px}.ped-tabela::-webkit-scrollbar-track{background:rgba(127,208,223,.06)}
+  .ped-tabela::-webkit-scrollbar-thumb{background:rgba(127,208,223,.45);border-radius:8px;border:3px solid transparent;background-clip:padding-box}.ped-tabela::-webkit-scrollbar-thumb:hover{background-color:rgba(127,208,223,.7)}.ped-tabela::-webkit-scrollbar-corner{background:transparent}
+  .ped-cab{position:sticky;top:0;z-index:2}
+  .ped-rod{display:flex;align-items:center;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;padding:8px 14px;background:var(--bg-card);border:1px solid var(--border-card);border-top:none;border-radius:0 0 16px 16px;font-size:13px;color:#9a9084}
+  .ped-lim,.ped-pag{display:flex;align-items:center;gap:6px}.ped-pag span{min-width:96px;text-align:center}
+  .ped-lim button,.ped-pag button{min-width:36px;height:32px;padding:0 10px;border-radius:8px;border:1px solid var(--border-input);background:none;color:var(--text-primary);font:600 13px inherit;cursor:pointer;transition:background .15s ease}
+  .ped-pag button{font-size:18px;line-height:1}.ped-lim button:hover,.ped-pag button:hover{background:var(--bg-accent-soft)}
+  .ped-mes{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid var(--border-input);border-radius:11px;background:var(--bg-card);color:var(--text-primary);font:600 14px inherit;cursor:pointer;white-space:nowrap;transition:border-color .15s ease}
+  .ped-mes:hover{border-color:#54acbf}.ped-mes svg{flex-shrink:0;opacity:.8}
+  .ped-mes:focus-visible,.ped-lim button:focus-visible,.ped-pag button:focus-visible{outline:2px solid #54acbf;outline-offset:2px}
   .ped-acoes{display:flex;align-items:center;justify-content:flex-end;flex-wrap:nowrap;gap:5px}
   .ped-cred{background:rgba(232,131,58,.12);border:1px solid rgba(232,131,58,.55);border-radius:6px;padding:2px 7px;font-size:11px;font-weight:600;cursor:pointer;color:#e8833a;white-space:nowrap;font-family:inherit;transition:background .15s ease}
   .ped-cred:hover{background:rgba(232,131,58,.24)}.ped-cred:focus-visible{outline:2px solid #54acbf;outline-offset:2px}
   .ped-ico{width:24px;height:24px;border-radius:6px!important;padding:0!important;display:inline-flex!important;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s ease,border-color .15s ease}
   .ped-ico:hover{background:var(--bg-accent-soft)!important}.ped-ico.perigo:hover{background:rgba(224,103,92,.14)!important;border-color:#e0675c!important}
   .ped-ico:focus-visible{outline:2px solid #54acbf;outline-offset:2px}
-  @media (max-width:1400px){.ped-grid{grid-template-columns:76px 104px minmax(120px,1fr) 96px 88px 92px 192px;gap:8px}.ped-grid>:nth-child(4){display:none!important}}
-  @media (max-width:1200px){.ped-grid{grid-template-columns:70px 92px minmax(100px,1fr) 88px 80px 86px 190px}}
+  @media (max-width:1400px){.ped-grid{grid-template-columns:76px 104px minmax(130px,1fr) minmax(110px,.8fr) 96px 88px 92px 192px;gap:8px}}
+  @media (max-width:1200px){.ped-grid{grid-template-columns:70px 92px minmax(120px,1fr) minmax(100px,.7fr) 88px 80px 86px 190px}}
   .pedido-linha .pedido-ver-seta{opacity:0;transition:opacity .15s ease}
   .pedido-linha:hover .pedido-ver-seta{opacity:1}
   .wa-robo-btn:hover{transform:scale(1.12) rotate(-6deg);background:var(--wa-verde-suave)!important}
@@ -3378,10 +3389,11 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
             <svg width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="#9a9084" stroke-width="1.8" stroke-linecap="round" style="position:absolute;left:14px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg>
             <input value="{{ orderSearch }}" oninput="{{ setOrderSearch }}" placeholder="Buscar por cliente, item ou nº…" style="width:100%;padding:11px 14px 11px 40px;border:1px solid var(--border-input);border-radius:11px;font-size:14px;background:var(--bg-card);color:var(--text-primary);outline:none">
           </div>
+          <button class="ped-mes" onclick="{{ abrirPedMes }}" aria-haspopup="menu" title="Filtrar por mês"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v15H4z M4 10h16 M8 3v4 M16 3v4"></path></svg><span>{{ pedMesLabel }}</span><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
           <div style="display:flex;gap:8px"><sc-for list="{{ orderFilterChips }}" as="t" hint-placeholder-count="3"><div onclick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</div></sc-for></div>
         </div>
-        <div class="ped-tabela" style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;overflow-x:auto;overflow-y:hidden">
-          <div class="ped-grid" style="padding:7px 18px;background:var(--bg-tablehead);font-size:12px;font-weight:600;color:#847a6e;text-transform:uppercase;letter-spacing:.05em">
+        <div class="ped-tabela" style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px 16px 0 0;overflow:auto;max-height:70vh">
+          <div class="ped-grid ped-cab" style="padding:7px 18px;background:var(--bg-tablehead);font-size:12px;font-weight:600;color:#847a6e;text-transform:uppercase;letter-spacing:.05em">
             <div>Nº</div><div>Data</div><div>Cliente</div><div>Pedido</div><div style="text-align:right">Total</div><div>Pagamento</div><div>Status</div><div style="text-align:right">Ações</div>
           </div>
           <sc-for list="{{ orderRows }}" as="o" hint-placeholder-count="6">
@@ -3396,6 +3408,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           </sc-for>
           <sc-if value="{{ noOrderResults }}" hint-placeholder-val="{{ false }}"><div style="padding:20px 22px;color:#9a9084;font-size:14px;border-top:1px solid var(--border-soft)">Nenhum pedido encontrado.</div></sc-if>
         </div>
+        <div class="ped-rod"><span class="ped-rod-info">{{ pedRodInfo }}</span><div class="ped-lim" role="group" aria-label="Linhas por página"><span>Linhas</span><sc-for list="{{ pedLimChips }}" as="l" hint-placeholder-count="4"><button onclick="{{ l.onClick }}" style="{{ l.style }}" aria-pressed="{{ l.on }}">{{ l.label }}</button></sc-for></div><div class="ped-pag"><button onclick="{{ pedPagAnt }}" style="{{ pedPagAntSt }}" aria-label="Página anterior">‹</button><span>{{ pedPagInfo }}</span><button onclick="{{ pedPagProx }}" style="{{ pedPagProxSt }}" aria-label="Próxima página">›</button></div></div>
       </sc-if>
 
       <!-- LANCAMENTO DIARIO / BALCAO -->
@@ -5976,7 +5989,7 @@ class Component extends DCLogic {
       .order('created_at', { ascending: false }).limit(200);
     if (error) { console.error(error); return; }
     const today = this.todayISO();
-    const orders = (data||[]).map(o => { const oid = o.numero_ref || ('#'+String(o.id).slice(0,6)); return {
+    const mapa = (o) => { const oid = o.numero_ref || ('#'+String(o.id).slice(0,6)); return {
       id: oid,
       dbId: o.id,
       clientId: o.cliente_id,
@@ -5996,13 +6009,15 @@ class Component extends DCLogic {
       itensArr: (o.rest_pedido_itens||[]).map(i=>({ d:i.descricao, q:Number(i.quantidade)||0 })),
       kind: o.origem === 'balcao' ? 'balcao' : undefined,
       date: this.fmtDateBR(o.data),
-    }; });
+    }; };
+    this._mapPedido = mapa; const orders = (data||[]).map(mapa);
     // pedido novo do cardápio online: aviso com som
     const novosOnline = (data||[]).filter(o => (o.origem==='site'||o.origem==='whatsapp') && o.status!=='entregue');
     if (this._pedOnlineIds) { const nv = novosOnline.filter(o => !this._pedOnlineIds.has(o.id)); if (nv.length) { this.showToast('Novo pedido do cardápio online: '+(nv[0].nome_cliente||'cliente')+' — veja em Pedidos.'); if (this.waTocarAlerta) this.waTocarAlerta(); } }
     this._pedOnlineIds = new Set(novosOnline.map(o => o.id));
     this._cliKey = null;
     this.setState({ orders });
+    if (this.state.pedMes) this.loadPedidosMes();
     if (this._dashDia !== today) this.loadDashStats();
     this._hmKeyRes = null; this._hmKeyVen = null; // o Histórico mensal recarrega se estiver aberto
   };
@@ -7598,7 +7613,7 @@ class Component extends DCLogic {
     this.setState(s=>({balcaoItems:s.balcaoItems.map(it=>it.id===id?{...it,price}:it)}));
     await sb.from('rest_balcao_itens').update({ preco:price }).eq('id',id); }; }
   setClientSearch=(e)=>this.setState({clientSearch:e.target.value});
-  setOrderSearch=(e)=>this.setState({orderSearch:e.target.value});
+  setOrderSearch=(e)=>this.setState({orderSearch:e.target.value,pedPag:0});
   setCredSearch=(e)=>this.setState({credSearch:e.target.value});
   setLaunchSearch=(e)=>this.setState({launchSearch:e.target.value});
   toggleTheme=()=>{ const v=this.state.theme==='dark'?'light':'dark'; this._lsSet('pdc_tema',v); this.setState({theme:v}); };
@@ -7647,6 +7662,40 @@ class Component extends DCLogic {
     await this.logCrediario(clientId, null, 'debito', price, it.name+' (balcão)');
     this.showToast(it.name+' de '+this.brl(price)+' lançado na conta.');
     this.loadPedidos(); this.loadClientesEmpresas(); };
+
+  // ── Pedidos: filtro de mês, páginas e altura da tabela ──
+  _pedAltura=()=>{ const t=document.querySelector('.ped-tabela'); if(!t) return; const rod=document.querySelector('.ped-rod');
+    const top=t.getBoundingClientRect().top+window.scrollY; const h=Math.max(260,Math.floor(window.innerHeight-top-(rod?rod.offsetHeight:0)-20));
+    if(t.style.height!==h+'px'){ t.style.height=h+'px'; t.style.maxHeight='none'; } };
+  _pedAlturaLiga=()=>{ if(this._pedAltOn) return; this._pedAltOn=1; let raf=0; const ag=()=>{ if(raf) return; raf=requestAnimationFrame(()=>{ raf=0; this._pedAltura(); }); };
+    window.addEventListener('resize',ag); try{ new MutationObserver(ag).observe(document.body,{childList:true,subtree:true}); }catch(_){} setTimeout(ag,50); };
+  loadPedidosMes=async(ym)=>{ ym=ym||this.state.pedMes; if(!ym) return;
+    if(this._demo){ this.setState({ pedMesOrders:(this.state.orders||[]).filter(o=>String(o.iso||'').slice(0,7)===ym) }); return; }
+    if(!this._mapPedido) return;
+    const [a,m]=ym.split('-').map(Number); const ini=ym+'-01', fim=(m===12?(a+1)+'-01':a+'-'+String(m+1).padStart(2,'0'))+'-01';
+    const { data, error } = await sb.from('rest_pedidos').select('id,numero_ref,cliente_id,empresa_id,forma_pagamento,status,total,data,origem,nome_cliente,telefone_contato,endereco_entrega,observacoes,created_at,pronto,motoboy_id,rest_motoboys(nome),rest_pedido_itens(descricao,quantidade,valor_total)').gte('data',ini).lt('data',fim).order('created_at',{ascending:false}).limit(5000);
+    if(error){ this.showToast('Erro ao carregar o mês: '+error.message); return; }
+    if(this.state.pedMes!==ym) return;
+    this.setState({ pedMesOrders:(data||[]).map(this._mapPedido) }); };
+  setPedMes=(v)=>{ this.setState({ pedMes:v, pedPag:0, pedMesOrders:null }); if(v) this.loadPedidosMes(v); };
+  abrirPedMes=(e)=>{ const bt=e&&e.currentTarget; const ant=document.getElementById('pdc-mes'); if(ant){ if(ant._fecha) ant._fecha(); else ant.remove(); return; }
+    const MES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    const hj=new Date(); const L=[['','Todos os meses']]; for(let i=0;i<12;i++){ const d=new Date(hj.getFullYear(),hj.getMonth()-i,1); L.push([d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'), MES[d.getMonth()]+' '+d.getFullYear()]); }
+    const r=bt?bt.getBoundingClientRect():{left:100,bottom:100}; const at=this.state.pedMes||'';
+    const m=document.createElement('div'); m.id='pdc-mes'; m.setAttribute('role','menu'); m.setAttribute('aria-label','Filtrar por mês');
+    m.style.cssText='position:fixed;z-index:99990;top:'+Math.round(r.bottom+6)+'px;left:'+Math.round(Math.max(8,Math.min(r.left,innerWidth-226)))+'px;width:218px;max-height:'+Math.max(160,Math.round(innerHeight-r.bottom-20))+'px;overflow-y:auto;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-card);border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.45);padding:6px;font-family:inherit';
+    const fecha=()=>{ m.remove(); document.removeEventListener('mousedown',fora,true); document.removeEventListener('keydown',tecla,true); };
+    const fora=(ev)=>{ if(!m.contains(ev.target)&&!(bt&&bt.contains(ev.target))) fecha(); };
+    const tecla=(ev)=>{ const bs=[...m.querySelectorAll('button')], i=bs.indexOf(document.activeElement);
+      if(ev.key==='Escape'){ ev.preventDefault(); ev.stopPropagation(); fecha(); if(bt) bt.focus(); }
+      else if(ev.key==='ArrowDown'||ev.key==='ArrowUp'){ ev.preventDefault(); const n=bs[(i+(ev.key==='ArrowDown'?1:-1)+bs.length)%bs.length]; if(n) n.focus(); } };
+    L.forEach(([v,l])=>{ const on=at===v; const b=document.createElement('button'); b.type='button'; b.setAttribute('role','menuitemradio'); b.setAttribute('aria-checked',String(on)); b.textContent=(on?'✓  ':'')+l;
+      b.style.cssText='display:block;width:100%;text-align:left;padding:9px 12px;border:none;border-radius:8px;background:'+(on?'rgba(84,172,191,.18)':'none')+';color:inherit;font:'+(on?'700':'500')+' 14px inherit;cursor:pointer;outline-offset:-2px';
+      b.onmouseenter=()=>{ if(!on) b.style.background='var(--bg-accent-soft)'; }; b.onmouseleave=()=>{ if(!on) b.style.background='none'; };
+      b.onclick=()=>{ fecha(); this.setPedMes(v); if(bt) bt.focus(); }; m.append(b); });
+    m._fecha=fecha; (document.querySelector('div[data-theme]')||document.body).append(m);
+    document.addEventListener('mousedown',fora,true); document.addEventListener('keydown',tecla,true);
+    const s=m.querySelector('[aria-checked=true]'); if(s){ s.focus(); s.scrollIntoView({block:'nearest'}); } };
 
   // ── passar pedido para o crediário (botão na lista de Pedidos) ──
   escolherClienteCred=(o)=>new Promise((fim)=>{ const ant=document.getElementById('pdc-cred'); if(ant) ant.remove();
@@ -7761,7 +7810,7 @@ class Component extends DCLogic {
     this.loadPedidos(); this.loadClientesEmpresas(); };
 
   renderVals(){
-    const s=this.state; const brl=this.brl.bind(this);
+    const s=this.state; const brl=this.brl.bind(this); this._pedAlturaLiga();
     const collapsed=s.collapsed; const showFull=!collapsed;
     const IC={
       dashboard:'M3 3h7v7H3z M14 3h7v7h-7z M14 14h7v7h-7z M3 14h7v7H3z',
@@ -7864,9 +7913,19 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     }));
     const hasConcluidos=concluidosRows.length>0;
     const oq=(s.orderSearch||'').toLowerCase();
-    const pedSel=s.pedidoDetalhe?s.orders.find(o=>o.dbId===s.pedidoDetalhe):null;
+    const pedSel=s.pedidoDetalhe?(s.orders.find(o=>o.dbId===s.pedidoDetalhe)||(s.pedMesOrders||[]).find(o=>o.dbId===s.pedidoDetalhe)):null;
     const pedDet=pedSel?mkOrderRow(pedSel):{itensLista:[],semItens:false};
-    const orderRows=s.orders.filter(o=>(s.orderFilter==='all'||o.status===s.orderFilter)&&(this.clientName(o.clientId).toLowerCase().includes(oq)||this.clientName(o.empresaId).toLowerCase().includes(oq)||o.items.toLowerCase().includes(oq)||o.id.toLowerCase().includes(oq))).map(mkOrderRow);
+    const pedBase=s.pedMes?(s.pedMesOrders||[]):s.orders; const orderRowsAll=pedBase.filter(o=>(s.orderFilter==='all'||o.status===s.orderFilter)&&(this.clientName(o.clientId).toLowerCase().includes(oq)||this.clientName(o.empresaId).toLowerCase().includes(oq)||o.items.toLowerCase().includes(oq)||o.id.toLowerCase().includes(oq)||String(o.waClient||'').toLowerCase().includes(oq)));
+    const pedLim=s.pedLim||50, pedTot=orderRowsAll.length, pedPags=Math.max(1,Math.ceil(pedTot/pedLim)), pedPag=Math.min(s.pedPag||0,pedPags-1);
+    const orderRows=orderRowsAll.slice(pedPag*pedLim,(pedPag+1)*pedLim).map(mkOrderRow);
+    const MESN=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+    const pedMesLabel=s.pedMes?(MESN[Number(s.pedMes.slice(5,7))-1]+' '+s.pedMes.slice(0,4)).replace(/^./,c=>c.toUpperCase()):'Todos os meses';
+    const pedCarregando=!!s.pedMes&&!s.pedMesOrders;
+    const pedRodInfo=pedCarregando?'Carregando o mês…':(pedTot?('Mostrando '+(pedPag*pedLim+1)+'–'+Math.min(pedTot,(pedPag+1)*pedLim)+' de '+pedTot+(pedTot===1?' pedido':' pedidos')):'Nenhum pedido')+(!s.pedMes&&(s.orders||[]).length>=200?' · últimos 200 (escolha o mês para ver mais)':'');
+    const pedLimChips=[25,50,100,200].map(n=>({label:String(n),on:String(pedLim===n),style:pedLim===n?'background:#26658C;border-color:#26658C;color:#fff':'',onClick:()=>this.setState({pedLim:n,pedPag:0})}));
+    const pedPagInfo='Página '+(pedPag+1)+' de '+pedPags, offSt='opacity:.35;cursor:default';
+    const pedPagAnt=()=>{ if(pedPag>0) this.setState({pedPag:pedPag-1}); }, pedPagProx=()=>{ if(pedPag<pedPags-1) this.setState({pedPag:pedPag+1}); };
+    const pedPagAntSt=pedPag>0?'':offSt, pedPagProxSt=pedPag<pedPags-1?'':offSt;
     const recentOrders=s.orders.slice(0,5).map(mkOrderRow);
 
     const mkClient=(c)=>({id:c.id,name:c.name,hasLink:c.type!=='PF',typeLabel:this.typeLabel(c.type),typeStyle:this.typeStyle(c.type),linkLabel:c.type==='Funcionario'?('vínculo: '+(c.company||'—')):(c.type==='Empresa'?'paga funcionários':'—'),contact:c.email,balanceFmt:c.balance>0?brl(c.balance):'—',balColor:c.balance>0?'#26658C':'#9a9084',onView:()=>this.setState({modal:'statement',selectedClient:c.id}),onPay:()=>this.setState({modal:'payment',selectedClient:c.id}),onCharge:()=>this.chargeClient(c.id),onDelete:()=>this.deleteClient(c.id)});
@@ -8508,7 +8567,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const btn='width:100%;background:linear-gradient(135deg,#2f7a9e,#26658C);color:#fff;border:none;border-radius:10px;padding:13px;font-weight:600;cursor:pointer;font-size:14px;margin-top:6px;box-shadow:0 2px 10px rgba(38,101,140,.28)';
     const chip=(active)=>'padding:7px 14px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;transition:transform .12s ease;border:1px solid '+(active?'#26658C':'var(--border-input)')+';background:'+(active?'#26658C':'var(--bg-card)')+';color:'+(active?'#fff':'#5f574d');
     const clientTypeChips=[['all','Todos'],['PF','Pessoa Física'],['Empresa','Empresa'],['Funcionario','Funcionário']].map(([v,l])=>({label:l,style:chip(s.clientType===v),onClick:()=>this.setState({clientType:v})}));
-    const orderFilterChips=[['all','Todos'],['aberto','Em aberto'],['entregue','Entregue']].map(([v,l])=>({label:l,style:chip(s.orderFilter===v),onClick:()=>this.setState({orderFilter:v})}));
+    const orderFilterChips=[['all','Todos'],['aberto','Em aberto'],['entregue','Entregue']].map(([v,l])=>({label:l,style:chip(s.orderFilter===v),onClick:()=>this.setState({orderFilter:v,pedPag:0})}));
 
     // ícone de cada item do Lançar pedido (prato, bebida, fitness ou outro)
     const ICO_ITEM=(n)=>{ const t=String(n||'').toLowerCase();
@@ -8556,7 +8615,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       doacaoRows, noDoacoes:s.doacoes.length===0, doacoesQtd:String(doacoesQtdN)+' itens', doacoesCount:s.doacoes.length, doacoesValorFmt:brl(doacoesValor),
       companyOptions:empresas,
       clientSearch:s.clientSearch, setClientSearch:this.setClientSearch, clientTypeChips, noClientResults:clientRows.length===0,
-      orderSearch:s.orderSearch, setOrderSearch:this.setOrderSearch, pedidoAberto:!!pedSel, pedDet, fecharPedido:()=>this.setState({pedidoDetalhe:null}), orderFilterChips, noOrderResults:orderRows.length===0,
+      orderSearch:s.orderSearch, setOrderSearch:this.setOrderSearch, pedidoAberto:!!pedSel, pedDet, fecharPedido:()=>this.setState({pedidoDetalhe:null}), orderFilterChips, noOrderResults:orderRows.length===0&&!pedCarregando, abrirPedMes:this.abrirPedMes, pedMesLabel, pedRodInfo, pedLimChips, pedPagInfo, pedPagAnt, pedPagProx, pedPagAntSt, pedPagProxSt,
       credSearch:s.credSearch, setCredSearch:this.setCredSearch,
       launchSearch:s.launchSearch, setLaunchSearch:this.setLaunchSearch,
       monthlyRows, devedoresRows, noDevedores:devedoresRows.length===0, totalRecebidoMesFmt:brl(totalRecebidoMes), totalFaturadoMesFmt:brl(totalFaturadoMes), totalCompradoMesFmt:brl(totalCompradoMes),
