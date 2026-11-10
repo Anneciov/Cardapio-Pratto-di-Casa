@@ -2684,6 +2684,9 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   .pm-oseta{position:absolute;right:14px;bottom:14px;opacity:.55;transition:transform .15s ease,opacity .15s ease}.pm-op:hover .pm-oseta{opacity:1;transform:translateX(3px)}
   .pm-op1{background:linear-gradient(160deg,#2f78a3,#26658C);border-color:transparent;color:#fff}.pm-op1 .pm-oic{background:rgba(255,255,255,.16);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}.pm-op1 .pm-otx span{opacity:.85}
   .pm-rod{display:flex;align-items:center;gap:6px;font-size:11.5px;color:#9a9084;margin-top:18px;padding-top:14px;border-top:1px solid var(--border-soft);line-height:1.5}.pm-rod svg{flex-shrink:0}
+  .pm-full{position:fixed;inset:0;max-width:none;width:auto;max-height:none;border-radius:0;border:0;display:flex;flex-direction:column;padding:18px 28px 16px;z-index:71}
+  .pm-full .pm-ajuda,.pm-full .pm-rod{display:none}.pm-full .pm-head{margin-bottom:14px}
+  .pm-full .pm-prev-area{flex:1 1 auto;min-height:0;max-height:none!important;padding:24px!important}.pm-full .pm-prev-area iframe{zoom:1.45}
   @media (max-width:760px){.pm-cfg{grid-template-columns:1fr}.pm-ops{grid-template-columns:1fr}.pm-op{min-height:0;flex-direction:row;align-items:center}.pm-box{padding:20px}}
   @media (prefers-reduced-motion:reduce){.pm-op,.pm-oseta{transition:none}}
   .pedido-linha{transition:background .15s ease}
@@ -4546,7 +4549,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   <!-- PRINT MODAL -->
   <sc-if value="{{ printOpen }}" hint-placeholder-val="{{ false }}">
     <div onclick="{{ closePrint }}" style="position:fixed;inset:0;z-index:70;background:rgba(20,14,8,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;animation:dcFadeIn .18s ease both">
-      <div onclick="{{ stop }}" class="pm-box">
+      <div onclick="{{ stop }}" class="pm-box {{ pmFullCls }}">
         <div class="pm-head"><span class="pm-hic"><svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V2h12v7 M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2 M6 14h12v8H6z M18 12.5h.01"></path></svg></span><div class="pm-htx">
           <div style="font-family:'Instrument Serif',serif;font-size:24px;line-height:1.15">{{ printTitle }}</div>
         <div class="pm-sub">{{ printClientName }} · <b>{{ printTotalFmt }}</b></div></div>
@@ -4571,15 +4574,15 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
             <span class="pm-otx"><b>Comanda da cozinha</b><span>Prato, montagem, guarnições e observação</span></span><span class="pm-oseta"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14 M13 6l6 6-6 6"></path></svg></span>
           </button>
           <button onclick="{{ doCliente }}" class="pm-op"><span class="pm-oic"><svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z M9 8h6 M9 12h6 M9 16h3"></path></svg></span>
-            <span class="pm-otx"><b>Comprovante do cliente</b><span>Cliente, entrega, valores, pagamento e QR</span></span><span class="pm-oseta"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14 M13 6l6 6-6 6"></path></svg></span>
+            <span class="pm-otx"><b>Comprovante do cliente</b><span>Valores, pagamento e QR para bipar no caixa</span></span><span class="pm-oseta"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14 M13 6l6 6-6 6"></path></svg></span>
           </button>
           <button onclick="{{ doEtiqueta }}" class="pm-op"><span class="pm-oic"><svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12l-8 8-9-9V3h8z M7.5 7.5h.01"></path></svg></span>
-            <span class="pm-otx"><b>Etiqueta de embalagem</b><span>Cliente, nº do pedido e QR</span></span><span class="pm-oseta"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14 M13 6l6 6-6 6"></path></svg></span>
+            <span class="pm-otx"><b>Etiqueta de entrega</b><span>Para o motoboy: endereço, cliente, prato e QR do mapa</span></span><span class="pm-oseta"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14 M13 6l6 6-6 6"></path></svg></span>
           </button>
         </div></sc-if>
         <sc-if value="{{ comPrevia }}" hint-placeholder-val="{{ false }}">
           <div class="pm-lbl"><svg width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z M12 15a3 3 0 100-6 3 3 0 000 6z"></path></svg>Prévia · {{ printPrevNome }}</div>
-          <div style="background:#d9d3c7;border-radius:12px;padding:12px;display:flex;justify-content:center;max-height:52vh;overflow:auto"><iframe srcdoc="{{ printPrevDoc }}" title="Prévia da impressão" style="{{ printPrevStyle }}"></iframe></div>
+          <div class="pm-prev-area" style="background:#d9d3c7;border-radius:12px;padding:12px;display:flex;justify-content:center;align-items:flex-start;max-height:52vh;overflow:auto"><iframe srcdoc="{{ printPrevDoc }}" title="Prévia da impressão" style="{{ printPrevStyle }}"></iframe></div>
           <div style="display:flex;gap:8px;margin-top:12px">
             <button onclick="{{ voltarPrevia }}" style="flex:1;padding:12px;border-radius:12px;border:1px solid var(--border-input);background:none;color:var(--text-primary);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Voltar</button>
             <button onclick="{{ imprimirPrevia }}" style="flex:2;padding:12px;border-radius:12px;border:none;background:#26658C;color:#fff;font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit">Imprimir</button>
@@ -5067,7 +5070,7 @@ class Component extends DCLogic {
       return r; });
     const end=String(o.endereco||''); const entrega=end?(/^Retirada/i.test(end)?'RETIRADA NO LOCAL':(/^Convênio:/i.test(end)?end:'ENTREGA: '+end)):(o.kind==='balcao'?'Balcão':'');
     const origem={site:'Pedido online',whatsapp:'WhatsApp',balcao:'Balcão'}[o.origem]||(o.kind==='balcao'?'Balcão':'Manual');
-    return { id:o.id, cn:cn&&cn!=='—'?cn:'', telFmt, quando, pg:pega('Pagamento')||this.payLabel(o.payment), tx:pega('Taxa de entrega'), obsCli, itens, entrega, origem, total:o.total };
+    return { id:o.id, end, cn:cn&&cn!=='—'?cn:'', telFmt, quando, pg:pega('Pagamento')||this.payLabel(o.payment), tx:pega('Taxa de entrega'), obsCli, itens, entrega, origem, total:o.total };
   }
   _opsTicket(type,d){ const E=Component.EMPRESA, ops=[], sep=()=>ops.push({t:'sep'}), cozinha=d.itens.filter(i=>!i.ehTaxa);
     if(type==='comanda'){
@@ -5079,10 +5082,17 @@ class Component extends DCLogic {
       ops.push({t:'header'}); ops.push({t:'lr',a:'Nº '+d.id,b:d.quando}); ops.push({t:'bold',s:'Cliente: '+(d.cn||'—')}); if(d.telFmt) ops.push({t:'small',s:'WhatsApp: '+d.telFmt}); if(d.entrega) ops.push({t:'smallwrap',s:d.entrega}); sep();
       d.itens.forEach(i=>{ ops.push({t:'lrItem',pre:i.q+'x',s:i.titulo,b:i.v?this.brl(i.v):''}); i.det.filter(([l])=>l!=='Montagem').forEach(([l,v])=>ops.push({t:'det',s:(l?l+': ':'')+v})); });
       sep(); ops.push({t:'total',a:'TOTAL',b:this.brl(d.total)}); ops.push({t:'wrap',s:'Pagamento: '+d.pg}); if(d.tx) ops.push({t:'small',s:'Taxa de entrega: '+d.tx}); if(d.obsCli) ops.push({t:'smallwrap',s:'Obs.: '+d.obsCli});
-      ops.push({t:'qr',text:(d.cn||'Cliente')+' · '+d.id,leg:d.cn||'Cliente'}); sep(); ops.push({t:'csmall',s:'Obrigado pela preferência!'});
+      ops.push({t:'qr',text:'PDC'+String(d.id||'').replace(/[^A-Za-z0-9]/g,'').toUpperCase()+'V'+Math.round((Number(d.total)||0)*100),leg:'Bipe no caixa · '+this.brl(d.total)}); sep(); ops.push({t:'csmall',s:'Obrigado pela preferência!'});
     } else {
-      ops.push({t:'title',s:E.nome}); ops.push({t:'big',s:d.cn||'Cliente'}); ops.push({t:'lr',a:'Nº '+d.id,b:d.quando}); if(d.telFmt) ops.push({t:'small',s:'WhatsApp: '+d.telFmt}); if(d.entrega) ops.push({t:'smallwrap',s:d.entrega});
-      ops.push({t:'smallwrap',s:cozinha.map(i=>i.q+'x '+i.titulo).join(', ')}); ops.push({t:'qr',text:(d.cn||'Cliente')+' · '+d.id,leg:d.cn||'Cliente'});
+      const ret=/^Retirada/i.test(d.end), conv=/^Convênio:/i.test(d.end);
+      ops.push({t:'title',s:ret?'** RETIRADA NO LOCAL **':(d.end&&!conv?'** ENTREGA - MOTOBOY **':'** '+(d.origem||'PEDIDO').toUpperCase()+' **')}); sep();
+      ops.push({t:'lr',a:'Nº '+d.id,b:d.quando}); ops.push({t:'big',s:d.cn||'Cliente'}); if(d.telFmt) ops.push({t:'bold',s:'Tel: '+d.telFmt});
+      if(d.end&&!ret){ sep(); ops.push({t:'small',s:conv?'CONVÊNIO':'ENDEREÇO DE ENTREGA'}); ops.push({t:'boldwrap',s:conv?d.end.replace(/^Convênio:\s*/i,''):d.end}); }
+      sep(); cozinha.forEach((i,n)=>{ if(n) ops.push({t:'gap'}); ops.push({t:'itemBig',pre:i.q+'x',s:i.titulo}); i.det.filter(([l])=>l!=='Montagem').forEach(([l,v])=>ops.push({t:'det',s:(l?l+': ':'')+v})); });
+      if(d.obsCli){ sep(); ops.push({t:'boldwrap',s:'OBS: '+d.obsCli}); }
+      sep(); ops.push({t:'total',a:'TOTAL',b:this.brl(d.total)}); ops.push({t:'wrap',s:'Pagamento: '+d.pg}); if(d.tx) ops.push({t:'small',s:'Taxa de entrega: '+d.tx});
+      if(d.end&&!ret&&!conv) ops.push({t:'qr',text:'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(d.end+' - Cajamar SP'),leg:'Abrir o endereço no mapa'});
+      ops.push({t:'csmall',s:E.nome+' · WhatsApp '+E.whatsapp});
     }
     return ops; }
   async _htmlTicket(type,job){ const d=this._detalheImp(job.order), ops=this._opsTicket(type,d), wmm=job.width==='58'?'58mm':'80mm', E=Component.EMPRESA;
@@ -7032,6 +7042,10 @@ class Component extends DCLogic {
   _cxLer=(raw)=>{ let t=String(raw||'').trim().replace(/ /g,''); if(!t) return null; let qtd=1;
     const m=t.match(/^([0-9]{1,3})[*xX×]([0-9.,]*)$/); if(m){ qtd=Math.max(1,parseInt(m[1],10)||1); t=m[2]; if(!t) return {tipo:'mult',qtd}; }
     // leitores costumam mandar o EAN-13 que começa com 0 como UPC-A (12 dígitos, sem o primeiro zero)
+    // QR do comprovante do pedido: PDC<nº do pedido>V<valor em centavos>
+    const pq=t.match(/^PDC([A-Z0-9]{1,14})V([0-9]{1,8})$/i); if(pq){ const ref=pq[1].toUpperCase(), v=parseInt(pq[2],10)/100; if(!(v>0)) return {tipo:'erro',msg:'Pedido com valor zerado.'};
+      const o=(this.state.orders||[]).find(x=>String(x.id||'').replace(/[^A-Za-z0-9]/g,'').toUpperCase()===ref); const nm=o?(o.waClient||(this.clientName(o.clientId)!=='—'?this.clientName(o.clientId):this.clientName(o.empresaId))):'';
+      return {tipo:'comanda',qtd:1,valor:v,codigo:'PDC'+ref,desc:'Pedido '+(o?o.id:ref)+(nm&&nm!=='—'?' · '+nm:'')}; }
     if(/^[0-9]{12}$/.test(t)&&this._cxEanOk('0'+t)) return this._cxComanda('0'+t,qtd);
     if(/^[0-9]{13}$/.test(t)) return this._cxComanda(t,qtd);
     if(/^[0-9]{8,}$/.test(t)) return {tipo:'erro',msg:'Código de barras não reconhecido: '+t+'. Se for a comanda da balança, confira em ⚙ Balança.'};
@@ -7056,7 +7070,7 @@ class Component extends DCLogic {
     if(r.tipo==='erro'){ const lendo=/^[0-9]{8,12}$/.test(i.value.trim()); p.textContent=lendo?'lendo código…':'—'; p.classList.add(lendo?'lendo':'erro'); return; }
     if(r.tipo==='comanda') p.classList.add('cmd');
     const pd=r.tipo==='valor'?this._cx.pend:'';
-    p.textContent=(pd?pd+' · ':'')+(r.qtd>1?r.qtd+' × '+this.brl(r.valor)+' = ':'')+this.brl(r.valor*r.qtd)+(r.tipo==='comanda'?' · comanda':''); };
+    p.textContent=(pd?pd+' · ':'')+(r.qtd>1?r.qtd+' × '+this.brl(r.valor)+' = ':'')+this.brl(r.valor*r.qtd)+(r.tipo==='comanda'?(/^PDC/.test(r.codigo)?' · pedido':' · comanda'):''); };
   _cxMsg=(t,tipo)=>{ const m=this._cxEl('cx-msg'); if(!m){ if(t&&this._cxToastOrig) this._cxToastOrig(t); return; }
     m.className='cx-msg'+(t?' '+(tipo||'info'):''); m.textContent=t||''; clearTimeout(this._cxMsgT);
     if(t&&tipo!=='erro') this._cxMsgT=setTimeout(()=>{ if(m.textContent===t){ m.textContent=''; m.className='cx-msg'; } },4500); };
@@ -8711,8 +8725,8 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       w58Style:'flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:8px 10px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;text-align:center;white-space:nowrap;transition:background .15s ease,border-color .15s ease;border:1px solid '+(!s.printJob||s.printJob.width!=='80'?'#26658C;background:#26658C;color:#fff':'var(--border-input);background:var(--bg-card);color:#847a6e'),
       w80Style:'flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:8px 10px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;text-align:center;white-space:nowrap;transition:background .15s ease,border-color .15s ease;border:1px solid '+(s.printJob&&s.printJob.width==='80'?'#26658C;background:#26658C;color:#fff':'var(--border-input);background:var(--bg-card);color:#847a6e'),
       doComanda:()=>this.previaImp('comanda'), doCliente:()=>this.previaImp('comprovante'), doEtiqueta:()=>this.previaImp('etiqueta'),
-      semPrevia:!s.printPrev, comPrevia:!!s.printPrev, printPrevDoc:s.printPrev?s.printPrev.doc:'', printPrevNome:s.printPrev?({comanda:'Comanda da cozinha',comprovante:'Comprovante do cliente',etiqueta:'Etiqueta de embalagem'}[s.printPrev.type]):'',
-      printPrevStyle:'border:0;background:#fff;box-shadow:0 6px 18px rgba(0,0,0,.25);flex-shrink:0;width:'+(s.printJob&&s.printJob.width==='80'?'304px':'222px')+';height:'+(s.printPrev?Math.max(260,s.printPrev.linhas*27+90):300)+'px',
+      semPrevia:!s.printPrev, comPrevia:!!s.printPrev, printPrevDoc:s.printPrev?s.printPrev.doc:'', printPrevNome:s.printPrev?({comanda:'Comanda da cozinha',comprovante:'Comprovante do cliente',etiqueta:'Etiqueta de entrega'}[s.printPrev.type]):'',
+      pmFullCls:s.printPrev?'pm-full':'', printPrevStyle:'border:0;background:#fff;box-shadow:0 6px 18px rgba(0,0,0,.25);flex-shrink:0;width:'+(s.printJob&&s.printJob.width==='80'?'304px':'222px')+';height:'+(s.printPrev?Math.max(260,s.printPrev.linhas*27+90):300)+'px',
       voltarPrevia:()=>this.setState({printPrev:null}), imprimirPrevia:()=>{ if(this.state.printPrev) this.doPrint(this.state.printPrev.type); },
       setModoDireta:()=>this.setPrintMode('direta'), setModoNavegador:()=>this.setPrintMode('navegador'), trocarTermica:this.trocarTermica,
       isModoDireta:s.printMode==='direta',
