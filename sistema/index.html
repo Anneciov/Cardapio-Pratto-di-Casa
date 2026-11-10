@@ -2684,6 +2684,20 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   .pm-oseta{position:absolute;right:14px;bottom:14px;opacity:.55;transition:transform .15s ease,opacity .15s ease}.pm-op:hover .pm-oseta{opacity:1;transform:translateX(3px)}
   .pm-op1{background:linear-gradient(160deg,#2f78a3,#26658C);border-color:transparent;color:#fff}.pm-op1 .pm-oic{background:rgba(255,255,255,.16);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}.pm-op1 .pm-otx span{opacity:.85}
   .pm-rod{display:flex;align-items:center;gap:6px;font-size:11.5px;color:#9a9084;margin-top:18px;padding-top:14px;border-top:1px solid var(--border-soft);line-height:1.5}.pm-rod svg{flex-shrink:0}
+  .pm-box{max-width:640px!important;padding:20px 22px 16px!important}
+  .pm-hic{width:40px!important;height:40px!important;border-radius:12px!important}.pm-hic svg{width:19px;height:19px}
+  .pm-head{margin-bottom:16px!important;gap:12px!important}.pm-head [style*="Instrument Serif"]{font-size:21px!important}
+  .pm-x{width:34px!important;height:34px!important;border-radius:10px!important}
+  .pm-cfg{gap:12px 16px!important;margin-bottom:10px!important}.pm-ajuda{font-size:12px!important;padding:8px 12px!important;margin-bottom:16px!important}
+  .pm-ops{gap:10px!important}.pm-op{min-height:112px!important;padding:12px 12px 10px!important;gap:9px!important;border-radius:14px!important}
+  .pm-oic{width:38px!important;height:38px!important;border-radius:11px!important}.pm-oic svg{width:20px;height:20px}
+  .pm-otx b{font-size:13.5px!important}.pm-otx span{font-size:11.5px!important}.pm-oseta{right:10px!important;bottom:10px!important}
+  .pm-full{height:calc(100vh - 40px)!important}
+  .pm-bts{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+  .pm-bts button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:38px;padding:0 18px;border-radius:10px;font:600 13.5px inherit;cursor:pointer;transition:background .15s ease,filter .15s ease}
+  .pm-bts .pm-volta{border:1px solid var(--border-input);background:none;color:var(--text-primary)}.pm-bts .pm-volta:hover{background:var(--bg-accent-soft)}
+  .pm-bts .pm-imp{border:none;background:#26658C;color:#fff;font-weight:700;padding:0 22px}.pm-bts .pm-imp:hover{filter:brightness(1.1)}
+  .pm-bts button:focus-visible{outline:2px solid #54acbf;outline-offset:2px}
   .pm-full{height:calc(100vh - 40px);display:flex;flex-direction:column;overflow:hidden}
   .pm-full .pm-ajuda,.pm-full .pm-rod{display:none}.pm-full .pm-head{margin-bottom:14px}
   .pm-full .pm-prev-area{flex:1 1 auto;min-height:0;max-height:none!important;overflow:hidden!important;align-items:center!important}
@@ -4588,9 +4602,9 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
         <sc-if value="{{ comPrevia }}" hint-placeholder-val="{{ false }}">
           <div class="pm-lbl"><svg width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z M12 15a3 3 0 100-6 3 3 0 000 6z"></path></svg>Prévia · {{ printPrevNome }}</div>
           <div class="pm-prev-area" style="background:#d9d3c7;border-radius:12px;padding:12px;display:flex;justify-content:center;align-items:flex-start;max-height:52vh;overflow:auto"><iframe srcdoc="{{ printPrevDoc }}" title="Prévia da impressão" style="{{ printPrevStyle }}"></iframe></div>
-          <div style="display:flex;gap:8px;margin-top:12px">
-            <button onclick="{{ voltarPrevia }}" style="flex:1;padding:12px;border-radius:12px;border:1px solid var(--border-input);background:none;color:var(--text-primary);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Voltar</button>
-            <button onclick="{{ imprimirPrevia }}" style="flex:2;padding:12px;border-radius:12px;border:none;background:#26658C;color:#fff;font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit">Imprimir</button>
+          <div class="pm-bts">
+            <button onclick="{{ voltarPrevia }}" class="pm-volta"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5 M11 6l-6 6 6 6"></path></svg>Voltar</button>
+            <button onclick="{{ imprimirPrevia }}" class="pm-imp"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V2h12v7 M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2 M6 14h12v8H6z"></path></svg>Imprimir</button>
           </div>
         </sc-if>
         <div class="pm-rod"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.1-7-11a7 7 0 0114 0c0 4.9-7 11-7 11z M12 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"></path></svg><span>{{ printEmpresaLine }}</span></div>
@@ -8734,8 +8748,8 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       printTotalFmt:s.printJob?brl(s.printJob.order.total):'',
       printEmpresaLine:Component.EMPRESA.nome+' · '+Component.EMPRESA.endereco,
       closePrint:this.closePrint, setW58:()=>this.setPrintWidth('58'), setW80:()=>this.setPrintWidth('80'),
-      w58Style:'flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:8px 10px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;text-align:center;white-space:nowrap;transition:background .15s ease,border-color .15s ease;border:1px solid '+(!s.printJob||s.printJob.width!=='80'?'#26658C;background:#26658C;color:#fff':'var(--border-input);background:var(--bg-card);color:#847a6e'),
-      w80Style:'flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:8px 10px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;text-align:center;white-space:nowrap;transition:background .15s ease,border-color .15s ease;border:1px solid '+(s.printJob&&s.printJob.width==='80'?'#26658C;background:#26658C;color:#fff':'var(--border-input);background:var(--bg-card);color:#847a6e'),
+      w58Style:'flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:5px 10px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;text-align:center;white-space:nowrap;transition:background .15s ease,border-color .15s ease;border:1px solid '+(!s.printJob||s.printJob.width!=='80'?'#26658C;background:#26658C;color:#fff':'var(--border-input);background:var(--bg-card);color:#847a6e'),
+      w80Style:'flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:5px 10px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;text-align:center;white-space:nowrap;transition:background .15s ease,border-color .15s ease;border:1px solid '+(s.printJob&&s.printJob.width==='80'?'#26658C;background:#26658C;color:#fff':'var(--border-input);background:var(--bg-card);color:#847a6e'),
       doComanda:()=>this.previaImp('comanda'), doCliente:()=>this.previaImp('comprovante'), doEtiqueta:()=>this.previaImp('etiqueta'),
       semPrevia:!s.printPrev, comPrevia:!!s.printPrev, printPrevDoc:s.printPrev?s.printPrev.doc:'', printPrevNome:s.printPrev?({comanda:'Comanda da cozinha',comprovante:'Comprovante do cliente',etiqueta:'Etiqueta de entrega'}[s.printPrev.type]):'',
       pmFullCls:s.printPrev?'pm-full':'', printPrevStyle:'border:0;background:#fff;box-shadow:0 6px 18px rgba(0,0,0,.25);flex-shrink:0;width:'+(s.printJob&&s.printJob.width==='80'?'304px':'222px')+';height:'+(s.printPrev?Math.max(260,s.printPrev.linhas*27+90):300)+'px',
@@ -8743,8 +8757,8 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       setModoDireta:()=>this.setPrintMode('direta'), setModoNavegador:()=>this.setPrintMode('navegador'), trocarTermica:this.trocarTermica,
       isModoDireta:s.printMode==='direta',
       isModoNavegador:s.printMode!=='direta', printModeLabel:s.printMode==='direta'?'pelo Bluetooth (com QR, sem desperdício de papel)':'pelo navegador / cabo USB', togglePrintMode:()=>this.setPrintMode(s.printMode==='direta'?'navegador':'direta'),
-      modoDiretaStyle:'flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:8px 10px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;text-align:center;white-space:nowrap;transition:background .15s ease,border-color .15s ease;border:1px solid '+(s.printMode==='direta'?'#26658C;background:#26658C;color:#fff':'var(--border-input);background:var(--bg-card);color:#847a6e'),
-      modoNavStyle:'flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:8px 10px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;text-align:center;white-space:nowrap;transition:background .15s ease,border-color .15s ease;border:1px solid '+(s.printMode!=='direta'?'#26658C;background:#26658C;color:#fff':'var(--border-input);background:var(--bg-card);color:#847a6e'),
+      modoDiretaStyle:'flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:5px 10px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;text-align:center;white-space:nowrap;transition:background .15s ease,border-color .15s ease;border:1px solid '+(s.printMode==='direta'?'#26658C;background:#26658C;color:#fff':'var(--border-input);background:var(--bg-card);color:#847a6e'),
+      modoNavStyle:'flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:5px 10px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;text-align:center;white-space:nowrap;transition:background .15s ease,border-color .15s ease;border:1px solid '+(s.printMode!=='direta'?'#26658C;background:#26658C;color:#fff':'var(--border-input);background:var(--bg-card);color:#847a6e'),
       inp, lbl, btn, curWrap, curPrefix, curInput, toast:s.toast,
       isToastError, isToastWarning, isToastInfo, isToastSuccess, toastTypeClass, dismissToast:this.dismissToast,
     };
