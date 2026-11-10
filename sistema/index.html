@@ -5145,6 +5145,7 @@ class Component extends DCLogic {
       enviar:async(oQue)=>{ cmd(27,100,3); // avança só 3 linhas para destacar o papel
         try{ await this._termicaEnviar(new Uint8Array(B)); this.showToast(oQue+' impresso pelo Bluetooth ('+(c58?'58':'80')+' mm).'); }
         catch(e){ if(e&&e.name==='NotFoundError') return; const net=e&&(e.name==='NetworkError'||/open serial port|não respondeu/i.test(e.message||''));
+          if(net){ this._porta=null; try{ for(const p of await navigator.serial.getPorts()){ if(p.forget) await p.forget(); } }catch(_){} return this.showToast('Não foi possível conectar nessa porta Bluetooth, então ela foi esquecida. Clique em Imprimir de novo: vai abrir a lista de conexões. Escolha "Serial Padrão por link Bluetooth" da impressora (a KP-1025 no computador do caixa é a COM9).',15000); }
           this.showToast(net?'Não foi possível conectar na impressora Bluetooth. Ligue a impressora, deixe perto do computador e desconecte do celular. Se continuar, clique em "Trocar impressora" (no Caixa: "Escolher impressora") e escolha a outra porta "Serial Padrão por link Bluetooth" (o Windows cria duas).':'Não foi possível imprimir pelo Bluetooth: '+((e&&e.message)||e)+' Confira se a impressora está ligada, perto do computador e desconectada do celular; se continuar, use "Trocar impressora".',12000); } },
     };
     cmd(27,64); k.fonte('A'); // inicializa
