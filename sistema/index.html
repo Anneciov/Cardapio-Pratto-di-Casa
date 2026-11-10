@@ -5092,7 +5092,9 @@ class Component extends DCLogic {
   }
   async _termicaEnviar(bytes){
     const porta=await this._termicaPorta(false);
-    await porta.open({baudRate:9600});
+    const abrindo=porta.open({baudRate:9600}); let esgotou=false;
+    await Promise.race([abrindo, new Promise((_,rej)=>setTimeout(()=>{ esgotou=true; rej(new Error('A impressora não respondeu.')); },12000))])
+      .catch(e=>{ if(esgotou) abrindo.then(()=>porta.close()).catch(()=>{}); else if(e&&e.name==='InvalidStateError'){ return porta.close().catch(()=>{}).then(()=>porta.open({baudRate:9600})); } throw e; });
     try{
       const w=porta.writable.getWriter();
       // Mini impressoras Bluetooth têm buffer pequeno e sem controle de fluxo: envia em pedaços de 128 bytes com pausa,
@@ -6741,6 +6743,9 @@ class Component extends DCLogic {
     '.cx-teclado,.cx-teclado[class]{gap:7px;grid-template-rows:repeat(4,clamp(44px,6.4vh,64px))}',
     '.cx-teclado .cx-k{min-height:0;height:100%}',
     '@media (max-height:720px){.cx-teclado,.cx-teclado[class]{gap:6px;grid-template-rows:repeat(4,44px)}.cx-atalhos{min-height:72px}}',
+    '/* impressora no caixa */',
+    '.cx-acoes .cx-btn2{display:inline-flex;align-items:center;gap:7px}.cx-acoes .cx-btn2 svg{color:#5eead4;flex-shrink:0}',
+    '.cx-impbt{color:#a9c9d4}',
     '@media (prefers-reduced-motion:reduce){.cx-ov *{transition:none!important;animation:none!important}}'
   ].join('');
   /* ============ CAIXA (PDV): venda paga na hora ou lançada na conta do cliente; lê a comanda da balança (EAN-13) ============ */
@@ -6951,7 +6956,7 @@ class Component extends DCLogic {
       p.innerHTML='<div class="cx-box ok"><div class="cx-okt"><span class="cx-check">✓</span><div><b>Venda concluída</b><small>'+E(r.ref||'')+' · '+E(this._cxPagLabel[r.pag]||'')+(r.conta?' · conta de '+E(r.conta):'')+'</small></div></div>'+
         (r.recebido!=null?'<div class="cx-troco big"><span>Troco</span><b>'+this.brl(r.troco)+'</b></div><div class="cx-sub">Recebido '+this.brl(r.recebido)+'</div>':'')+
         (r.conta?'<div class="cx-sub">Novo saldo da conta: <b>'+this.brl(r.saldoNovo)+'</b> (cobrado no fechamento do mês)</div>':'')+
-        '<div class="cx-acoes"><button class="cx-btn2" data-cx="imprimir">Imprimir cupom<kbd>P</kbd></button>'+(location.protocol==='file:'?'<button class="cx-btn2" data-cx="nota">Nota fiscal</button>':'')+'<button class="cx-okbtn" data-cx="nova">Nova venda<kbd>Enter</kbd></button></div></div>'; return; }
+        '<div class="cx-acoes"><button class="cx-btn2" data-cx="imprimir"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6 M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2 M6 14h12v7H6z"></path></svg>Imprimir cupom<kbd>P</kbd></button>'+(this.state.printMode==='direta'?'<button class="cx-btn2 cx-impbt" data-cx="trocarimp" title="Mostra a lista de impressoras Bluetooth para escolher"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7l10 10-5 5V2l5 5L7 17"></path></svg>Escolher impressora</button>':'')+(location.protocol==='file:'?'<button class="cx-btn2" data-cx="nota">Nota fiscal</button>':'')+'<button class="cx-okbtn" data-cx="nova">Nova venda<kbd>Enter</kbd></button></div></div>'; return; }
     if(cx.modo==='dinheiro'){
       p.innerHTML='<div class="cx-box"><div class="cx-lbl">Dinheiro · valor recebido</div>'+
         '<input id="cx-recebido" class="cx-entrada sm" autocomplete="off" inputmode="decimal" data-numpad="off" placeholder="0,00" aria-label="Valor recebido">'+
@@ -7234,7 +7239,7 @@ class Component extends DCLogic {
       k.sep(); k.neg(1); k.alto(1); k.lr('TOTAL',this.brl(res.total)); k.alto(0); k.neg(0); k.lr('Pagamento',pagL);
       if(res.recebido!=null){ k.lr('Recebido',this.brl(res.recebido)); k.lr('Troco',this.brl(res.troco)); }
       if(res.conta){ k.ln('Lancado na conta de '+res.conta); if(res.saldoNovo!=null) k.lr('Saldo da conta',this.brl(res.saldoNovo)); }
-      k.sep(); k.rodape('Obrigado pela preferencia!'); await k.enviar('Cupom'); return; }
+      k.sep(); k.rodape('Obrigado pela preferencia!'); this._cxMsg('Enviando para a impressora Bluetooth…','info'); await k.enviar('Cupom'); const mm=this._cxEl('cx-msg'); if(mm&&/^Enviando/.test(mm.textContent)) this._cxMsg('',''); return; }
     const lr=(a,b,cl)=>'<div class="lr'+(cl?' '+cl:'')+'"><span>'+a+'</span><span>'+b+'</span></div>';
     this._cxImprimirDoc('<div class="c"><div class="t">'+E(emp.nome)+'</div><div style="font-size:10px">'+E(emp.endereco)+'</div><div style="font-size:10px">WhatsApp '+E(emp.whatsapp)+'</div></div><div class="hr"></div>'+
       '<div class="c" style="font-weight:700;letter-spacing:.1em">CUPOM DE VENDA</div><div class="c" style="font-size:10px">Sem valor fiscal · '+E(res.ref)+' · '+E(quando)+'</div>'+(res.cliente?'<div>Cliente: <b>'+E(res.cliente)+'</b></div>':'')+'<div class="hr"></div>'+
@@ -7281,6 +7286,7 @@ class Component extends DCLogic {
     if(a==='nota-v'){ const r=this._cxEl('cx-recebido'); if(!r) return; const v=el.dataset.v==='exato'?this._cxTotal():Number(el.dataset.v); r.value=v.toFixed(2).replace('.',','); this._cxTroco(); r.focus(); return; }
     if(a==='nova') return this._cxNova();
     if(a==='imprimir') return this._cxImprimir();
+    if(a==='trocarimp'){ this._porta=null; return this.trocarTermica(); }
     if(a==='nota'){ this.abrirNotaFiscal(); return; }
     if(a==='pegacli') return this._cxPegaCli(el.dataset.id);
     if(a==='tirarcli'){ cx.cliente=null; if(cx.modo==='conta') cx.modo='pagar'; this._cxAtualizar(); const b=this._cxEl('cx-busca'); if(b) b.focus(); return; }
