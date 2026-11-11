@@ -127,9 +127,14 @@ aside nav>div:hover{background:#04315a!important;transform:scale(1.03)}
 .cr-b-wa:hover{background:#2c7449}
 .cr-tabela{background:var(--bg-card);border:1px solid var(--border-card);border-radius:12px;overflow:auto;max-height:calc(100vh - 250px)}
 .cr-in{display:flex;flex-direction:column}
-.cr-g{display:grid;gap:10px;align-items:center;padding:6px 14px;font-size:13px}
-.cr-ga{grid-template-columns:minmax(0,1.6fr) 1fr 1.05fr .9fr 1fr 1fr 236px}
-.cr-gq{grid-template-columns:minmax(0,1.6fr) 1fr 1fr 1fr 1fr 1fr .7fr}
+.tab-com-rod{border-bottom-left-radius:0!important;border-bottom-right-radius:0!important;margin-bottom:0!important}.tab-rod{margin-bottom:0}
+.tab-rod .ped-lim button.on{background:#26658C;border-color:#26658C;color:#fff}.tab-rod .ped-pag button.off{opacity:.35;cursor:default}
+.cr-tabela::-webkit-scrollbar{width:12px;height:12px}.cr-tabela::-webkit-scrollbar-track{background:rgba(127,208,223,.06)}
+.cr-tabela::-webkit-scrollbar-thumb{background:rgba(127,208,223,.45);border-radius:8px;border:3px solid transparent;background-clip:padding-box}.cr-tabela::-webkit-scrollbar-corner{background:transparent}
+
+.cr-g{display:grid;gap:8px;align-items:center;padding:6px 14px;font-size:13px}
+.cr-ga{grid-template-columns:minmax(140px,320px) 104px 116px 96px 112px 108px 230px;justify-content:start}.cr-tabela:has(.cr-ga),.cr-tabela:has(.cr-gq){width:fit-content;max-width:100%}
+.cr-gq{grid-template-columns:minmax(140px,320px) 104px 112px 104px 100px 120px 90px;justify-content:start}
 .cr-gm{grid-template-columns:78px 46px minmax(0,1.2fr) 96px minmax(0,2.2fr) 104px 112px 124px}
 .cr-cab{position:sticky;top:0;z-index:1;background:var(--bg-tablehead);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#847a6e;padding-top:7px;padding-bottom:7px}
 .cr-lin{border-top:1px solid var(--border-soft);transition:background-color .12s ease}
@@ -7715,6 +7720,34 @@ class Component extends DCLogic {
     this.loadPedidos(); this.loadClientesEmpresas(); };
 
   // ── Pedidos: filtro de mês, páginas e altura da tabela ──
+  // ── tabelas (Clientes, Crediário, Histórico): mesmo padrão de Pedidos — altura até o fim da tela, rolagem só na tabela, linhas por página ──
+  _tabsAjusta=()=>{ const est=this._tabEst||(this._tabEst=new WeakMap());
+    document.querySelectorAll('.tab-rod').forEach(f=>{ const a=f.previousElementSibling; if(!a||!a.classList.contains('cr-tabela')) f.remove(); });
+    const tabs=[...document.querySelectorAll('.cr-tabela')].filter(t=>t.offsetParent);
+    tabs.forEach(t=>{ const inn=t.querySelector(':scope>.cr-in'); if(!inn) return;
+      let st=est.get(t); if(!st){ st={lim:50,pag:0}; est.set(t,st); }
+      const rows=[...inn.children].filter(r=>r.classList.contains('cr-lin')), tot=rows.length, pags=Math.max(1,Math.ceil(tot/st.lim)); if(st.pag>pags-1) st.pag=pags-1;
+      rows.forEach((r,k)=>{ const v=(k>=st.pag*st.lim&&k<(st.pag+1)*st.lim)?'':'none'; if(r.style.display!==v) r.style.display=v; });
+      let rod=t.nextElementSibling; if(!rod||!rod.classList.contains('tab-rod')){
+        rod=document.createElement('div'); rod.className='ped-rod tab-rod';
+        rod.innerHTML='<span class="ped-rod-info"></span><div class="ped-lim" role="group" aria-label="Linhas por página"><span>Linhas</span>'+[25,50,100,200].map(n=>'<button type="button" data-lim="'+n+'">'+n+'</button>').join('')+'</div><div class="ped-pag"><button type="button" data-pg="-1" aria-label="Página anterior">‹</button><span></span><button type="button" data-pg="1" aria-label="Próxima página">›</button></div>';
+        rod.addEventListener('click',(e)=>{ const b=e.target.closest('button'); if(!b) return; const s=est.get(t); if(!s) return;
+          if(b.dataset.lim){ s.lim=Number(b.dataset.lim); s.pag=0; } else { const np=s.pag+Number(b.dataset.pg); if(np<0||np>=Number(rod.dataset.pags||1)) return; s.pag=np; }
+          t.scrollTop=0; this._tabsAjusta(); });
+        t.after(rod); }
+      rod.dataset.pags=String(pags);
+      const info=tot?('Mostrando '+(st.pag*st.lim+1)+'–'+Math.min(tot,(st.pag+1)*st.lim)+' de '+tot):'Nenhuma linha';
+      const si=rod.querySelector('.ped-rod-info'); if(si.textContent!==info) si.textContent=info;
+      const sp=rod.querySelector('.ped-pag span'), pt='Página '+(st.pag+1)+' de '+pags; if(sp.textContent!==pt) sp.textContent=pt;
+      rod.querySelectorAll('[data-lim]').forEach(b=>{ const on=Number(b.dataset.lim)===st.lim; if(b.classList.contains('on')!==on){ b.classList.toggle('on',on); b.setAttribute('aria-pressed',String(on)); } });
+      const [ant,prox]=rod.querySelectorAll('[data-pg]'); const aOff=st.pag<=0, pOff=st.pag>=pags-1; if(ant.classList.contains('off')!==aOff) ant.classList.toggle('off',aOff); if(prox.classList.contains('off')!==pOff) prox.classList.toggle('off',pOff);
+      if(!t.classList.contains('tab-com-rod')) t.classList.add('tab-com-rod'); });
+    // altura: a última tabela visível vai até o fim da tela; as outras só limitam a altura
+    tabs.forEach((t,i)=>{ const rod=t.nextElementSibling; const top=t.getBoundingClientRect().top+window.scrollY; const h=Math.max(240,Math.floor(window.innerHeight-top-(rod&&rod.classList.contains('tab-rod')?rod.offsetHeight:0)-20));
+      if(i===tabs.length-1){ const fo=this._tabFolga||(this._tabFolga={}), ch=((t.querySelector('.cr-cab')||{}).textContent||'').slice(0,60), hh=Math.max(240,h-(fo[ch]||0));
+        if(t.style.height!==hh+'px'){ t.style.height=hh+'px'; t.style.maxHeight='none'; }
+        const exc=document.scrollingElement.scrollHeight-window.innerHeight; if(exc>0&&hh>240&&(fo[ch]||0)<300) fo[ch]=(fo[ch]||0)+exc; }
+      else if(t.style.maxHeight!==h+'px'){ t.style.height=''; t.style.maxHeight=h+'px'; } }); };
   // prévia da impressão: mostra o cupom/etiqueta inteiro, ajustando o tamanho ao espaço da janela
   _pmAjusta=()=>{ const f=document.querySelector('.pm-prev-area iframe'); if(!f) return; const a=f.parentElement;
     if(!f.dataset.lig){ f.dataset.lig='1'; f.addEventListener('load',()=>{ f.dataset.h=''; this._pmAjusta(); }); }
@@ -7722,7 +7755,7 @@ class Component extends DCLogic {
     if(h>0&&f.dataset.h!==String(h)){ f.dataset.h=String(h); f.style.height=h+'px'; }
     const H=parseFloat(f.style.height)||300, W=parseFloat(getComputedStyle(f).width)||222;
     const z=Math.max(.35,Math.min(1.8,(a.clientHeight-28)/H,(a.clientWidth-28)/W)).toFixed(3); if(f.style.zoom!==z) f.style.zoom=z; };
-  _pedAltura=()=>{ this._pmAjusta(); const t=document.querySelector('.ped-tabela'); if(!t) return; const rod=document.querySelector('.ped-rod');
+  _pedAltura=()=>{ this._pmAjusta(); this._tabsAjusta(); const t=document.querySelector('.ped-tabela'); if(!t) return; const rod=document.querySelector('.ped-rod');
     const top=t.getBoundingClientRect().top+window.scrollY; const h=Math.max(260,Math.floor(window.innerHeight-top-(rod?rod.offsetHeight:0)-20));
     if(t.style.height!==h+'px'){ t.style.height=h+'px'; t.style.maxHeight='none'; } };
   _pedAlturaLiga=()=>{ if(this._pedAltOn) return; this._pedAltOn=1; let raf=0; const ag=()=>{ if(raf) return; raf=requestAnimationFrame(()=>{ raf=0; this._pedAltura(); }); };
