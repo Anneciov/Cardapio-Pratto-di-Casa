@@ -3867,10 +3867,10 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           <sc-if value="{{ hasCozinhaLate }}" hint-placeholder-val="{{ false }}">
             <div style="display:inline-flex;align-items:center;gap:8px;background:#2a1416;border:1px solid #5a2b2b;border-radius:12px;padding:10px 16px;color:#ef4444;font-weight:700;font-size:13px">
               <svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v5 M12 17h.01 M12 3a9 9 0 100 18 9 9 0 000-18z"></path></svg>
-              {{ cozinhaLate }} atrasado(s)
+              {{ cozinhaLate }} passou do tempo
             </div>
           </sc-if>
-          <div style="font-size:12.5px;color:#9a9084;margin-left:auto">Tempo de preparo padrão: 15 min · atualiza em tempo real</div>
+          <div style="font-size:12.5px;color:#9a9084;margin-left:auto">Tempo de preparo do prato no cardápio (padrão 15 min) · atualiza em tempo real</div>
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px">
           <sc-for list="{{ cozinhaTickets }}" as="t" hint-placeholder-count="3">
@@ -3878,7 +3878,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
                 <div style="display:flex;align-items:center;gap:10px">
                   <div style="width:28px;height:28px;border-radius:8px;background:var(--bg-accent-soft);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;font-size:14px;color:var(--text-primary)">{{ t.order }}</div>
-                  <div style="font-weight:600;font-size:15px">{{ t.cliente }}</div>
+                  <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ t.cliente }}</div><div style="font-size:11.5px;color:#8fb3c0">{{ t.prepTxt }}</div></div>
                 </div>
                 <div style="{{ t.badgeStyle }}">{{ t.statusLabel }}</div>
               </div>
@@ -3891,12 +3891,12 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
                 <div style="{{ t.timerStyle }}">{{ t.timer }}</div>
               </div>
               <div style="height:6px;background:var(--border-soft);border-radius:99px;overflow:hidden;margin-bottom:12px"><div style="{{ t.barFill }}"></div></div>
-              <button onclick="{{ t.onReady }}" style="width:100%;background:#26658C;color:#fff;border:none;border-radius:10px;padding:11px;font-weight:600;font-size:13.5px;cursor:pointer">Marcar como pronto</button>
+              <button onclick="{{ t.onReady }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:#2f8f57;color:#fff;border:none;border-radius:10px;padding:10px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Concluir</button>
             </div>
           </sc-for>
         </div>
         <sc-if value="{{ noCozinha }}" hint-placeholder-val="{{ true }}">
-          <div style="background:var(--bg-card);border:1px dashed var(--border-card);border-radius:16px;padding:48px 24px;text-align:center;color:#9a9084;font-size:14px">Nenhum pedido em preparo. Ao aceitar um pedido do WhatsApp, ele aparece aqui com o cronômetro de 15 min.</div>
+          <div style="background:var(--bg-card);border:1px dashed var(--border-card);border-radius:16px;padding:48px 24px;text-align:center;color:#9a9084;font-size:14px">Nenhum pedido em preparo. Ao imprimir a comanda da cozinha (ou aceitar um pedido do WhatsApp), ele aparece aqui com a contagem regressiva.</div>
         </sc-if>
       </sc-if>
 
@@ -4696,7 +4696,7 @@ class Component extends DCLogic {
     sbReady.then(()=>{ this.checkSession(); });
   }
 
-  componentDidMount(){ document.addEventListener('paste',this.colarFotoPrato); this.setState({ arte:this.arteDados() }); this._loginTimer=setInterval(()=>{ if(!this.state.authed) this.setState(s=>({loginSlide:((s.loginSlide||0)+1)%3})); },5000); this._buildNumpad(); this._tick=setInterval(()=>{ if(this.state.waEmAndamento&&this.state.waEmAndamento.length) this.setState(s=>({nowTick:s.nowTick+1})); },1000); }
+  componentDidMount(){ document.addEventListener('paste',this.colarFotoPrato); this.setState({ arte:this.arteDados() }); this._loginTimer=setInterval(()=>{ if(!this.state.authed) this.setState(s=>({loginSlide:((s.loginSlide||0)+1)%3})); },5000); this._buildNumpad(); this._tick=setInterval(()=>{ if((this.state.waEmAndamento&&this.state.waEmAndamento.length)||(this.state.orders||[]).some(o=>o.prepIni&&!o.pronto&&o.status!=='entregue')) this.setState(s=>({nowTick:s.nowTick+1})); },1000); }
   componentWillUnmount(){ if(this._loginTimer) clearInterval(this._loginTimer); if(this._numpad){ this._numpad.remove(); this._numpad=null; } if(this._tick) clearInterval(this._tick); }
 
   /* ============ TECLADO NUMÉRICO VIRTUAL ============ */
@@ -5151,7 +5151,7 @@ class Component extends DCLogic {
       +'.ib{display:flex;gap:6px;font-size:15px;font-weight:700;margin-top:2px}.det{font-size:12.5px;padding-left:24px}</style></head><body>'+h+'</body></html>';
     return { doc, linhas }; }
   previaImp=async(type)=>{ this._pmZoom=null; const job=this.state.printJob; if(!job) return; const r=await this._htmlTicket(type,job); this.setState({ printPrev:{ type, doc:r.doc, linhas:r.linhas } }); };
-  doPrint=async(type)=>{ const job=this.state.printJob; if(!job) return; if(this.state.printMode==='direta') return this.doPrintDireta(type); const wmm=job.width==='58'?'58mm':'80mm';
+  doPrint=async(type)=>{ const job=this.state.printJob; if(!job) return; if(type==='comanda') this.enviarCozinha(job.order); if(this.state.printMode==='direta') return this.doPrintDireta(type); const wmm=job.width==='58'?'58mm':'80mm';
     const { doc } = await this._htmlTicket(type,job);
     const ifr=document.createElement('iframe'); ifr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0';
     document.body.appendChild(ifr); const d=ifr.contentWindow.document; d.open(); d.write(doc); d.close();
@@ -6048,7 +6048,7 @@ class Component extends DCLogic {
 
   loadPedidos = async () => {
     const { data, error } = await sb.from('rest_pedidos')
-      .select('id,numero_ref,cliente_id,empresa_id,forma_pagamento,status,total,data,origem,nome_cliente,telefone_contato,endereco_entrega,observacoes,created_at,pronto,motoboy_id,rest_motoboys(nome),rest_pedido_itens(descricao,quantidade,valor_total)')
+      .select('id,numero_ref,cliente_id,empresa_id,forma_pagamento,status,total,data,origem,nome_cliente,telefone_contato,endereco_entrega,observacoes,created_at,pronto,prep_started_at,motoboy_id,rest_motoboys(nome),rest_pedido_itens(descricao,quantidade,valor_total)')
       .order('created_at', { ascending: false }).limit(200);
     if (error) { console.error(error); return; }
     const today = this.todayISO();
@@ -6058,7 +6058,7 @@ class Component extends DCLogic {
       clientId: o.cliente_id,
       empresaId: o.empresa_id,
       waClient: o.nome_cliente || undefined,
-      pronto: !!o.pronto,
+      pronto: !!o.pronto, prepIni: o.prep_started_at || null,
       motoboyId: o.motoboy_id || null,
       motoboyName: o.rest_motoboys ? o.rest_motoboys.nome : null,
       items: (o.rest_pedido_itens||[]).map(i=>i.quantidade+'x '+i.descricao).join(', ') || '—',
@@ -7538,6 +7538,24 @@ class Component extends DCLogic {
     this.loadComplementos(); };
 
   /* ================= COZINHA (preparo) ================= */
+  // ── Cozinha: imprimir a comanda põe o pedido na fila com contagem regressiva ──
+  _cozPrepMin=(descs)=>{ const s=this.state; let m=0;
+    (descs||[]).forEach(d=>{ const t=String(d||'').split(' · ')[0]; if(/^Taxa/i.test(t)) return; const z=t.match(/\((P|M|G)\)/); const tam=z?z[1]:(/fitness/i.test(t)?'F':'');
+      let it=tam?(s.cardapio||[]).find(x=>x.size===tam):null; if(!it) it=(s.cardapio||[]).find(x=>x.name&&t.toLowerCase().indexOf(String(x.name).toLowerCase())>=0);
+      const v=it?Number(it.tempo_preparo):0; if(v>m) m=v; });
+    return m>0?m:15; };
+  enviarCozinha=async(o)=>{ if(!o||!o.dbId||o.status==='entregue') return; const cur=(this.state.orders||[]).find(x=>x.dbId===o.dbId)||o; if(cur.prepIni&&!cur.pronto) return;
+    const ini=new Date().toISOString(), min=this._cozPrepMin((o.itensDet&&o.itensDet.length)?o.itensDet.map(i=>i.d):this.parseItems(o.items).map(i=>i.name));
+    if(!this._demo){ const { error } = await sb.from('rest_pedidos').update({ prep_started_at:ini, pronto:false }).eq('id', o.dbId);
+      if(error){ this.showToast('A comanda foi impressa, mas não entrou na fila da Cozinha: '+error.message); return; } }
+    this.setState(s=>({ orders:(s.orders||[]).map(x=>x.dbId===o.dbId?{...x,prepIni:ini,pronto:false}:x) }));
+    this.showToast('Comanda na fila da Cozinha — '+min+' min de preparo.'); };
+  concluirCozinha=async(id,wa,remain)=>{ const min=Math.max(1,Math.floor(Math.abs(remain)/60));
+    const msg=remain>=0?('Concluído no tempo'+(remain>=60?' (sobraram '+Math.floor(remain/60)+' min)':'')+'.'):('Concluído, mas passou do tempo em '+min+' min.');
+    if(this._demo){ this.setState(s=>({ orders:(s.orders||[]).map(o=>o.dbId===id?{...o,pronto:true}:o), waEmAndamento:(s.waEmAndamento||[]).map(x=>x.id===id?{...x,pronto:true}:x) })); this.showToast(msg); return; }
+    if(wa) await this.decidirPedidoWhatsapp(id,'pronto');
+    else { const { error } = await sb.from('rest_pedidos').update({ pronto:true }).eq('id', id); if(error){ this.showToast('Erro: '+error.message); return; } }
+    this.setState(s=>({ orders:(s.orders||[]).map(o=>o.dbId===id?{...o,pronto:true}:o) })); this.showToast(msg); this.loadPedidos(); };
   markKitchenReady=(id)=>{ this.decidirPedidoWhatsapp(id, 'pronto'); };
   openDispatchModal=(orderId)=>{ this.setState({modal:'delivery', dispatchOrderId:orderId}); };
   motoboyAccept=(orderId)=>{ this.setState(s=>{ const orders=s.orders.map(o=>o.id===orderId?{...o,flow:'em_rota'}:o); const orderFlow={...s.orderFlow,[orderId]:'em_rota'}; const deliveries=[{id:'dl'+Date.now(),date:this.fmtDateBR(this.todayISO()),motoboy:'—',region:'—',fee:0,orderRef:orderId,status:'pendente'},...s.deliveries]; return {orders,orderFlow,deliveries}; }); this.showToast('Motoboy aceitou — pedido em rota.'); };
@@ -7777,7 +7795,7 @@ class Component extends DCLogic {
     if(this._demo){ this.setState({ pedMesOrders:(this.state.orders||[]).filter(o=>String(o.iso||'').slice(0,7)===ym) }); return; }
     if(!this._mapPedido) return;
     const [a,m]=ym.split('-').map(Number); const ini=ym+'-01', fim=(m===12?(a+1)+'-01':a+'-'+String(m+1).padStart(2,'0'))+'-01';
-    const { data, error } = await sb.from('rest_pedidos').select('id,numero_ref,cliente_id,empresa_id,forma_pagamento,status,total,data,origem,nome_cliente,telefone_contato,endereco_entrega,observacoes,created_at,pronto,motoboy_id,rest_motoboys(nome),rest_pedido_itens(descricao,quantidade,valor_total)').gte('data',ini).lt('data',fim).order('created_at',{ascending:false}).limit(5000);
+    const { data, error } = await sb.from('rest_pedidos').select('id,numero_ref,cliente_id,empresa_id,forma_pagamento,status,total,data,origem,nome_cliente,telefone_contato,endereco_entrega,observacoes,created_at,pronto,prep_started_at,motoboy_id,rest_motoboys(nome),rest_pedido_itens(descricao,quantidade,valor_total)').gte('data',ini).lt('data',fim).order('created_at',{ascending:false}).limit(5000);
     if(error){ this.showToast('Erro ao carregar o mês: '+error.message); return; }
     if(this.state.pedMes!==ym) return;
     this.setState({ pedMesOrders:(data||[]).map(this._mapPedido) }); };
@@ -7968,7 +7986,7 @@ class Component extends DCLogic {
       style:'display:flex;align-items:center;gap:11px;padding:'+(collapsed?'11px 0':'10px 14px')+';justify-content:'+(collapsed?'center':'flex-start')+';border-radius:9px;cursor:pointer;font-size:14px;font-weight:500;color:#b3d6de;background:transparent;margin-top:6px;border-top:1px solid rgba(167,235,242,.12)' });
 
 const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo','fde6d3;color:#b5701e'],pronto:['Pronto','e3f3e9;color:#2f8f57'],aguardando_motoboy:['Aguardando motoboy','fdf2dc;color:#a9791a'],em_rota:['Em rota','e7eef7;color:#26658C'],entregue:['Entregue','eef1ec;color:#3f7d5c']};
-    const mkOrderRow0=(o)=>{ const flow=o.status==='entregue'?'entregue':(o.motoboyId?'em_rota':(o.pronto?'pronto':'aberto')); const fl=FLOW[flow]||FLOW.aberto; return {id:o.id,date:o.date,clientName:o.waClient||(this.clientName(o.clientId)!=='—'?this.clientName(o.clientId):this.clientName(o.empresaId)),items:o.items,totalFmt:brl(o.total),paymentLabel:this.payLabel(o.payment),payStyle:this.payStyle(o.payment),statusLabel:o.motoboyId?(fl[0]+' · '+o.motoboyName):fl[0],statusStyle:'display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:#'+fl[1],isOpen:flow==='aberto',isReady:flow==='pronto',onDone:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.concludeOrder(o.dbId); },onDispatch:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.setState({pedidoDetalhe:null}); this.openDispatchModal(o.dbId); },onPrint:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.openPrint(o); },credBt:o.payment!=='crediario',podeCred:o.payment!=='crediario',onCred:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.passarCrediario(o); },podeExcluir:ehAdmin,onDelete:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.excluirPedido(o); },onOpen:()=>this.setState({pedidoDetalhe:o.dbId}),...(()=>{ const itensLista=(o.items&&o.items!=='—'?o.items.split(/, (?=\d+x )/):[]).map(x=>{ const m=/^(\d+)x (.*)$/.exec(x.trim()); return m?{qtd:m[1],desc:m[2]}:{qtd:'1',desc:x.trim()}; }); const n=itensLista.reduce((a,i)=>a+(Number(i.qtd)||0),0); return { itensLista, semItens:itensLista.length===0, qtdItensLabel:n===0?'sem itens':(n===1?'1 item':n+' itens') }; })()}; };
+    const mkOrderRow0=(o)=>{ const flow=o.status==='entregue'?'entregue':(o.motoboyId?'em_rota':(o.pronto?'pronto':(o.prepIni?'em_preparo':'aberto'))); const fl=FLOW[flow]||FLOW.aberto; return {id:o.id,date:o.date,clientName:o.waClient||(this.clientName(o.clientId)!=='—'?this.clientName(o.clientId):this.clientName(o.empresaId)),items:o.items,totalFmt:brl(o.total),paymentLabel:this.payLabel(o.payment),payStyle:this.payStyle(o.payment),statusLabel:o.motoboyId?(fl[0]+' · '+o.motoboyName):fl[0],statusStyle:'display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:#'+fl[1],isOpen:flow==='aberto'||flow==='em_preparo',isReady:flow==='pronto',onDone:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.concludeOrder(o.dbId); },onDispatch:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.setState({pedidoDetalhe:null}); this.openDispatchModal(o.dbId); },onPrint:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.openPrint(o); },credBt:o.payment!=='crediario',podeCred:o.payment!=='crediario',onCred:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.passarCrediario(o); },podeExcluir:ehAdmin,onDelete:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.excluirPedido(o); },onOpen:()=>this.setState({pedidoDetalhe:o.dbId}),...(()=>{ const itensLista=(o.items&&o.items!=='—'?o.items.split(/, (?=\d+x )/):[]).map(x=>{ const m=/^(\d+)x (.*)$/.exec(x.trim()); return m?{qtd:m[1],desc:m[2]}:{qtd:'1',desc:x.trim()}; }); const n=itensLista.reduce((a,i)=>a+(Number(i.qtd)||0),0); return { itensLista, semItens:itensLista.length===0, qtdItensLabel:n===0?'sem itens':(n===1?'1 item':n+' itens') }; })()}; };
     // Pedidos: hora, origem (Online / WhatsApp / Balcão) e detalhes do cliente para a lista e o modal
     const ORIG={site:['Online','background:rgba(255,122,26,.16);color:#ffa94d'],whatsapp:['WhatsApp','background:rgba(37,211,102,.16);color:#4ade80'],balcao:['Balcão','background:rgba(84,172,191,.16);color:#7fd0df']};
     const mkOrderRow=(o)=>{ const r=mkOrderRow0(o); const cr=o.criado?new Date(o.criado):null; const hora=cr&&!isNaN(cr)?cr.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):''; const og=ORIG[o.origem]||null;
@@ -8163,9 +8181,13 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const isAdicionalEditForm=s.modal==='adicionalEdit';
     const afTitle=af.id?'Editar adicional':'Novo adicional';
     const kfmt=(sec)=>{const m=Math.floor(Math.abs(sec)/60),ss=Math.abs(sec)%60;return (sec<0?'-':'')+m+':'+String(ss).padStart(2,'0');};
-    const cozinhaTickets=(s.waEmAndamento||[]).filter(p=>!p.pronto).map((p,idx)=>{ const startMs=p.prep_started_at?new Date(p.prep_started_at).getTime():new Date(p.created_at).getTime(); const total=15*60; const elapsed=Math.floor((Date.now()-startMs)/1000); const remain=total-elapsed; const late=remain<0; const warn=!late&&remain<=300; const color=late?'#ef4444':(warn?'#f5b301':'#22c55e'); const pct=Math.max(0,Math.min(100,(remain/total)*100));
-      return {id:p.id, order:String(idx+1), cliente:this.waNameOf(p), itens:(p.rest_pedido_itens||[]).map(i=>({texto:i.quantidade+'x '+i.descricao})), timer:kfmt(remain), statusLabel:late?'ATRASADO':(warn?'Finalizando':'Em preparo'), color, cardStyle:'background:var(--bg-card);border:1px solid var(--border-card);border-left:5px solid '+color+';border-radius:14px;padding:16px 18px', badgeStyle:'display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:'+color, timerStyle:'font-family:\'Space Mono\',monospace;font-size:30px;font-weight:700;color:'+color+';line-height:1', barFill:'height:100%;width:'+pct+'%;background:'+color+';border-radius:99px;transition:width 1s linear', onReady:()=>this.markKitchenReady(p.id)}; });
-    const cozinhaLate=cozinhaTickets.filter(t=>t.statusLabel==='ATRASADO').length;
+    const cozWa=(s.waEmAndamento||[]).filter(p=>!p.pronto);
+    const cozFonte=[...cozWa.map(p=>({p:{...p,_min:this._cozPrepMin((p.rest_pedido_itens||[]).map(i=>i.descricao))},wa:true})),
+      ...(s.orders||[]).filter(o=>o.prepIni&&!o.pronto&&o.status!=='entregue'&&!cozWa.some(w=>w.id===o.dbId)).map(o=>({wa:false,p:{id:o.dbId,prep_started_at:o.prepIni,created_at:o.criado,nome_cliente:o.waClient||(this.clientName(o.clientId)!=='—'?this.clientName(o.clientId):this.clientName(o.empresaId)),rest_pedido_itens:((o.itensDet&&o.itensDet.length)?o.itensDet.map(i=>({quantidade:i.q,descricao:i.d})):this.parseItems(o.items).map(i=>({quantidade:i.qty,descricao:i.name}))).filter(i=>!/^Taxa/i.test(i.descricao)),_min:this._cozPrepMin((o.itensDet&&o.itensDet.length)?o.itensDet.map(i=>i.d):this.parseItems(o.items).map(i=>i.name)),_ref:o.id}}))]
+      .sort((a,b)=>new Date(a.p.prep_started_at||a.p.created_at)-new Date(b.p.prep_started_at||b.p.created_at));
+    const cozinhaTickets=cozFonte.map(({p,wa},idx)=>{ const startMs=p.prep_started_at?new Date(p.prep_started_at).getTime():new Date(p.created_at).getTime(); const total=(p._min||15)*60; const elapsed=Math.floor((Date.now()-startMs)/1000); const remain=total-elapsed; const late=remain<0; const warn=!late&&remain<=300; const color=late?'#ef4444':(warn?'#f5b301':'#22c55e'); const pct=Math.max(0,Math.min(100,(remain/total)*100));
+      return {id:p.id, order:String(idx+1), cliente:this.waNameOf(p), itens:(p.rest_pedido_itens||[]).map(i=>({texto:i.quantidade+'x '+i.descricao})), timer:kfmt(remain), statusLabel:late?'PASSOU DO TEMPO':(warn?'Finalizando':'Em preparo'), prepTxt:(p._ref?p._ref+' · ':'')+(p._min||15)+' min de preparo', color, cardStyle:'background:var(--bg-card);border:1px solid var(--border-card);border-left:5px solid '+color+';border-radius:14px;padding:16px 18px', badgeStyle:'display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:'+color, timerStyle:'font-family:\'Space Mono\',monospace;font-size:30px;font-weight:700;color:'+color+';line-height:1', barFill:'height:100%;width:'+pct+'%;background:'+color+';border-radius:99px;transition:width 1s linear', onReady:()=>this.concluirCozinha(p.id,wa,remain)}; });
+    const cozinhaLate=cozinhaTickets.filter(t=>t.statusLabel==='PASSOU DO TEMPO').length;
     const motoboyQueue=s.orders.filter(o=>o.flow==='aguardando_motoboy').map(o=>({id:o.id,cliente:o.waClient||(this.clientName(o.clientId)!=='—'?this.clientName(o.clientId):this.clientName(o.empresaId)),items:o.items,totalFmt:brl(o.total),onAccept:()=>this.motoboyAccept(o.id),onRefuse:()=>this.motoboyRefuse(o.id)}));
 
     const deliveryRows=s.deliveries.map(d=>({date:d.date,motoboy:d.motoboy,region:d.region,orderRef:d.orderRef,feeFmt:brl(d.fee),isPending:d.status==='pendente',isDone:d.status==='entregue',onClose:()=>this.closeDelivery(d.id)}));
