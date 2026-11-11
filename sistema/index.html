@@ -209,7 +209,7 @@ aside nav>div:hover{background:#04315a!important;transform:scale(1.03)}
 @media (max-width:900px){.hm-fech{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* ── fim histórico mensal ── */
 /* ── clientes ── */
-.cli-g{grid-template-columns:minmax(130px,1.6fr) 100px 94px 40px repeat(5,minmax(66px,1fr)) 76px 76px 150px;gap:8px}
+.cli-g{grid-template-columns:minmax(130px,1.6fr) 100px 94px 40px repeat(5,minmax(66px,1fr)) 76px 76px 186px;gap:8px}.cli-lixo{display:inline-flex!important;align-items:center;justify-content:center;width:30px;padding:0!important;color:#e0675c!important;border-color:rgba(224,103,92,.45)!important}.cli-lixo:hover{background:rgba(224,103,92,.14)!important}.ped-ico-ed{width:26px!important;height:26px!important;margin-left:6px;background:none;border:1px solid var(--border-input);color:#7fd0df;cursor:pointer}.ped-lixo-det{flex:0 0 auto;width:44px;display:flex;align-items:center;justify-content:center;background:none;border:1px solid rgba(224,103,92,.5);border-radius:10px;color:#e0675c;cursor:pointer}.ped-lixo-det:hover{background:rgba(224,103,92,.14)}.ped-lixo-det:focus-visible,.ped-ico-ed:focus-visible,.cli-lixo:focus-visible{outline:2px solid #54acbf;outline-offset:2px}
 .cli-g .cr-nome{white-space:normal;line-height:1.25}
 .cli-sub{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cli-g .cr-mono{font-size:12px}
@@ -3324,6 +3324,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
               <div class="n cr-acoes">
                 <button onclick="{{ c.onView }}" class="cr-b">Extrato</button>
                 <sc-if value="{{ c.temDivida }}" hint-placeholder-val="{{ false }}"><button onclick="{{ c.onPay }}" class="cr-b cr-b-ok">Pagamento</button></sc-if>
+                <button onclick="{{ c.onExcluir }}" class="cr-b cli-lixo" title="Excluir cliente" aria-label="Excluir cliente"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18 M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2 M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6 M10 11v6 M14 11v6"></path></svg></button>
               </div>
             </div>
           </sc-for>
@@ -4229,7 +4230,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           <sc-for list="{{ pedDet.itensLista }}" as="it" hint-placeholder-count="3">
             <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px dashed var(--border-card)">
               <span style="min-width:34px;text-align:center;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#fff;background:#26658C;border-radius:8px;padding:3px 6px;flex-shrink:0">{{ it.qtd }}×</span>
-              <span style="flex:1;font-size:14px;line-height:1.4;padding-top:2px">{{ it.desc }}</span><span style="font-family:'Space Mono',monospace;font-size:13px;color:#b3d6de;padding-top:3px;white-space:nowrap">{{ it.valorFmt }}</span>
+              <span style="flex:1;font-size:14px;line-height:1.4;padding-top:2px">{{ it.desc }}</span><span style="font-family:'Space Mono',monospace;font-size:13px;color:#b3d6de;padding-top:3px;white-space:nowrap">{{ it.valorFmt }}</span><sc-if value="{{ it.podeEditar }}" hint-placeholder-val="{{ false }}"><button onclick="{{ it.onEdit }}" title="Alterar valor" aria-label="Alterar valor do item" class="ped-ico ped-ico-ed"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9 M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"></path></svg></button></sc-if>
             </div>
           </sc-for>
           <sc-if value="{{ pedDet.semItens }}" hint-placeholder-val="{{ false }}"><div style="padding:14px 0;color:#9a9084;font-size:13.5px">Nenhum item registrado neste pedido.</div></sc-if>
@@ -4240,6 +4241,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
         </div>
         <div style="display:flex;gap:8px;padding:14px 22px 18px;border-top:1px solid var(--border-card);flex-wrap:wrap">
           <button onclick="{{ pedDet.onPrint }}" style="flex:1;min-width:120px;display:flex;align-items:center;justify-content:center;gap:7px;background:none;border:1px solid var(--border-input);border-radius:10px;padding:10px 12px;font-size:13.5px;font-weight:600;cursor:pointer;color:var(--text-primary);font-family:inherit"><svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7 M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2 M6 14h12v8H6z"></path></svg>Imprimir</button>
+          <sc-if value="{{ pedDet.podeExcluir }}" hint-placeholder-val="{{ false }}"><button onclick="{{ pedDet.onDelete }}" title="Excluir pedido" aria-label="Excluir pedido" class="ped-lixo-det"><svg width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18 M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2 M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6 M10 11v6 M14 11v6"></path></svg></button></sc-if>
           <sc-if value="{{ pedDet.podeCred }}" hint-placeholder-val="{{ false }}"><button onclick="{{ pedDet.onCred }}" style="flex:1;min-width:120px;display:flex;align-items:center;justify-content:center;gap:7px;background:rgba(232,131,58,.12);border:1px solid rgba(232,131,58,.55);border-radius:10px;padding:10px 12px;font-size:13.5px;font-weight:600;cursor:pointer;color:#e8833a;font-family:inherit"><svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h15a3 3 0 013 3v8a2 2 0 01-2 2H5a2 2 0 01-2-2z M3 7l12-4v4 M17 14h.01"></path></svg>Passar para o crediário</button></sc-if>
           <sc-if value="{{ pedDet.isOpen }}" hint-placeholder-val="{{ false }}"><button onclick="{{ pedDet.onDone }}" style="flex:1;min-width:120px;background:#25623f;color:#fff;border:none;border-radius:10px;padding:10px 12px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit">Concluir pedido</button></sc-if>
           <sc-if value="{{ pedDet.isReady }}" hint-placeholder-val="{{ false }}"><button onclick="{{ pedDet.onDispatch }}" style="flex:1;min-width:120px;background:#26658C;color:#fff;border:none;border-radius:10px;padding:10px 12px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit">Enviar ao motoboy</button></sc-if>
@@ -6048,7 +6050,7 @@ class Component extends DCLogic {
 
   loadPedidos = async () => {
     const { data, error } = await sb.from('rest_pedidos')
-      .select('id,numero_ref,cliente_id,empresa_id,forma_pagamento,status,total,data,origem,nome_cliente,telefone_contato,endereco_entrega,observacoes,created_at,pronto,prep_started_at,motoboy_id,rest_motoboys(nome),rest_pedido_itens(descricao,quantidade,valor_total)')
+      .select('id,numero_ref,cliente_id,empresa_id,forma_pagamento,status,total,data,origem,nome_cliente,telefone_contato,endereco_entrega,observacoes,created_at,pronto,prep_started_at,motoboy_id,rest_motoboys(nome),rest_pedido_itens(id,descricao,quantidade,valor_total)')
       .order('created_at', { ascending: false }).limit(200);
     if (error) { console.error(error); return; }
     const today = this.todayISO();
@@ -6063,7 +6065,7 @@ class Component extends DCLogic {
       motoboyName: o.rest_motoboys ? o.rest_motoboys.nome : null,
       items: (o.rest_pedido_itens||[]).map(i=>i.quantidade+'x '+i.descricao).join(', ') || '—',
       origem: o.origem || 'manual', telefone: o.telefone_contato || '', endereco: o.endereco_entrega || '', obsRaw: o.observacoes || '', criado: o.created_at || '',
-      itensDet: (o.rest_pedido_itens||[]).map(i=>({ q:Number(i.quantidade)||0, d:i.descricao, v:Number(i.valor_total)||0 })),
+      itensDet: (o.rest_pedido_itens||[]).map(i=>({ id:i.id, q:Number(i.quantidade)||0, d:i.descricao, v:Number(i.valor_total)||0 })),
       total: Number(o.total) || 0,
       payment: o.forma_pagamento || 'dinheiro',
       status: o.status === 'entregue' ? 'entregue' : 'aberto',
@@ -6226,6 +6228,52 @@ class Component extends DCLogic {
     if(error){ this.showToast('Erro: '+error.message); return; }
     this.setState({modal:null,selectedCompany:null});
     this.showToast('Funcionário registrado em '+compName+'.'); this.loadClientesEmpresas(); };
+
+  // ── caixa de confirmação simples (com campo opcional) ──
+  _dlg=(o)=>new Promise((fim)=>{ const ant=document.getElementById('pdc-dlg'); if(ant) ant.remove();
+    const el=(tag,css,txt)=>{ const e=document.createElement(tag); if(css) e.style.cssText=css; if(txt!=null) e.textContent=txt; return e; };
+    const cor=o.perigo?'#d9534f':'#26658C';
+    const fundo=el('div','position:fixed;inset:0;z-index:99995;background:rgba(2,10,20,.62);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px'); fundo.id='pdc-dlg';
+    const cx=el('div','width:min(400px,100%);background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-card);border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.55);padding:20px;font-family:inherit');
+    cx.setAttribute('role','dialog'); cx.setAttribute('aria-modal','true'); cx.setAttribute('aria-labelledby','pdc-dlg-t');
+    const t=el('div','font-size:17px;font-weight:700;margin-bottom:6px',o.titulo); t.id='pdc-dlg-t'; cx.append(t);
+    if(o.texto) cx.append(el('div','font-size:13.5px;color:#9fbcc6;line-height:1.45;margin-bottom:14px;white-space:pre-line',o.texto));
+    let inp=null, err=null;
+    if(o.campo){ const lb=el('label','display:block;font-size:12px;font-weight:600;color:#9a9084;margin-bottom:6px',o.campo.rotulo||''); inp=el('input','width:100%;box-sizing:border-box;min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--border-input);background:var(--bg-page);color:var(--text-primary);font:700 18px \'Space Mono\',monospace;outline:none');
+      inp.value=o.campo.valor||''; inp.inputMode='decimal'; inp.setAttribute('data-numpad','off'); inp.autocomplete='off'; lb.htmlFor=inp.id='pdc-dlg-in'; err=el('div','font-size:12px;color:#f19a8e;min-height:16px;margin-top:5px',''); cx.append(lb,inp,err); }
+    const bts=el('div','display:flex;gap:8px;justify-content:flex-end;margin-top:12px');
+    const no=el('button','min-height:40px;padding:0 16px;border-radius:10px;border:1px solid var(--border-input);background:none;color:var(--text-primary);font:600 13.5px inherit;cursor:pointer','Cancelar');
+    const sim=el('button','min-height:40px;padding:0 18px;border-radius:10px;border:none;background:'+cor+';color:#fff;font:700 13.5px inherit;cursor:pointer',o.botao||'Confirmar');
+    no.type=sim.type='button'; bts.append(no,sim); cx.append(bts); fundo.append(cx);
+    const sai=(v)=>{ document.removeEventListener('keydown',tecla,true); fundo.remove(); fim(v); };
+    const ok=()=>{ if(!inp) return sai(true); const v=o.campo.validar?o.campo.validar(inp.value):inp.value; if(v==null){ err.textContent=o.campo.erro||'Valor inválido.'; inp.focus(); return; } sai(v); };
+    const tecla=(e)=>{ if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); sai(null); } else if(e.key==='Enter'){ e.preventDefault(); e.stopPropagation(); ok(); } };
+    no.onclick=()=>sai(null); sim.onclick=ok; fundo.addEventListener('click',(e)=>{ if(e.target===fundo) sai(null); });
+    document.addEventListener('keydown',tecla,true); (document.querySelector('div[data-theme]')||document.body).append(fundo); setTimeout(()=>{ if(inp){ inp.focus(); inp.select(); } else no.focus(); },30); });
+  // ── alterar o valor de um item do pedido (modal de detalhes) ──
+  editarValorItem=async(o,it)=>{ const atual=Number(it.v)||0;
+    const novo=await this._dlg({ titulo:'Alterar valor', texto:it.q+'× '+it.d+'\nPedido '+o.id+' · valor atual '+this.brl(atual), botao:'Salvar valor',
+      campo:{ rotulo:'Novo valor do item (R$)', valor:atual.toFixed(2).replace('.',','), erro:'Digite um valor válido. Ex.: 25,90', validar:(x)=>{ let s=String(x||'').trim().replace(/^R\$\s*/i,'').replace(/\s/g,''); if(!s) return null; if(s.indexOf(',')>=0) s=s.replace(/\./g,'').replace(',','.'); const n=Number(s); return isFinite(n)&&n>=0?Math.round(n*100)/100:null; } } });
+    if(novo==null) return; const diff=Math.round((novo-atual)*100)/100; if(!diff) return;
+    const total=Math.round(((Number(o.total)||0)+diff)*100)/100, q=Number(it.q)||1;
+    const aplica=(s)=>({ orders:(s.orders||[]).map(x=>x.dbId!==o.dbId?x:{...x,total,itensDet:(x.itensDet||[]).map(y=>y.id===it.id?{...y,v:novo}:y)}) });
+    if(this._demo){ this.setState(aplica); this.showToast('Valor alterado para '+this.brl(novo)+'. Total do pedido: '+this.brl(total)+'.'); return; }
+    const { error:e1 } = await sb.from('rest_pedido_itens').update({ valor_total:novo, valor_unitario:Math.round(novo/q*100)/100 }).eq('id', it.id);
+    if(e1){ this.showToast('Erro: '+e1.message); return; }
+    const { error:e2 } = await sb.from('rest_pedidos').update({ total }).eq('id', o.dbId);
+    if(e2){ this.showToast('Erro ao atualizar o total: '+e2.message); return; }
+    const cid=o.clientId||o.empresaId;
+    if(o.payment==='crediario'&&cid&&(o.origem!=='site'||o.clientId)){ await this.addClientBalance(cid, diff); await this.logCrediario(o.clientId||null, o.clientId?null:o.empresaId, 'debito', diff, 'Ajuste de valor — Pedido '+o.id+' ('+it.d+')'); }
+    this.setState(aplica); this.showToast('Valor alterado para '+this.brl(novo)+'. Total do pedido: '+this.brl(total)+'.'); this.loadPedidos(); this.loadClientesEmpresas(); };
+  // ── excluir cliente (fica inativo: compras e pagamentos continuam guardados) ──
+  excluirCliente=async(c)=>{ const deve=Number(c.balance)||0, emp=c.type==='Empresa';
+    const ok=await this._dlg({ titulo:'Excluir '+(emp?'empresa':'cliente')+'?', perigo:true, botao:'Excluir',
+      texto:c.name+(deve>0?'\nAtenção: deve '+this.brl(deve)+'. O saldo continua registrado.':'')+'\nSai da lista; as compras e os pagamentos ficam guardados.' });
+    if(!ok) return;
+    if(this._demo){ this.setState(s=>({ clients:(s.clients||[]).filter(x=>x.id!==c.id) })); this.showToast(emp?'Empresa excluída.':'Cliente excluído.'); return; }
+    const { error } = await sb.from(emp?'rest_empresas':'rest_clientes').update({ ativo:false }).eq('id', c.id);
+    if(error){ this.showToast('Erro: '+error.message); return; }
+    this.showToast(emp?'Empresa excluída.':'Cliente excluído.'); this.loadClientesEmpresas(); };
 
   deleteClient=async(id)=>{ const { error } = await sb.from('rest_clientes').update({ ativo:false }).eq('id',id);
     if(error){ this.showToast('Erro: '+error.message); return; }
@@ -7795,7 +7843,7 @@ class Component extends DCLogic {
     if(this._demo){ this.setState({ pedMesOrders:(this.state.orders||[]).filter(o=>String(o.iso||'').slice(0,7)===ym) }); return; }
     if(!this._mapPedido) return;
     const [a,m]=ym.split('-').map(Number); const ini=ym+'-01', fim=(m===12?(a+1)+'-01':a+'-'+String(m+1).padStart(2,'0'))+'-01';
-    const { data, error } = await sb.from('rest_pedidos').select('id,numero_ref,cliente_id,empresa_id,forma_pagamento,status,total,data,origem,nome_cliente,telefone_contato,endereco_entrega,observacoes,created_at,pronto,prep_started_at,motoboy_id,rest_motoboys(nome),rest_pedido_itens(descricao,quantidade,valor_total)').gte('data',ini).lt('data',fim).order('created_at',{ascending:false}).limit(5000);
+    const { data, error } = await sb.from('rest_pedidos').select('id,numero_ref,cliente_id,empresa_id,forma_pagamento,status,total,data,origem,nome_cliente,telefone_contato,endereco_entrega,observacoes,created_at,pronto,prep_started_at,motoboy_id,rest_motoboys(nome),rest_pedido_itens(id,descricao,quantidade,valor_total)').gte('data',ini).lt('data',fim).order('created_at',{ascending:false}).limit(5000);
     if(error){ this.showToast('Erro ao carregar o mês: '+error.message); return; }
     if(this.state.pedMes!==ym) return;
     this.setState({ pedMesOrders:(data||[]).map(this._mapPedido) }); };
@@ -7993,12 +8041,12 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       const ob=String(o.obsRaw||''); const pega=(rot)=>{ const i=ob.indexOf(rot+':'); if(i<0) return ''; const rest=ob.slice(i+rot.length+1); const c=rest.search(/ · (Pagamento|Taxa de entrega|Convênio):/); return (c>=0?rest.slice(0,c):rest).trim(); };
       const ini=ob.search(/(^| · )(Pagamento|Taxa de entrega|Convênio):/); const obsCli=(ini<0?ob:ob.slice(0,ini)).trim();
       const tel=String(o.telefone||'').replace(/\D/g,''); const t2=tel.length>11&&tel.indexOf('55')===0?tel.slice(2):tel; const telFmt=t2.length>=10?'('+t2.slice(0,2)+') '+t2.slice(2,-4)+'-'+t2.slice(-4):tel;
-      const itensDet=(o.itensDet||[]).map(i=>({qtd:String(i.q), desc:i.d, valorFmt:i.v?brl(i.v):''}));
+      const itensDet=(o.itensDet||[]).map(i=>({qtd:String(i.q), desc:i.d, valorFmt:i.v?brl(i.v):'R$ 0,00', podeEditar:!!i.id, onEdit:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.editarValorItem(o,i); }}));
       const pg=pega('Pagamento'), tx=pega('Taxa de entrega'), cv=pega('Convênio');
       return {...r, hora, dataHora:(o.date||'')+(hora?' · '+hora:''), temEntrega:!!(o.endereco&&!/^(Retirada|Conv[eê]nio:)/i.test(String(o.endereco).trim())), enderecoTxt:String(o.endereco||''), temOrigem:!!og, origemLabel:og?og[0]:'', origemStyle:'display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.02em;flex-shrink:0;'+(og?og[1]:''),
         telefoneFmt:telFmt, temTelefone:!!tel, waLink:tel?'https://wa.me/'+(t2.length<=11?'55'+t2:tel):'', endereco:o.endereco||'', temEndereco:!!o.endereco&&!/^Convênio:/.test(o.endereco),
         pagamentoDet:pg, temPagDet:!!pg, taxaDet:tx, temTaxaDet:!!tx, convenioDet:cv, temConvDet:!!cv, obsCliente:obsCli, temObs:!!obsCli,
-        temContato:!!tel||!!o.endereco||!!cv, itensLista:itensDet.length?itensDet:(r.itensLista||[]).map(x=>({...x,valorFmt:''})) }; };
+        temContato:!!tel||!!o.endereco||!!cv, itensLista:itensDet.length?itensDet:(r.itensLista||[]).map(x=>({...x,valorFmt:'',podeEditar:false})) }; };
     const waPendentesRows=(s.waPendentes||[]).map(p=>({
       id:p.id,
       clientName:this.waNameOf(p),
@@ -8476,7 +8524,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
         pedidos:x.pedidos?String(x.pedidos):'—', comprado:clZ(x.comprado), naHora:clZ(x.naHora), naConta:clZ(x.naConta), temContaEmp:x.naContaEmp>0.004, contaEmpSub:'na conta da empresa: '+clN(x.naContaEmp),
         quitado:clZ(x.pag+x.bx), temBaixa:x.bx>0.004, bxSub:'inclui baixa de '+clN(x.bx),
         deve:deve>0?clN(deve):'em dia', deveCor:deve>0?'#d0892b':'#3f9d6b', ultCompra:x.ult?clData(x.ult):'—', ultCompraSub:x.ult?clHa(x.ult):'', ultPag:x.ultPag?clData(x.ultPag):'—', ultPagSub:x.ultPag?clHa(x.ultPag):'',
-        temDivida:deve>0, onView:()=>this.setState({modal:'statement',selectedClient:c.id}), onPay:()=>this.setState({modal:'payment',selectedClient:c.id}) }; });
+        temDivida:deve>0, onExcluir:()=>this.excluirCliente(c), onView:()=>this.setState({modal:'statement',selectedClient:c.id}), onPay:()=>this.setState({modal:'payment',selectedClient:c.id}) }; });
     const clSoma=(f)=>clVisiveis.reduce((a,r)=>a+f(r),0);
     const cliTot={ qtd:clVisiveis.length+(clVisiveis.length===1?' cliente':' clientes'), pedidos:String(clSoma(r=>r.x.pedidos)), comprado:clN(clSoma(r=>r.x.comprado)), naHora:clN(clSoma(r=>r.x.naHora)),
       naConta:clN(clSoma(r=>r.x.naConta)), quitado:clN(clSoma(r=>r.x.pag+r.x.bx)), deve:clN(clSoma(r=>r.deve)) };
