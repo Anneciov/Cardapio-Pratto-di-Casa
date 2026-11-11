@@ -127,6 +127,8 @@ aside nav>div:hover{background:#04315a!important;transform:scale(1.03)}
 .cr-b-wa:hover{background:#2c7449}
 .cr-tabela{background:var(--bg-card);border:1px solid var(--border-card);border-radius:12px;overflow:auto;max-height:calc(100vh - 250px)}
 .cr-in{display:flex;flex-direction:column}
+.cdp-guias{display:inline-flex;margin-bottom:18px}.cdp-guias .cr-aba{padding:9px 16px;font-size:14px;white-space:nowrap}.cdp-guias .cr-aba svg{flex-shrink:0;opacity:.85}.cdp-guias .cr-aba:focus-visible{outline:2px solid #54acbf;outline-offset:2px}
+
 .tab-com-rod{border-bottom-left-radius:0!important;border-bottom-right-radius:0!important;margin-bottom:0!important}.tab-rod{margin-bottom:0}
 .tab-rod .ped-lim button.on{background:#26658C;border-color:#26658C;color:#fff}.tab-rod .ped-pag button.off{opacity:.35;cursor:default}
 .cr-tabela::-webkit-scrollbar{width:12px;height:12px}.cr-tabela::-webkit-scrollbar-track{background:rgba(127,208,223,.06)}
@@ -3996,6 +3998,8 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           </div>
         </sc-if>
         <sc-if value="{{ cardapioShowTiles }}" hint-placeholder-val="{{ true }}">
+          <div class="cr-abas cdp-guias" role="tablist" aria-label="Cardápio do dia"><button onclick="{{ cdpIrPratos }}" class="{{ cdpGuiaPratosCls }}" role="tab" aria-selected="{{ cdpAbaPratos }}"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18 M5 12a7 7 0 0014 0 M9 8c0-1.2 1-1.6 1-2.8 M14 8c0-1.2 1-1.6 1-2.8"></path></svg>Pratos do dia<span class="cr-cont">{{ cdpAtivosN }}</span></button><button onclick="{{ cdpIrMontar }}" class="{{ cdpGuiaMontarCls }}" role="tab" aria-selected="{{ cdpAbaMontar }}"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11 M9 12h11 M9 18h11 M4 6l1 1 2-2 M4 12l1 1 2-2 M4 18l1 1 2-2"></path></svg>Montar cardápio de hoje</button></div>
+          <sc-if value="{{ cdpAbaMontar }}" hint-placeholder-val="{{ false }}">
           <div class="mcd" style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:18px;padding:18px 20px 20px;margin-bottom:26px">
             <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
               <div style="flex:1;min-width:220px"><div style="font-size:19px;font-weight:700">Montar o cardápio de hoje</div><div style="font-size:12.5px;color:#9a9084;margin-top:2px">Hoje, Guarnições e Fitness mudam todo dia — clique numa sugestão ou digite e aperte Enter.</div></div>
@@ -4031,6 +4035,8 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
               <button onclick="{{ abrirArte }}" style="background:linear-gradient(120deg,#023859,#26658C 60%,#54ACBF);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">🖼️ Arte para o cliente</button>
             </div>
           </div>
+          </sc-if>
+          <sc-if value="{{ cdpAbaPratos }}" hint-placeholder-val="{{ true }}">
           <div class="cdp-cats" style="display:flex;gap:20px;overflow-x:auto;padding:6px 4px 16px;margin-bottom:4px">
             <sc-for list="{{ cdpCats }}" as="k" hint-placeholder-count="5">
               <div class="cdp-cat" onclick="{{ k.onClick }}" title="{{ k.titulo }}" style="display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;flex-shrink:0;width:76px">
@@ -4073,6 +4079,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
             </sc-for>
           </div>
           <sc-if value="{{ cdpVazio }}" hint-placeholder-val="{{ false }}"><div style="padding:40px 20px;text-align:center;color:#9a9084;font-size:14px">Nenhum prato cadastrado aqui ainda.</div></sc-if>
+          </sc-if>
         </sc-if>
       </sc-if>
       </sc-if>
@@ -8070,7 +8077,10 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
         priceFmt:i.price>0?c.priceFmt:(this.num(VALC[i.size])?brl(this.num(VALC[i.size])):c.priceFmt),
         onFoto:(e)=>{ parar(e); this.editCardapioItemById(i.id); }}; });
     const cdpAtivos=cdpLista.filter(i=>i.available).length, cdpSemFoto=cdpLista.filter(i=>!i.foto_url).length;
-    const cdpVals={ cdpCats, cdpPratos, cdpVazio:cdpPratos.length===0, cdpTitulo:cdpCat?SIZEL[cdpCat]:'Pratos de hoje', cdpTemCat:!!cdpCat,
+    const cdpAba=s.cdpAba||this._lsGet('pdc_cdp_aba','pratos'); const cdpIr=(a)=>()=>{ this._lsSet('pdc_cdp_aba',a); this.setState({cdpAba:a}); };
+    const cdpVals={ cdpAbaPratos:cdpAba!=='montar', cdpAbaMontar:cdpAba==='montar', cdpIrPratos:cdpIr('pratos'), cdpIrMontar:cdpIr('montar'),
+      cdpGuiaPratosCls:'cr-aba'+(cdpAba!=='montar'?' on':''), cdpGuiaMontarCls:'cr-aba'+(cdpAba==='montar'?' on':''), cdpAtivosN:cdpAtivos,
+      cdpCats, cdpPratos, cdpVazio:cdpPratos.length===0, cdpTitulo:cdpCat?SIZEL[cdpCat]:'Pratos de hoje', cdpTemCat:!!cdpCat,
       cdpAbrirCat:()=>this.openCardapioCategory(cdpCat),
       cdpAtivosTxt:cdpAtivos+(cdpAtivos===1?' disponível hoje':' disponíveis hoje'),
       cdpSemFotoTxt:cdpSemFoto?(' · '+cdpSemFoto+(cdpSemFoto===1?' prato sem foto — copie a foto e, com o mouse em cima do prato, aperte Ctrl+V':' pratos sem foto — copie a foto e, com o mouse em cima do prato, aperte Ctrl+V')):'' };
