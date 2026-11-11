@@ -127,6 +127,28 @@ aside nav>div:hover{background:#04315a!important;transform:scale(1.03)}
 .cr-b-wa:hover{background:#2c7449}
 .cr-tabela{background:var(--bg-card);border:1px solid var(--border-card);border-radius:12px;overflow:auto;max-height:calc(100vh - 250px)}
 .cr-in{display:flex;flex-direction:column}
+.emp-resumo{display:flex;flex-wrap:wrap;background:var(--bg-card);border:1px solid var(--border-card);border-radius:14px;margin-bottom:14px;overflow:hidden}
+.emp-resumo>div{flex:1 1 200px;display:flex;align-items:center;gap:11px;padding:10px 16px;min-width:0}.emp-resumo>div+div{border-left:1px solid var(--border-soft)}
+.emp-resumo small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#7fa9b7;white-space:nowrap}.emp-resumo b{display:block;font:700 17px 'Space Mono',monospace;margin-top:1px}
+.emp-ric{width:32px;height:32px;flex-shrink:0;border-radius:9px;display:flex;align-items:center;justify-content:center;background:rgba(84,172,191,.12);color:#54acbf}.emp-ric.ouro{background:rgba(232,176,75,.12);color:#e8b04b}
+.emp-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px;align-items:start}
+.emp-card{display:flex;flex-direction:column;gap:10px;background:var(--bg-card);border:1px solid var(--border-card);border-radius:14px;padding:13px 14px;transition:border-color .15s ease,box-shadow .15s ease}
+.emp-card:hover{border-color:rgba(84,172,191,.45);box-shadow:0 10px 24px -18px rgba(84,172,191,.9)}
+.emp-topo{display:flex;align-items:center;gap:10px}.emp-ic{width:34px;height:34px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(84,172,191,.14);color:#54acbf}
+.emp-id{flex:1;min-width:0}.emp-nome{font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.emp-fone{display:flex;align-items:center;gap:5px;font:12px 'Space Mono',monospace;color:#8fb3c0;margin-top:1px;white-space:nowrap;overflow:hidden}.emp-fone svg{flex-shrink:0;opacity:.8}
+.emp-saldo{text-align:right;flex-shrink:0}.emp-saldo small{display:block;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#7fa9b7}.emp-saldo b{font:700 14px 'Space Mono',monospace;color:#54acbf}
+.emp-sub{display:flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#7fa9b7;padding-top:8px;border-top:1px solid var(--border-soft)}
+.emp-cont{font-family:'Space Mono',monospace;font-size:10.5px;padding:0 7px;border-radius:999px;background:rgba(127,127,127,.18);color:var(--text-primary)}
+.emp-lista{display:flex;flex-direction:column;max-height:220px;overflow-y:auto}
+.emp-func{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:6px 0}.emp-func+.emp-func{border-top:1px solid var(--border-soft)}
+.emp-fnome{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.emp-fsub{font:11px 'Space Mono',monospace;color:#8fb3c0}.emp-fsaldo{font:700 12.5px 'Space Mono',monospace}
+.emp-vazio{font-size:12.5px;color:#8fb3c0;font-style:italic;padding:2px 0}
+.emp-add{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:0 12px;border-radius:10px;border:1px dashed rgba(84,172,191,.5);background:rgba(84,172,191,.06);color:#7fd0df;font:600 12.5px inherit;cursor:pointer;transition:background .15s ease,border-color .15s ease}
+.emp-add:hover{background:rgba(84,172,191,.14);border-color:#54acbf;border-style:solid}.emp-add:focus-visible{outline:2px solid #54acbf;outline-offset:2px}
+.emp-nenhuma{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--bg-card);border:1px dashed var(--border-input);border-radius:14px;padding:26px;text-align:center;color:#8fb3c0;font-size:13.5px}.emp-nenhuma svg{color:#54acbf}
+[data-theme=light] .emp-add{color:#26658C}
+
 .cr-gl{grid-template-columns:minmax(170px,260px) minmax(240px,560px) 110px;justify-content:start}.cr-tabela:has(.cr-gl){width:fit-content;max-width:100%}.cr-gl.cr-lin>div:nth-child(2){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lanc-resumo{margin-left:0;flex-shrink:0;flex-wrap:nowrap;gap:14px}
 .cdp-guias{display:inline-flex;margin-bottom:18px}.cdp-acoes{display:flex;flex-direction:column;align-items:center;gap:12px;margin:26px auto 0;padding:16px 18px 18px;width:fit-content;max-width:100%;box-sizing:border-box;border:1px solid var(--border-card);border-radius:18px;background:var(--bg-card);box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}.cdp-acoes-t{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#7fa9b7}.cdp-acoes-t svg{color:#54acbf}.cdp-acoes-bts{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px}.cdp-acoes-sep{width:1px;height:26px;background:var(--border-card)}.cdp-ab{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;border:1px solid var(--border-input);background:transparent;color:var(--text-primary);font:600 13.5px inherit;cursor:pointer;white-space:nowrap;transition:background-color .15s ease,border-color .15s ease,transform .15s ease,box-shadow .15s ease}.cdp-ab svg{flex-shrink:0;color:#54acbf}.cdp-ab:hover{background:var(--bg-accent-soft);border-color:#54acbf;transform:translateY(-1px)}.cdp-ab:active{transform:translateY(0) scale(.98)}.cdp-ab:focus-visible{outline:2px solid #54acbf;outline-offset:2px}.cdp-ab.pri{background:linear-gradient(135deg,#ffa94d,#ff7a1a);border-color:transparent;color:#1a0d02;font-weight:700;box-shadow:0 10px 22px -12px rgba(255,122,26,.9)}.cdp-ab.pri svg{color:#1a0d02}.cdp-ab.pri:hover{filter:brightness(1.06)}.cdp-ab.sec{background:linear-gradient(120deg,#023859,#26658C 60%,#54ACBF);border-color:transparent;color:#fff;font-weight:700}.cdp-ab.sec svg{color:#fff}@media (max-width:760px){.cdp-acoes-sep{display:none}}@media (prefers-reduced-motion:reduce){.cdp-ab{transition:none}}.cdp-guias .cr-aba{padding:9px 16px;font-size:14px;white-space:nowrap}.cdp-guias .cr-aba svg{flex-shrink:0;opacity:.85}.cdp-guias .cr-aba:focus-visible{outline:2px solid #54acbf;outline-offset:2px}
 .cdp-acoes{gap:9px!important;padding:12px 14px 14px!important}.cdp-acoes-bts{flex-wrap:nowrap!important;gap:7px!important}.cdp-ab{min-height:36px!important;padding:0 12px!important;font-size:12.5px!important;gap:6px!important;border-radius:10px!important}.cdp-ab svg{width:14px;height:14px}.cdp-acoes-sep{height:22px!important}.cdp-ab.pri{box-shadow:0 8px 16px -12px rgba(255,122,26,.9)!important}@media (max-width:1100px){.cdp-banner-tx+.azul-flutua{width:240px;transform:scale(.7);transform-origin:right center}.cdp-acoes-bts{flex-wrap:wrap!important}}
@@ -3312,46 +3334,34 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
       </sc-if>
       <!-- EMPRESAS & FUNCIONÁRIOS -->
       <sc-if value="{{ isEmpresas }}" hint-placeholder-val="{{ false }}">
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px">
-          <div style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;padding:18px 20px;display:flex;align-items:center;gap:14px">
-            <div style="width:38px;height:38px;border-radius:10px;background:var(--bg-accent-soft);color:#26658C;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18 M5 21V5l7-3v19 M12 21V9l7 2v10"></path></svg></div>
-            <div><div style="font-size:11.5px;color:#847a6e;text-transform:uppercase;letter-spacing:.06em;font-weight:600">Empresas cadastradas</div><div style="font-family:'Space Mono',monospace;font-size:22px;font-weight:700;margin-top:2px">{{ empresasCount }}</div></div>
-          </div>
-          <div style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;padding:18px 20px;display:flex;align-items:center;gap:14px">
-            <div style="width:38px;height:38px;border-radius:10px;background:var(--bg-accent-soft);color:#26658C;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20a8 8 0 0116 0 M12 11a4 4 0 100-8 4 4 0 000 8"></path></svg></div>
-            <div><div style="font-size:11.5px;color:#847a6e;text-transform:uppercase;letter-spacing:.06em;font-weight:600">Funcionários vinculados</div><div style="font-family:'Space Mono',monospace;font-size:22px;font-weight:700;margin-top:2px">{{ funcVinculadosCount }}</div></div>
-          </div>
-          <div style="background:#04315a;color:#fff;border-radius:16px;padding:18px 20px;display:flex;align-items:center;gap:14px">
-            <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.1);color:#e8b04b;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h20v12H2z M2 10h20 M6 15h4"></path></svg></div>
-            <div><div style="font-size:11.5px;color:#b3d6de;text-transform:uppercase;letter-spacing:.06em;font-weight:600">Saldo total das empresas</div><div style="font-family:'Space Mono',monospace;font-size:22px;font-weight:700;margin-top:2px">{{ saldoEmpresasFmt }}</div></div>
-          </div>
+        <div class="emp-resumo">
+          <div><span class="emp-ric"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18 M5 21V5l7-3v19 M12 21V9l7 2v10"></path></svg></span><div><small>Empresas cadastradas</small><b>{{ empresasCount }}</b></div></div>
+          <div><span class="emp-ric"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20a8 8 0 0116 0 M12 11a4 4 0 100-8 4 4 0 000 8"></path></svg></span><div><small>Funcionários vinculados</small><b>{{ funcVinculadosCount }}</b></div></div>
+          <div><span class="emp-ric ouro"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h20v12H2z M2 10h20 M6 15h4"></path></svg></span><div><small>Saldo total das empresas</small><b>{{ saldoEmpresasFmt }}</b></div></div>
         </div>
-
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px">
+        <div class="emp-grade">
           <sc-for list="{{ empresaCards }}" as="e" hint-placeholder-count="2">
-            <div class="hc" style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column">
-              <div style="display:flex;align-items:flex-start;gap:12px">
-                <div style="width:40px;height:40px;border-radius:11px;background:#e1f2f6;color:#26658C;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="19" height="19" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18 M5 21V5l7-3v19 M12 21V9l7 2v10"></path></svg></div>
-                <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:16px">{{ e.name }}</div><div style="font-size:12px;color:#9a9084;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ e.contact }}</div></div>
-                <div style="text-align:right;flex-shrink:0"><div style="font-size:11px;color:#9a9084;text-transform:uppercase;letter-spacing:.05em">Saldo empresa</div><div style="font-family:'Space Mono',monospace;font-weight:700;font-size:16px;color:#26658C;margin-top:2px">{{ e.balanceFmt }}</div></div>
+            <div class="emp-card">
+              <div class="emp-topo">
+                <span class="emp-ic"><svg width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18 M5 21V5l7-3v19 M12 21V9l7 2v10"></path></svg></span>
+                <div class="emp-id"><div class="emp-nome" title="{{ e.name }}">{{ e.name }}</div><div class="emp-fone"><svg width="12" height="12" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2"></path></svg><span>{{ e.contact }}</span></div></div>
+                <div class="emp-saldo"><small>Saldo</small><b>{{ e.balanceFmt }}</b></div>
               </div>
-              <div style="margin-top:16px;font-size:12px;font-weight:600;color:#847a6e;text-transform:uppercase;letter-spacing:.05em">Funcionários registrados · {{ e.empCount }}</div>
-              <div style="margin-top:6px">
+              <div class="emp-sub"><span>Funcionários</span><span class="emp-cont">{{ e.empCount }}</span></div>
+              <div class="emp-lista">
                 <sc-for list="{{ e.employees }}" as="f" hint-placeholder-count="2">
-                  <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--border-soft)">
-                    <div style="min-width:0"><div style="font-weight:500;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ f.name }}</div><div style="font-size:11.5px;color:#9a9084;font-family:'Space Mono',monospace">{{ f.phone }} · {{ f.payerLabel }}</div></div>
-                    <div style="text-align:right;font-family:'Space Mono',monospace;font-size:13px;color:{{ f.balColor }};font-weight:600">{{ f.balanceFmt }}</div>
+                  <div class="emp-func">
+                    <div style="min-width:0"><div class="emp-fnome">{{ f.name }}</div><div class="emp-fsub">{{ f.phone }} · {{ f.payerLabel }}</div></div>
+                    <div class="emp-fsaldo" style="color:{{ f.balColor }}">{{ f.balanceFmt }}</div>
                   </div>
                 </sc-for>
-                <sc-if value="{{ e.noEmp }}" hint-placeholder-val="{{ false }}"><div style="padding:10px 0;font-size:13px;color:#9a9084;border-top:1px solid var(--border-soft)">Nenhum funcionário registrado ainda.</div></sc-if>
+                <sc-if value="{{ e.noEmp }}" hint-placeholder-val="{{ false }}"><div class="emp-vazio">Nenhum funcionário registrado ainda.</div></sc-if>
               </div>
-              <div style="display:flex;gap:8px;margin-top:auto;padding-top:14px">
-                <button onclick="{{ e.onAddFunc }}" style="flex:1;background:#26658C;color:#fff;border:none;border-radius:9px;padding:11px;font-size:13px;font-weight:600;cursor:pointer">+ Registrar funcionário</button>
-              </div>
+              <button onclick="{{ e.onAddFunc }}" class="emp-add"><svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20a7 7 0 0112.5-4.3 M10 11a4 4 0 100-8 4 4 0 000 8z M19 14v6 M16 17h6"></path></svg>Registrar funcionário</button>
             </div>
           </sc-for>
         </div>
-        <sc-if value="{{ noEmpresas }}" hint-placeholder-val="{{ false }}"><div style="background:var(--bg-card);border:1px dashed #d3cabb;border-radius:16px;padding:28px;text-align:center;color:#9a9084;font-size:14px">Nenhuma empresa cadastrada. Use “Nova empresa” acima.</div></sc-if>
+        <sc-if value="{{ noEmpresas }}" hint-placeholder-val="{{ false }}"><div class="emp-nenhuma"><svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18 M5 21V5l7-3v19 M12 21V9l7 2v10"></path></svg><span>Nenhuma empresa cadastrada. Use “Nova empresa” acima.</span></div></sc-if>
       </sc-if>
 
       <!-- PEDIDOS -->
