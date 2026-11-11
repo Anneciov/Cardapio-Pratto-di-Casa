@@ -159,7 +159,7 @@ aside nav>div:hover{background:#04315a!important;transform:scale(1.03)}
 .cr-tabela::-webkit-scrollbar-thumb{background:rgba(127,208,223,.45);border-radius:8px;border:3px solid transparent;background-clip:padding-box}.cr-tabela::-webkit-scrollbar-corner{background:transparent}
 
 .cr-g{display:grid;gap:8px;align-items:center;padding:6px 14px;font-size:13px}
-.cr-ga{grid-template-columns:minmax(140px,320px) 104px 116px 96px 112px 108px 230px;justify-content:start}.cr-tabela:has(.cr-ga),.cr-tabela:has(.cr-gq){width:fit-content;max-width:100%}
+.cr-ga{grid-template-columns:minmax(140px,320px) 104px 116px 96px 112px 140px 230px;justify-content:start}.cr-saldo-ed{display:flex;align-items:center;justify-content:flex-end;gap:6px}.cr-ed-saldo{width:28px;height:28px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;border-radius:7px;border:1px solid transparent;background:none;color:#7fd0df;cursor:pointer;opacity:.6;transition:opacity .15s ease,background .15s ease,border-color .15s ease}.cr-lin:hover .cr-ed-saldo,.cr-ed-saldo:focus-visible{opacity:1;border-color:var(--border-input)}.cr-ed-saldo:hover{background:rgba(84,172,191,.16)}.cr-ed-saldo:focus-visible{outline:2px solid #54acbf;outline-offset:2px}[data-theme=light] .cr-ed-saldo{color:#26658C}.cr-tabela:has(.cr-ga),.cr-tabela:has(.cr-gq){width:fit-content;max-width:100%}
 .cr-gq{grid-template-columns:minmax(140px,320px) 104px 112px 104px 100px 120px 90px;justify-content:start}
 .cr-gm{grid-template-columns:78px 46px minmax(0,1.2fr) 96px minmax(0,2.2fr) 104px 112px 124px}
 .cr-cab{position:sticky;top:0;z-index:1;background:var(--bg-tablehead);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#847a6e;padding-top:7px;padding-bottom:7px}
@@ -3528,7 +3528,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
                 <div class="cr-mono">{{ c.desde }}<span class="cr-sub"> {{ c.dias }}</span></div>
                 <div class="cr-mono">{{ c.ultCompra }}</div>
                 <div class="n cr-mono">{{ c.comprasMes }}<span class="cr-sub"> {{ c.nMes }}</span></div>
-                <div class="n cr-mono cr-forte" style="color:#d0892b">{{ c.balanceFmt }}</div>
+                <div class="n cr-saldo-ed"><span class="cr-mono cr-forte" style="color:#d0892b">{{ c.balanceFmt }}</span><button onclick="{{ c.onEditSaldo }}" title="Alterar saldo devedor" aria-label="Alterar saldo devedor" class="cr-ed-saldo"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9 M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"></path></svg></button></div>
                 <div class="n cr-acoes">
                   <button onclick="{{ c.onView }}" class="cr-b">Extrato</button>
                   <button onclick="{{ c.onPay }}" class="cr-b cr-b-ok">Pagamento</button>
@@ -6269,6 +6269,19 @@ class Component extends DCLogic {
     const cid=o.clientId||o.empresaId;
     if(o.payment==='crediario'&&cid&&(o.origem!=='site'||o.clientId)){ await this.addClientBalance(cid, diff); await this.logCrediario(o.clientId||null, o.clientId?null:o.empresaId, 'debito', diff, 'Ajuste de valor — Pedido '+o.id+' ('+it.d+')'); }
     this.setState(aplica); this.showToast('Valor alterado para '+this.brl(novo)+'. Total do pedido: '+this.brl(total)+'.'); this.loadPedidos(); this.loadClientesEmpresas(); };
+  // ── alterar o saldo devedor direto na tabela do Crediário ──
+  editarSaldo=async(c)=>{ if(!c) return; const atual=Math.round((Number(c.balance)||0)*100)/100;
+    const novo=await this._dlg({ titulo:'Alterar saldo devedor', texto:c.name+'\nSaldo atual '+this.brl(atual)+'. A diferença fica registrada no extrato.', botao:'Salvar saldo',
+      campo:{ rotulo:'Novo saldo devedor (R$)', valor:atual.toFixed(2).replace('.',','), erro:'Digite um valor válido. Ex.: 25,90', validar:(x)=>{ let s=String(x||'').trim().replace(/^R\$\s*/i,'').replace(/\s/g,''); if(!s) return null; if(s.indexOf(',')>=0) s=s.replace(/\./g,'').replace(',','.'); const n=Number(s); return isFinite(n)&&n>=0?Math.round(n*100)/100:null; } } });
+    if(novo==null) return; const diff=Math.round((novo-atual)*100)/100; if(!diff) return;
+    const aplica=(s)=>({ clients:(s.clients||[]).map(x=>x.id===c.id?{...x,balance:novo}:x) });
+    const msg='Saldo de '+c.name+' alterado para '+this.brl(novo)+'.';
+    if(this._demo){ this.setState(aplica); this.showToast(msg); return; }
+    const emp=c.type==='Empresa';
+    const { error } = await sb.from(emp?'rest_empresas':'rest_clientes').update({ saldo_devedor:novo }).eq('id', c.id);
+    if(error){ this.showToast('Erro: '+error.message); return; }
+    await this.logCrediario(emp?null:c.id, emp?c.id:null, 'debito', diff, 'Ajuste manual de saldo ('+this.brl(atual)+' → '+this.brl(novo)+')');
+    this.setState(aplica); this.showToast(msg); this.loadClientesEmpresas(); };
   // ── excluir cliente (fica inativo: compras e pagamentos continuam guardados) ──
   excluirCliente=async(c)=>{ const deve=Number(c.balance)||0, emp=c.type==='Empresa';
     const ok=await this._dlg({ titulo:'Excluir '+(emp?'empresa':'cliente')+'?', perigo:true, botao:'Excluir',
@@ -8276,7 +8289,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const crMesAtual=crCrono.filter(h=>h._iso>=crMesIni&&h._iso<=crHoje);
     const credAbertoRows=crediarioRows.map(r=>{ const k=r.id, compr=crMesAtual.filter(h=>h._k===k&&h.type==='Débito'), d=crDesde[k];
       return {...r, desde:d?crData(d):'—', dias:d?'('+crDias(d)+(crDias(d)===1?' dia)':' dias)'):'', ultCompra:crUltCompra[k]?crData(crUltCompra[k]):'—',
-        comprasMes:compr.length?brl(compr.reduce((a,h)=>a+h.amount,0)):'—', nMes:compr.length?'· '+compr.length:''}; });
+        comprasMes:compr.length?brl(compr.reduce((a,h)=>a+h.amount,0)):'—', nMes:compr.length?'· '+compr.length:'', onEditSaldo:()=>this.editarSaldo(s.clients.find(x=>x.id===k))}; });
     // aba Quitados
     const credQuitRows=Object.values(crPorCli).filter(g=>{ if(!(g.comprado>0)) return false; const c=s.clients.find(x=>x.id===g.k); return c?!(c.balance>0):(g.comprado-g.pago)<=0.004; })
       .sort((a,b)=>String(b.ultPag||b.ult).localeCompare(String(a.ultPag||a.ult))).map(g=>{ const c=s.clients.find(x=>x.id===g.k);
