@@ -101,6 +101,8 @@ aside nav>div:hover{background:#04315a!important;transform:scale(1.03)}
 .cr-cont{font-family:'Space Mono',monospace;font-size:11px;padding:1px 7px;border-radius:999px;background:rgba(127,127,127,.18)}
 .cr-aba.on .cr-cont{background:rgba(255,255,255,.2)}
 .cr-resumo-l{display:flex;gap:6px 18px;flex-wrap:wrap;margin-left:auto;font-size:12px;opacity:.9}
+@media (min-width:1360px){.cr-top{flex-wrap:nowrap}.cr-top .cr-resumo-l{flex-wrap:nowrap;gap:14px;flex-shrink:0;font-size:11.5px}.cr-top .cr-resumo-l b{font-size:12px}}
+.cr-top .cr-busca-top{flex:1 1 200px;min-width:140px;max-width:380px}.cr-aba{white-space:nowrap}.cr-abas{flex-shrink:0}
 .cr-resumo-l>span{white-space:nowrap}
 .cr-resumo-l b{font-family:'Space Mono',monospace;font-size:13px;margin-left:4px}
 .cr-resumo-l b.verde,.cr-fech b.verde{color:#3f9d6b}
@@ -3501,6 +3503,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           <div class="cr-abas" role="tablist">
             <sc-for list="{{ credAbas }}" as="a" hint-placeholder-count="3"><button onclick="{{ a.onClick }}" class="{{ a.cls }}" role="tab">{{ a.label }}<span class="cr-cont">{{ a.n }}</span></button></sc-for>
           </div>
+          <sc-if value="{{ credAbaAberto }}" hint-placeholder-val="{{ true }}"><div class="cr-busca cr-busca-top" title="Só quem tem saldo a pagar. Quem quitou vai para a aba Quitados."><svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg><input value="{{ credSearch }}" oninput="{{ setCredSearch }}" placeholder="Buscar cliente devedor…"></div></sc-if>
           <div class="cr-resumo-l">
             <span>A receber <b>{{ totalReceberFmt }}</b></span>
             <span>Devendo <b>{{ credResumo.devendo }}</b></span>
@@ -3511,10 +3514,6 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 
         <!-- Aba: em aberto -->
         <sc-if value="{{ credAbaAberto }}" hint-placeholder-val="{{ true }}">
-          <div class="cr-barra">
-            <div class="cr-busca"><svg width="15" height="15" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg><input value="{{ credSearch }}" oninput="{{ setCredSearch }}" placeholder="Buscar cliente devedor…"></div>
-            <span class="cr-info">Só quem tem saldo a pagar. Quem quitou vai para a aba Quitados.</span>
-          </div>
           <div class="cr-tabela"><div class="cr-in" style="min-width:980px">
             <div class="cr-g cr-ga cr-cab"><div>Cliente</div><div>Tipo</div><div>Em aberto desde</div><div>Última compra</div><div class="n">Compras no mês</div><div class="n">Saldo devedor</div><div class="n">Ações</div></div>
             <sc-for list="{{ credAbertoRows }}" as="c" hint-placeholder-count="3">
