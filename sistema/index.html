@@ -3881,7 +3881,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
               {{ cozinhaLate }} passou do tempo
             </div>
           </sc-if>
-          <div style="font-size:12.5px;color:#9a9084;margin-left:auto">Tempo de preparo do prato no cardápio (padrão 15 min) · atualiza em tempo real</div>
+          <div style="font-size:12.5px;color:#9a9084;margin-left:auto">Tempo de preparo do prato no cardápio (padrão 5 min) · atualiza em tempo real</div>
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px">
           <sc-for list="{{ cozinhaTickets }}" as="t" hint-placeholder-count="3">
@@ -4712,7 +4712,7 @@ class Component extends DCLogic {
     sbReady.then(()=>{ this.checkSession(); });
   }
 
-  componentDidMount(){ document.addEventListener('paste',this.colarFotoPrato); this.setState({ arte:this.arteDados() }); this._loginTimer=setInterval(()=>{ if(!this.state.authed) this.setState(s=>({loginSlide:((s.loginSlide||0)+1)%3})); },5000); this._buildNumpad(); this._tick=setInterval(()=>{ if((this.state.waEmAndamento&&this.state.waEmAndamento.length)||(this.state.orders||[]).some(o=>o.prepIni&&!o.pronto&&o.status!=='entregue')) this.setState(s=>({nowTick:s.nowTick+1})); },1000); }
+  componentDidMount(){ document.addEventListener('paste',this.colarFotoPrato); this.setState({ arte:this.arteDados() }); this._loginTimer=setInterval(()=>{ if(!this.state.authed) this.setState(s=>({loginSlide:((s.loginSlide||0)+1)%3})); },5000); this._buildNumpad(); this._tick=setInterval(()=>{ if((this.state.waEmAndamento&&this.state.waEmAndamento.length)||(this.state.orders||[]).some(o=>o.prepIni&&!o.pronto&&(Date.now()-new Date(o.prepIni).getTime())<432e5)) this.setState(s=>({nowTick:s.nowTick+1})); },1000); }
   componentWillUnmount(){ if(this._loginTimer) clearInterval(this._loginTimer); if(this._numpad){ this._numpad.remove(); this._numpad=null; } if(this._tick) clearInterval(this._tick); }
 
   /* ============ TECLADO NUMÉRICO VIRTUAL ============ */
@@ -7621,8 +7621,8 @@ class Component extends DCLogic {
     (descs||[]).forEach(d=>{ const t=String(d||'').split(' · ')[0]; if(/^Taxa/i.test(t)) return; const z=t.match(/\((P|M|G)\)/); const tam=z?z[1]:(/fitness/i.test(t)?'F':'');
       let it=tam?(s.cardapio||[]).find(x=>x.size===tam):null; if(!it) it=(s.cardapio||[]).find(x=>x.name&&t.toLowerCase().indexOf(String(x.name).toLowerCase())>=0);
       const v=it?Number(it.tempo_preparo):0; if(v>m) m=v; });
-    return m>0?m:15; };
-  enviarCozinha=async(o)=>{ if(!o||!o.dbId||o.status==='entregue') return; const cur=(this.state.orders||[]).find(x=>x.dbId===o.dbId)||o; if(cur.prepIni&&!cur.pronto) return;
+    return m>0?m:5; };
+  enviarCozinha=async(o)=>{ if(!o||!o.dbId) return; const cur=(this.state.orders||[]).find(x=>x.dbId===o.dbId)||o; if(cur.prepIni&&!cur.pronto) return;
     const ini=new Date().toISOString(), min=this._cozPrepMin((o.itensDet&&o.itensDet.length)?o.itensDet.map(i=>i.d):this.parseItems(o.items).map(i=>i.name));
     if(!this._demo){ const { error } = await sb.from('rest_pedidos').update({ prep_started_at:ini, pronto:false }).eq('id', o.dbId);
       if(error){ this.showToast('A comanda foi impressa, mas não entrou na fila da Cozinha: '+error.message); return; } }
@@ -8273,10 +8273,10 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const kfmt=(sec)=>{const m=Math.floor(Math.abs(sec)/60),ss=Math.abs(sec)%60;return (sec<0?'-':'')+m+':'+String(ss).padStart(2,'0');};
     const cozWa=(s.waEmAndamento||[]).filter(p=>!p.pronto);
     const cozFonte=[...cozWa.map(p=>({p:{...p,_min:this._cozPrepMin((p.rest_pedido_itens||[]).map(i=>i.descricao))},wa:true})),
-      ...(s.orders||[]).filter(o=>o.prepIni&&!o.pronto&&o.status!=='entregue'&&!cozWa.some(w=>w.id===o.dbId)).map(o=>({wa:false,p:{id:o.dbId,prep_started_at:o.prepIni,created_at:o.criado,nome_cliente:o.waClient||(this.clientName(o.clientId)!=='—'?this.clientName(o.clientId):this.clientName(o.empresaId)),rest_pedido_itens:((o.itensDet&&o.itensDet.length)?o.itensDet.map(i=>({quantidade:i.q,descricao:i.d})):this.parseItems(o.items).map(i=>({quantidade:i.qty,descricao:i.name}))).filter(i=>!/^Taxa/i.test(i.descricao)),_min:this._cozPrepMin((o.itensDet&&o.itensDet.length)?o.itensDet.map(i=>i.d):this.parseItems(o.items).map(i=>i.name)),_ref:o.id}}))]
+      ...(s.orders||[]).filter(o=>o.prepIni&&!o.pronto&&(Date.now()-new Date(o.prepIni).getTime())<432e5&&!cozWa.some(w=>w.id===o.dbId)).map(o=>({wa:false,p:{id:o.dbId,prep_started_at:o.prepIni,created_at:o.criado,nome_cliente:o.waClient||(this.clientName(o.clientId)!=='—'?this.clientName(o.clientId):this.clientName(o.empresaId)),rest_pedido_itens:((o.itensDet&&o.itensDet.length)?o.itensDet.map(i=>({quantidade:i.q,descricao:i.d})):this.parseItems(o.items).map(i=>({quantidade:i.qty,descricao:i.name}))).filter(i=>!/^Taxa/i.test(i.descricao)),_min:this._cozPrepMin((o.itensDet&&o.itensDet.length)?o.itensDet.map(i=>i.d):this.parseItems(o.items).map(i=>i.name)),_ref:o.id}}))]
       .sort((a,b)=>new Date(a.p.prep_started_at||a.p.created_at)-new Date(b.p.prep_started_at||b.p.created_at));
-    const cozinhaTickets=cozFonte.map(({p,wa},idx)=>{ const startMs=p.prep_started_at?new Date(p.prep_started_at).getTime():new Date(p.created_at).getTime(); const total=(p._min||15)*60; const elapsed=Math.floor((Date.now()-startMs)/1000); const remain=total-elapsed; const late=remain<0; const warn=!late&&remain<=300; const color=late?'#ef4444':(warn?'#f5b301':'#22c55e'); const pct=Math.max(0,Math.min(100,(remain/total)*100));
-      return {id:p.id, order:String(idx+1), cliente:this.waNameOf(p), itens:(p.rest_pedido_itens||[]).map(i=>({texto:i.quantidade+'x '+i.descricao})), timer:kfmt(remain), statusLabel:late?'PASSOU DO TEMPO':(warn?'Finalizando':'Em preparo'), prepTxt:(p._ref?p._ref+' · ':'')+(p._min||15)+' min de preparo', color, cardStyle:'background:var(--bg-card);border:1px solid var(--border-card);border-left:5px solid '+color+';border-radius:14px;padding:16px 18px', badgeStyle:'display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:'+color, timerStyle:'font-family:\'Space Mono\',monospace;font-size:30px;font-weight:700;color:'+color+';line-height:1', barFill:'height:100%;width:'+pct+'%;background:'+color+';border-radius:99px;transition:width 1s linear', onReady:()=>this.concluirCozinha(p.id,wa,remain)}; });
+    const cozinhaTickets=cozFonte.map(({p,wa},idx)=>{ const startMs=p.prep_started_at?new Date(p.prep_started_at).getTime():new Date(p.created_at).getTime(); const total=(p._min||5)*60; const elapsed=Math.floor((Date.now()-startMs)/1000); const remain=total-elapsed; const late=remain<0; const warn=!late&&remain<=300; const color=late?'#ef4444':(warn?'#f5b301':'#22c55e'); const pct=Math.max(0,Math.min(100,(remain/total)*100));
+      return {id:p.id, order:String(idx+1), cliente:this.waNameOf(p), itens:(p.rest_pedido_itens||[]).map(i=>({texto:i.quantidade+'x '+i.descricao})), timer:kfmt(remain), statusLabel:late?'PASSOU DO TEMPO':(warn?'Finalizando':'Em preparo'), prepTxt:(p._ref?p._ref+' · ':'')+(p._min||5)+' min de preparo', color, cardStyle:'background:var(--bg-card);border:1px solid var(--border-card);border-left:5px solid '+color+';border-radius:14px;padding:16px 18px', badgeStyle:'display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:'+color, timerStyle:'font-family:\'Space Mono\',monospace;font-size:30px;font-weight:700;color:'+color+';line-height:1', barFill:'height:100%;width:'+pct+'%;background:'+color+';border-radius:99px;transition:width 1s linear', onReady:()=>this.concluirCozinha(p.id,wa,remain)}; });
     const cozinhaLate=cozinhaTickets.filter(t=>t.statusLabel==='PASSOU DO TEMPO').length;
     const motoboyQueue=s.orders.filter(o=>o.flow==='aguardando_motoboy').map(o=>({id:o.id,cliente:o.waClient||(this.clientName(o.clientId)!=='—'?this.clientName(o.clientId):this.clientName(o.empresaId)),items:o.items,totalFmt:brl(o.total),onAccept:()=>this.motoboyAccept(o.id),onRefuse:()=>this.motoboyRefuse(o.id)}));
 
