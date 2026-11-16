@@ -8866,12 +8866,15 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       trend:dTr===null?'sem vendas ontem para comparar':(dSeta(dTr)+' em relação a ontem ('+brl(dOntem)+')'),
       trendStyle:'display:inline-block;margin-top:8px;padding:3px 9px;border-radius:6px;font-family:Space Mono,monospace;font-size:11px;font-weight:700;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:'+(dTr===null?'#9cc3cf':(dTr>=0?'#4ade80':'#f87171')),
     };
+    const dLocIso=(ts)=>{ const x=new Date(ts); return isNaN(x)?'':x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); };
+    const dHojeBR=this.fmtDateBR(dHoje);
+    const dCredHoje=(s.crediarioHistory||[]).filter(h=>h.type==='Débito'&&(h.ts?dLocIso(h.ts)===dHoje:(h.iso?h.iso===dHoje:h.date===dHojeBR)));
     const dMini=[
       {label:'Balcão',cor:'#2dd4bf',lista:hojeBal,view:'lancamento',titulo:'Abrir lançamento no balcão'},
       {label:'Pedidos',cor:'#60a5fa',lista:hojePed,view:'pedidos',titulo:'Abrir pedidos'},
-      {label:'Em aberto',cor:'#fbbf24',lista:hojeAb,view:'pedidos',titulo:'Abrir pedidos em aberto'},
+      {label:'Crediário hoje',cor:'#fb923c',lista:dCredHoje,n:dCredHoje.length,v:dCredHoje.reduce((a,h)=>a+(Number(h.amount)||0),0),ir:()=>this.setState({view:'crediario',credAba:'mov'}),titulo:'Crediário lançado hoje · abrir movimentações'},
       {label:'Entregues',cor:'#22c55e',lista:hojeEnt,view:'pedidos',titulo:'Abrir pedidos'},
-    ].map(k=>({label:k.label,cor:k.cor,titulo:k.titulo,onClick:dIr(k.view),n:String(k.lista.length),valor:brl(dSoma(k.lista))}));
+    ].map(k=>({label:k.label,cor:k.cor,titulo:k.titulo,onClick:k.ir||dIr(k.view),n:String(k.n!=null?k.n:k.lista.length),valor:brl(k.v!=null?k.v:dSoma(k.lista))}));
     const dSpVals=Array.from({length:14},(_,i)=>dPorDia[dIso(13-i)]||0), dSpMax=Math.max(1,...dSpVals);
     const dSpLine='M'+dSpVals.map((v,i)=>Math.round(i*600/13)+','+Math.round(56-v/dSpMax*50)).join(' L');
     const dSpark={line:dSpLine, area:dSpLine+' L600,60 L0,60 Z', ini:this.fmtDateBR(dIso(13))};
