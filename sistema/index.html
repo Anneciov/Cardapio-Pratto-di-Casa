@@ -3871,14 +3871,14 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 
       <!-- COZINHA -->
       <sc-if value="{{ isCozinha }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
-          <div style="display:inline-flex;align-items:center;gap:9px;background:var(--bg-card);border:1px solid var(--border-card);border-radius:12px;padding:10px 16px">
-            <span style="font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:#22c55e">{{ cozinhaCount }}</span>
-            <span style="font-size:13px;color:#847a6e">em preparo</span>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          <div style="display:inline-flex;align-items:center;gap:6px;background:var(--bg-card);border:1px solid var(--border-card);border-radius:9px;padding:4px 10px;min-height:30px">
+            <span style="font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:#22c55e">{{ cozinhaCount }}</span>
+            <span style="font-size:12px;color:#847a6e">em preparo</span>
           </div>
           <sc-if value="{{ hasCozinhaLate }}" hint-placeholder-val="{{ false }}">
-            <div style="display:inline-flex;align-items:center;gap:8px;background:#2a1416;border:1px solid #5a2b2b;border-radius:12px;padding:10px 16px;color:#ef4444;font-weight:700;font-size:13px">
-              <svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v5 M12 17h.01 M12 3a9 9 0 100 18 9 9 0 000-18z"></path></svg>
+            <div style="display:inline-flex;align-items:center;gap:6px;background:#2a1416;border:1px solid #5a2b2b;border-radius:9px;padding:4px 10px;min-height:30px;color:#ef4444;font-weight:700;font-size:12px">
+              <svg width="13" height="13" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 8v5 M12 17h.01 M12 3a9 9 0 100 18 9 9 0 000-18z"></path></svg>
               {{ cozinhaLate }} passou do tempo
             </div>
           </sc-if>
