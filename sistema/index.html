@@ -6200,28 +6200,23 @@ class Component extends DCLogic {
     const NL = String.fromCharCode(10), R = (v) => this.brl(Number(v) || 0);
     const MES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
     const nome = MES[parseInt(ym.slice(5, 7), 10) - 1] + '/' + ym.slice(0, 4), atual = ym === this.todayISO().slice(0, 7);
-    const msg = (refazer ? 'Refazer a baixa de ' : 'Dar baixa em ') + nome + '?' + NL + NL +
-      'Vendas: ' + t.vendas + ' · total vendido ' + R(t.total) + NL + 'Pago na hora: ' + R(t.na_hora) + NL + 'Recebido da conta: ' + R(t.recebido_conta) + NL +
-      'Total recebido: ' + R(t.recebido_total) + NL + 'Ficou na conta: ' + R(t.na_conta) + ' (continua no Crediário)' + NL + NL +
-      (info ? 'Vendas pagas que passam para "Baixadas": ' + info.pagas + NL + 'Pendentes do crediário que continuam na lista: ' + info.pend + ' (' + R(info.pendV) + ')' + NL + NL
-        : 'As vendas pagas do mês passam para "Baixadas"; as pendentes do crediário continuam na lista até serem pagas.' + NL + NL) +
-      'Os saldos devedores dos clientes não mudam. A baixa fica guardada e não pode ser apagada.' + (atual ? NL + 'Atenção: este mês ainda não terminou.' : '');
-    if (!confirm(msg)) return;
     if (info) t = { ...t, pendentes_qtd: info.pend, pendentes_valor: info.pendV, pagas_baixadas: info.pagas };
-    const quem = this.state.userEmail || null, agora = new Date().toISOString();
-    if (quem === 'demonstração') {
-      this.setState(st => { const lista = st.histFech || [], ant = lista.find(f => String(f.mes).slice(0, 7) === ym);
-        return { histFech: [{ mes: ym + '-01', totais: t, fechado_por: ant ? ant.fechado_por : quem, fechado_em: ant ? ant.fechado_em : agora, atualizado_por: ant ? quem : null, atualizado_em: ant ? agora : null },
-          ...lista.filter(f => String(f.mes).slice(0, 7) !== ym)] }; });
-    } else {
+    const quem = this.state.userEmail || null;
+    const salvar = async () => { const agora = new Date().toISOString();
+      if (quem === 'demonstração') {
+        this.setState(st => { const lista = st.histFech || [], ant = lista.find(f => String(f.mes).slice(0, 7) === ym);
+          return { histFech: [{ mes: ym + '-01', totais: t, fechado_por: ant ? ant.fechado_por : quem, fechado_em: ant ? ant.fechado_em : agora, atualizado_por: ant ? quem : null, atualizado_em: ant ? agora : null },
+            ...lista.filter(f => String(f.mes).slice(0, 7) !== ym)] }; });
+        return ''; }
       const { error } = refazer
         ? await sb.from('rest_fechamentos').update({ totais: t, atualizado_por: quem, atualizado_em: agora }).eq('mes', ym + '-01')
         : await sb.from('rest_fechamentos').insert({ mes: ym + '-01', totais: t, fechado_por: quem });
-      if (error) { alert('Não foi possível registrar a baixa: ' + error.message); return; }
-      await this.loadFechamentos();
-    }
+      if (error) return error.message;
+      await this.loadFechamentos(); return ''; };
+    const r = await this._bxModal({ nome, refazer, atual, t, info, salvar });
+    if (!r) return;
     this.showToast('Baixa de ' + nome + (refazer ? ' refeita.' : ' registrada.'));
-    setTimeout(() => { if (this._hmRelatorioFn && confirm('Imprimir o relatório de vendas de ' + nome + '?')) this._hmRelatorioFn(ym); }, 400);
+    if (r.imprimir && this._hmRelatorioFn) setTimeout(() => this._hmRelatorioFn(ym), 400);
   };
   // ── fim carga histórico ──
   // ── Clientes: carga do resumo ──
@@ -6267,6 +6262,53 @@ class Component extends DCLogic {
     this.setState({modal:null,selectedCompany:null});
     this.showToast('Funcionário registrado em '+compName+'.'); this.loadClientesEmpresas(); };
 
+  // ── modal de confirmação da baixa mensal (mesmo visual do Histórico) ──
+  _bxModal=(o)=>new Promise((fim)=>{ const ant=document.getElementById('pdc-bxm'); if(ant) ant.remove();
+    if(!document.getElementById('pdc-bxm-css')){ const st=document.createElement('style'); st.id='pdc-bxm-css'; st.textContent='.bxm-fundo{position:fixed;inset:0;z-index:99990;background:rgba(2,10,20,.62);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px;animation:bxmF .18s ease}.bxm{width:min(640px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-card);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:bxmE .22s cubic-bezier(.2,.8,.2,1);font-family:inherit}@keyframes bxmF{from{opacity:0}}@keyframes bxmE{from{opacity:0;transform:translateY(8px) scale(.98)}}.bxm-cab{display:flex;align-items:flex-start;gap:14px;padding:20px 22px 14px}.bxm-ic{width:44px;height:44px;flex-shrink:0;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#4fc28a;background:rgba(63,157,107,.15);box-shadow:inset 0 0 0 1px rgba(63,157,107,.32)}.bxm-cab h2{margin:0;font-size:19px;font-weight:700;line-height:1.25}.bxm-cab p{margin:4px 0 0;font-size:13px;opacity:.72;line-height:1.4}.bxm-x{margin-left:auto;width:38px;height:38px;flex-shrink:0;border-radius:10px;border:1px solid var(--border-input);background:none;color:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background-color .15s ease}.bxm-x:hover{background:rgba(127,127,127,.12)}.bxm-aviso{margin:0 22px 14px;padding:9px 12px;border-radius:10px;font-size:12.5px;font-weight:600;line-height:1.4;color:#e8a35a;background:rgba(208,137,43,.12);border:1px solid rgba(208,137,43,.35);display:flex;gap:9px;align-items:center}.bxm-aviso svg{flex-shrink:0}.bxm-kpis{display:grid;grid-template-columns:repeat(3,1fr);margin:0 22px;border:1px solid var(--border-card);border-radius:14px;overflow:hidden}.bxm-k{padding:11px 14px;border-right:1px solid var(--border-card);border-bottom:1px solid var(--border-card);min-width:0}.bxm-k:nth-child(3n){border-right:none}.bxm-k:nth-child(n+4){border-bottom:none}.bxm-k span{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.72}.bxm-k b{display:block;margin-top:3px;font:700 16px/1.2 Space Mono,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bxm-k small{display:block;font-size:11.5px;opacity:.65;margin-top:2px}.bxm-v{color:#4fc28a}.bxm-l{color:#e0703a}.bxm-sec{margin:18px 22px 0;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.72}.bxm-fx{margin:8px 22px 0;display:grid;gap:8px}.bxm-f{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;border:1px solid var(--border-card)}.bxm-f>i{width:34px;height:34px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-style:normal}.bxm-f.ok>i{color:#4fc28a;background:rgba(63,157,107,.15)}.bxm-f.pe>i{color:#e0703a;background:rgba(224,112,58,.15)}.bxm-f.in>i{color:#54acbf;background:rgba(84,172,191,.15)}.bxm-f>div{flex:1;min-width:0;font-size:13.5px;line-height:1.35;font-weight:600}.bxm-f>div small{display:block;font-size:12px;font-weight:400;opacity:.7;margin-top:1px}.bxm-f>b{font:700 15px Space Mono,monospace;white-space:nowrap}.bxm-imp{display:flex;align-items:center;gap:10px;margin:16px 22px 0;font-size:13.5px;cursor:pointer;user-select:none;min-height:24px}.bxm-imp input{width:18px;height:18px;margin:0;accent-color:#26658C;cursor:pointer}.bxm-err{margin:10px 22px 0;padding:8px 12px;border-radius:10px;font-size:12.5px;color:#f19a8e;background:rgba(229,72,77,.1);border:1px solid rgba(229,72,77,.35)}.bxm-err:empty{display:none}.bxm-rod{display:flex;justify-content:flex-end;gap:10px;padding:18px 22px 20px}.bxm-b{min-height:44px;padding:0 18px;border-radius:11px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:filter .15s ease,background-color .15s ease,transform .08s ease}.bxm-b:active{transform:scale(.98)}.bxm-b0{border:1px solid var(--border-input);background:none;color:inherit}.bxm-b0:hover{background:rgba(127,127,127,.1)}.bxm-b1{border:none;background:#3f9d6b;color:#fff;font-weight:700}.bxm-b1:hover{filter:brightness(1.08)}.bxm-b1:disabled{opacity:.65;cursor:progress}.bxm button:focus-visible,.bxm input:focus-visible{outline:2px solid #54acbf;outline-offset:2px}@media (max-width:560px){.bxm-kpis{grid-template-columns:repeat(2,1fr)}.bxm-k:nth-child(n){border-right:1px solid var(--border-card);border-bottom:1px solid var(--border-card)}.bxm-k:nth-child(2n){border-right:none}.bxm-k:nth-child(n+5){border-bottom:none}.bxm-rod{flex-direction:column-reverse}.bxm-cab,.bxm-rod{padding-left:16px;padding-right:16px}.bxm-kpis,.bxm-fx,.bxm-sec,.bxm-imp,.bxm-aviso,.bxm-err{margin-left:16px;margin-right:16px}}@media (prefers-reduced-motion:reduce){.bxm,.bxm-fundo{animation:none}}[data-theme=light] .bxm-fundo{background:rgba(1,28,64,.38)}[data-theme=light] .bxm-aviso{color:#9a5a08}[data-theme=light] .bxm-v,[data-theme=light] .bxm-f.ok>i,[data-theme=light] .bxm-ic{color:#2f7d52}[data-theme=light] .bxm-l,[data-theme=light] .bxm-f.pe>i{color:#c2541d}[data-theme=light] .bxm-f.in>i{color:#26658C}[data-theme=light] .bxm-err{color:#b42318}'; document.head.appendChild(st); }
+    const R=(v)=>this.brl(Number(v)||0), t=o.t||{}, inf=o.info;
+    const ico=(d,n)=>'<svg width="'+(n||18)+'" height="'+(n||18)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+d+'"></path></svg>';
+    const I={ arq:'M21 8v13H3V8 M1 3h22v5H1z M10 12h4', x:'M18 6L6 18 M6 6l12 12', ok:'M20 6L9 17l-5-5', av:'M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z M12 9v4 M12 17h.01',
+      mv:'M5 12h14 M13 6l6 6-6 6', rel:'M12 8v4l3 2 M3 12a9 9 0 1018 0 9 9 0 00-18 0', esc:'M12 1v22 M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6' };
+    const kpi=(rot,val,cls,sub)=>'<div class="bxm-k"><span>'+rot+'</span><b class="'+(cls||'')+'">'+val+'</b>'+(sub?'<small>'+sub+'</small>':'')+'</div>';
+    const linha=(cls,ic,tx,sub,num)=>'<div class="bxm-f '+cls+'"><i>'+ico(ic,17)+'</i><div>'+tx+(sub?'<small>'+sub+'</small>':'')+'</div>'+(num?'<b>'+num+'</b>':'')+'</div>';
+    const n=(q,um,muitos)=>q+' '+(q===1?um:muitos);
+    const fundo=document.createElement('div'); fundo.className='bxm-fundo'; fundo.id='pdc-bxm';
+    fundo.innerHTML='<div class="bxm" role="dialog" aria-modal="true" aria-labelledby="bxm-t" aria-describedby="bxm-d">'+
+      '<div class="bxm-cab"><div class="bxm-ic">'+ico(I.arq,22)+'</div><div><h2 id="bxm-t">'+(o.refazer?'Refazer a baixa de ':'Dar baixa em ')+o.nome+'</h2>'+
+        '<p id="bxm-d">Fecha o mês do que foi pago e guarda os totais para o relatório de vendas.</p></div>'+
+        '<button type="button" class="bxm-x" data-a="nao" aria-label="Fechar">'+ico(I.x,18)+'</button></div>'+
+      (o.atual?'<div class="bxm-aviso">'+ico(I.av,16)+'<span>Este mês ainda não terminou. Se houver vendas depois da baixa, o Histórico avisa para refazer.</span></div>':'')+
+      '<div class="bxm-kpis">'+
+        kpi('Vendas',String(Number(t.vendas)||0),'',t.dias_com_venda?n(Number(t.dias_com_venda),'dia com venda','dias com venda'):'')+
+        kpi('Total vendido',R(t.total),'',t.ticket?'ticket médio '+R(t.ticket):'')+
+        kpi('Pago na hora',R(t.na_hora),'bxm-v','dinheiro, PIX, cartão e vale')+
+        kpi('Recebido da conta',R(t.recebido_conta),'bxm-v','pagamentos do crediário')+
+        kpi('Total recebido',R(t.recebido_total),'bxm-v','na hora + recebido')+
+        kpi('Ficou na conta',R(t.na_conta),'bxm-l','continua no Crediário')+
+      '</div>'+
+      '<div class="bxm-sec">O que acontece com as vendas</div><div class="bxm-fx">'+
+        (inf?linha('ok',I.mv,n(inf.pagas,'venda paga vai','vendas pagas vão')+' para Baixadas','Saem da lista Não baixadas da aba Vendas','')
+            :linha('ok',I.mv,'As vendas pagas do mês vão para Baixadas','Saem da lista Não baixadas da aba Vendas',''))+
+        (inf?linha('pe',I.rel,inf.pend?n(inf.pend,'pendente continua','pendentes continuam')+' na lista':'Nenhuma venda pendente do crediário',inf.pend?'Vendas no crediário que o cliente ainda não pagou':'Todas as vendas do mês estão pagas',inf.pend?R(inf.pendV):'')
+            :linha('pe',I.rel,'As pendentes do crediário continuam na lista','Até o cliente pagar',''))+
+        linha('in',I.esc,'Os saldos devedores não mudam','A baixa fica guardada e não pode ser apagada, só refeita','')+
+      '</div>'+
+      '<label class="bxm-imp"><input type="checkbox" data-k="imp" checked>Imprimir o relatório de vendas depois</label>'+
+      '<div class="bxm-err" role="alert" data-k="err"></div>'+
+      '<div class="bxm-rod"><button type="button" class="bxm-b bxm-b0" data-a="nao">Cancelar</button>'+
+        '<button type="button" class="bxm-b bxm-b1" data-a="sim">'+ico(I.ok,17)+'<span>'+(o.refazer?'Refazer baixa':'Confirmar baixa')+'</span></button></div></div>';
+    const q=(s)=>fundo.querySelector(s), bt=q('[data-a=sim]'), err=q('[data-k=err]');
+    let salvando=false;
+    const sai=(v)=>{ document.removeEventListener('keydown',tecla,true); fundo.remove(); fim(v); };
+    const sim=async()=>{ if(salvando) return; salvando=true; bt.disabled=true; bt.querySelector('span').textContent='Registrando…'; err.textContent='';
+      let e=''; try{ e=(await o.salvar())||''; }catch(x){ e=String(x&&x.message||x); }
+      if(e){ salvando=false; bt.disabled=false; bt.querySelector('span').textContent=o.refazer?'Refazer baixa':'Confirmar baixa'; err.textContent='Não foi possível registrar a baixa: '+e; return; }
+      sai({ imprimir:q('[data-k=imp]').checked }); };
+    const tecla=(e)=>{ if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); if(!salvando) sai(null); return; }
+      if(e.key==='Tab'){ const f=[...fundo.querySelectorAll('button:not(:disabled),input')]; if(!f.length) return; const a=f[0], z=f[f.length-1];
+        if(e.shiftKey&&document.activeElement===a){ e.preventDefault(); z.focus(); } else if(!e.shiftKey&&document.activeElement===z){ e.preventDefault(); a.focus(); } } };
+    fundo.addEventListener('click',(e)=>{ const b=e.target.closest('[data-a]'); if(b){ if(b.dataset.a==='sim') sim(); else if(!salvando) sai(null); return; } if(e.target===fundo&&!salvando) sai(null); });
+    document.addEventListener('keydown',tecla,true); (document.querySelector('div[data-theme]')||document.body).append(fundo); setTimeout(()=>bt.focus(),30); });
   // ── caixa de confirmação simples (com campo opcional) ──
   _dlg=(o)=>new Promise((fim)=>{ const ant=document.getElementById('pdc-dlg'); if(ant) ant.remove();
     const el=(tag,css,txt)=>{ const e=document.createElement(tag); if(css) e.style.cssText=css; if(txt!=null) e.textContent=txt; return e; };
