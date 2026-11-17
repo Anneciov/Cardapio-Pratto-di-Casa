@@ -3884,26 +3884,26 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           </sc-if>
           <div style="font-size:12.5px;color:#9a9084;margin-left:auto">Tempo de preparo do prato no cardápio (padrão 5 min) · atualiza em tempo real</div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px">
           <sc-for list="{{ cozinhaTickets }}" as="t" hint-placeholder-count="3">
             <div class="hc" style="{{ t.cardStyle }}">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-                <div style="display:flex;align-items:center;gap:10px">
-                  <div style="width:28px;height:28px;border-radius:8px;background:var(--bg-accent-soft);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;font-size:14px;color:var(--text-primary)">{{ t.order }}</div>
-                  <div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ t.cliente }}</div><div style="font-size:11.5px;color:#8fb3c0">{{ t.prepTxt }}</div></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+                <div style="display:flex;align-items:center;gap:8px;min-width:0">
+                  <div style="width:24px;height:24px;flex-shrink:0;border-radius:7px;background:var(--bg-accent-soft);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;font-size:12px;color:var(--text-primary)">{{ t.order }}</div>
+                  <div style="min-width:0"><div style="font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.cliente }}</div><div style="font-size:11px;color:#8fb3c0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.prepTxt }}</div></div>
                 </div>
                 <div style="{{ t.badgeStyle }}">{{ t.statusLabel }}</div>
               </div>
-              <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:10px">
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:7px">
                 <div style="flex:1;min-width:0">
                   <sc-for list="{{ t.itens }}" as="i" hint-placeholder-count="2">
-                    <div style="font-size:13.5px;color:var(--text-primary);padding:2px 0">{{ i.texto }}</div>
+                    <div style="font-size:12.5px;line-height:1.3;color:var(--text-primary);padding:1px 0">{{ i.texto }}</div>
                   </sc-for>
                 </div>
                 <div style="{{ t.timerStyle }}">{{ t.timer }}</div>
               </div>
-              <div style="height:6px;background:var(--border-soft);border-radius:99px;overflow:hidden;margin-bottom:12px"><div style="{{ t.barFill }}"></div></div>
-              <button onclick="{{ t.onReady }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:#2f8f57;color:#fff;border:none;border-radius:10px;padding:10px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit"><svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Concluir</button>
+              <div style="height:4px;background:var(--border-soft);border-radius:99px;overflow:hidden;margin-bottom:8px"><div style="{{ t.barFill }}"></div></div>
+              <button onclick="{{ t.onReady }}" style="width:100%;min-height:34px;display:flex;align-items:center;justify-content:center;gap:6px;background:#2f8f57;color:#fff;border:none;border-radius:8px;padding:6px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Concluir</button>
             </div>
           </sc-for>
         </div>
@@ -8560,7 +8560,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       ...(s.orders||[]).filter(o=>o.prepIni&&!o.pronto&&(Date.now()-new Date(o.prepIni).getTime())<432e5&&!cozWa.some(w=>w.id===o.dbId)).map(o=>({wa:false,p:{id:o.dbId,prep_started_at:o.prepIni,created_at:o.criado,nome_cliente:o.waClient||(this.clientName(o.clientId)!=='—'?this.clientName(o.clientId):this.clientName(o.empresaId)),rest_pedido_itens:((o.itensDet&&o.itensDet.length)?o.itensDet.map(i=>({quantidade:i.q,descricao:i.d})):this.parseItems(o.items).map(i=>({quantidade:i.qty,descricao:i.name}))).filter(i=>!/^Taxa/i.test(i.descricao)),_min:this._cozPrepMin((o.itensDet&&o.itensDet.length)?o.itensDet.map(i=>i.d):this.parseItems(o.items).map(i=>i.name)),_ref:o.id}}))]
       .sort((a,b)=>new Date(a.p.prep_started_at||a.p.created_at)-new Date(b.p.prep_started_at||b.p.created_at));
     const cozinhaTickets=cozFonte.map(({p,wa},idx)=>{ const startMs=p.prep_started_at?new Date(p.prep_started_at).getTime():new Date(p.created_at).getTime(); const total=(p._min||5)*60; const elapsed=Math.floor((Date.now()-startMs)/1000); const remain=total-elapsed; const late=remain<0; const warn=!late&&remain<=300; const color=late?'#ef4444':(warn?'#f5b301':'#22c55e'); const pct=Math.max(0,Math.min(100,(remain/total)*100));
-      return {id:p.id, order:String(idx+1), cliente:this.waNameOf(p), itens:(p.rest_pedido_itens||[]).map(i=>({texto:i.quantidade+'x '+i.descricao})), timer:kfmt(remain), statusLabel:late?'PASSOU DO TEMPO':(warn?'Finalizando':'Em preparo'), prepTxt:(p._ref?p._ref+' · ':'')+(p._min||5)+' min de preparo', color, cardStyle:'background:var(--bg-card);border:1px solid var(--border-card);border-left:5px solid '+color+';border-radius:14px;padding:16px 18px', badgeStyle:'display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:'+color, timerStyle:'font-family:\'Space Mono\',monospace;font-size:30px;font-weight:700;color:'+color+';line-height:1', barFill:'height:100%;width:'+pct+'%;background:'+color+';border-radius:99px;transition:width 1s linear', onReady:()=>this.concluirCozinha(p.id,wa,remain)}; });
+      return {id:p.id, order:String(idx+1), cliente:this.waNameOf(p), itens:(p.rest_pedido_itens||[]).map(i=>({texto:i.quantidade+'x '+i.descricao})), timer:kfmt(remain), statusLabel:late?'PASSOU DO TEMPO':(warn?'Finalizando':'Em preparo'), prepTxt:(p._ref?p._ref+' · ':'')+(p._min||5)+' min de preparo', color, cardStyle:'background:var(--bg-card);border:1px solid var(--border-card);border-left:4px solid '+color+';border-radius:12px;padding:10px 12px', badgeStyle:'display:inline-flex;align-items:center;gap:6px;flex-shrink:0;white-space:nowrap;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:'+color, timerStyle:'font-family:\'Space Mono\',monospace;font-size:21px;font-weight:700;color:'+color+';line-height:1', barFill:'height:100%;width:'+pct+'%;background:'+color+';border-radius:99px;transition:width 1s linear', onReady:()=>this.concluirCozinha(p.id,wa,remain)}; });
     const cozinhaLate=cozinhaTickets.filter(t=>t.statusLabel==='PASSOU DO TEMPO').length;
     const motoboyQueue=s.orders.filter(o=>o.flow==='aguardando_motoboy').map(o=>({id:o.id,cliente:o.waClient||(this.clientName(o.clientId)!=='—'?this.clientName(o.clientId):this.clientName(o.empresaId)),items:o.items,totalFmt:brl(o.total),onAccept:()=>this.motoboyAccept(o.id),onRefuse:()=>this.motoboyRefuse(o.id)}));
 
