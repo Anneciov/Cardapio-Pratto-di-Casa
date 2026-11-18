@@ -785,11 +785,14 @@ function avulsosTxt() {
   return GRUPOS.map(([g, , , tit]) => { const sel = listaGrupo(DADOS, g).filter(p => (PED[g] || {})[p.nome]);
     return sel.length ? `*${tit}:*\n` + sel.map(p => { const n = PED[g][p.nome]; const ob = g === 'porc' ? ((PED.porcObs || {})[p.nome] || '').trim() : ''; return `${n}× ${p.nome}${p.preco ? ' — ' + reais(n * num(p.preco)) : ''}${ob ? '\n   Obs.: ' + ob : ''}`; }).join('\n') : ''; }).filter(Boolean).join('\n\n');
 }
+// bebidas ficam fora das abas: aparecem no prato feito, no fitness e no "Monte seu pedido"
 function renderPorcoes() {
-  document.getElementById('ped-porcoes').innerHTML = GRUPOS.map(([g, tit, nota]) => { const ps = listaGrupo(DADOS, g); if (!ps.length) return ''; const n0 = qtdGrupo(g);
+  const sec = ([g, tit, nota]) => { const ps = listaGrupo(DADOS, g); if (!ps.length) return ''; const n0 = qtdGrupo(g);
     return `<section class="ped-sec" id="sec-${g}">${cabecalho('+', tit, n0 > 0, '<span class="ped-opc">opcional</span>')}<p class="ped-nota">${nota}</p>
     <div class="porc-lista">${ps.map(p => { const n = (PED[g] || {})[p.nome] || 0; return `<div class="porc${n ? ' on' : ''}">${fotoAvulso(DADOS, p.nome, 'porc-foto', 52)}<div class="porc-t"><b>${esc(p.nome)}</b><span>${p.preco ? reais(num(p.preco)) : ''}</span></div>
-      <div class="porc-q"><button type="button" data-porc="${esc(p.nome)}" data-g="${g}" data-d="-1" aria-label="Menos ${esc(p.nome)}"${n ? '' : ' disabled'}>−</button><b aria-live="polite">${n}</b><button type="button" data-porc="${esc(p.nome)}" data-g="${g}" data-d="1" aria-label="Mais ${esc(p.nome)}">+</button></div>${g === 'porc' && n ? `<input class="porc-obs" data-obs="${esc(p.nome)}" maxlength="80" placeholder="Observação (ex.: sem cenoura)" aria-label="Observação da porção ${esc(p.nome)}" value="${esc((PED.porcObs || {})[p.nome] || '')}">` : ''}</div>`; }).join('')}</div></section>`; }).join('');
+      <div class="porc-q"><button type="button" data-porc="${esc(p.nome)}" data-g="${g}" data-d="-1" aria-label="Menos ${esc(p.nome)}"${n ? '' : ' disabled'}>−</button><b aria-live="polite">${n}</b><button type="button" data-porc="${esc(p.nome)}" data-g="${g}" data-d="1" aria-label="Mais ${esc(p.nome)}">+</button></div>${g === 'porc' && n ? `<input class="porc-obs" data-obs="${esc(p.nome)}" maxlength="80" placeholder="Observação (ex.: sem cenoura)" aria-label="Observação da porção ${esc(p.nome)}" value="${esc((PED.porcObs || {})[p.nome] || '')}">` : ''}</div>`; }).join('')}</div></section>`; };
+  document.getElementById('ped-porcoes').innerHTML = GRUPOS.filter(([g]) => g !== 'bebi').map(sec).join('');
+  document.getElementById('ped-bebidas').innerHTML = GRUPOS.filter(([g]) => g === 'bebi').map(sec).join('');
 }
 function mostrarAba(aba) {
   const tem = !!DADOS && temAvulsos(DADOS); const ab = tem ? aba : 'prato'; PED.aba = ab; const el = document.getElementById('ped-abas'); el.hidden = true;
@@ -964,6 +967,7 @@ function pedidoHTML() {
         <div class="ped-qtd"><button type="button" data-qtd="-1" aria-label="Menos">−</button><b id="ped-qtd" aria-live="polite">1</b><button type="button" data-qtd="1" aria-label="Mais">+</button></div>
         <button type="button" class="ped-mais" id="ped-mais"><span aria-hidden="true">+</span> Adicionar outro prato (P, M ou G)</button></section>
       </div><div id="aba-monte" hidden><div id="ped-porcoes"></div></div>
+      <div id="ped-bebidas"></div>
       <section class="ped-sec"><div class="ped-h"><span class="ped-n">5</span><h4>Observação</h4><span class="ped-opc">opcional</span></div>
         <p class="ped-nota">Quer tirar algo do prato? Toque no que não quer.</p>
         <div class="ped-tags" id="ped-tags"></div>
@@ -1016,7 +1020,7 @@ function cabecalho(numero, titulo, feito, extra) {
 }
 function renderOpcoes() {
   const d = DADOS; const fit = PED.tam === 'F'; const es = d.especial || {};
-  if (fit) { PED.guarn = []; PED.semGuarn = false; PED.extras = []; PED.querExtra = null; } else if (PED.guarn.length < MAX_GUARN) { PED.extras = []; PED.querExtra = null; } PED.extras = PED.extras.filter(x => !PED.guarn.includes(x));
+  if (fit) { PED.guarn = []; PED.semGuarn = false; PED.querExtra = null; } else if (PED.guarn.length < MAX_GUARN) { PED.extras = []; PED.querExtra = null; } PED.extras = PED.extras.filter(x => !PED.guarn.includes(x));
   renderSacola(); renderPorcoes(); renderTags(); mostrarAba(PED.aba);
   const tams = tamanhosPedido(d).map(([k, n]) => { const p = precoPedido(d, k, PED.prato); const f = fotoTamanho(d, k);
     return `<button type="button" class="ped-tam${PED.tam === k ? ' on' : ''}" data-tam="${k}" aria-pressed="${PED.tam === k}">
@@ -1050,7 +1054,11 @@ function renderOpcoes() {
       <div class="ped-lista" role="radiogroup">${opPrato}</div></section>` : ''}
     ${(d.guarnicoes || []).length && !fit ? `<section class="ped-sec" id="sec-guarn">${cabecalho(3, fit ? 'Guarnição extra' : 'Guarnições', fit || cheio || PED.semGuarn, fit ? '<span class="ped-opc">opcional</span>' : contador)}
       <p class="ped-nota">${fit ? 'O prato fitness não vem com guarnição.' : `Escolha até ${MAX_GUARN} — já estão inclusas no prato. Não quer? Marque “Sem guarnição”.`}</p>
-      ${fit ? '' : `<div class="ped-lista${cheio || PED.semGuarn ? ' cheia' : ''}">${opGuarn}${opSem}</div>`}${extraHTML}</section>` : ''}`;
+      ${fit ? '' : `<div class="ped-lista${cheio || PED.semGuarn ? ' cheia' : ''}">${opGuarn}${opSem}</div>`}${extraHTML}</section>` : ''}
+    ${(d.guarnicoes || []).length && fit ? `<section class="ped-sec" id="sec-guarn">${cabecalho(3, 'Guarnições', true, '<span class="ped-opc">opcional</span>')}
+      <p class="ped-nota">No fitness as guarnições são à parte${ve > 0 ? `: + ${reais(ve)} cada` : ''}. Escolha quantas quiser.</p>
+      <div class="ped-lista">${d.guarnicoes.map(n => { const on = PED.extras.includes(n); return `<button type="button" class="ped-op${on ? ' on' : ''}" data-extra="${esc(n)}" role="checkbox" aria-checked="${on}"><i class="ped-ind ped-check">${on ? ICO_OK : ''}</i><span>${esc(n)}</span>${ve > 0 ? `<em class="ped-mais1">+${reais(ve)}</em>` : ''}</button>`; }).join('')}</div>
+      ${PED.extras.length && ve > 0 ? `<p class="ped-nota ped-extra-tot">${PED.extras.length} guarniç${PED.extras.length > 1 ? 'ões' : 'ão'}: + ${reais(PED.extras.length * ve)} por prato</p>` : ''}</section>` : ''}`;
   atualizarTotal();
 }
 function atualizarTotal() {
