@@ -4421,7 +4421,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
                 <sc-for list="{{ stmtRows }}" as="r" hint-placeholder-count="3">
                   <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border-soft)"><div><div style="font-size:14px;font-weight:500">{{ r.items }}</div><div style="font-size:12px;color:#9a9084;font-family:'Space Mono',monospace">{{ r.date }}</div></div><div style="font-family:'Space Mono',monospace;font-size:14px">{{ r.totalFmt }}</div></div>
                 </sc-for>
-                <sc-if value="{{ stmtEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 0;color:#9a9084;font-size:13px">Sem lançamentos em crediário.</div></sc-if>
+                <sc-if value="{{ stmtEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 0;color:#9a9084;font-size:13px">Sem compras em aberto.</div></sc-if>
               </div>
               <div style="background:var(--bg-tablehead);padding:16px 22px;display:flex;justify-content:space-between;align-items:center"><div style="font-size:13px;font-weight:600;color:#5f574d;text-transform:uppercase;letter-spacing:.05em">Total a pagar</div><div style="font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:#26658C">{{ stmtBalance }}</div></div>
             </div>
@@ -5273,13 +5273,16 @@ class Component extends DCLogic {
       case 'csmall': k.rodape(op.s); break; } }
     await k.enviar(type==='comanda'?'Comanda':type==='comprovante'?'Comprovante':'Etiqueta');
   };
-  printExtratoDireta=async(sel,rows,width)=>{ const k=this._cupomTermica(width==='58');
+  printExtratoDireta=async(sel,ext,width)=>{ const k=this._cupomTermica(width==='58');
     k.cabecalho();
-    k.al(1); k.neg(1); k.linha('EXTRATO DO CLIENTE'); k.neg(0); k.al(0);
-    k.neg(1); k.linha('Cliente: '+sel.name); k.neg(0); k.fonte('B'); k.ln(this.typeLabel(sel.type)+' - '+new Date().toLocaleDateString('pt-BR')); k.fonte('A'); k.sep();
-    if(rows.length) rows.forEach(o=>{ k.lr(o.id+(o.date?' '+o.date:''),this.brl(o.total)); if(o.items&&o.items!=='—'){ k.fonte('B'); k.item(' ',String(o.items)); k.fonte('A'); } });
-    else k.ln('Sem lançamentos em crediário.');
-    k.sep(); k.neg(1); k.alto(1); k.lr('TOTAL A PAGAR',this.brl(sel.balance)); k.alto(0); k.neg(0);
+    const mes=new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+    k.al(1); k.neg(1); k.linha('EXTRATO DE CREDIÁRIO'); k.neg(0); k.fonte('B'); k.ln(mes); k.fonte('A'); k.al(0); k.sep();
+    k.neg(1); k.linha('Cliente: '+sel.name); k.neg(0); k.fonte('B'); k.ln(this.typeLabel(sel.type)+' - emitido em '+new Date().toLocaleDateString('pt-BR')); k.fonte('A'); k.sep();
+    if(ext.linhas.length){ ext.linhas.forEach(l=>{ const d=this._dm(l.dt); k.neg(1); k.lr(d||'-',this.brl(l.v)); k.neg(0); k.fonte('B'); k.item(' ',String(l.d||'Compra')); k.fonte('A'); });
+      if(ext.abat>0.004) k.lr('Já pago','- '+this.brl(ext.abat)); }
+    else k.ln('Sem compras em aberto.');
+    k.sep(); k.neg(1); k.alto(1); k.lr('TOTAL A PAGAR',this.brl(sel.balance)); k.alto(0); k.neg(0); k.sep();
+    k.al(1); k.fonte('B'); k.ln('Pagamento via PIX (CNPJ)'); k.fonte('A'); k.neg(1); k.ln('47.765.501/0001-22'); k.neg(0); k.al(0);
     await k.qr(sel.name+' · extrato',sel.name); k.sep(); k.rodape('Obrigado pela preferência!');
     await k.enviar('Extrato');
   };
@@ -7917,14 +7920,19 @@ class Component extends DCLogic {
 
   /* ================= IMPRESSÃO DO EXTRATO ================= */
   printExtrato=async(width)=>{ const sel=this.state.clients.find(c=>c.id===this.state.selectedClient); if(!sel) return; const wmm=(width==='58')?'58mm':'80mm';
-    const rows=this.state.orders.filter(o=>(o.clientId===sel.id||o.empresaId===sel.id)&&o.payment==='crediario');
-    if(this.state.printMode==='direta') return this.printExtratoDireta(sel,rows,width);
+    const ext=await this._extratoLinhas(sel), R=(x)=>this.brl(x), E=(x)=>String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    const mes=new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+    if(this.state.printMode==='direta') return this.printExtratoDireta(sel,ext,width);
     const emp=Component.EMPRESA; const hr='<div style="border-top:1px dashed #000;margin:6px 0"></div>';
     const q=await this._qr(sel.name+' · extrato'); const qrImg=q?'<div style="text-align:center;margin:8px 0"><img src="'+q+'" style="width:110px;height:110px"><div style="font-size:10px;margin-top:2px">'+sel.name+'</div></div>':'';
     const body='<div style="text-align:center"><div style="font-weight:700;font-size:15px">'+emp.nome+'</div><div style="font-size:10px;line-height:1.3">'+emp.endereco+'</div><div style="font-size:10px">WhatsApp '+emp.whatsapp+'</div></div>'+hr+
-      '<div style="text-align:center;font-weight:700;font-size:12px;letter-spacing:.1em">EXTRATO DO CLIENTE</div><div style="font-size:11px;margin-top:2px">Cliente: <b>'+sel.name+'</b></div><div style="font-size:10px">'+this.typeLabel(sel.type)+' · '+new Date().toLocaleDateString('pt-BR')+'</div>'+hr+
-      (rows.length?rows.map(o=>'<div style="display:flex;justify-content:space-between;font-size:11px;margin:2px 0"><span>'+o.id+' '+String(o.items).slice(0,20)+'</span><span>'+this.brl(o.total)+'</span></div>').join(''):'<div style="font-size:11px">Sem lançamentos em crediário.</div>')+hr+
-      '<div style="display:flex;justify-content:space-between;font-weight:700;font-size:14px"><span>TOTAL A PAGAR</span><span>'+this.brl(sel.balance)+'</span></div>'+qrImg+hr+
+      '<div style="text-align:center;font-weight:700;font-size:12px;letter-spacing:.1em">EXTRATO DE CREDIÁRIO</div><div style="text-align:center;font-size:10px;text-transform:capitalize">'+E(mes)+'</div>'+hr+
+      '<div style="font-size:11px">Cliente: <b>'+E(sel.name)+'</b></div><div style="font-size:10px">'+this.typeLabel(sel.type)+' · emitido em '+new Date().toLocaleDateString('pt-BR')+'</div>'+hr+
+      (ext.linhas.length?ext.linhas.map(l=>{ const d=this._dm(l.dt); return '<div style="font-size:11px;margin:5px 0;line-height:1.25"><div style="display:flex;justify-content:space-between;gap:6px;font-weight:700"><span>'+(d||'—')+'</span><span style="white-space:nowrap">'+R(l.v)+'</span></div><div>'+E(l.d)+'</div></div>'; }).join('')
+        +(ext.abat>0.004?'<div style="display:flex;justify-content:space-between;gap:6px;font-size:11px;margin:4px 0"><span><b>Já pago</b></span><span style="white-space:nowrap">− '+R(ext.abat)+'</span></div>':'')
+        :'<div style="font-size:11px">Sem compras em aberto.</div>')+hr+
+      '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:6px;font-weight:700;font-size:13px"><span>TOTAL A PAGAR</span><span style="white-space:nowrap;font-size:14px">'+R(sel.balance)+'</span></div>'+hr+
+      '<div style="font-size:10.5px;text-align:center;line-height:1.35">Pagamento via PIX (CNPJ)<br><b>47.765.501/0001-22</b></div>'+qrImg+hr+
       '<div style="text-align:center;font-size:10px">Obrigado pela preferência!</div>';
     const doc='<html><head><meta charset="utf-8"><style>@page{size:'+wmm+' auto;margin:0}*{margin:0;padding:0;box-sizing:border-box}body{width:'+wmm+';padding:5mm 4mm;font-family:"Courier New",monospace;color:#000;-webkit-print-color-adjust:exact}</style></head><body>'+body+'</body></html>';
     const ifr=document.createElement('iframe'); ifr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0'; document.body.appendChild(ifr);
@@ -8025,9 +8033,10 @@ class Component extends DCLogic {
   waLink(phone,msg){ let d=this.onlyDigits(phone); if(d && !d.startsWith('55')) d='55'+d; return 'https://wa.me/'+d+'?text='+encodeURIComponent(msg); }
   // As compras saem do extrato do crediário (não da lista de pedidos, que só tem os 200 mais recentes):
   // pega os débitos do mais novo para o mais antigo até somar o saldo devedor atual.
-  async buildStatementMsg(c){
+  // linhas do extrato (mesmas da cobrança no WhatsApp): compras mais novas até somar o saldo devedor
+  _dm(d){ const x=new Date(/^\d{4}-\d{2}-\d{2}$/.test(String(d))?d+'T12:00:00':d); return isNaN(x)?'':String(x.getDate()).padStart(2,'0')+'/'+String(x.getMonth()+1).padStart(2,'0'); }
+  async _extratoLinhas(c){
     const s=this.state, emp=c.type==='Empresa', saldo=Math.round((Number(c.balance)||0)*100)/100;
-    const dm=(d)=>{ const x=new Date(/^\d{4}-\d{2}-\d{2}$/.test(String(d))?d+'T12:00:00':d); return isNaN(x)?'':String(x.getDate()).padStart(2,'0')+'/'+String(x.getMonth()+1).padStart(2,'0'); };
     const limpa=(t)=>{ t=String(t||'').trim(); if(/^Ajuste manual de saldo/i.test(t)) return 'Ajuste de saldo'; return t.replace(/^(Caixa|Pedido)\s+#?[\w-]+:\s*/i,'').replace(/\s*·\s*comanda 0+(?!\d)/i,'').trim()||'Compra'; };
     let linhas=null, abat=0;
     if(!this._demo&&saldo>0) try{
@@ -8036,6 +8045,11 @@ class Component extends DCLogic {
         for(const l of data){ if(soma>=saldo-0.004) break; const v=Number(l.valor)||0; soma=Math.round((soma+v)*100)/100; linhas.unshift({ dt:l.created_at||l.data, d:limpa(l.descricao), v }); }
         abat=Math.round((soma-saldo)*100)/100; } }catch(e){ console.error(e); linhas=null; abat=0; }
     if(!linhas) linhas=saldo>0?s.orders.filter(o=>(emp?o.empresaId===c.id:o.clientId===c.id)&&o.payment==='crediario').map(o=>({ dt:o.criado||o.iso, d:o.items, v:o.total })).reverse():[];
+    return { linhas, abat };
+  }
+  async buildStatementMsg(c){
+    const dm=(d)=>this._dm(d);
+    const { linhas, abat } = await this._extratoLinhas(c);
     const mes=new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
     let m='*Pratto di Casa* — Comida caseira\n';
     m+='Extrato de crediário • '+mes+'\n';
@@ -9090,7 +9104,11 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const act=actionMap[s.view];
 
     const sel=s.clients.find(c=>c.id===s.selectedClient);
-    const stmtRows = sel ? s.orders.filter(o=>(o.clientId===sel.id||o.empresaId===sel.id)&&o.payment==='crediario').map(o=>({items:o.items,date:o.id,totalFmt:brl(o.total)})) : [];
+    const stmtKey=sel?sel.id+':'+sel.balance:'', stmtExt=s.stmtExt&&s.stmtExt.key===stmtKey?s.stmtExt:null;
+    if(s.modal==='statement'&&sel&&this._stmtKey!==stmtKey){ this._stmtKey=stmtKey; setTimeout(()=>this._extratoLinhas(sel).then(r=>this.setState({stmtExt:{key:stmtKey,...r}})).catch(()=>{}),0); }
+    if(s.modal!=='statement') this._stmtKey=null;
+    const stmtRows = !sel ? [] : stmtExt ? [...stmtExt.linhas.map(l=>({items:l.d,date:this._dm(l.dt),totalFmt:brl(l.v)})), ...(stmtExt.abat>0.004?[{items:'Já pago',date:'',totalFmt:'− '+brl(stmtExt.abat)}]:[])]
+      : s.orders.filter(o=>(o.clientId===sel.id||o.empresaId===sel.id)&&o.payment==='crediario').map(o=>({items:o.items,date:o.id,totalFmt:brl(o.total)}));
     const stk=s.stock.find(x=>x.id===s.selectedStock);
 
     const inp='width:100%;padding:12px 14px;border:1px solid var(--border-input);border-radius:9px;font-size:15px;margin-bottom:14px;background:var(--bg-card);color:var(--text-primary)';
