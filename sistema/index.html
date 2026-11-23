@@ -7478,6 +7478,7 @@ class Component extends DCLogic {
     '/* impressora no caixa */',
     '.cx-acoes .cx-btn2{display:inline-flex;align-items:center;gap:7px}.cx-acoes .cx-btn2 svg{color:#5eead4;flex-shrink:0}',
     '.cx-impbt{color:#a9c9d4}',
+    '.cx-vdel{display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;color:#f87171;border-color:rgba(248,113,113,.35)}.cx-vdel:hover{background:rgba(248,113,113,.14);border-color:rgba(248,113,113,.6)}',
     '@media (prefers-reduced-motion:reduce){.cx-ov *{transition:none!important;animation:none!important}}'
   ].join('');
   /* ============ CAIXA (PDV): venda paga na hora ou lançada na conta do cliente; lê a comanda da balança (EAN-13) ============ */
@@ -7981,6 +7982,9 @@ class Component extends DCLogic {
     bts.forEach(b=>b.disabled=false); f.reset(); this._cxTipoCli(f); msg(nome+' cadastrado.','ok'); setTimeout(()=>this._cxListaCli(),50); f.nome.focus(); };
 
   // ── Aba Vendas de hoje (fechamento) ──
+  _cxExcluirVenda=async(id)=>{ const o=(this.state.orders||[]).find(x=>x.dbId===id); if(!o) return;
+    await this.excluirPedido(o); if(!this._demo){ try{ await this.loadPedidos(); }catch(e){} }
+    if(this._cxOv&&this._cx&&this._cx.aba==='hoje') this._cxDesenhar(); };
   _cxVendasHoje=()=>this.state.orders.filter(o=>o.today&&o.kind==='balcao');
   _cxHtmlHoje=()=>{ const E=this._cxEsc, L=this._cxVendasHoje(), tot=L.reduce((a,o)=>a+o.total,0);
     const por={}; L.forEach(o=>{ por[o.payment]=por[o.payment]||{n:0,v:0}; por[o.payment].n++; por[o.payment].v+=o.total; });
@@ -7994,7 +7998,7 @@ class Component extends DCLogic {
           (formas.length?formas.map(k=>'<div class="cx-frow"><span>'+E(this._cxPagLabel[k])+'</span><small>'+por[k].n+(por[k].n===1?' venda':' vendas')+'</small><b>'+this.brl(por[k].v)+'</b></div>').join('')+'<div class="cx-frow tot"><span>Total</span><small></small><b>'+this.brl(tot)+'</b></div>':'<div class="cx-vazio">Nenhuma venda no caixa hoje.</div>')+
         '</div>'+
         '<div class="cx-box"><div class="cx-lbl" style="margin-bottom:8px">Vendas</div><div class="cx-lv">'+
-          (L.length?L.map(o=>'<div class="cx-vrow"><b class="cx-ref">'+E(o.id)+'</b><div class="cx-cli-tx"><b>'+E(nomeDe(o))+'</b><small>'+E(o.items)+'</small></div><span class="cx-forma">'+E(this.payLabel(o.payment))+'</span><b class="cx-vt">'+this.brl(o.total)+'</b><button class="cx-btn2" data-cx="reimprimir" data-id="'+E(o.dbId)+'">Cupom</button></div>').join(''):'<div class="cx-vazio">As vendas do caixa aparecem aqui.</div>')+
+          (L.length?L.map(o=>'<div class="cx-vrow"><b class="cx-ref">'+E(o.id)+'</b><div class="cx-cli-tx"><b>'+E(nomeDe(o))+'</b><small>'+E(o.items)+'</small></div><span class="cx-forma">'+E(this.payLabel(o.payment))+'</span><b class="cx-vt">'+this.brl(o.total)+'</b><button class="cx-btn2" data-cx="reimprimir" data-id="'+E(o.dbId)+'">Cupom</button>'+((this._demo||this.state.ehAdmin)?'<button class="cx-btn2 cx-vdel" data-cx="excluirvenda" data-id="'+E(o.dbId)+'" title="Excluir venda '+E(o.id)+'" aria-label="Excluir venda '+E(o.id)+'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18 M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2 M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6 M10 11v6 M14 11v6"></path></svg></button>':'')+'</div>').join(''):'<div class="cx-vazio">As vendas do caixa aparecem aqui.</div>')+
         '</div></div>'+
       '</div></div>'; };
 
@@ -8089,6 +8093,7 @@ class Component extends DCLogic {
     if(a==='salvarcfg') return this._cxSalvarCfg(el);
     if(a==='salvarcli') return this._cxSalvarCli(el,!!(sub&&sub.dataset.usar));
     if(a==='reimprimir') return this._cxReimprimir(el.dataset.id);
+    if(a==='excluirvenda') return this._cxExcluirVenda(el.dataset.id);
     if(a==='fechamento') return this._cxFechamento(); };
   // ── fim do caixa ──
   _otimizarFoto=async(file)=>{ try{ if(!file||!/^image[/](jpeg|png|webp)$/.test(file.type)) return file; const bmp=await createImageBitmap(file); const k=Math.min(1, 1000/Math.max(bmp.width,bmp.height)); const w=Math.max(1,Math.round(bmp.width*k)), h=Math.max(1,Math.round(bmp.height*k)); const cv=document.createElement('canvas'); cv.width=w; cv.height=h; cv.getContext('2d').drawImage(bmp,0,0,w,h); if(bmp.close) bmp.close(); const blob=await new Promise(ok=>cv.toBlob(ok,'image/webp',0.82)); if(!blob||blob.type!=='image/webp'||blob.size>=file.size) return file; const base=String(file.name||'foto').split('.')[0].replace(/[^a-zA-Z0-9_-]/g,'_')||'foto'; return new File([blob], base+'.webp', {type:'image/webp'}); }catch(e){ console.warn('[foto] enviada sem otimizar', e); return file; } };
@@ -8661,7 +8666,11 @@ class Component extends DCLogic {
     if(!(await this.confirmarExclusao(o, ref, cn&&cn!=='—'?cn:''))) return;
     if(this._demo){ this.setState(s=>({ orders:(s.orders||[]).filter(x=>x.dbId!==o.dbId), pedidoDetalhe:null })); this.showToast('Pedido '+ref+' excluído.'); return; }
     const { error } = await sb.from('rest_pedidos').delete().eq('id', o.dbId); if(error){ this.showToast('Não excluiu: '+error.message); return; }
-    if(o.payment==='crediario'&&(o.origem!=='site'||o.clientId)&&(o.clientId||o.empresaId)) await this.addClientBalance(o.clientId||o.empresaId, -(o.total||0)); // pedido do site (convênio) não mexe no saldo
+    if(o.payment==='crediario'&&(o.origem!=='site'||o.clientId)&&(o.clientId||o.empresaId)){ await this.addClientBalance(o.clientId||o.empresaId, -(o.total||0)); // pedido do site (convênio) não mexe no saldo
+      try{ const nr=String(ref).replace(/^#/,''), col=o.clientId?'cliente_id':'empresa_id', rx=new RegExp('#'+nr.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?!\\d)');
+        const { data:ls } = await sb.from('rest_crediario_lancamentos').select('id,descricao').eq(col, o.clientId||o.empresaId).eq('tipo','debito').ilike('descricao','%#'+nr+'%');
+        const ids=(ls||[]).filter(l=>rx.test(l.descricao||'')).map(l=>l.id); if(ids.length) await sb.from('rest_crediario_lancamentos').delete().in('id',ids);
+        if(this.loadCrediarioHistory) this.loadCrediarioHistory(); }catch(e){ console.error(e); } }
     this.setState({ pedidoDetalhe:null }); this.showToast('Pedido '+ref+' excluído.'); this.loadPedidos(); this.loadClientesEmpresas(); };
   removeBalcao=async(o)=>{
     await sb.from('rest_pedidos').delete().eq('id', o.dbId);
