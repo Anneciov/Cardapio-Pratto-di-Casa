@@ -6044,6 +6044,7 @@ class Component extends DCLogic {
     }));
     this.setState({ clients: [...empresas, ...pessoas] });
     this._cliKey = null; // a tela Clientes recarrega o resumo
+    if (this._autoConvenio && this._ultConv) setTimeout(() => this._autoConvenio(this._ultConv), 0);
     if (this._convPub !== undefined) { const ant = this._convPub; if (JSON.stringify(empresas.map(c=>String(c.name||'').trim()).filter(Boolean).sort((a,b)=>a.localeCompare(b,'pt-BR'))) !== ant) this.agendarPublicacao(); }
   };
 
@@ -6104,6 +6105,8 @@ class Component extends DCLogic {
     this._pedOnlineIds = new Set(novosOnline.map(o => o.id));
     this._cliKey = null;
     this.setState({ orders });
+    this._ultConv = (data||[]).map(o => ({ dbId:o.id, ref:o.numero_ref||'', origem:o.origem, emp:o.empresa_id, cli:o.cliente_id, forma:o.forma_pagamento, total:Number(o.total)||0, obs:o.observacoes||'', nome:o.nome_cliente||'', tel:o.telefone_contato||'', status:o.status, itens:(o.rest_pedido_itens||[]).map(i=>i.quantidade+'x '+i.descricao).join(', ') }));
+    if (this._autoConvenio) this._autoConvenio(this._ultConv);
     if (this.state.pedMes) this.loadPedidosMes();
     if (this._dashDia !== today) this.loadDashStats();
     this._hmKeyRes = null; this._hmKeyVen = null; // o Histórico mensal recarrega se estiver aberto
@@ -6402,6 +6405,28 @@ class Component extends DCLogic {
     document.addEventListener('keydown',tecla,true); (document.querySelector('div[data-theme]')||document.body).append(fundo); setTimeout(()=>{ const x=q('.mvd-x'); if(x) x.focus(); },30);
     try{ D=await this._bxClientes(ym); desenha(); }catch(e){ console.error(e); q('[data-k=corpo]').innerHTML='<div class="bxc-vz">Não foi possível calcular: '+E(e.message||e)+'</div>'; } };
   // ── conta do crediário de quem compra: funcionário cuja empresa paga lança na empresa ──
+  // ── pedido do convênio (site/WhatsApp) de funcionário cadastrado: lança sozinho na conta da empresa ──
+  // marca o pedido ("já lançado na conta da empresa") antes de lançar, para não lançar duas vezes (mesmo com dois computadores abertos)
+  _autoConvenio=async(lista)=>{ if(this._demo||typeof sb==='undefined'||!sb||!Array.isArray(lista)) return 0; this._convFeitos=this._convFeitos||new Set();
+    if(this._convRodando) return 0; this._convRodando=true; let n=0;
+    const dig=(x)=>String(x||'').replace(/\D/g,'').slice(-8), nrm=(x)=>String(x||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
+    try{ const cls=this.state.clients||[];
+      for(const o of lista){ if(!o||!o.dbId||this._convFeitos.has(o.dbId)) continue;
+        if(!(o.origem==='site'||o.origem==='whatsapp')||o.forma!=='crediario'||!o.emp||o.status==='cancelado'||o.status==='recusado'||!(o.total>0)) continue;
+        if(/j[aá] lan[cç]ado na conta/i.test(o.obs||'')){ this._convFeitos.add(o.dbId); continue; }
+        const E0=cls.find(c=>c.id===o.emp&&c.type==='Empresa'); if(!E0) continue;
+        const F=cls.filter(c=>c.type==='Funcionario'&&c.company===E0.name);
+        const f=o.cli?F.find(x=>x.id===o.cli):F.find(x=>(dig(x.phone).length===8&&dig(x.phone)===dig(o.tel))||(nrm(x.name)&&nrm(x.name)===nrm(o.nome)));
+        if(!f) continue; this._convFeitos.add(o.dbId);
+        const obs=[String(o.obs||'').trim(),'Já lançado na conta da empresa'].filter(Boolean).join(' · ');
+        const { data:up, error } = await sb.from('rest_pedidos').update({ cliente_id:f.id, observacoes:obs }).eq('id',o.dbId).or('observacoes.is.null,observacoes.not.ilike."*lan*ado na conta*"').select('id');
+        if(error||!up||!up.length) continue;
+        const ref=String(o.ref||'').replace(/^#/,'');
+        await this.addClientBalance(E0.id,o.total); E0.balance=Math.round(((Number(E0.balance)||0)+o.total)*100)/100;
+        await this.logCrediario(f.id,E0.id,'debito',o.total,'Pedido #'+ref+(o.itens?': '+o.itens:'')); n++; }
+    }catch(e){ console.error(e); } finally{ this._convRodando=false; }
+    if(n){ this.showToast(n===1?'1 pedido do convênio lançado na conta da empresa.':n+' pedidos do convênio lançados na conta da empresa.'); this.loadClientesEmpresas(); if(this.loadCrediarioHistory) this.loadCrediarioHistory(); setTimeout(()=>this.loadPedidos(),400); }
+    return n; };
   _contaCred=(c)=>{ if(!c) return { cliente_id:null, empresa_id:null, quem:null }; if(c.type==='Empresa') return { cliente_id:null, empresa_id:c.id, quem:c };
     const inf=this._cxCobranca(c); return { cliente_id:c.id, empresa_id:inf.emp?inf.emp.id:null, quem:inf.quem||c }; };
   // ── Empresas: detalhe da empresa com funcionários, gastos e pedidos do mês ──
@@ -6423,10 +6448,10 @@ class Component extends DCLogic {
         L=(s.crediarioHistory||[]).filter(h=>h.who===e.id&&String(h.iso||hoje).slice(0,7)===ym).map(h=>({ tipo:h.type==='Débito'?'debito':(h.type==='Pagamento'?'pagamento':'outro'), v:Number(h.amount)||0 })); return; }
       const ou='empresa_id.eq.'+e.id+(ids.length?',cliente_id.in.('+ids.join(',')+')':'');
       const [p,l]=await Promise.all([
-        sb.from('rest_pedidos').select('id,numero_ref,data,created_at,total,forma_pagamento,status,cliente_id,empresa_id,nome_cliente,telefone_contato,rest_pedido_itens(descricao,quantidade)').or(ou).gte('data',ini).lte('data',fim).order('created_at',{ascending:false}).limit(3000),
+        sb.from('rest_pedidos').select('id,numero_ref,data,created_at,total,forma_pagamento,status,origem,observacoes,cliente_id,empresa_id,nome_cliente,telefone_contato,rest_pedido_itens(descricao,quantidade)').or(ou).gte('data',ini).lte('data',fim).order('created_at',{ascending:false}).limit(3000),
         sb.from('rest_crediario_lancamentos').select('tipo,valor').eq('empresa_id',e.id).gte('data',ini).lte('data',fim).limit(5000) ]);
       if(p.error) throw p.error;
-      P=(p.data||[]).map(o=>({ id:o.id, ref:String(o.numero_ref||'').replace(/^#/,''), data:o.data, ts:o.created_at||'', total:Number(o.total)||0, forma:o.forma_pagamento, status:o.status, cli:o.cliente_id, emp:o.empresa_id, nome:o.nome_cliente||'', tel:o.telefone_contato||'', itens:(o.rest_pedido_itens||[]).map(i=>i.quantidade+'x '+i.descricao).join(', ') }));
+      P=(p.data||[]).map(o=>({ id:o.id, ref:String(o.numero_ref||'').replace(/^#/,''), data:o.data, ts:o.created_at||'', total:Number(o.total)||0, forma:o.forma_pagamento, status:o.status, origem:o.origem, obs:o.observacoes||'', cli:o.cliente_id, emp:o.empresa_id, nome:o.nome_cliente||'', tel:o.telefone_contato||'', itens:(o.rest_pedido_itens||[]).map(i=>i.quantidade+'x '+i.descricao).join(', ') }));
       L=(l.data||[]).map(x=>({ tipo:x.tipo, v:Number(x.valor)||0 })); };
     const fundo=document.createElement('div'); fundo.className='mvd-fundo'; fundo.id='pdc-emd';
     fundo.innerHTML='<div class="mvd" role="dialog" aria-modal="true" aria-labelledby="emd-t" style="--c:#54acbf;width:min(1120px,100%)"><div class="mvd-cab" data-k="cab"></div><div data-k="kpis"></div><div class="mvd-corpo" data-k="corpo"><div class="mvd-load"><i></i>Carregando…</div></div>'+
@@ -6467,7 +6492,8 @@ class Component extends DCLogic {
         '<div class="mvd-col"><section class="mvd-sec"><h3>'+ico(I.bag,14)+E(tituloP)+'<em>'+vis.length+' · '+R(vis.reduce((a,o)=>a+o.total,0))+'</em></h3>'+
           (selF?'<div style="margin:-4px 0 8px"><button type="button" class="dia-ch" data-f="" style="min-height:28px;padding:0 10px;border-radius:999px;border:1px solid var(--border-input);background:none;color:inherit;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer">← Ver todos os pedidos</button></div>':'')+
           '<div class="emd-lista">'+(vis.length?vis.map(lp).join(''):'<div class="emd-vz">Nenhum pedido neste mês.</div>')+'</div></section></div>'; };
-    const recarrega=async()=>{ carregando=true; desenha(); q('[data-k=corpo]').innerHTML='<div class="mvd-load"><i></i>Carregando…</div>'; try{ await carrega(); carregando=false; desenha(); }catch(x){ console.error(x); q('[data-k=corpo]').innerHTML='<div class="emd-vz">Não foi possível carregar: '+E(x.message||x)+'</div>'; } };
+    const recarrega=async(jaLancou)=>{ carregando=true; desenha(); q('[data-k=corpo]').innerHTML='<div class="mvd-load"><i></i>Carregando…</div>'; try{ await carrega(); carregando=false; desenha();
+        if(!jaLancou&&this._autoConvenio){ const n=await this._autoConvenio(P.map(o=>({ dbId:o.id, ref:o.ref, origem:o.origem, emp:o.emp, cli:o.cli, forma:o.forma, total:o.total, obs:o.obs, nome:o.nome, tel:o.tel, status:o.status, itens:o.itens }))); if(n&&document.body.contains(fundo)){ await this.loadClientesEmpresas(); recarrega(true); } } }catch(x){ console.error(x); q('[data-k=corpo]').innerHTML='<div class="emd-vz">Não foi possível carregar: '+E(x.message||x)+'</div>'; } };
     const transferir=async(id)=>{ const f=funcs().find(x=>x.id===id), E0=emp(); if(!f||!(f.balance>0.004)) return; const v=Math.round(f.balance*100)/100;
       const ok=await this._dlg({ titulo:'Passar saldo para a empresa?', texto:f.name+' tem '+R(v)+' na conta dele, mas quem paga é '+E0.name+'.\nO valor sai da conta do funcionário e vai para a conta da empresa (fica registrado no extrato dos dois).', botao:'Passar '+R(v) }); if(!ok) return;
       if(this._demo){ this.setState(s=>({ clients:(s.clients||[]).map(c=>c.id===f.id?{...c,balance:0}:(c.id===E0.id?{...c,balance:(c.balance||0)+v}:c)) })); this.showToast('Saldo passado para '+E0.name+'.'); desenha(); return; }
@@ -6485,7 +6511,7 @@ class Component extends DCLogic {
       const ok=await this._dlg({ titulo:'Cadastrar funcionário?', texto:nome+(tel?' · '+tel:'')+'\nVai ser funcionário de '+e.name+' (a empresa paga). Os pedidos dele aparecem no nome dele.', botao:'Cadastrar' }); if(!ok) return;
       if(this._demo){ this.setState(s=>({ clients:[...(s.clients||[]),{ id:'f'+Date.now(), name:nome, type:'Funcionario', company:e.name, payer:'Empresa', phone:tel, email:'', balance:0 }] })); this.showToast(nome+' cadastrado em '+e.name+'.'); setTimeout(desenha,50); return; }
       const { error } = await sb.from('rest_clientes').insert({ nome, telefone:tel||null, tipo_cliente:'Funcionario', empresa_id:e.id, quem_paga:'Empresa' }); if(error){ this.showToast('Não cadastrou: '+error.message); return; }
-      await this.loadClientesEmpresas(); this.showToast(nome+' cadastrado em '+e.name+'.'); desenha(); };
+      await this.loadClientesEmpresas(); this.showToast(nome+' cadastrado em '+e.name+'.'); recarrega(); };
     fundo.addEventListener('click',(ev)=>{ const tr=ev.target.closest('[data-tr]'); if(tr){ ev.stopPropagation(); transferir(tr.dataset.tr); return; }
       const rm=ev.target.closest('[data-rm]'); if(rm){ ev.stopPropagation(); tirar(rm.dataset.rm); return; }
       const cd=ev.target.closest('[data-cad]'); if(cd){ ev.stopPropagation(); cadastrar(cd.dataset.cad); return; }
