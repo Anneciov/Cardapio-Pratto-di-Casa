@@ -3682,13 +3682,12 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
         <sc-if value="{{ histAbaDia }}" hint-placeholder-val="{{ false }}">
           <div class="cr-info" style="margin:0 0 6px">Dia a dia de {{ histPer.label }} · valores em R$ · domingos em vermelho.</div>
           <div class="cr-tabela"><div class="cr-in" style="min-width:1040px">
-            <div class="cr-g hm-gd cr-cab"><div>Data</div><div>Dia</div><div class="n">Vendas</div><div class="n">Total</div><div class="n">Dinheiro</div><div class="n">PIX</div><div class="n">Débito</div><div class="n">Crédito</div><div class="n">Vale-ref.</div><div class="n">Na conta</div><div class="n">Recebido conta</div><div class="n">Motoboys</div><div class="n">Ticket</div><div>Gráfico</div></div>
+            <div class="cr-g hm-gd cr-cab"><div>Data</div><div>Dia</div><div class="n">Vendas</div><div class="n">Dinheiro</div><div class="n">PIX</div><div class="n">Débito</div><div class="n">Crédito</div><div class="n">Vale-ref.</div><div class="n">Na conta</div><div class="n">Recebido conta</div><div class="n">Motoboys</div><div class="n">Total</div><div class="n">Ticket</div><div>Gráfico</div></div>
             <sc-for list="{{ histDiaRows }}" as="d" hint-placeholder-count="8">
               <div class="{{ d.cls }}" role="button" tabindex="0" onclick="{{ d.onOpen }}" title="Ver e editar tudo deste dia">
                 <div class="cr-mono">{{ d.data }}</div>
                 <div class="hm-dia">{{ d.dia }}</div>
                 <div class="n cr-mono">{{ d.qtd }}</div>
-                <div class="n cr-mono cr-forte">{{ d.total }}</div>
                 <div class="n cr-mono">{{ d.dinheiro }}</div>
                 <div class="n cr-mono">{{ d.pix }}</div>
                 <div class="n cr-mono">{{ d.debito }}</div>
@@ -3697,12 +3696,13 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
                 <div class="n cr-mono" style="color:#e0703a">{{ d.conta }}</div>
                 <div class="n cr-mono" style="color:#3f9d6b">{{ d.rec }}</div>
                 <div class="n cr-mono">{{ d.mot }}</div>
+                <div class="n cr-mono cr-forte">{{ d.total }}</div>
                 <div class="n cr-mono">{{ d.ticket }}</div>
                 <div class="hm-bar" title="{{ d.pct }} do maior dia"><div style="width:{{ d.barra }}"></div></div>
               </div>
             </sc-for>
             <sc-if value="{{ noHistDia }}" hint-placeholder-val="{{ false }}"><div class="cr-vazio">Nenhuma venda neste período.</div></sc-if>
-            <div class="cr-g hm-gd cr-rod"><div>Total</div><div></div><div class="n">{{ histDiaTot.qtd }}</div><div class="n">{{ histDiaTot.total }}</div><div class="n">{{ histDiaTot.dinheiro }}</div><div class="n">{{ histDiaTot.pix }}</div><div class="n">{{ histDiaTot.debito }}</div><div class="n">{{ histDiaTot.credito }}</div><div class="n">{{ histDiaTot.vr }}</div><div class="n">{{ histDiaTot.conta }}</div><div class="n">{{ histDiaTot.rec }}</div><div class="n">{{ histDiaTot.mot }}</div><div class="n">{{ histDiaTot.ticket }}</div><div></div></div>
+            <div class="cr-g hm-gd cr-rod"><div>Total</div><div></div><div class="n">{{ histDiaTot.qtd }}</div><div class="n">{{ histDiaTot.dinheiro }}</div><div class="n">{{ histDiaTot.pix }}</div><div class="n">{{ histDiaTot.debito }}</div><div class="n">{{ histDiaTot.credito }}</div><div class="n">{{ histDiaTot.vr }}</div><div class="n">{{ histDiaTot.conta }}</div><div class="n">{{ histDiaTot.rec }}</div><div class="n">{{ histDiaTot.mot }}</div><div class="n">{{ histDiaTot.total }}</div><div class="n">{{ histDiaTot.ticket }}</div><div></div></div>
           </div></div>
         </sc-if>
 
@@ -9114,8 +9114,8 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const hmTabela=()=>{
       if(hmAba==='baixas') return { titulo:'Baixas mensais (do que foi pago)', cab:['Mês','Baixa em','Por','Vendas','Total vendido','Pago na hora','Recebido da conta','Total recebido','Ficou na conta','Motoboys','Caixa líquido','Situação'],
         linhas:histBaixaRows.map(r=>[r.mes,r.quando,r.por,r.vendas,r.total,r.naHora,r.rec,r.recTotal,r.naConta,r.mot,r.caixa,r.situacao]) };
-      if(hmAba==='dia') return { titulo:'Histórico por dia · '+histPer.label, cab:['Data','Dia','Vendas',...hmCabV,'Ticket'],
-        linhas:[...histDiaRows.map(r=>[r.data,r.dia,r.qtd,...hmLinV(r),r.ticket]),['Total','',histDiaTot.qtd,...hmLinV(histDiaTot),histDiaTot.ticket]] };
+      if(hmAba==='dia') return { titulo:'Histórico por dia · '+histPer.label, cab:['Data','Dia','Vendas',...hmCabV.slice(1),'Total','Ticket'],
+        linhas:[...histDiaRows.map(r=>[r.data,r.dia,r.qtd,...hmLinV(r).slice(1),r.total,r.ticket]),['Total','',histDiaTot.qtd,...hmLinV(histDiaTot).slice(1),histDiaTot.total,histDiaTot.ticket]] };
       if(hmAba==='vendas') return { titulo:'Vendas · '+histPer.label, cab:['Data','Hora','Nº','Cliente','Origem','Itens','Forma','Status','Valor'],
         linhas:[...histVenRows.map(r=>[r.data,r.hora,r.ref,r.cliente,r.origem,r.itens,r.forma,r.status,r.valor]),['Total','','',histVenTot.qtd,'','','','',histVenTot.total]] };
       return { titulo:'Histórico por mês · 12 meses até '+histPer.ateMes, cab:['Mês','Vendas','Total vendido','Ticket','Dinheiro','PIX','Débito','Crédito','Vale-refeição','Na conta','Recebido da conta','Motoboys','Caixa líquido','Baixa'],
