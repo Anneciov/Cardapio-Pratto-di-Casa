@@ -154,6 +154,7 @@ aside nav>div:hover{background:#04315a!important;transform:scale(1.03)}
 .cdp-acoes{gap:9px!important;padding:12px 14px 14px!important}.cdp-acoes-bts{flex-wrap:nowrap!important;gap:7px!important}.cdp-ab{min-height:36px!important;padding:0 12px!important;font-size:12.5px!important;gap:6px!important;border-radius:10px!important}.cdp-ab svg{width:14px;height:14px}.cdp-acoes-sep{height:22px!important}.cdp-ab.pri{box-shadow:0 8px 16px -12px rgba(255,122,26,.9)!important}@media (max-width:1100px){.cdp-banner-tx+.azul-flutua{width:240px;transform:scale(.7);transform-origin:right center}.cdp-acoes-bts{flex-wrap:wrap!important}}
 
 .tab-com-rod{border-bottom-left-radius:0!important;border-bottom-right-radius:0!important;margin-bottom:0!important}.tab-rod{margin-bottom:0}
+.tab-esq{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.tab-exp{display:inline-flex;align-items:center;gap:5px;min-height:30px;padding:0 10px;border-radius:8px;border:1px solid var(--border-input);background:none;color:var(--text-primary);font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;transition:background-color .15s ease,border-color .15s ease}.tab-exp:hover{background:rgba(127,127,127,.12)}.tab-exp[aria-pressed=true]{background:#26658C;border-color:#26658C;color:#fff}.tab-exp:focus-visible{outline:2px solid #54ACBF;outline-offset:2px}.tab-exp svg{flex-shrink:0}
 .tab-rod .ped-lim button.on{background:#26658C;border-color:#26658C;color:#fff}.tab-rod .ped-pag button.off{opacity:.35;cursor:default}
 .cr-tabela::-webkit-scrollbar{width:12px;height:12px}.cr-tabela::-webkit-scrollbar-track{background:rgba(127,208,223,.06)}
 .cr-tabela::-webkit-scrollbar-thumb{background:rgba(127,208,223,.45);border-radius:8px;border:3px solid transparent;background-clip:padding-box}.cr-tabela::-webkit-scrollbar-corner{background:transparent}
@@ -8401,6 +8402,9 @@ class Component extends DCLogic {
 
   // ── Pedidos: filtro de mês, páginas e altura da tabela ──
   // ── tabelas (Clientes, Crediário, Histórico): mesmo padrão de Pedidos — altura até o fim da tela, rolagem só na tabela, linhas por página ──
+  _topoFixo=()=>{ let h=0; const x=Math.round(window.innerWidth*0.6); let el=document.elementFromPoint(x,4);
+    while(el&&el!==document.body){ const cs=getComputedStyle(el); if(cs.position==='sticky'||cs.position==='fixed'){ h=el.getBoundingClientRect().bottom; break; } el=el.parentElement; }
+    return Math.max(0,Math.min(160,Math.round(h))); };
   _tabsAjusta=()=>{ const est=this._tabEst||(this._tabEst=new WeakMap());
     document.querySelectorAll('.tab-rod').forEach(f=>{ const a=f.previousElementSibling; if(!a||!a.classList.contains('cr-tabela')) f.remove(); });
     const tabs=[...document.querySelectorAll('.cr-tabela')].filter(t=>t.offsetParent);
@@ -8410,20 +8414,26 @@ class Component extends DCLogic {
       rows.forEach((r,k)=>{ const v=(k>=st.pag*st.lim&&k<(st.pag+1)*st.lim)?'':'none'; if(r.style.display!==v) r.style.display=v; });
       let rod=t.nextElementSibling; if(!rod||!rod.classList.contains('tab-rod')){
         rod=document.createElement('div'); rod.className='ped-rod tab-rod';
-        rod.innerHTML='<span class="ped-rod-info"></span><div class="ped-lim" role="group" aria-label="Linhas por página"><span>Linhas</span>'+[25,50,100,200].map(n=>'<button type="button" data-lim="'+n+'">'+n+'</button>').join('')+'</div><div class="ped-pag"><button type="button" data-pg="-1" aria-label="Página anterior">‹</button><span></span><button type="button" data-pg="1" aria-label="Próxima página">›</button></div>';
+        rod.innerHTML='<div class="tab-esq"><button type="button" class="tab-exp" data-exp="1" aria-pressed="false" title="Expandir a tabela para ocupar a tela"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6 M9 21H3v-6 M21 3l-7 7 M3 21l7-7"></path></svg><span>Expandir</span></button><span class="ped-rod-info"></span></div><div class="ped-lim" role="group" aria-label="Linhas por página"><span>Linhas</span>'+[25,50,100,200].map(n=>'<button type="button" data-lim="'+n+'">'+n+'</button>').join('')+'</div><div class="ped-pag"><button type="button" data-pg="-1" aria-label="Página anterior">‹</button><span></span><button type="button" data-pg="1" aria-label="Próxima página">›</button></div>';
         rod.addEventListener('click',(e)=>{ const b=e.target.closest('button'); if(!b) return; const s=est.get(t); if(!s) return;
+          if(b.dataset.exp){ s.exp=!s.exp; this._tabsAjusta(); setTimeout(()=>{ if(s.exp){ t.scrollIntoView({block:'start',behavior:'smooth'}); return; }
+            let el=t.parentElement; while(el&&el!==document.body){ if(el.scrollHeight>el.clientHeight+2&&/(auto|scroll)/.test(getComputedStyle(el).overflowY)){ el.scrollTo({top:0,behavior:'smooth'}); break; } el=el.parentElement; } window.scrollTo({top:0,behavior:'smooth'}); },40); return; }
           if(b.dataset.lim){ s.lim=Number(b.dataset.lim); s.pag=0; } else { const np=s.pag+Number(b.dataset.pg); if(np<0||np>=Number(rod.dataset.pags||1)) return; s.pag=np; }
           t.scrollTop=0; this._tabsAjusta(); });
         t.after(rod); }
       rod.dataset.pags=String(pags); const tw=Math.round(t.getBoundingClientRect().width)+'px'; if(rod.style.width!==tw) rod.style.width=tw;
       const info=tot?('Mostrando '+(st.pag*st.lim+1)+'–'+Math.min(tot,(st.pag+1)*st.lim)+' de '+tot):'Nenhuma linha';
       const si=rod.querySelector('.ped-rod-info'); if(si.textContent!==info) si.textContent=info;
+      const be=rod.querySelector('[data-exp]'); if(be&&be.getAttribute('aria-pressed')!==String(!!st.exp)){ const on=!!st.exp; be.setAttribute('aria-pressed',String(on)); be.querySelector('span').textContent=on?'Recolher':'Expandir';
+        be.title=on?'Voltar a tabela ao tamanho normal':'Expandir a tabela para ocupar a tela'; be.querySelector('path').setAttribute('d',on?'M4 14h6v6 M20 10h-6V4 M14 10l7-7 M3 21l7-7':'M15 3h6v6 M9 21H3v-6 M21 3l-7 7 M3 21l7-7'); t.classList.toggle('tab-exp-on',on); }
       const sp=rod.querySelector('.ped-pag span'), pt='Página '+(st.pag+1)+' de '+pags; if(sp.textContent!==pt) sp.textContent=pt;
       rod.querySelectorAll('[data-lim]').forEach(b=>{ const on=Number(b.dataset.lim)===st.lim; if(b.classList.contains('on')!==on){ b.classList.toggle('on',on); b.setAttribute('aria-pressed',String(on)); } });
       const [ant,prox]=rod.querySelectorAll('[data-pg]'); const aOff=st.pag<=0, pOff=st.pag>=pags-1; if(ant.classList.contains('off')!==aOff) ant.classList.toggle('off',aOff); if(prox.classList.contains('off')!==pOff) prox.classList.toggle('off',pOff);
       if(!t.classList.contains('tab-com-rod')) t.classList.add('tab-com-rod'); });
     // altura: a última tabela visível vai até o fim da tela; as outras só limitam a altura
-    tabs.forEach((t,i)=>{ const rod=t.nextElementSibling; const top=t.getBoundingClientRect().top+window.scrollY; const h=Math.max(240,Math.floor(window.innerHeight-top-(rod&&rod.classList.contains('tab-rod')?rod.offsetHeight:0)-20));
+    tabs.forEach((t,i)=>{ const rod=t.nextElementSibling; const sx=est.get(t);
+      if(sx&&sx.exp){ const topo=this._topoFixo(), hx=Math.max(240,Math.floor(window.innerHeight-topo-(rod&&rod.classList.contains('tab-rod')?rod.offsetHeight:0)-20)); t.style.scrollMarginTop=(topo+8)+'px'; if(t.style.height!==hx+'px'){ t.style.height=hx+'px'; t.style.maxHeight='none'; } return; }
+      const top=t.getBoundingClientRect().top+window.scrollY; const h=Math.max(240,Math.floor(window.innerHeight-top-(rod&&rod.classList.contains('tab-rod')?rod.offsetHeight:0)-20));
       if(i===tabs.length-1){ const fo=this._tabFolga||(this._tabFolga={}), ch=((t.querySelector('.cr-cab')||{}).textContent||'').slice(0,60), hh=Math.max(240,h-(fo[ch]||0));
         if(t.style.height!==hh+'px'){ t.style.height=hh+'px'; t.style.maxHeight='none'; }
         const exc=document.scrollingElement.scrollHeight-window.innerHeight; if(exc>0&&hh>240&&(fo[ch]||0)<300) fo[ch]=(fo[ch]||0)+exc; }
