@@ -3353,7 +3353,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
         </div>
         <div class="emp-grade">
           <sc-for list="{{ empresaCards }}" as="e" hint-placeholder-count="2">
-            <div class="emp-card">
+            <div class="emp-card cr-clic cr-movlin" role="button" tabindex="0" onclick="{{ e.onOpen }}" title="Ver funcionários, gastos e pedidos da empresa">
               <div class="emp-topo">
                 <span class="emp-ic"><svg width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18 M5 21V5l7-3v19 M12 21V9l7 2v10"></path></svg></span>
                 <div class="emp-id"><div class="emp-nome" title="{{ e.name }}">{{ e.name }}</div><div class="emp-fone"><svg width="12" height="12" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2"></path></svg><span>{{ e.contact }}</span></div></div>
@@ -6394,6 +6394,83 @@ class Component extends DCLogic {
       const a=t.dataset.a; if(a==='fechar') return sai(); if(!D) return; if(a==='csv') return exportar(); if(a==='imp') return imprimir(); });
     document.addEventListener('keydown',tecla,true); (document.querySelector('div[data-theme]')||document.body).append(fundo); setTimeout(()=>{ const x=q('.mvd-x'); if(x) x.focus(); },30);
     try{ D=await this._bxClientes(ym); desenha(); }catch(e){ console.error(e); q('[data-k=corpo]').innerHTML='<div class="bxc-vz">Não foi possível calcular: '+E(e.message||e)+'</div>'; } };
+  // ── conta do crediário de quem compra: funcionário cuja empresa paga lança na empresa ──
+  _contaCred=(c)=>{ if(!c) return { cliente_id:null, empresa_id:null, quem:null }; if(c.type==='Empresa') return { cliente_id:null, empresa_id:c.id, quem:c };
+    const inf=this._cxCobranca(c); return { cliente_id:c.id, empresa_id:inf.emp?inf.emp.id:null, quem:inf.quem||c }; };
+  // ── Empresas: detalhe da empresa com funcionários, gastos e pedidos do mês ──
+  _empModal=async(e,ym0)=>{ const ant=document.getElementById('pdc-emd'); if(ant) ant.remove(); this._mvdCss();
+    if(!document.getElementById('pdc-emd-css')){ const st=document.createElement('style'); st.id='pdc-emd-css'; st.textContent='.emd-mes{display:flex;align-items:center;gap:6px}.emd-mes b{min-width:150px;text-align:center;font-size:13.5px}.emd-mes button{width:32px;height:32px;border-radius:8px;border:1px solid var(--border-input);background:none;color:inherit;cursor:pointer;font-size:16px}.emd-mes button:disabled{opacity:.35;cursor:default}.emd-k{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;padding:14px 20px 0}.emd-f{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;width:100%;padding:9px 8px;border:none;border-top:1px solid var(--border-soft);background:none;color:inherit;text-align:left;font-family:inherit;cursor:pointer;border-radius:9px;transition:background-color .15s ease}.emd-f:first-of-type{border-top:none}.emd-f:focus-visible{outline:2px solid #54acbf;outline-offset:-2px}.emd-f:hover{background:rgba(127,127,127,.09)}.emd-f.on{background:color-mix(in srgb,#54acbf 16%,transparent);box-shadow:inset 3px 0 0 #54acbf}.emd-f b{font-size:14px}.emd-f small{display:block;font-size:12px;opacity:.7;margin-top:1px}.emd-f .v{text-align:right;font:700 14px Space Mono,monospace;white-space:nowrap}.emd-f .v small{font-family:inherit;font-weight:500}.emd-tag{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:999px;border:1px solid currentColor;margin-left:6px;vertical-align:1px}.emd-tr{grid-column:1/-1;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;color:#e0703a;padding:2px 0 0}.emd-tr button{min-height:28px;padding:0 10px;border-radius:8px;border:1px solid rgba(224,112,58,.5);background:none;color:#e0703a;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer}.emd-vz{font-size:13px;opacity:.7;padding:8px 2px}.emd-lista{max-height:52vh;overflow:auto;margin:0 -6px;padding:0 6px}@media (max-width:820px){.emd-lista{max-height:none}}'; document.head.appendChild(st); }
+    const R=(v)=>this.brl(Number(v)||0), E=(x)=>String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+    const ico=(d,n)=>'<svg width="'+(n||15)+'" height="'+(n||15)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+d+'"></path></svg>';
+    const I={ build:'M3 21h18 M5 21V5l7-3v19 M12 21V9l7 2v10', x:'M18 6L6 18 M6 6l12 12', users:'M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2 M9 11a4 4 0 100-8 4 4 0 000 8z M23 21v-2a4 4 0 00-3-3.9 M16 3.1a4 4 0 010 7.8', bag:'M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z M3 6h18 M16 10a4 4 0 01-8 0',
+      add:'M3 20a7 7 0 0112.5-4.3 M10 11a4 4 0 100-8 4 4 0 000 8z M19 14v6 M16 17h6', doc:'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z M14 2v6h6 M16 13H8 M16 17H8', phone:'M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2' };
+    const COR={dinheiro:'#3f9d6b',pix:'#14b8a6',debito:'#5b8def',credito:'#8b5cf6',vr:'#d0892b',crediario:'#e0703a'};
+    const MES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'], hoje=this.todayISO();
+    let ym=ym0||hoje.slice(0,7), P=[], L=[], selF='', carregando=true;
+    const funcs=()=>(this.state.clients||[]).filter(c=>c.type==='Funcionario'&&c.company===e.name);
+    const emp=()=>(this.state.clients||[]).find(c=>c.id===e.id)||e;
+    const fimDe=(m)=>{ const [y,mm]=m.split('-').map(Number); return m+'-'+String(new Date(Date.UTC(y,mm,0)).getUTCDate()).padStart(2,'0'); };
+    const carrega=async()=>{ const F=funcs(), ids=F.map(f=>f.id), ini=ym+'-01', fim=fimDe(ym);
+      if(this._demo){ const s=this.state;
+        P=(s.orders||[]).filter(o=>(o.empresaId===e.id||ids.includes(o.clientId))&&String(o.iso||hoje).slice(0,7)===ym).map(o=>({ id:o.dbId, ref:String(o.id||'').replace(/^#/,''), data:o.iso||hoje, ts:o.criado||'', total:Number(o.total)||0, forma:o.payment, status:o.status, cli:o.clientId||null, emp:o.empresaId||null, itens:o.items||'' }));
+        L=(s.crediarioHistory||[]).filter(h=>h.who===e.id&&String(h.iso||hoje).slice(0,7)===ym).map(h=>({ tipo:h.type==='Débito'?'debito':(h.type==='Pagamento'?'pagamento':'outro'), v:Number(h.amount)||0 })); return; }
+      const ou='empresa_id.eq.'+e.id+(ids.length?',cliente_id.in.('+ids.join(',')+')':'');
+      const [p,l]=await Promise.all([
+        sb.from('rest_pedidos').select('id,numero_ref,data,created_at,total,forma_pagamento,status,cliente_id,empresa_id,rest_pedido_itens(descricao,quantidade)').or(ou).gte('data',ini).lte('data',fim).order('created_at',{ascending:false}).limit(3000),
+        sb.from('rest_crediario_lancamentos').select('tipo,valor').eq('empresa_id',e.id).gte('data',ini).lte('data',fim).limit(5000) ]);
+      if(p.error) throw p.error;
+      P=(p.data||[]).map(o=>({ id:o.id, ref:String(o.numero_ref||'').replace(/^#/,''), data:o.data, ts:o.created_at||'', total:Number(o.total)||0, forma:o.forma_pagamento, status:o.status, cli:o.cliente_id, emp:o.empresa_id, itens:(o.rest_pedido_itens||[]).map(i=>i.quantidade+'x '+i.descricao).join(', ') }));
+      L=(l.data||[]).map(x=>({ tipo:x.tipo, v:Number(x.valor)||0 })); };
+    const fundo=document.createElement('div'); fundo.className='mvd-fundo'; fundo.id='pdc-emd';
+    fundo.innerHTML='<div class="mvd" role="dialog" aria-modal="true" aria-labelledby="emd-t" style="--c:#54acbf;width:min(1120px,100%)"><div class="mvd-cab" data-k="cab"></div><div data-k="kpis"></div><div class="mvd-corpo" data-k="corpo"><div class="mvd-load"><i></i>Carregando…</div></div>'+
+      '<div class="mvd-rod"><button type="button" class="mvd-b" data-a="func">'+ico(I.add,15)+'Registrar funcionário</button><button type="button" class="mvd-b" data-a="extrato">'+ico(I.doc,15)+'Extrato da empresa</button><button type="button" class="mvd-b mvd-b1" data-a="fechar">Fechar</button></div></div>';
+    const q=(x)=>fundo.querySelector(x);
+    const desenha=()=>{ const E0=emp(), F=funcs(), nomeMes=MES[parseInt(ym.slice(5,7),10)-1]+' de '+ym.slice(0,4);
+      const ok=P.filter(o=>o.status!=='cancelado'&&o.status!=='recusado'), tot=ok.reduce((a,o)=>a+o.total,0), conta=ok.filter(o=>o.forma==='crediario').reduce((a,o)=>a+o.total,0);
+      const pago=L.filter(x=>x.tipo==='pagamento'||x.tipo==='fatura_fechada').reduce((a,x)=>a+x.v,0);
+      const porF=(id)=>ok.filter(o=>o.cli===id), semF=ok.filter(o=>!o.cli||!F.some(f=>f.id===o.cli));
+      q('[data-k=cab]').innerHTML='<div class="mvd-ic">'+ico(I.build,22)+'</div><div class="mvd-tt"><h2 id="emd-t">'+E(E0.name)+'</h2><p>'+(E0.phone?'<span>'+ico(I.phone,14)+E(E0.phone)+'</span>':'')+'<span>'+ico(I.users,14)+F.length+' funcionário'+(F.length===1?'':'s')+'</span>'+
+        '<span class="emd-mes"><button type="button" data-a="ant" aria-label="Mês anterior">‹</button><b>'+E(nomeMes)+'</b><button type="button" data-a="prox" aria-label="Próximo mês"'+(ym>=hoje.slice(0,7)?' disabled':'')+'>›</button></span></p></div>'+
+        '<div class="mvd-val"><small>Saldo devedor</small><b style="color:'+(E0.balance>0?'#d0892b':'#3f9d6b')+'">'+R(E0.balance)+'</b></div><button type="button" class="mvd-x" data-a="fechar" aria-label="Fechar">'+ico(I.x,18)+'</button>';
+      const k=(r,v,c,sub)=>'<div class="mvd-k"><span>'+r+'</span><b'+(c?' style="color:'+c+'"':'')+'>'+v+'</b>'+(sub?'<span style="margin-top:2px;text-transform:none;letter-spacing:0;font-weight:500">'+sub+'</span>':'')+'</div>';
+      q('[data-k=kpis]').innerHTML='<div class="emd-k">'+k('Gasto no mês',R(tot),'',ok.length+' pedido'+(ok.length===1?'':'s'))+k('Na conta da empresa',R(conta),'#e0703a')+k('Pago à vista',R(tot-conta),'#3f9d6b')+k('Pagamentos da empresa',R(pago),'#3f9d6b','no mês')+k('Saldo devedor hoje',R(E0.balance),E0.balance>0?'#d0892b':'#3f9d6b')+'</div>';
+      if(carregando) return;
+      const linhaF=(f)=>{ const L2=porF(f.id), g=L2.reduce((a,o)=>a+o.total,0), gc=L2.filter(o=>o.forma==='crediario').reduce((a,o)=>a+o.total,0), ep=f.payer==='Empresa';
+        return '<div class="emd-f'+(selF===f.id?' on':'')+'" role="button" tabindex="0" data-f="'+E(f.id)+'"><span><b>'+E(f.name)+'</b><span class="emd-tag" style="color:'+(ep?'#54acbf':'#8a94a6')+'">'+(ep?'empresa paga':'paga próprio')+'</span><small>'+E(f.phone||'sem telefone')+' · '+L2.length+' pedido'+(L2.length===1?'':'s')+' no mês</small></span>'+
+          '<span class="v">'+R(g)+'<small>'+(gc>0.004?R(gc)+' na conta':'—')+'</small></span>'+
+          (ep&&f.balance>0.004?'<span class="emd-tr">Saldo de '+R(f.balance)+' na conta do próprio funcionário <button type="button" data-tr="'+E(f.id)+'">Passar para a empresa</button></span>':(!ep&&f.balance>0.004?'<span class="emd-tr" style="color:#8a94a6">Deve '+R(f.balance)+' na conta dele (paga próprio)</span>':''))+'</div>'; };
+      const vis=selF==='__sem'?semF:(selF?porF(selF):ok);
+      const nomeDe=(o)=>{ const f=F.find(x=>x.id===o.cli); return f?f.name:(o.cli?this.clientName(o.cli):E0.name); };
+      const lp=(o)=>{ const cor=COR[o.forma]||'#8a94a6', d=String(o.data||''), hr=o.ts?new Date(o.ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';
+        return '<div class="mvd-h" style="cursor:default"><small>'+d.slice(8,10)+'/'+d.slice(5,7)+'<i>'+E(hr)+(o.ref?' · #'+E(o.ref):'')+'</i></small><div><em style="color:'+cor+'">'+E(this.payLabel(o.forma))+'</em>'+E(nomeDe(o))+'<span class="dia-sub" style="display:block;font-size:12px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+E(o.itens||'—')+'</span></div><b style="color:'+cor+'">'+R(o.total)+'</b></div>'; };
+      const tituloP=selF==='__sem'?'Pedidos em nome da empresa':(selF?'Pedidos de '+(F.find(f=>f.id===selF)||{}).name:'Pedidos do mês');
+      q('[data-k=corpo]').innerHTML='<div class="mvd-col"><section class="mvd-sec"><h3>'+ico(I.users,14)+'Funcionários<em>gasto no mês</em></h3>'+
+          (F.length?F.slice().sort((a,b)=>porF(b.id).reduce((x,o)=>x+o.total,0)-porF(a.id).reduce((x,o)=>x+o.total,0)).map(linhaF).join(''):'<div class="emd-vz">Nenhum funcionário registrado. Use "Registrar funcionário" aqui embaixo.</div>')+
+          (semF.length?'<div class="emd-f'+(selF==='__sem'?' on':'')+'" role="button" tabindex="0" data-f="__sem"><span><b>Pedidos em nome da empresa</b><small>sem funcionário identificado · '+semF.length+' pedido'+(semF.length===1?'':'s')+'</small></span><span class="v">'+R(semF.reduce((a,o)=>a+o.total,0))+'</span></div>':'')+'</section></div>'+
+        '<div class="mvd-col"><section class="mvd-sec"><h3>'+ico(I.bag,14)+E(tituloP)+'<em>'+vis.length+' · '+R(vis.reduce((a,o)=>a+o.total,0))+'</em></h3>'+
+          (selF?'<div style="margin:-4px 0 8px"><button type="button" class="dia-ch" data-f="" style="min-height:28px;padding:0 10px;border-radius:999px;border:1px solid var(--border-input);background:none;color:inherit;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer">← Ver todos os pedidos</button></div>':'')+
+          '<div class="emd-lista">'+(vis.length?vis.map(lp).join(''):'<div class="emd-vz">Nenhum pedido neste mês.</div>')+'</div></section></div>'; };
+    const recarrega=async()=>{ carregando=true; desenha(); q('[data-k=corpo]').innerHTML='<div class="mvd-load"><i></i>Carregando…</div>'; try{ await carrega(); carregando=false; desenha(); }catch(x){ console.error(x); q('[data-k=corpo]').innerHTML='<div class="emd-vz">Não foi possível carregar: '+E(x.message||x)+'</div>'; } };
+    const transferir=async(id)=>{ const f=funcs().find(x=>x.id===id), E0=emp(); if(!f||!(f.balance>0.004)) return; const v=Math.round(f.balance*100)/100;
+      const ok=await this._dlg({ titulo:'Passar saldo para a empresa?', texto:f.name+' tem '+R(v)+' na conta dele, mas quem paga é '+E0.name+'.\nO valor sai da conta do funcionário e vai para a conta da empresa (fica registrado no extrato dos dois).', botao:'Passar '+R(v) }); if(!ok) return;
+      if(this._demo){ this.setState(s=>({ clients:(s.clients||[]).map(c=>c.id===f.id?{...c,balance:0}:(c.id===E0.id?{...c,balance:(c.balance||0)+v}:c)) })); this.showToast('Saldo passado para '+E0.name+'.'); desenha(); return; }
+      try{ await this.addClientBalance(f.id,-v); await this.addClientBalance(E0.id,v);
+        await this.logCrediario(f.id,null,'fatura_fechada',v,'Saldo passado para a conta da empresa '+E0.name);
+        await this.logCrediario(f.id,E0.id,'debito',v,'Saldo de '+f.name+' passado para a empresa');
+        await this.loadClientesEmpresas(); if(this.loadCrediarioHistory) this.loadCrediarioHistory(); this.showToast('Saldo de '+f.name+' passado para '+E0.name+'.'); desenha(); }
+      catch(x){ this.showToast('Não deu: '+(x.message||x)); } };
+    const sai=()=>{ document.removeEventListener('keydown',tecla,true); fundo.remove(); };
+    const tecla=(ev)=>{ if(document.getElementById('pdc-dlg')||document.getElementById('pdc-ficha')) return; if(ev.key==='Escape'){ ev.preventDefault(); ev.stopPropagation(); sai(); return; }
+      if((ev.key==='Enter'||ev.key===' ')&&ev.target&&ev.target.classList&&ev.target.classList.contains('emd-f')){ ev.preventDefault(); ev.target.click(); } };
+    fundo.addEventListener('click',(ev)=>{ const tr=ev.target.closest('[data-tr]'); if(tr){ ev.stopPropagation(); transferir(tr.dataset.tr); return; }
+      const t=ev.target.closest('[data-f],[data-a]'); if(!t){ if(ev.target===fundo) sai(); return; }
+      if(t.dataset.f!=null){ selF=selF===t.dataset.f?'':t.dataset.f; desenha(); return; }
+      const a=t.dataset.a; if(a==='fechar') return sai();
+      if(a==='ant'||a==='prox'){ const [y,m]=ym.split('-').map(Number), d=new Date(Date.UTC(y,m-1+(a==='ant'?-1:1),1)); ym=d.toISOString().slice(0,7); selF=''; recarrega(); return; }
+      if(a==='func'){ sai(); this.setState({modal:'funcEmpresa',selectedCompany:e.name}); return; }
+      if(a==='extrato'){ sai(); this.setState({selectedClient:e.id,modal:'statement'}); return; } });
+    document.addEventListener('keydown',tecla,true); (document.querySelector('div[data-theme]')||document.body).append(fundo); setTimeout(()=>{ const x=q('.mvd-x'); if(x) x.focus(); },30);
+    recarrega(); };
   _mvdCss=()=>{
     if(!document.getElementById('pdc-mvd-css')){ const st=document.createElement('style'); st.id='pdc-mvd-css'; st.textContent='.mvd-fundo{position:fixed;inset:0;z-index:99985;background:rgba(2,10,20,.62);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px;animation:mvdF .18s ease}.mvd{width:min(1040px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-card);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:mvdE .22s cubic-bezier(.2,.8,.2,1);font-family:inherit;overflow:hidden}@keyframes mvdF{from{opacity:0}}@keyframes mvdE{from{opacity:0;transform:translateY(8px) scale(.985)}}.mvd-cab{display:flex;align-items:flex-start;gap:14px;padding:18px 20px 16px;border-bottom:1px solid var(--border-card)}.mvd-ic{width:46px;height:46px;flex-shrink:0;border-radius:13px;display:flex;align-items:center;justify-content:center;color:var(--c);background:color-mix(in srgb,var(--c) 15%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 35%,transparent)}.mvd-tt{flex:1;min-width:0}.mvd-tt h2{margin:0;font-size:19px;font-weight:700;line-height:1.25;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.mvd-tag{font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;border:1px solid currentColor;line-height:1.5}.mvd-tt p{margin:4px 0 0;font-size:13px;opacity:.75;display:flex;gap:12px;flex-wrap:wrap}.mvd-tt p span{display:inline-flex;align-items:center;gap:5px}.mvd-val{text-align:right;flex-shrink:0}.mvd-val small{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.7}.mvd-val b{display:block;font:700 26px/1.15 Space Mono,monospace;color:var(--c);white-space:nowrap}.mvd-x{width:38px;height:38px;flex-shrink:0;border-radius:10px;border:1px solid var(--border-input);background:none;color:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background-color .15s ease}.mvd-x:hover{background:rgba(127,127,127,.12)}.mvd-corpo{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px;padding:16px 20px;overflow:auto;min-height:0}.mvd-col{display:flex;flex-direction:column;gap:16px;min-width:0}.mvd-sec{border:1px solid var(--border-card);border-radius:14px;padding:12px 14px;min-width:0}.mvd-sec>h3{margin:0 0 10px;font-size:11.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#7fb3c4;display:flex;align-items:center;gap:7px}.mvd-sec>h3 svg{flex-shrink:0}.mvd-sec>h3 em{margin-left:auto;font-style:normal;font-weight:600;letter-spacing:0;text-transform:none;opacity:.8}.mvd-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px}.mvd-g.um{grid-template-columns:1fr}.mvd-f{min-width:0}.mvd-f span{display:block;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;opacity:.62}.mvd-f b{display:block;margin-top:2px;font-size:14px;font-weight:600;overflow-wrap:anywhere}.mvd-f b.m{font-family:Space Mono,monospace}.mvd-f.lg{grid-column:1/-1}.mvd-saldo{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:10px 12px;border-radius:10px;background:rgba(127,127,127,.08);font:700 14px Space Mono,monospace}.mvd-saldo i{font-style:normal;opacity:.6}.mvd-saldo small{font-family:inherit;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;opacity:.62;width:100%}.mvd-its{width:100%;border-collapse:collapse;font-size:13px}.mvd-its th{text-align:left;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;opacity:.62;padding:4px 6px;border-bottom:1px solid var(--border-card)}.mvd-its td{padding:6px;border-bottom:1px solid var(--border-soft);vertical-align:top}.mvd-its .n{text-align:right;white-space:nowrap;font-family:Space Mono,monospace}.mvd-its tfoot td{font-weight:700;border-bottom:none}.mvd-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:12px}.mvd-k{padding:8px 10px;border-radius:10px;background:rgba(127,127,127,.08);min-width:0}.mvd-k span{display:block;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;opacity:.62}.mvd-k b{display:block;margin-top:2px;font:700 14px Space Mono,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mvd-hist{max-height:340px;overflow:auto;margin:0 -6px;padding:0 6px}.mvd-h{display:grid;grid-template-columns:76px minmax(0,1fr) auto;gap:4px 10px;align-items:center;width:100%;padding:8px;border:none;border-radius:9px;background:none;color:inherit;text-align:left;font-family:inherit;cursor:pointer;transition:background-color .15s ease}.mvd-h+.mvd-h{border-top:1px solid var(--border-soft)}.mvd-h:hover{background:rgba(127,127,127,.09)}.mvd-h.on{background:color-mix(in srgb,#54acbf 16%,transparent);box-shadow:inset 3px 0 0 #54acbf}.mvd-h small{font:600 11.5px Space Mono,monospace;opacity:.8}.mvd-h small i{display:block;font-style:normal;opacity:.7}.mvd-h div{min-width:0;font-size:13px;line-height:1.3}.mvd-h div em{font-style:normal;font-size:11px;font-weight:700;margin-right:6px}.mvd-h b{font:700 13px Space Mono,monospace;text-align:right;white-space:nowrap}.mvd-h b i{display:block;font-style:normal;font-size:11px;font-weight:600;opacity:.6}.mvd-vz{font-size:13px;opacity:.7;padding:6px 0}.mvd-load{font-size:13px;opacity:.7;display:flex;align-items:center;gap:8px}.mvd-load i{width:14px;height:14px;border-radius:50%;border:2px solid rgba(127,127,127,.3);border-top-color:#54acbf;animation:mvdG .8s linear infinite}@keyframes mvdG{to{transform:rotate(360deg)}}.mvd-rod{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding:12px 20px 16px;border-top:1px solid var(--border-card)}.mvd-b{min-height:36px;padding:0 14px;border-radius:9px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border-input);background:none;color:inherit;transition:background-color .15s ease}.mvd-b:hover{background:rgba(127,127,127,.1)}.mvd-b1{background:#26658C;border-color:#26658C;color:#fff}.mvd-b1:hover{background:#2f7a9e}.mvd button:focus-visible{outline:2px solid #54acbf;outline-offset:2px}@media (max-width:820px){.mvd-corpo{grid-template-columns:1fr}.mvd-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.mvd-cab{flex-wrap:wrap}.mvd-val{order:3;width:100%;text-align:left}}@media (max-width:480px){.mvd-g{grid-template-columns:1fr}.mvd-rod .mvd-b{flex:1 1 auto;justify-content:center}}@media (prefers-reduced-motion:reduce){.mvd,.mvd-fundo,.mvd-load i{animation:none}}[data-theme=light] .mvd-sec>h3{color:#26658C}[data-theme=light] .mvd-fundo{background:rgba(1,28,64,.38)}'; document.head.appendChild(st); }
   };
@@ -6524,8 +6601,8 @@ class Component extends DCLogic {
       try{
         for(const i of mudouIt){ const { error } = await sb.from('rest_pedido_itens').update({ quantidade:i.q2, valor_total:i.v2, valor_unitario:Math.round(i.v2/i.q2*100)/100 }).eq('id',i.id); if(error) throw error; }
         if(Object.keys(upd).length){ const { error } = await sb.from('rest_pedidos').update(upd).eq('id',v.id); if(error) throw error; }
-        const cc=v.cli||v.emp;
-        if(v.forma==='crediario'&&cc&&Math.abs(dif)>=0.005&&(v.origem!=='site'||v.cli)){ await this.addClientBalance(cc,dif); await this.logCrediario(v.cli||null, v.cli?null:v.emp, 'debito', dif, 'Ajuste de valor — Pedido #'+v.ref); }
+        const cc=v.emp||v.cli;
+        if(v.forma==='crediario'&&cc&&Math.abs(dif)>=0.005&&(v.origem!=='site'||v.cli)){ await this.addClientBalance(cc,dif); await this.logCrediario(v.cli||null, v.emp||null, 'debito', dif, 'Ajuste de valor — Pedido #'+v.ref); }
       }catch(e){ ocupado(false); return erro('Não salvou: '+(e.message||e)); }
       recarrega('Venda'+(v.ref?' #'+v.ref:'')+' atualizada.'); };
     const pedidoDe=(v)=>({ dbId:v.id, id:'#'+v.ref, total:v.total, payment:v.forma, origem:v.origem, clientId:v.cli, empresaId:v.emp, waClient:v.nome, itensDet:v.itens.map(i=>({q:i.q,d:i.d,v:i.v})), items:v.itens.map(i=>i.q+'x '+i.d).join(', ')||'—' });
@@ -6695,8 +6772,8 @@ class Component extends DCLogic {
     if(e1){ this.showToast('Erro: '+e1.message); return; }
     const { error:e2 } = await sb.from('rest_pedidos').update({ total }).eq('id', o.dbId);
     if(e2){ this.showToast('Erro ao atualizar o total: '+e2.message); return; }
-    const cid=o.clientId||o.empresaId;
-    if(o.payment==='crediario'&&cid&&(o.origem!=='site'||o.clientId)){ await this.addClientBalance(cid, diff); await this.logCrediario(o.clientId||null, o.clientId?null:o.empresaId, 'debito', diff, 'Ajuste de valor — Pedido '+o.id+' ('+it.d+')'); }
+    const cid=o.empresaId||o.clientId;
+    if(o.payment==='crediario'&&cid&&(o.origem!=='site'||o.clientId)){ await this.addClientBalance(cid, diff); await this.logCrediario(o.clientId||null, o.empresaId||null, 'debito', diff, 'Ajuste de valor — Pedido '+o.id+' ('+it.d+')'); }
     this.setState(aplica); this.showToast('Valor alterado para '+this.brl(novo)+'. Total do pedido: '+this.brl(total)+'.'); this.loadPedidos(); this.loadClientesEmpresas(); };
   // ── alterar o saldo devedor direto na tabela do Crediário ──
   editarSaldo=async(c)=>{ if(!c) return; const atual=Math.round((Number(c.balance)||0)*100)/100;
@@ -8458,28 +8535,28 @@ class Component extends DCLogic {
 
   submitOrderDynamic=async()=>{ const s=this.state; if(!s.orderClientId&&s.orderPayment==='crediario'){ this.showToast('Para lançar no crediário, escolha o cliente.'); return; } if(!s.orderItems.length){ this.showToast('Adicione ao menos um item.'); return; }
     const total=s.orderItems.reduce((a,i)=>a+i.price*i.qty,0); const pay=s.orderPayment; const cid=s.orderClientId;
-    const c=s.clients.find(x=>x.id===cid); const isEmp=c&&c.type==='Empresa';
+    const c=s.clients.find(x=>x.id===cid); const isEmp=c&&c.type==='Empresa', kc=this._contaCred(c);
     const { data: pedido, error } = await sb.from('rest_pedidos').insert({
-      numero_ref:this.nextNumeroRef(), cliente_id:isEmp?null:cid, empresa_id:isEmp?cid:null,
+      numero_ref:this.nextNumeroRef(), cliente_id:c?kc.cliente_id:null, empresa_id:c?kc.empresa_id:null,
       origem:'manual', status:'aberto', total, forma_pagamento:pay,
     }).select('id').single();
     if(error){ this.showToast('Erro: '+error.message); return; }
     for(const it of s.orderItems){
       await sb.from('rest_pedido_itens').insert({ pedido_id:pedido.id, descricao:it.name, quantidade:it.qty, valor_unitario:it.price, valor_total:it.price*it.qty });
     }
-    if(pay==='crediario'){ await this.addClientBalance(cid, total); await this.logCrediario(isEmp?null:cid, isEmp?cid:null, 'debito', total, 'Pedido '+(s.orderItems.map(i=>i.name).join(', '))); }
+    if(pay==='crediario'){ await this.addClientBalance(kc.quem?kc.quem.id:cid, total); await this.logCrediario(kc.cliente_id, kc.empresa_id, 'debito', total, 'Pedido '+(s.orderItems.map(i=>i.name).join(', '))); }
     this.setState({ modal:null, orderClientSearch:'', orderClientId:null, orderItems:[], orderCustomName:'', orderCustomPrice:'' });
     this.showToast(pay==='crediario'?'Pedido lançado no crediário do cliente.':'Pedido lançado.');
     this.loadPedidos(); this.loadClientesEmpresas(); if(pay==='crediario') this.loadCrediarioHistory(); };
 
   addBalcao=async(clientId,itemId)=>{ const it=this.state.balcaoItems.find(x=>x.id===itemId); if(!it) return; const price=it.price||0;
     const { data: pedido, error } = await sb.from('rest_pedidos').insert({
-      numero_ref:this.nextNumeroRef(), cliente_id:clientId, origem:'balcao', status:'entregue', total:price, forma_pagamento:'crediario',
+      numero_ref:this.nextNumeroRef(), cliente_id:this._contaCred((this.state.clients||[]).find(x=>x.id===clientId)).cliente_id||clientId, empresa_id:this._contaCred((this.state.clients||[]).find(x=>x.id===clientId)).empresa_id, origem:'balcao', status:'entregue', total:price, forma_pagamento:'crediario',
     }).select('id').single();
     if(error){ this.showToast('Erro: '+error.message); return; }
     await sb.from('rest_pedido_itens').insert({ pedido_id:pedido.id, descricao:it.name+' (balcão)', quantidade:1, valor_unitario:price, valor_total:price });
-    await this.addClientBalance(clientId, price);
-    await this.logCrediario(clientId, null, 'debito', price, it.name+' (balcão)');
+    const kb=this._contaCred((this.state.clients||[]).find(x=>x.id===clientId)); await this.addClientBalance(kb.quem?kb.quem.id:clientId, price);
+    await this.logCrediario(kb.cliente_id||clientId, kb.empresa_id, 'debito', price, it.name+' (balcão)');
     this.showToast(it.name+' de '+this.brl(price)+' lançado na conta.');
     this.loadPedidos(); this.loadClientesEmpresas(); };
 
@@ -8631,11 +8708,11 @@ class Component extends DCLogic {
     if(this._demo){ const c=(this.state.clients||[]).find(x=>x.id===cid); this.setState(s=>({ pedidoDetalhe:null, orders:(s.orders||[]).map(x=>x.dbId===o.dbId?{...x,payment:'crediario',clientId:cid||x.clientId}:x) })); this.showToast('Pedido '+ref+' lançado no crediário de '+(c?c.name:nome)+'.'); return; }
     if(!cid){ const { data, error } = await sb.from('rest_clientes').insert({ nome, tipo_cliente:'PF', telefone:r.tel||null }).select('id').single();
       if(error){ this.showToast('Erro ao cadastrar o cliente: '+error.message); return; } cid=data.id; }
-    const c=(this.state.clients||[]).find(x=>x.id===cid); const isEmp=!!(c&&c.type==='Empresa'); if(c) nome=c.name;
-    const { error } = await sb.from('rest_pedidos').update({ forma_pagamento:'crediario', cliente_id:isEmp?null:cid, empresa_id:isEmp?cid:null }).eq('id', o.dbId);
+    const c=(this.state.clients||[]).find(x=>x.id===cid); const isEmp=!!(c&&c.type==='Empresa'); if(c) nome=c.name; const kp=c?this._contaCred(c):{cliente_id:cid,empresa_id:null,quem:null};
+    const { error } = await sb.from('rest_pedidos').update({ forma_pagamento:'crediario', cliente_id:kp.cliente_id, empresa_id:kp.empresa_id }).eq('id', o.dbId);
     if(error){ this.showToast('Erro: '+error.message); return; }
-    await this.addClientBalance(cid, total);
-    await this.logCrediario(isEmp?null:cid, isEmp?cid:null, 'debito', total, 'Pedido '+ref+(itens?': '+itens:''));
+    await this.addClientBalance(kp.quem?kp.quem.id:cid, total);
+    await this.logCrediario(kp.cliente_id, kp.empresa_id, 'debito', total, 'Pedido '+ref+(itens?': '+itens:''));
     this.setState({ pedidoDetalhe:null }); this.showToast('Pedido '+ref+' lançado no crediário de '+nome+' ('+this.brl(total)+').');
     this.loadPedidos(); this.loadClientesEmpresas(); if(this.loadCrediarioHistory) this.loadCrediarioHistory(); };
 
@@ -8667,7 +8744,7 @@ class Component extends DCLogic {
     if(!(await this.confirmarExclusao(o, ref, cn&&cn!=='—'?cn:''))) return;
     if(this._demo){ this.setState(s=>({ orders:(s.orders||[]).filter(x=>x.dbId!==o.dbId), pedidoDetalhe:null })); this.showToast('Pedido '+ref+' excluído.'); return; }
     const { error } = await sb.from('rest_pedidos').delete().eq('id', o.dbId); if(error){ this.showToast('Não excluiu: '+error.message); return; }
-    if(o.payment==='crediario'&&(o.origem!=='site'||o.clientId)&&(o.clientId||o.empresaId)){ await this.addClientBalance(o.clientId||o.empresaId, -(o.total||0)); // pedido do site (convênio) não mexe no saldo
+    if(o.payment==='crediario'&&(o.origem!=='site'||o.clientId)&&(o.clientId||o.empresaId)){ await this.addClientBalance(o.empresaId||o.clientId, -(o.total||0)); // pedido do site (convênio) não mexe no saldo
       try{ const nr=String(ref).replace(/^#/,''), col=o.clientId?'cliente_id':'empresa_id', rx=new RegExp('#'+nr.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?!\\d)');
         const { data:ls } = await sb.from('rest_crediario_lancamentos').select('id,descricao').eq(col, o.clientId||o.empresaId).eq('tipo','debito').ilike('descricao','%#'+nr+'%');
         const ids=(ls||[]).filter(l=>rx.test(l.descricao||'')).map(l=>l.id); if(ids.length) await sb.from('rest_crediario_lancamentos').delete().in('id',ids);
@@ -8819,7 +8896,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       const emps=s.clients.filter(c=>c.type==='Funcionario'&&c.company===e.name);
       return { name:e.name, contact:(e.phone||'')+(e.email?' · '+e.email:''), balanceFmt:brl(e.balance), empCount:emps.length, noEmp:emps.length===0,
         employees:emps.map(f=>({name:f.name,phone:f.phone||'—',payerLabel:(f.payer==='Empresa'?'empresa paga':'paga próprio'),balanceFmt:f.balance>0?brl(f.balance):'—',balColor:f.balance>0?'#26658C':'#9a9084'})),
-        onAddFunc:()=>this.setState({modal:'funcEmpresa',selectedCompany:e.name}) }; });
+        onAddFunc:()=>this.setState({modal:'funcEmpresa',selectedCompany:e.name}), onOpen:(ev)=>{ if(ev&&ev.target&&ev.target.closest&&ev.target.closest('button')) return; this._empModal(e); } }; });
 
     // Doações
     const doacaoRows=s.doacoes.map(d=>({date:d.date,desc:d.desc,dest:d.dest,qty:String(d.qty),valFmt:d.val>0?brl(d.val):'—',onDelete:()=>this.deleteDoacao(d.id)}));
