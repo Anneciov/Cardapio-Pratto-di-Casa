@@ -6396,7 +6396,7 @@ class Component extends DCLogic {
     const desenha=()=>{ const C=conta(), bq=busca.trim().toLowerCase();
       if(sel&&!V.some(v=>v.id===sel)) sel=null; if(!sel&&V.length) sel=V[0].id;
       q('[data-k=cab]').innerHTML='<div class="mvd-ic">'+ico(I.cal,22)+'</div><div class="mvd-tt"><h2 id="dia-t">'+E(dLonga)+'</h2>'+
-        '<p><span>'+ico(I.bag,14)+C.ok.length+(C.ok.length===1?' venda':' vendas')+'</span><span>'+ico(I.pago,14)+RC.length+(RC.length===1?' recebimento':' recebimentos')+'</span><span>'+ico(I.moto,14)+MT.length+' motoboy'+(MT.length===1?'':'s')+'</span></p></div>'+
+        '<p><span>'+ico(I.bag,14)+C.ok.length+(C.ok.length===1?' venda':' vendas')+'</span><span>'+ico(I.pago,14)+RC.length+(RC.length===1?' recebimento':' recebimentos')+'</span></p></div>'+
         '<div class="mvd-val"><small>Total vendido</small><b>'+R(C.tot)+'</b></div><button type="button" class="mvd-x" data-a="fechar" aria-label="Fechar">'+ico(I.x,18)+'</button>';
       const vis=V.filter(v=>(!filtro||v.forma===filtro)&&(!bq||[v.ref,nomeV(v),v.itens.map(i=>i.d).join(' ')].join(' ').toLowerCase().includes(bq)));
       const ch=(k,n)=>'<button type="button" class="dia-ch'+(filtro===k?' on':'')+'" data-fil="'+k+'">'+n+'</button>';
@@ -6408,13 +6408,13 @@ class Component extends DCLogic {
       const v=V.find(x=>x.id===sel);
       q('[data-k=corpo]').innerHTML='<div class="mvd-col">'+(v?secVenda(v):'<section class="mvd-sec"><h3>'+ico(I.bag,14)+'Venda</h3><div class="dia-vz">Nenhuma venda neste dia.</div></section>')+
           '<section class="mvd-sec"><h3>'+ico(I.pago,14)+'Recebido do crediário<em>'+RC.length+'</em></h3>'+(RC.length?RC.map(lr).join(''):'<div class="dia-vz">Nenhum pagamento de crediário neste dia.</div>')+'</section>'+
-          '<section class="mvd-sec"><h3>'+ico(I.moto,14)+'Motoboys pagos<em>'+MT.length+'</em></h3>'+(MT.length?MT.map(lm).join(''):'<div class="dia-vz">Nenhum pagamento de motoboy neste dia.</div>')+'</section></div>'+
+          '</div>'+
         '<div class="mvd-col"><section class="mvd-sec"><h3>'+ico(I.res,14)+'Resumo do dia<em>'+curto+'</em></h3>'+
           '<div class="mvd-kpis"><div class="mvd-k"><span>Vendas</span><b>'+C.ok.length+'</b></div><div class="mvd-k"><span>Ticket médio</span><b>'+R(C.ok.length?C.tot/C.ok.length:0)+'</b></div><div class="mvd-k"><span>Na conta</span><b style="color:'+COR.crediario+'">'+R(C.so('crediario'))+'</b></div><div class="mvd-k"><span>Recebido</span><b style="color:#3f9d6b">'+R(C.rec)+'</b></div></div>'+
           '<div class="mvd-g">'+campo('Dinheiro','<em style="font-style:normal;color:'+COR.dinheiro+'">'+R(C.so('dinheiro'))+'</em>','m')+campo('PIX','<em style="font-style:normal;color:'+COR.pix+'">'+R(C.so('pix'))+'</em>','m')+
             campo('Cartão de débito','<em style="font-style:normal;color:'+COR.debito+'">'+R(C.so('debito'))+'</em>','m')+campo('Cartão de crédito','<em style="font-style:normal;color:'+COR.credito+'">'+R(C.so('credito'))+'</em>','m')+
-            campo('Vale-refeição','<em style="font-style:normal;color:'+COR.vr+'">'+R(C.so('vr'))+'</em>','m')+campo('Motoboys pagos',R(C.mot),'m')+'</div>'+
-          '<div class="mvd-saldo"><small>Caixa do dia · pago na hora + recebido − motoboys</small><span class="dia-cx">'+R(C.naHora)+' <i>+</i> '+R(C.rec)+' <i>−</i> '+R(C.mot)+' <i>=</i> <span style="color:'+(C.cx<0?'#e5484d':'#3f9d6b')+'">'+(C.cx<0?'− ':'')+R(Math.abs(C.cx))+'</span></span></div></section>'+
+            campo('Vale-refeição','<em style="font-style:normal;color:'+COR.vr+'">'+R(C.so('vr'))+'</em>','m')+'</div>'+
+          '<div class="mvd-saldo"><small>Caixa do dia · pago na hora + recebido'+(C.mot>0.004?' − motoboys':'')+'</small><span class="dia-cx">'+R(C.naHora)+' <i>+</i> '+R(C.rec)+(C.mot>0.004?' <i>−</i> '+R(C.mot):'')+' <i>=</i> <span style="color:'+(C.cx<0?'#e5484d':'#3f9d6b')+'">'+(C.cx<0?'− ':'')+R(Math.abs(C.cx))+'</span></span></div></section>'+
         '<section class="mvd-sec"><h3>'+ico(I.lista,14)+'Vendas do dia<em>'+vis.length+(vis.length!==V.length?' de '+V.length:'')+(V.length===1?' venda':' vendas')+'</em></h3>'+
           '<div class="dia-bar"><input type="search" data-k="busca" placeholder="Buscar cliente, item ou nº" value="'+E(busca)+'" aria-label="Buscar venda">'+ch('','Todas')+FORMAS.map(([k,n])=>ch(k,{debito:'Débito',credito:'Crédito',vr:'Vale-ref.'}[k]||n)).join('')+ch('crediario','Na conta')+'</div>'+
           '<div class="dia-lista">'+(vis.length?vis.map(lv).join(''):'<div class="dia-vz">Nenhuma venda'+(V.length?' com esse filtro.':' neste dia.')+'</div>')+'</div></section></div>';
