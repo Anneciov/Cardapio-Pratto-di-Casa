@@ -6265,6 +6265,13 @@ class Component extends DCLogic {
   submitFuncEmpresa=async(e)=>{ e.preventDefault(); const f=e.target.elements;
     const compName=this.state.selectedCompany||'';
     const emp=this.state.clients.find(c=>c.type==='Empresa'&&c.name===compName);
+    const nrm=(x)=>String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim(), dig=(x)=>String(x||'').replace(/\D/g,'').slice(-8);
+    const igual=this.state.clients.find(c=>c.type!=='Empresa'&&nrm(c.name)===nrm(f.name.value)&&(!dig(f.phone.value)||!dig(c.phone)||dig(c.phone)===dig(f.phone.value)));
+    if(igual&&igual.company===compName){ this.showToast(igual.name+' já é funcionário de '+compName+'.'); return; }
+    if(igual){ const mover=await this._dlg({ titulo:'Já existe '+igual.name, texto:(igual.company?'Está cadastrado em '+igual.company+'.':'Está cadastrado como cliente.')+'\nÉ a mesma pessoa? Mover para '+compName+'.\n(Se for outra pessoa, cancele e coloque o sobrenome.)', botao:'Mover para '+compName });
+      if(!mover) return;
+      const { error:em } = await sb.from('rest_clientes').update({ tipo_cliente:'Funcionario', empresa_id:emp?emp.id:null, quem_paga:f.who.value, telefone:f.phone.value||igual.phone||null }).eq('id', igual.id);
+      if(em){ this.showToast('Erro: '+em.message); return; } this.setState({modal:null,selectedCompany:null}); this.showToast(igual.name+' agora é funcionário de '+compName+'.'); this.loadClientesEmpresas(); return; }
     const { error } = await sb.from('rest_clientes').insert({ nome:f.name.value, tipo_cliente:'Funcionario', empresa_id:emp?emp.id:null, quem_paga:f.who.value, email:f.email.value||null, telefone:f.phone.value||null });
     if(error){ this.showToast('Erro: '+error.message); return; }
     this.setState({modal:null,selectedCompany:null});
@@ -6412,14 +6419,14 @@ class Component extends DCLogic {
     const fimDe=(m)=>{ const [y,mm]=m.split('-').map(Number); return m+'-'+String(new Date(Date.UTC(y,mm,0)).getUTCDate()).padStart(2,'0'); };
     const carrega=async()=>{ const F=funcs(), ids=F.map(f=>f.id), ini=ym+'-01', fim=fimDe(ym);
       if(this._demo){ const s=this.state;
-        P=(s.orders||[]).filter(o=>(o.empresaId===e.id||ids.includes(o.clientId))&&String(o.iso||hoje).slice(0,7)===ym).map(o=>({ id:o.dbId, ref:String(o.id||'').replace(/^#/,''), data:o.iso||hoje, ts:o.criado||'', total:Number(o.total)||0, forma:o.payment, status:o.status, cli:o.clientId||null, emp:o.empresaId||null, itens:o.items||'' }));
+        P=(s.orders||[]).filter(o=>(o.empresaId===e.id||ids.includes(o.clientId))&&String(o.iso||hoje).slice(0,7)===ym).map(o=>({ id:o.dbId, ref:String(o.id||'').replace(/^#/,''), data:o.iso||hoje, ts:o.criado||'', total:Number(o.total)||0, forma:o.payment, status:o.status, cli:o.clientId||null, emp:o.empresaId||null, nome:o.waClient||'', tel:o.telefone||'', itens:o.items||'' }));
         L=(s.crediarioHistory||[]).filter(h=>h.who===e.id&&String(h.iso||hoje).slice(0,7)===ym).map(h=>({ tipo:h.type==='Débito'?'debito':(h.type==='Pagamento'?'pagamento':'outro'), v:Number(h.amount)||0 })); return; }
       const ou='empresa_id.eq.'+e.id+(ids.length?',cliente_id.in.('+ids.join(',')+')':'');
       const [p,l]=await Promise.all([
-        sb.from('rest_pedidos').select('id,numero_ref,data,created_at,total,forma_pagamento,status,cliente_id,empresa_id,rest_pedido_itens(descricao,quantidade)').or(ou).gte('data',ini).lte('data',fim).order('created_at',{ascending:false}).limit(3000),
+        sb.from('rest_pedidos').select('id,numero_ref,data,created_at,total,forma_pagamento,status,cliente_id,empresa_id,nome_cliente,telefone_contato,rest_pedido_itens(descricao,quantidade)').or(ou).gte('data',ini).lte('data',fim).order('created_at',{ascending:false}).limit(3000),
         sb.from('rest_crediario_lancamentos').select('tipo,valor').eq('empresa_id',e.id).gte('data',ini).lte('data',fim).limit(5000) ]);
       if(p.error) throw p.error;
-      P=(p.data||[]).map(o=>({ id:o.id, ref:String(o.numero_ref||'').replace(/^#/,''), data:o.data, ts:o.created_at||'', total:Number(o.total)||0, forma:o.forma_pagamento, status:o.status, cli:o.cliente_id, emp:o.empresa_id, itens:(o.rest_pedido_itens||[]).map(i=>i.quantidade+'x '+i.descricao).join(', ') }));
+      P=(p.data||[]).map(o=>({ id:o.id, ref:String(o.numero_ref||'').replace(/^#/,''), data:o.data, ts:o.created_at||'', total:Number(o.total)||0, forma:o.forma_pagamento, status:o.status, cli:o.cliente_id, emp:o.empresa_id, nome:o.nome_cliente||'', tel:o.telefone_contato||'', itens:(o.rest_pedido_itens||[]).map(i=>i.quantidade+'x '+i.descricao).join(', ') }));
       L=(l.data||[]).map(x=>({ tipo:x.tipo, v:Number(x.valor)||0 })); };
     const fundo=document.createElement('div'); fundo.className='mvd-fundo'; fundo.id='pdc-emd';
     fundo.innerHTML='<div class="mvd" role="dialog" aria-modal="true" aria-labelledby="emd-t" style="--c:#54acbf;width:min(1120px,100%)"><div class="mvd-cab" data-k="cab"></div><div data-k="kpis"></div><div class="mvd-corpo" data-k="corpo"><div class="mvd-load"><i></i>Carregando…</div></div>'+
@@ -6428,7 +6435,11 @@ class Component extends DCLogic {
     const desenha=()=>{ const E0=emp(), F=funcs(), nomeMes=MES[parseInt(ym.slice(5,7),10)-1]+' de '+ym.slice(0,4);
       const ok=P.filter(o=>o.status!=='cancelado'&&o.status!=='recusado'), tot=ok.reduce((a,o)=>a+o.total,0), conta=ok.filter(o=>o.forma==='crediario').reduce((a,o)=>a+o.total,0);
       const pago=L.filter(x=>x.tipo==='pagamento'||x.tipo==='fatura_fechada').reduce((a,x)=>a+x.v,0);
-      const porF=(id)=>ok.filter(o=>o.cli===id), semF=ok.filter(o=>!o.cli||!F.some(f=>f.id===o.cli));
+      const dig=(x)=>String(x||'').replace(/\D/g,'').slice(-8), nrm=(x)=>String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
+      const dono=(o)=>{ if(o.cli&&F.some(f=>f.id===o.cli)) return o.cli; if(o.cli) return null; const f=F.find(f=>(dig(f.phone).length===8&&dig(f.phone)===dig(o.tel))||(nrm(f.name)&&nrm(f.name)===nrm(o.nome))); return f?f.id:null; };
+      const porF=(id)=>ok.filter(o=>dono(o)===id), semF=ok.filter(o=>!dono(o));
+      const grupos={}; semF.filter(o=>!o.cli).forEach(o=>{ const kk=nrm(o.nome); if(!kk) return; const g0=grupos[kk]||(grupos[kk]={k:kk,nome:String(o.nome).trim(),tel:'',L:[]}); g0.L.push(o); if(!g0.tel&&o.tel) g0.tel=o.tel; });
+      const semNome=semF.filter(o=>!nrm(o.nome)&&!o.cli), outrosCli=ok.filter(o=>o.cli&&!F.some(f=>f.id===o.cli));
       q('[data-k=cab]').innerHTML='<div class="mvd-ic">'+ico(I.build,22)+'</div><div class="mvd-tt"><h2 id="emd-t">'+E(E0.name)+'</h2><p>'+(E0.phone?'<span>'+ico(I.phone,14)+E(E0.phone)+'</span>':'')+'<span>'+ico(I.users,14)+F.length+' funcionário'+(F.length===1?'':'s')+'</span>'+
         '<span class="emd-mes"><button type="button" data-a="ant" aria-label="Mês anterior">‹</button><b>'+E(nomeMes)+'</b><button type="button" data-a="prox" aria-label="Próximo mês"'+(ym>=hoje.slice(0,7)?' disabled':'')+'>›</button></span></p></div>'+
         '<div class="mvd-val"><small>Saldo devedor</small><b style="color:'+(E0.balance>0?'#d0892b':'#3f9d6b')+'">'+R(E0.balance)+'</b></div><button type="button" class="mvd-x" data-a="fechar" aria-label="Fechar">'+ico(I.x,18)+'</button>';
@@ -6438,15 +6449,19 @@ class Component extends DCLogic {
       const linhaF=(f)=>{ const L2=porF(f.id), g=L2.reduce((a,o)=>a+o.total,0), gc=L2.filter(o=>o.forma==='crediario').reduce((a,o)=>a+o.total,0), ep=f.payer==='Empresa';
         return '<div class="emd-f'+(selF===f.id?' on':'')+'" role="button" tabindex="0" data-f="'+E(f.id)+'"><span><b>'+E(f.name)+'</b><span class="emd-tag" style="color:'+(ep?'#54acbf':'#8a94a6')+'">'+(ep?'empresa paga':'paga próprio')+'</span><small>'+E(f.phone||'sem telefone')+' · '+L2.length+' pedido'+(L2.length===1?'':'s')+' no mês</small></span>'+
           '<span class="v">'+R(g)+'<small>'+(gc>0.004?R(gc)+' na conta':'—')+'</small></span>'+
-          (ep&&f.balance>0.004?'<span class="emd-tr">Saldo de '+R(f.balance)+' na conta do próprio funcionário <button type="button" data-tr="'+E(f.id)+'">Passar para a empresa</button></span>':(!ep&&f.balance>0.004?'<span class="emd-tr" style="color:#8a94a6">Deve '+R(f.balance)+' na conta dele (paga próprio)</span>':''))+'</div>'; };
-      const vis=selF==='__sem'?semF:(selF?porF(selF):ok);
-      const nomeDe=(o)=>{ const f=F.find(x=>x.id===o.cli); return f?f.name:(o.cli?this.clientName(o.cli):E0.name); };
+          (ep&&f.balance>0.004?'<span class="emd-tr">Saldo de '+R(f.balance)+' na conta do próprio funcionário <button type="button" data-tr="'+E(f.id)+'">Passar para a empresa</button></span>':(!ep&&f.balance>0.004?'<span class="emd-tr" style="color:#8a94a6">Deve '+R(f.balance)+' na conta dele (paga próprio)</span>':''))+
+          (()=>{ const dup=(this.state.clients||[]).filter(c=>c.id!==f.id&&c.type==='Funcionario'&&nrm(c.name)===nrm(f.name)&&c.company!==e.name); return dup.length?'<span class="emd-tr" style="color:#d0892b">Também cadastrado em '+E(dup.map(c=>c.company||'outra empresa').join(', '))+'. Se for engano, <button type="button" data-rm="'+E(f.id)+'">Tirar desta empresa</button></span>':''; })()+'</div>'; };
+      const vis=selF==='__sem'?semNome:(selF==='__out'?outrosCli:(selF.indexOf('__n:')===0?((grupos[selF.slice(4)]||{}).L||[]):(selF?porF(selF):ok)));
+      const nomeDe=(o)=>{ const d=dono(o), f=d&&F.find(x=>x.id===d); return f?f.name:(o.nome||(o.cli?this.clientName(o.cli):E0.name)); };
       const lp=(o)=>{ const cor=COR[o.forma]||'#8a94a6', d=String(o.data||''), hr=o.ts?new Date(o.ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';
         return '<div class="mvd-h" style="cursor:default"><small>'+d.slice(8,10)+'/'+d.slice(5,7)+'<i>'+E(hr)+(o.ref?' · #'+E(o.ref):'')+'</i></small><div><em style="color:'+cor+'">'+E(this.payLabel(o.forma))+'</em>'+E(nomeDe(o))+'<span class="dia-sub" style="display:block;font-size:12px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+E(o.itens||'—')+'</span></div><b style="color:'+cor+'">'+R(o.total)+'</b></div>'; };
-      const tituloP=selF==='__sem'?'Pedidos em nome da empresa':(selF?'Pedidos de '+(F.find(f=>f.id===selF)||{}).name:'Pedidos do mês');
+      const tituloP=selF==='__sem'?'Pedidos em nome da empresa':(selF==='__out'?'Pedidos de outros clientes':(selF.indexOf('__n:')===0?'Pedidos de '+((grupos[selF.slice(4)]||{}).nome||''):(selF?'Pedidos de '+(F.find(f=>f.id===selF)||{}).name:'Pedidos do mês')));
       q('[data-k=corpo]').innerHTML='<div class="mvd-col"><section class="mvd-sec"><h3>'+ico(I.users,14)+'Funcionários<em>gasto no mês</em></h3>'+
           (F.length?F.slice().sort((a,b)=>porF(b.id).reduce((x,o)=>x+o.total,0)-porF(a.id).reduce((x,o)=>x+o.total,0)).map(linhaF).join(''):'<div class="emd-vz">Nenhum funcionário registrado. Use "Registrar funcionário" aqui embaixo.</div>')+
-          (semF.length?'<div class="emd-f'+(selF==='__sem'?' on':'')+'" role="button" tabindex="0" data-f="__sem"><span><b>Pedidos em nome da empresa</b><small>sem funcionário identificado · '+semF.length+' pedido'+(semF.length===1?'':'s')+'</small></span><span class="v">'+R(semF.reduce((a,o)=>a+o.total,0))+'</span></div>':'')+'</section></div>'+
+          (Object.keys(grupos).length?'<h3 style="margin-top:14px">'+ico(I.add,14)+'Pediram pelo convênio sem cadastro<em>'+Object.keys(grupos).length+'</em></h3>'+Object.values(grupos).sort((a,b)=>b.L.length-a.L.length).map(g=>'<div class="emd-f'+(selF==='__n:'+g.k?' on':'')+'" role="button" tabindex="0" data-f="__n:'+E(g.k)+'"><span><b>'+E(g.nome)+'</b><span class="emd-tag" style="color:#d0892b">sem cadastro</span><small>'+E(g.tel||'sem telefone')+' · '+g.L.length+' pedido'+(g.L.length===1?'':'s')+' no mês</small></span><span class="v">'+R(g.L.reduce((a,o)=>a+o.total,0))+'</span>'+
+            '<span class="emd-tr" style="color:#54acbf">Funcionário desta empresa? <button type="button" data-cad="'+E(g.k)+'" style="border-color:rgba(84,172,191,.5);color:#54acbf">Cadastrar como funcionário</button></span></div>').join(''):'')+
+          (semNome.length?'<div class="emd-f'+(selF==='__sem'?' on':'')+'" role="button" tabindex="0" data-f="__sem"><span><b>Pedidos em nome da empresa</b><small>sem nome de quem pediu · '+semNome.length+' pedido'+(semNome.length===1?'':'s')+'</small></span><span class="v">'+R(semNome.reduce((a,o)=>a+o.total,0))+'</span></div>':'')+
+          (outrosCli.length?'<div class="emd-f'+(selF==='__out'?' on':'')+'" role="button" tabindex="0" data-f="__out"><span><b>Outros clientes na conta da empresa</b><small>'+E([...new Set(outrosCli.map(o=>this.clientName(o.cli)))].join(', '))+'</small></span><span class="v">'+R(outrosCli.reduce((a,o)=>a+o.total,0))+'</span></div>':'')+'</section></div>'+
         '<div class="mvd-col"><section class="mvd-sec"><h3>'+ico(I.bag,14)+E(tituloP)+'<em>'+vis.length+' · '+R(vis.reduce((a,o)=>a+o.total,0))+'</em></h3>'+
           (selF?'<div style="margin:-4px 0 8px"><button type="button" class="dia-ch" data-f="" style="min-height:28px;padding:0 10px;border-radius:999px;border:1px solid var(--border-input);background:none;color:inherit;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer">← Ver todos os pedidos</button></div>':'')+
           '<div class="emd-lista">'+(vis.length?vis.map(lp).join(''):'<div class="emd-vz">Nenhum pedido neste mês.</div>')+'</div></section></div>'; };
@@ -6462,7 +6477,16 @@ class Component extends DCLogic {
     const sai=()=>{ document.removeEventListener('keydown',tecla,true); fundo.remove(); };
     const tecla=(ev)=>{ if(document.getElementById('pdc-dlg')||document.getElementById('pdc-ficha')) return; if(ev.key==='Escape'){ ev.preventDefault(); ev.stopPropagation(); sai(); return; }
       if((ev.key==='Enter'||ev.key===' ')&&ev.target&&ev.target.classList&&ev.target.classList.contains('emd-f')){ ev.preventDefault(); ev.target.click(); } };
+    const tirar=async(id)=>{ const f=funcs().find(x=>x.id===id); if(!f) return; await this.excluirCliente(f); setTimeout(()=>{ if(document.body.contains(fundo)) desenha(); },900); };
+    const cadastrar=async(k0)=>{ const nrm=(x)=>String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
+      const L0=P.filter(o=>nrm(o.nome)===k0); if(!L0.length) return; const nome=String(L0[0].nome).trim(), tel=(L0.find(o=>o.tel)||{}).tel||'';
+      const ok=await this._dlg({ titulo:'Cadastrar funcionário?', texto:nome+(tel?' · '+tel:'')+'\nVai ser funcionário de '+e.name+' (a empresa paga). Os pedidos dele aparecem no nome dele.', botao:'Cadastrar' }); if(!ok) return;
+      if(this._demo){ this.setState(s=>({ clients:[...(s.clients||[]),{ id:'f'+Date.now(), name:nome, type:'Funcionario', company:e.name, payer:'Empresa', phone:tel, email:'', balance:0 }] })); this.showToast(nome+' cadastrado em '+e.name+'.'); setTimeout(desenha,50); return; }
+      const { error } = await sb.from('rest_clientes').insert({ nome, telefone:tel||null, tipo_cliente:'Funcionario', empresa_id:e.id, quem_paga:'Empresa' }); if(error){ this.showToast('Não cadastrou: '+error.message); return; }
+      await this.loadClientesEmpresas(); this.showToast(nome+' cadastrado em '+e.name+'.'); desenha(); };
     fundo.addEventListener('click',(ev)=>{ const tr=ev.target.closest('[data-tr]'); if(tr){ ev.stopPropagation(); transferir(tr.dataset.tr); return; }
+      const rm=ev.target.closest('[data-rm]'); if(rm){ ev.stopPropagation(); tirar(rm.dataset.rm); return; }
+      const cd=ev.target.closest('[data-cad]'); if(cd){ ev.stopPropagation(); cadastrar(cd.dataset.cad); return; }
       const t=ev.target.closest('[data-f],[data-a]'); if(!t){ if(ev.target===fundo) sai(); return; }
       if(t.dataset.f!=null){ selF=selF===t.dataset.f?'':t.dataset.f; desenha(); return; }
       const a=t.dataset.a; if(a==='fechar') return sai();
