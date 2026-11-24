@@ -2915,6 +2915,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
         <h1 style="font-family:'Instrument Serif',serif;font-size:20px;font-weight:400;letter-spacing:0;line-height:1.2">{{ pageTitle }}</h1>
         <p style="font-size:12px;color:#847a6e;margin-top:0">{{ pageSub }}</p>
       </div>
+      <button onclick="{{ toggleLoja }}" title="{{ lojaTitle }}" aria-pressed="{{ lojaPressed }}" style="{{ lojaBtnStyle }}"><span style="{{ lojaDotStyle }}"></span>{{ lojaLabel }}</button>
       <button onclick="{{ toggleTheme }}" title="{{ themeLabel }}" class="tema-btn" style="width:38px;height:38px;border-radius:50%;border:1px solid var(--border-card);background:var(--bg-card);color:var(--text-primary);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ themeIcon }}"></path></svg></button>
       <div style="text-align:right;font-size:11.5px;color:#847a6e">Hoje<br><span style="font-family:'Space Mono',monospace;color:var(--text-primary);font-size:12.5px">{{ todayFmt }}</span></div>
       <sc-if value="{{ hasAction }}" hint-placeholder-val="{{ true }}">
@@ -4925,21 +4926,37 @@ class Component extends DCLogic {
     return { ...this.arteOriginal(), v:2, hoje:N(j.hoje), guarnicoes:N(j.guarnicoes), fitness:N(j.fitness), fitnessObs:j.fitnessObs||'', gExtra:j.guarnExtra==null?'1,00':j.guarnExtra, regioes:j.regioes?P(j.regioes):undefined,
       pP:pr.P||'', pM:pr.M||'', pG:pr.G||'', pFit:pr.fitness||'', espNome:es.nome||'', eP:es.P||'', eM:es.M||'', eG:es.G||'', fotos:j.fotos||{}, porcoes:P(j.porcoes), monte:P(j.monte), bebidas:P(j.bebidas), atualizado:j.atualizado }; };
   sincronizarArte=async()=>{ if(this._demo||!sb) return null; if(Date.now()-(this._arteEdit||0)<4000) return null;
-    try{ const u=sb.storage.from('cardapio').getPublicUrl('cardapio-hoje.json').data.publicUrl; const r=await fetch(u+'?v='+Date.now(),{cache:'no-store'}); if(!r.ok) return null; const j=await r.json();
+    try{ const u=sb.storage.from('cardapio').getPublicUrl('cardapio-hoje.json').data.publicUrl; const r=await fetch(u+'?v='+Date.now(),{cache:'no-store'}); if(!r.ok) return null; const j=await r.json(); this._aplicarLoja(j);
       const loc=this.state.arte||this.arteDados(); const tl=Date.parse(loc.atualizado||'')||0;
       const rem=(j.arteSync&&j.arteSync.v===2)?j.arteSync:(!tl?this.arteDoJson(j):null); if(!rem) return null;
       const tr=Date.parse(rem.atualizado||'')||0; if(tr<=tl||Date.now()-(this._arteEdit||0)<4000) return null;
       this.setState({ arte:rem }); this._lsSet('pdc_cardapio_arte', JSON.stringify(rem)); setTimeout(()=>{ if(this.redesenharArte) this.redesenharArte(); },50); return rem;
     }catch(e){ console.warn('[cardápio sync]',e); return null; } };
   // ── fim sync ──
+  // ── Restaurante aberto/fechado: vai junto no cardápio publicado (aberto:false = o site não aceita pedidos) ──
+  _aplicarLoja=(j)=>{ if(!j) return; const at=Date.parse(j.lojaAt||'')||0, L=this._loja; if(L&&L.at>at) return;
+    this._loja={ aberto:j.aberto!==false, at }; if(this.state.lojaAberta!==this._loja.aberto) this.setState({ lojaAberta:this._loja.aberto }); };
+  lerLoja=async()=>{ if(this._demo||!sb) return; try{ const u=sb.storage.from('cardapio').getPublicUrl('cardapio-hoje.json').data.publicUrl; const r=await fetch(u+'?v='+Date.now(),{cache:'no-store'});
+      if(r.ok) this._aplicarLoja(await r.json()); else if(r.status===400||r.status===404) this._aplicarLoja({}); }catch(e){ console.warn('[aberto/fechado]',e); } };
+  toggleLoja=async()=>{ if(this._lojaSalvando) return;
+    if(this._demo){ const v=this.state.lojaAberta===false; this._loja={aberto:v,at:Date.now()}; this.setState({lojaAberta:v}); this.showToast(v?'Restaurante ABERTO (demonstração).':'Restaurante FECHADO (demonstração).'); return; }
+    if(!this._loja) await this.lerLoja(); if(!this._loja){ this.showToast('Sem conexão: não foi possível mudar Aberto/Fechado agora.'); return; }
+    if(this.state.cardapioLoading){ this.showToast('Aguarde o cardápio terminar de carregar e tente de novo.'); return; }
+    const novo=!this._loja.aberto;
+    if(!novo&&!confirm('Fechar o restaurante?\n\nO cardápio vai mostrar "Estamos fechados" e os clientes não vão conseguir fazer pedidos pelo site.')) return;
+    const antes=this._loja; this._loja={ aberto:novo, at:Date.now() }; this._lojaSalvando=true; this.setState({ lojaAberta:novo, lojaSalvando:true });
+    clearTimeout(this._pubT); this._pubErroMsg=""; const ok=await this.publicarCardapio(); this._lojaSalvando=false;
+    if(ok!==true){ this._loja=antes; this.setState({ lojaAberta:antes.aberto, lojaSalvando:false }); this.showToast('Não foi possível avisar o cardápio'+(this._pubErroMsg?': '+this._pubErroMsg:'. Tente de novo.')); return; }
+    this.setState({ lojaSalvando:false }); this.showToast(novo?'Restaurante ABERTO: os clientes já podem pedir pelo cardápio.':'Restaurante FECHADO: o cardápio não aceita pedidos.'); };
   publicarCardapio=async()=>{ if(this._demo||!sb) return; const novo=await this.sincronizarArte(); const a=novo||this.state.arte; if(!a) return; const L=this.mcdSplit;
-    const dados={ v:1, atualizado:new Date().toISOString(), empresa:{...Component.EMPRESA, whatsapp:Component.WHATSAPP_CARDAPIO}, hoje:L(a.hoje), guarnicoes:L(a.guarnicoes), fitness:L(a.fitness), fitnessObs:a.fitnessObs||'', guarnExtra:a.gExtra==null?'1,00':String(a.gExtra).trim(), regioes:L(this.mcdVal(a,'regioes')).map(x=>this.mcdPorcao(x)).filter(x=>x.nome), convenios:this.listaConvenios(), porcoes:L(a.porcoes).map(x=>this.mcdPorcao(x)).filter(x=>x.nome), monte:L(a.monte).map(x=>this.mcdPorcao(x)).filter(x=>x.nome), bebidas:L(a.bebidas).map(x=>this.mcdPorcao(x)).filter(x=>x.nome),
+    if(!this._loja) await this.lerLoja(); if(!this._loja) return; // sem saber se está fechado, não publica (para não reabrir sem querer)
+    const dados={ v:1, atualizado:new Date().toISOString(), aberto:this._loja.aberto, lojaAt:this._loja.at?new Date(this._loja.at).toISOString():null, empresa:{...Component.EMPRESA, whatsapp:Component.WHATSAPP_CARDAPIO}, hoje:L(a.hoje), guarnicoes:L(a.guarnicoes), fitness:L(a.fitness), fitnessObs:a.fitnessObs||'', guarnExtra:a.gExtra==null?'1,00':String(a.gExtra).trim(), regioes:L(this.mcdVal(a,'regioes')).map(x=>this.mcdPorcao(x)).filter(x=>x.nome), convenios:this.listaConvenios(), porcoes:L(a.porcoes).map(x=>this.mcdPorcao(x)).filter(x=>x.nome), monte:L(a.monte).map(x=>this.mcdPorcao(x)).filter(x=>x.nome), bebidas:L(a.bebidas).map(x=>this.mcdPorcao(x)).filter(x=>x.nome),
       precos:{ P:a.pP||'', M:a.pM||'', G:a.pG||'', fitness:a.pFit||'' }, especial:{ nome:a.espNome||'', P:a.eP||'', M:a.eM||'', G:a.eG||'' }, fotos:a.fotos||{},
       // os mesmos pratos cadastrados no sistema (com foto, ingredientes e valor do tamanho), para o site ficar igual ao "Ver Cardápio"
       pratos:this.pratosParaSite(), arteSync:{ ...a } };
     try{ const { error } = await sb.storage.from('cardapio').upload('cardapio-hoje.json', new Blob([JSON.stringify(dados)],{type:'application/json'}), { upsert:true, contentType:'application/json', cacheControl:'30' });
-      if(error) throw error; this.setState({ mcdPublicado:new Date().toISOString(), mcdPubErro:'' }); }
-    catch(e){ console.warn('[cardápio online]',e); this.setState({ mcdPubErro:(e&&e.message)||'erro' }); } };
+      if(error) throw error; this.setState({ mcdPublicado:new Date().toISOString(), mcdPubErro:'' }); return true; }
+    catch(e){ console.warn('[cardápio online]',e); this.setState({ mcdPubErro:(e&&e.message)||'erro' }); this._pubErroMsg=(e&&e.message)||'erro'; return false; } };
   copiarLinkCardapio=async()=>{ if(!CARDAPIO_LINK){ this.showToast('A página do cliente ainda não foi publicada na internet.'); return; }
     try{ await navigator.clipboard.writeText(CARDAPIO_LINK); this.showToast('Link do cardápio copiado — cole no WhatsApp ou no Instagram.'); }catch(e){ this.showToast(CARDAPIO_LINK,9000); } };
   abrirLinkCardapio=()=>{ if(CARDAPIO_LINK) window.open(CARDAPIO_LINK,'_blank'); else this.showToast('A página do cliente ainda não foi publicada na internet.'); };
@@ -5980,7 +5997,7 @@ class Component extends DCLogic {
 
   /* ================= LOAD ================= */
   loadAll = async () => {
-    this.carregarPermissao();
+    this.carregarPermissao(); this.lerLoja();
     // ao entrar no sistema, publica o cardápio do dia para a página dos clientes
     clearTimeout(this._pubT); this._pubT = setTimeout(() => { if (!this.state.arte) this.setState({ arte: this.arteDados() }); setTimeout(this.publicarCardapio, 300); }, 2500);
     // outro aparelho mudou o cardápio? confere a cada 45 s e quando a janela volta ao foco
@@ -9655,6 +9672,10 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       hasSlots: s.signupSlots===null || s.signupSlots>0, noSlots: s.signupSlots!==null && s.signupSlots<=0,
       signupSlotsMsg: s.signupSlots===null?'Verificando vagas…':(s.signupSlots>0?('Vagas disponíveis: '+s.signupSlots+' de 5'):'Nenhuma vaga disponível no momento.'),
       navItems, ...navFlyVals, theme:s.theme, rootStyle, showFull, asideStyle, brandRowStyle, collapseBtnStyle, collapseIcon, themeBtnStyle, themeIcon, themeLabel, toggleTheme:this.toggleTheme, toggleCollapse:this.toggleCollapse,
+      toggleLoja:this.toggleLoja, lojaLabel:s.lojaSalvando?'Salvando…':(s.lojaAberta===false?'Fechado':(s.lojaAberta==null&&!this._demo?'Verificando…':'Aberto')), lojaPressed:s.lojaAberta===false?'false':'true',
+      lojaTitle:s.lojaAberta===false?'Restaurante FECHADO: o cardápio não aceita pedidos. Clique para abrir.':'Restaurante ABERTO: clientes podem pedir pelo cardápio. Clique para fechar.',
+      lojaBtnStyle:'display:flex;align-items:center;gap:8px;flex-shrink:0;height:38px;padding:0 14px;border-radius:999px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;letter-spacing:.02em;'+(s.lojaAberta===false?'background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.55);color:#dc2626':'background:rgba(22,163,74,.12);border:1px solid rgba(22,163,74,.55);color:#16a34a')+(s.lojaSalvando?';opacity:.65;cursor:wait':''),
+      lojaDotStyle:'width:9px;height:9px;border-radius:50%;flex-shrink:0;background:'+(s.lojaAberta===false?'#dc2626':'#16a34a')+';box-shadow:0 0 0 3px '+(s.lojaAberta===false?'rgba(220,38,38,.2)':'rgba(22,163,74,.2)'),
       heroVendasFmt:brl(vendasDia), heroSub, dHero, dMini, dSpark, dBand, dStatus, dDias, dSemana, dPag, dPagItens, noPag:dPagItens.length===0, dTop, noTop:dTop.length===0, dDev, dEst, dReceberFmt:brl(totalReceber), dSpPts, irCrediario, irEstoque, goPedido:()=>this.openModal('order'), goLancar:()=>this.setState({view:'lancamento'}), goCaixa:()=>this.abrirCaixa(),
       closingDate, todayFmt,
       mostrarTopo:s.view!=='whatsapp', conteudoStyle:(s.view==='whatsapp'?'padding:0;height:100vh;overflow:hidden':'padding:16px 24px;overflow:auto')+';flex:1;animation:dcFadeIn .3s ease',

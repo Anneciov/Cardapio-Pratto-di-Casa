@@ -511,6 +511,24 @@
     .precos{gap:8px}.preco{padding:14px 6px 12px}footer{padding:18px}
   }
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  /* Restaurante fechado (o sistema liga/desliga): faixa embaixo e nenhum pedido */
+  .faixa-fechado{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:15;width:min(560px,calc(100% - 32px));display:flex;align-items:center;gap:12px;padding:12px 18px;border-radius:18px;background:rgba(40,14,14,.94);border:1px solid rgba(248,113,113,.55);box-shadow:0 18px 40px -14px rgba(0,0,0,.9);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--texto)}
+  .faixa-fechado[hidden]{display:none}
+  .faixa-fechado i{flex-shrink:0;width:12px;height:12px;border-radius:50%;background:#f87171;box-shadow:0 0 0 4px rgba(248,113,113,.22)}
+  .faixa-fechado b{display:block;font:700 15px Oswald,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#fca5a5}
+  .faixa-fechado span{display:block;font:500 13px/1.35 Inter,sans-serif;color:#e5e7eb}
+  body.loja-fechada .pedir,body.loja-fechada .mp-barra,body.loja-fechada .mp-add,body.loja-fechada .mp-step{display:none!important}
+  body.loja-fechada [data-pedir]{cursor:not-allowed}
+  body.loja-fechada .item[data-pedir]::after{content:'Fechado'}
+  .fechado-aviso{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(5,6,8,.74);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .fechado-aviso[hidden]{display:none}
+  .fechado-cx{width:min(400px,100%);padding:28px 24px 22px;border-radius:22px;background:var(--quadro2);border:1px solid var(--linha);text-align:center;box-shadow:var(--sombra)}
+  .fechado-cx .fc-ico{width:56px;height:56px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;background:rgba(248,113,113,.15);color:#f87171}
+  .fechado-cx .fc-ico svg{width:28px;height:28px}
+  .fechado-cx h3{font:700 26px Oswald,sans-serif;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+  .fechado-cx p{font:500 14.5px/1.5 Inter,sans-serif;color:var(--suave)}
+  .fechado-cx button{margin-top:18px;min-height:46px;padding:0 28px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--laranja2),var(--laranja));color:#1a0d02;font:700 15px Inter,sans-serif;cursor:pointer}
+  .fechado-cx button:focus-visible{outline:2px solid var(--laranja);outline-offset:3px}
 </style>
 </head>
 <body class="na-capa">
@@ -1102,7 +1120,39 @@ function erroPedido(msg, secao) {
   const e = document.getElementById('ped-erro'); e.textContent = msg; e.classList.add('on'); clearTimeout(erroPedido.t); erroPedido.t = setTimeout(() => e.classList.remove('on'), 2600);
   const s = document.getElementById(secao); if (s) { s.scrollIntoView({ behavior: 'smooth', block: 'center' }); s.classList.remove('alerta'); void s.offsetWidth; s.classList.add('alerta'); }
 }
+// ---------- Restaurante aberto / fechado (ligado no sistema; vem no cardápio publicado) ----------
+let FECHADO = false;
+function aplicarStatus(d) {
+  FECHADO = !!d && d.aberto === false; document.body.classList.toggle('loja-fechada', FECHADO);
+  let f = document.getElementById('faixa-fechado');
+  if (!f) { document.body.insertAdjacentHTML('beforeend', '<div class="faixa-fechado" id="faixa-fechado" role="status" aria-live="polite" hidden><i aria-hidden="true"></i><div><b>Estamos fechados</b><span>No momento não estamos recebendo pedidos. Volte mais tarde!</span></div></div>'); f = document.getElementById('faixa-fechado'); }
+  f.hidden = !FECHADO;
+  if (FECHADO) { const p = document.getElementById('ped'); if (p && !p.hidden) { fecharPedido(); avisoFechado(); } }
+}
+function avisoFechado() {
+  let a = document.getElementById('fechado-aviso');
+  if (!a) { document.body.insertAdjacentHTML('beforeend', `<div class="fechado-aviso" id="fechado-aviso" hidden><div class="fechado-cx" role="alertdialog" aria-modal="true" aria-labelledby="fc-tit" aria-describedby="fc-txt">
+      <div class="fc-ico">${SVG('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/>')}</div>
+      <h3 id="fc-tit">Estamos fechados</h3><p id="fc-txt">No momento o restaurante não está recebendo pedidos. Volte mais tarde, vamos adorar te atender!</p>
+      <button type="button" data-fcok>Entendi</button></div></div>`);
+    a = document.getElementById('fechado-aviso');
+    a.addEventListener('click', (e) => { if (e.target === a || e.target.closest('[data-fcok]')) a.hidden = true; });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') a.hidden = true; }); }
+  a.hidden = false; setTimeout(() => { const b = a.querySelector('[data-fcok]'); if (b) b.focus(); }, 30);
+}
+// confere de novo no servidor (o restaurante pode ter fechado com a página aberta)
+async function conferirStatus() {
+  if (new URLSearchParams(location.search).has('demo')) return;
+  try { const r = await fetch(DADOS_URL + '?v=' + Date.now(), { cache: 'no-store' }); if (!r.ok) return; const j = await r.json();
+    const antes = FECHADO; aplicarStatus(j); if (antes && !FECHADO && DADOS) DADOS.aberto = true; } catch (_) {}
+}
+// com o restaurante fechado, nenhum botão de pedir funciona (roda antes dos outros cliques)
+addEventListener('click', (e) => { if (!FECHADO) return; const el = e.target.closest('[data-pedir], #pag-monte [data-mp], #ped-enviar, [data-pixenviar]'); if (!el) return;
+  e.preventDefault(); e.stopImmediatePropagation(); avisoFechado(); }, true);
+setInterval(() => { if (!document.hidden && DADOS) conferirStatus(); }, 60000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && DADOS) conferirStatus(); });
 function enviarPedido() {
+  if (FECHADO) return avisoFechado();
   const d = DADOS; const falta = faltaEnvio();
   if (falta) { if (falta.sec === 'sec-entrega' && PED.ent === 'entrega') setTimeout(focarEndereco, 350); return erroPedido(falta.err || ('Escolha ' + falta.msg + '.'), falta.sec); }
   if (!PED.pixOk && !confirmaGuarn('Enviar')) return;
@@ -1172,6 +1222,8 @@ function mostrarOk(ref, urlWa, pix, total) {
 }
 function abrirPedido(tam, prato, guarn, especial) {
   const d = DADOS; if (!d) return;
+  if (FECHADO) return avisoFechado();
+  conferirStatus();
   if (!document.getElementById('ped')) { document.body.insertAdjacentHTML('beforeend', pedidoHTML()); ligarPedido(); }
   const tams = tamanhosPedido(d).map(([k]) => k);
   PED.tam = tams.includes(tam) ? tam : (tams.includes('M') ? 'M' : tams[0] || ''); PED.prato = prato || ''; PED.guarn = []; PED.qtd = 1; PED.extras = []; PED.querExtra = null; PED.semGuarn = false; PED.aba = 'prato';
@@ -1367,7 +1419,7 @@ async function iniciar() {
   if (!d && p.has('demo')) d = PADRAO;
   if (!d) { // sem cardápio publicado (ou sem internet): não mostra cardápio antigo, só o caminho para pedir
     document.body.classList.remove('na-capa'); montar(PADRAO); q.innerHTML = '<div class="aviso"><div style="font:700 30px Oswald;color:#f3f4f6;margin-bottom:10px">PRATTO DI <span style="color:#ff7a1a">CASA</span></div>O cardápio de hoje ainda não foi publicado.<br>Chame a gente no WhatsApp que passamos os pratos do dia! 😊</div>'; return; }
-  DADOS = d; q.innerHTML = montar(d);
+  DADOS = d; q.innerHTML = montar(d); aplicarStatus(d);
   document.getElementById('capa').innerHTML = capaHTML(d); document.getElementById('pag-monte').innerHTML = montePagHTML(d);
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   if (new URLSearchParams(location.search).has('cardapio')) history.replaceState(null, '', location.pathname + location.search + '#cardapio');
