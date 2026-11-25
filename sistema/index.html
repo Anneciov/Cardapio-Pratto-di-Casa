@@ -209,7 +209,7 @@ aside nav>div:hover{background:#04315a!important;transform:scale(1.03)}
 .hm-bar>div{height:100%;border-radius:4px;background:linear-gradient(90deg,#54ACBF,#26658C)}
 .hm-fech{grid-template-columns:repeat(5,minmax(0,1fr))}
 .hm-gm .cr-mono,.hm-gd .cr-mono{font-size:12px}
-.hm-erro{margin:0 0 8px;padding:8px 12px;border-radius:10px;font-size:13px;color:#f3a08c;background:rgba(229,72,77,.1);border:1px solid rgba(229,72,77,.35)}
+@keyframes pdcPisca{0%,100%{background:rgba(232,176,75,.10);box-shadow:0 0 0 0 rgba(232,176,75,0)}50%{background:rgba(232,176,75,.32);box-shadow:0 0 0 4px rgba(232,176,75,.28)}}.fech-alerta{cursor:pointer;color:#ffd27a!important;border-radius:10px;padding:8px 10px!important;margin-left:-10px;margin-right:-10px;border-top-color:transparent!important;animation:pdcPisca 1.2s ease-in-out infinite}.fech-alerta .fech-data{color:#ffe2a3!important;font-weight:700}.fech-aviso{margin-top:3px;font-size:11.5px;font-weight:700;color:#ffd27a}.bx-pisca{animation:pdcPisca 1.2s ease-in-out infinite;border:1px solid #e8b04b!important;color:#7a4a00!important;font-weight:700}[data-theme=dark] .bx-pisca{color:#ffe2a3!important}@media (prefers-reduced-motion:reduce){.fech-alerta,.bx-pisca{animation:none;background:rgba(232,176,75,.25)}}.hm-erro{margin:0 0 8px;padding:8px 12px;border-radius:10px;font-size:13px;color:#f3a08c;background:rgba(229,72,77,.1);border:1px solid rgba(229,72,77,.35)}
 @media (max-width:900px){.hm-fech{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* ── fim histórico mensal ── */
 /* ── clientes ── */
@@ -2894,7 +2894,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
       <div style="margin-top:auto;padding:18px 22px;border-top:1px solid #0a3f66;font-size:11.5px;color:#6f9fb0;line-height:1.7">
         <div style="color:#9a9084">R. Alexandrino Pinto da Silva, 262<br>Centro · Cajamar/SP</div>
         <div style="margin-top:8px;font-family:'Space Mono',monospace;color:#b3d6de">(11) 4446-6187</div>
-        <div style="margin-top:10px;padding-top:10px;border-top:1px solid #0a3a5f">Próximo fechamento · <span style="color:#b3d6de;font-family:'Space Mono',monospace">{{ closingDate }}</span></div>
+        <div onclick="{{ fechIr }}" class="{{ fechCls }}" title="{{ fechTitulo }}" role="{{ fechRole }}" style="margin-top:10px;padding-top:10px;border-top:1px solid #0a3a5f">Próximo fechamento · <span class="fech-data" style="color:#b3d6de;font-family:'Space Mono',monospace">{{ closingDate }}</span><sc-if value="{{ fechAlerta }}" hint-placeholder-val="{{ false }}"><div class="fech-aviso">{{ fechAviso }}</div></sc-if></div>
         <div style="margin-top:10px;padding-top:10px;border-top:1px solid #0a3a5f;display:flex;align-items:center;gap:8px">
           <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">{{ userEmail }}</span>
           <button onclick="{{ doLogout }}" style="background:none;border:1px solid #145079;color:#b3d6de;border-radius:7px;padding:4px 9px;font-size:11px;cursor:pointer;flex-shrink:0">Sair</button>
@@ -3637,7 +3637,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
         </div>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 14px">
           <div class="cr-chips">
-            <sc-if value="{{ histBx.pode }}" hint-placeholder-val="{{ false }}"><button onclick="{{ histBx.onClick }}" class="cr-b cr-b-ok" title="Baixa de verdade: registra o fechamento do mês">{{ histBx.rot }}</button></sc-if>
+            <sc-if value="{{ histBx.pode }}" hint-placeholder-val="{{ false }}"><button onclick="{{ histBx.onClick }}" class="{{ histBx.btnCls }}" title="Baixa de verdade: registra o fechamento do mês">{{ histBx.rot }}</button></sc-if>
             <sc-if value="{{ histBx.feita }}" hint-placeholder-val="{{ false }}"><span class="hm-bx-ok hm-bx-top">{{ histBx.txt }}</span></sc-if>
           </div>
           <div class="cr-chips" style="margin-left:auto">
@@ -6050,7 +6050,7 @@ class Component extends DCLogic {
 
   /* ================= LOAD ================= */
   loadAll = async () => {
-    this.carregarPermissao(); this.lerLoja();
+    this.carregarPermissao(); this.lerLoja(); if (!this._demo) setTimeout(() => this.loadFechamentos(), 1500);
     // ao entrar no sistema, publica o cardápio do dia para a página dos clientes
     clearTimeout(this._pubT); this._pubT = setTimeout(() => { if (!this.state.arte) this.setState({ arte: this.arteDados() }); setTimeout(this.publicarCardapio, 300); }, 2500);
     // outro aparelho mudou o cardápio? confere a cada 45 s e quando a janela volta ao foco
@@ -9597,7 +9597,8 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
         pendInfo:t.pendentes_qtd!=null?(Number(t.pendentes_qtd)||0)+' pendente'+(Number(t.pendentes_qtd)===1?'':'s')+' · '+brl(Number(t.pendentes_valor)||0):'',
         onVer:()=>this.setState({histAba:'vendas',histSit:'baixadas',histBusca:'',histFiltro:'todas',histDe:ym+'-01',histAte:ym===hmMesAtual?hmHoje:hmFimMes(ym)}) }; });
     const hmYmSel=hmAte.slice(0,7), hmFSel=hmFech[hmYmSel], hmMudSel=hmMudou(hmYmSel), hmGSel=hmPorMes[hmYmSel]||hmGrupo();
-    const histBx={ pode:hmResOk&&(!hmFSel||hmMudSel)&&(hmGSel.qtd>0||hmGSel.rec>0), rot:(hmFSel?'Refazer baixa de ':'Dar baixa em ')+hmNomeMes(hmYmSel),
+    const hmDiasFech=Math.round((Date.parse(hmFimMes(hmMesAtual)+'T12:00:00Z')-Date.parse(hmHoje+'T12:00:00Z'))/864e5);
+    const histBx={ btnCls:'cr-b cr-b-ok'+((hmYmSel<hmMesAtual||(hmYmSel===hmMesAtual&&hmDiasFech<=5))?' bx-pisca':''), pode:hmResOk&&(!hmFSel||hmMudSel)&&(hmGSel.qtd>0||hmGSel.rec>0), rot:(hmFSel?'Refazer baixa de ':'Dar baixa em ')+hmNomeMes(hmYmSel),
       feita:!!hmFSel&&!hmMudSel, txt:'✓ Baixa de '+hmNomeMes(hmYmSel)+(hmFSel?' feita em '+hmQuando(hmFSel.fechado_em).slice(0,8):''), onClick:hmBaixar(hmYmSel), onRel:()=>hmRelatorio(hmYmSel), onCli:()=>this._bxClientesModal(hmYmSel,hmFSel), onSim:()=>this.simularBaixaMes(hmYmSel,hmTotaisMes(hmYmSel)) };
     // faixa do período, topo, abas e atalhos
     const hmCx=hmCaixa(hmPer), hmMaiorVenda=hmVen.reduce((a,v)=>Math.max(a,v.total),0);
@@ -10014,7 +10015,10 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       lojaBtnStyle:'display:flex;align-items:center;gap:6px;flex-shrink:0;height:28px;padding:0 10px;border-radius:999px;cursor:pointer;font-family:inherit;font-size:12px;line-height:1;font-weight:600;letter-spacing:.01em;'+(s.lojaAberta===false?'background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.55);color:#dc2626':'background:rgba(22,163,74,.12);border:1px solid rgba(22,163,74,.55);color:#16a34a')+(s.lojaSalvando?';opacity:.65;cursor:wait':''),
       lojaDotStyle:'width:7px;height:7px;border-radius:50%;flex-shrink:0;background:'+(s.lojaAberta===false?'#dc2626':'#16a34a')+';box-shadow:0 0 0 2px '+(s.lojaAberta===false?'rgba(220,38,38,.2)':'rgba(22,163,74,.2)'),
       heroVendasFmt:brl(vendasDia), heroSub, dHero, dMini, dSpark, dBand, dStatus, dDias, dSemana, dPag, dPagItens, noPag:dPagItens.length===0, dTop, noTop:dTop.length===0, dDev, dEst, dReceberFmt:brl(totalReceber), dSpPts, irCrediario, irEstoque, goPedido:()=>this.openModal('order'), goLancar:()=>this.setState({view:'lancamento'}), goCaixa:()=>this.abrirCaixa(),
-      closingDate, todayFmt,
+      closingDate, todayFmt, ...(()=>{ const hj=new Date(); hj.setHours(0,0,0,0); const dias=Math.round((lastDay-hj)/864e5), ym=lastDay.getFullYear()+'-'+String(lastDay.getMonth()+1).padStart(2,'0');
+        const feito=(s.histFech||[]).some(f=>String(f.mes).slice(0,7)===ym), alerta=!feito&&dias<=5;
+        return { fechAlerta:alerta, fechCls:alerta?'fech-alerta':'', fechRole:alerta?'button':'', fechAviso:dias<=0?'Hoje é o fechamento · dê baixa no mês':('Faltam '+dias+(dias===1?' dia':' dias')+' · dê baixa no mês'),
+          fechTitulo:alerta?'Clique para abrir o Histórico mensal e dar baixa no mês':(feito?'Baixa deste mês já feita':''), fechIr:()=>{ if(alerta) this.setState({ view:'historico', histAba:'mes', histDe:null, histAte:null }); } }; })(),
       mostrarTopo:s.view!=='whatsapp', conteudoStyle:(s.view==='whatsapp'?'padding:0;height:100vh;overflow:hidden':'padding:16px 24px;overflow:auto')+';flex:1;animation:dcFadeIn .3s ease',
       pageTitle:titles[s.view]?titles[s.view][0]:'', pageSub:titles[s.view]?titles[s.view][1]:'',
       hasAction:!!act, actionLabel:act?act[0]:'', primaryAction:act?()=>this.openModal(act[1]):null,
