@@ -3632,9 +3632,13 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           <label class="cr-campo">De<input type="date" value="{{ histPer.de }}" onchange="{{ onHistDe }}"></label>
           <label class="cr-campo">Até<input type="date" value="{{ histPer.ate }}" onchange="{{ onHistAte }}"></label>
           <div class="cr-chips"><sc-for list="{{ histPresets }}" as="p" hint-placeholder-count="6"><button onclick="{{ p.onClick }}" class="{{ p.cls }}">{{ p.label }}</button></sc-for></div>
-          <div class="cr-chips" style="margin-left:auto">
-            <sc-if value="{{ histBx.pode }}" hint-placeholder-val="{{ false }}"><button onclick="{{ histBx.onClick }}" class="cr-b cr-b-ok">{{ histBx.rot }}</button></sc-if>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 14px">
+          <div class="cr-chips">
+            <sc-if value="{{ histBx.pode }}" hint-placeholder-val="{{ false }}"><button onclick="{{ histBx.onClick }}" class="cr-b cr-b-ok" title="Baixa de verdade: registra o fechamento do mês">{{ histBx.rot }}</button></sc-if>
             <sc-if value="{{ histBx.feita }}" hint-placeholder-val="{{ false }}"><span class="hm-bx-ok hm-bx-top">{{ histBx.txt }}</span></sc-if>
+          </div>
+          <div class="cr-chips" style="margin-left:auto">
             <button onclick="{{ histBx.onSim }}" class="cr-b" title="Simula a baixa do mês (não grava nada) e baixa um Excel com todas as tabelas e o consumo detalhado dos clientes">Simular baixa (Excel)</button><button onclick="{{ histBx.onCli }}" class="cr-b" title="Comprado, pago e em aberto de cada cliente no mês">Baixa por cliente</button><button onclick="{{ histBx.onRel }}" class="cr-b">Relatório do mês</button><button onclick="{{ histImprimir }}" class="cr-b">Imprimir</button><button onclick="{{ histExportar }}" class="cr-b">Exportar planilha</button>
           </div>
         </div>
