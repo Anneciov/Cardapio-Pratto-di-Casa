@@ -152,6 +152,7 @@ aside nav>div:hover{background:#04315a!important;transform:scale(1.03)}
 [data-theme=light] .emp-add{color:#26658C}
 
 .cr-gl{grid-template-columns:minmax(170px,260px) minmax(240px,560px) 110px;justify-content:start}.cr-tabela:has(.cr-gl){width:fit-content;max-width:100%}.cr-gl.cr-lin>div:nth-child(2){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lanc-resumo{margin-left:0;flex-shrink:0;flex-wrap:nowrap;gap:14px}
+.lc-g{grid-template-columns:20px minmax(220px,1.8fr) 130px 70px 60px 110px 110px 110px 150px}.lc-g>div:last-child{padding-left:16px}.lc-seta{font-size:20px;line-height:1;color:#54acbf;text-align:center;transition:transform .15s ease}.lc-det{background:rgba(84,172,191,.06);border-top:1px solid var(--border-soft);padding:4px 14px 10px 42px}.lc-dg{display:grid;grid-template-columns:72px 50px 78px minmax(260px,1fr) 80px 150px 100px;gap:8px;align-items:center;padding:5px 0;font-size:12.5px;border-top:1px dashed var(--border-soft)}.lc-dg .n{text-align:right}.lc-dcab{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;opacity:.6;border-top:none}.lc-dtot{font-weight:700;border-top:1px solid var(--border-soft)}.lc-its{line-height:1.35;white-space:normal}
 .cdp-guias{display:inline-flex;margin-bottom:18px}.cdp-acoes{display:flex;flex-direction:column;align-items:center;gap:12px;margin:26px auto 0;padding:16px 18px 18px;width:fit-content;max-width:100%;box-sizing:border-box;border:1px solid var(--border-card);border-radius:18px;background:var(--bg-card);box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}.cdp-acoes-t{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#7fa9b7}.cdp-acoes-t svg{color:#54acbf}.cdp-acoes-bts{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px}.cdp-acoes-sep{width:1px;height:26px;background:var(--border-card)}.cdp-ab{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;border:1px solid var(--border-input);background:transparent;color:var(--text-primary);font:600 13.5px inherit;cursor:pointer;white-space:nowrap;transition:background-color .15s ease,border-color .15s ease,transform .15s ease,box-shadow .15s ease}.cdp-ab svg{flex-shrink:0;color:#54acbf}.cdp-ab:hover{background:var(--bg-accent-soft);border-color:#54acbf;transform:translateY(-1px)}.cdp-ab:active{transform:translateY(0) scale(.98)}.cdp-ab:focus-visible{outline:2px solid #54acbf;outline-offset:2px}.cdp-ab.pri{background:linear-gradient(135deg,#ffa94d,#ff7a1a);border-color:transparent;color:#1a0d02;font-weight:700;box-shadow:0 10px 22px -12px rgba(255,122,26,.9)}.cdp-ab.pri svg{color:#1a0d02}.cdp-ab.pri:hover{filter:brightness(1.06)}.cdp-ab.sec{background:linear-gradient(120deg,#023859,#26658C 60%,#54ACBF);border-color:transparent;color:#fff;font-weight:700}.cdp-ab.sec svg{color:#fff}@media (max-width:760px){.cdp-acoes-sep{display:none}}@media (prefers-reduced-motion:reduce){.cdp-ab{transition:none}}.cdp-guias .cr-aba{padding:9px 16px;font-size:14px;white-space:nowrap}.cdp-guias .cr-aba svg{flex-shrink:0;opacity:.85}.cdp-guias .cr-aba:focus-visible{outline:2px solid #54acbf;outline-offset:2px}
 .cdp-acoes{gap:9px!important;padding:12px 14px 14px!important}.cdp-acoes-bts{flex-wrap:nowrap!important;gap:7px!important}.cdp-ab{min-height:36px!important;padding:0 12px!important;font-size:12.5px!important;gap:6px!important;border-radius:10px!important}.cdp-ab svg{width:14px;height:14px}.cdp-acoes-sep{height:22px!important}.cdp-ab.pri{box-shadow:0 8px 16px -12px rgba(255,122,26,.9)!important}@media (max-width:1100px){.cdp-banner-tx+.azul-flutua{width:240px;transform:scale(.7);transform-origin:right center}.cdp-acoes-bts{flex-wrap:wrap!important}}
 
@@ -3494,6 +3495,8 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 
       <!-- LANCAMENTO DIARIO / BALCAO -->
       <sc-if value="{{ isLancamento }}" hint-placeholder-val="{{ false }}">
+        <div class="cr-top"><div class="cr-abas" role="tablist"><sc-for list="{{ lancAbas }}" as="a" hint-placeholder-count="2"><button onclick="{{ a.onClick }}" class="{{ a.cls }}" role="tab">{{ a.label }}<span class="cr-cont">{{ a.n }}</span></button></sc-for></div></div>
+        <sc-if value="{{ lancAbaHoje }}" hint-placeholder-val="{{ true }}">
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px">
           <div style="position:relative;flex:1">
             <svg width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="#9a9084" stroke-width="1.8" stroke-linecap="round" style="position:absolute;left:14px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg>
@@ -3514,6 +3517,58 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
             </div>
           </sc-for>
         </div></div>
+        </sc-if>
+        <sc-if value="{{ lancAbaCli }}" hint-placeholder-val="{{ false }}">
+          <div class="cr-barra cr-periodo">
+            <label class="cr-campo">Mês<input type="month" value="{{ lcPer.mes }}" onchange="{{ onLcMes }}"></label>
+            <label class="cr-campo">De<input type="date" value="{{ lcPer.de }}" onchange="{{ onLcDe }}"></label>
+            <label class="cr-campo">Até<input type="date" value="{{ lcPer.ate }}" onchange="{{ onLcAte }}"></label>
+            <div class="cr-chips"><sc-for list="{{ lcPresets }}" as="p" hint-placeholder-count="5"><button onclick="{{ p.onClick }}" class="{{ p.cls }}">{{ p.label }}</button></sc-for></div>
+          </div>
+          <div class="cr-barra">
+            <div class="cr-busca sm" style="flex:1 1 260px;max-width:380px"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="position:absolute;left:10px;opacity:.6"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg><input value="{{ lcPer.busca }}" oninput="{{ onLcBusca }}" placeholder="Cliente, empresa, item ou nº do pedido" style="width:100%;padding:8px 12px 8px 32px;border:1px solid var(--border-input);border-radius:10px;font-size:13px;background:var(--bg-card);color:var(--text-primary);outline:none"></div>
+            <div class="cr-chips"><sc-for list="{{ lcOrdens }}" as="o" hint-placeholder-count="4"><button onclick="{{ o.onClick }}" class="{{ o.cls }}">{{ o.label }}</button></sc-for></div>
+            <div class="cr-chips" style="margin-left:auto"><button onclick="{{ lcExpandirTodos }}" class="cr-b">{{ lcExpLabel }}</button><button onclick="{{ lcImprimir }}" class="cr-b">Imprimir</button><button onclick="{{ lcExcel }}" class="cr-b">Exportar Excel</button></div>
+          </div>
+          <div class="cr-fech">
+            <div><span>Período</span><b>{{ lcPer.label }}</b></div>
+            <div><span>Clientes</span><b>{{ lcRes.clientes }}</b><small>{{ lcRes.media }}</small></div>
+            <div><span>Pedidos</span><b>{{ lcRes.pedidos }}</b><small>{{ lcRes.itens }}</small></div>
+            <div><span>Total consumido</span><b>{{ lcRes.total }}</b></div>
+            <div><span>Ticket médio</span><b>{{ lcRes.ticket }}</b><small>por pedido</small></div>
+            <div><span>Pago na hora</span><b class="verde">{{ lcRes.naHora }}</b></div>
+            <div><span>Na conta</span><b style="color:#e0703a">{{ lcRes.naConta }}</b><small>crediário</small></div>
+          </div>
+          <sc-if value="{{ lcTemErro }}" hint-placeholder-val="{{ false }}"><div class="hm-erro">{{ lcErro }}</div></sc-if>
+          <div class="cr-tabela"><div class="cr-in" style="min-width:1000px">
+            <div class="cr-g lc-g cr-cab"><div></div><div>Cliente</div><div>Tipo</div><div class="n">Pedidos</div><div class="n">Itens</div><div class="n">Total</div><div class="n">Na hora</div><div class="n">Na conta</div><div>Última compra</div></div>
+            <sc-for list="{{ lancCliRows }}" as="c" hint-placeholder-count="5"><div class="cr-lin lc-bloco">
+              <div class="cr-g lc-g cr-clic" role="button" tabindex="0" onclick="{{ c.onToggle }}" aria-expanded="{{ c.expandido }}" title="Ver as compras detalhadas">
+                <div class="lc-seta" style="{{ c.setaStyle }}" aria-hidden="true">›</div>
+                <div style="min-width:0"><div class="cr-nome sem">{{ c.nome }}</div><div class="cr-sub">{{ c.sub }}</div></div>
+                <div><span style="{{ c.typeStyle }}">{{ c.typeLabel }}</span></div>
+                <div class="n cr-mono">{{ c.pedidos }}</div>
+                <div class="n cr-mono">{{ c.itens }}</div>
+                <div class="n cr-mono cr-forte">{{ c.total }}</div>
+                <div class="n cr-mono" style="color:#3f9d6b">{{ c.naHora }}</div>
+                <div class="n cr-mono" style="color:#e0703a">{{ c.naConta }}</div>
+                <div style="display:flex;align-items:center;gap:8px;justify-content:space-between"><span class="cr-mono">{{ c.ultima }}</span><sc-if value="{{ c.temPedido }}" hint-placeholder-val="{{ false }}"><button data-lc-pedido="1" onclick="{{ c.onPedido }}" class="cr-b" title="Lançar pedido para este cliente">+ Pedido</button></sc-if></div>
+              </div>
+              <sc-if value="{{ c.aberto }}" hint-placeholder-val="{{ false }}">
+                <div class="lc-det">
+                  <div class="lc-dg lc-dcab"><div>Data</div><div>Hora</div><div>Pedido</div><div>Itens comprados</div><div>Origem</div><div>Forma</div><div class="n">Valor</div></div>
+                  <sc-for list="{{ c.compras }}" as="p" hint-placeholder-count="2">
+                    <div class="lc-dg"><div class="cr-mono">{{ p.data }}</div><div class="cr-mono cr-sub">{{ p.hora }}</div><div class="cr-mono">{{ p.ref }}</div><div class="lc-its">{{ p.itens }}</div><div class="cr-sub2">{{ p.origem }}</div><div><span class="cr-tag" style="{{ p.formaStyle }}">{{ p.forma }}</span></div><div class="n cr-mono cr-forte">{{ p.valor }}</div></div>
+                  </sc-for>
+                  <div class="lc-dg lc-dtot"><div>Total</div><div></div><div></div><div>{{ c.sub }}</div><div></div><div></div><div class="n cr-mono">{{ c.total }}</div></div>
+                </div>
+              </sc-if>
+            </div></sc-for>
+            <sc-if value="{{ lcVazio }}" hint-placeholder-val="{{ false }}"><div class="cr-vazio">{{ lcVazioTxt }}</div></sc-if>
+            <div class="cr-g lc-g cr-rod"><div></div><div>Total · {{ lcRes.clientes }} clientes</div><div></div><div class="n">{{ lcRes.pedidos }}</div><div class="n">{{ lcRes.itens }}</div><div class="n">{{ lcRes.total }}</div><div class="n">{{ lcRes.naHora }}</div><div class="n">{{ lcRes.naConta }}</div><div></div></div>
+          </div></div>
+          <sc-if value="{{ lcRes.mais }}" hint-placeholder-val="{{ false }}"><div class="cr-info" style="margin-top:6px">{{ lcRes.mais }}</div></sc-if>
+        </sc-if>
       </sc-if>
 
       <!-- CREDIARIO -->
@@ -6189,6 +6244,62 @@ class Component extends DCLogic {
     if (error) { console.error(error); this.setState({ histErro: 'Não foi possível carregar o histórico: ' + error.message, histResumoKey: chave }); return; }
     if (this._hmKeyRes !== chave) return; // o período mudou enquanto carregava
     this.setState({ histResumo: (data || []).map(r => ({ dia: r.dia, forma: r.forma, origem: r.origem, qtd: Number(r.qtd) || 0, total: Number(r.total) || 0 })), histResumoKey: chave, histErro: '' });
+  };
+  // ── Lançamento diário · compras por cliente: pedidos do período com os itens ──
+  loadLancCli = async (de, ate, chave) => {
+    const s = this.state;
+    if (this._demo || s.userEmail === 'demonstração') {
+      const hoje = this.todayISO();
+      const L = [...(s.dashStats || []).map((o, i) => ({ id: 'ds' + i, ref: '', iso: o.iso, ts: '', hora: '', total: Number(o.total) || 0, forma: o.payment, origem: 'balcao', status: o.status || 'entregue', nome: '', cli: null, emp: null,
+          itens: (o.itens || []).map(x => ({ d: x.d, q: Number(x.q) || 1, u: x.v != null ? Number(x.v) : null, t: null })) })),
+        ...(s.orders || []).filter(o => o.today).map(o => ({ id: o.dbId || o.id, ref: o.id, iso: hoje, ts: '', hora: '', total: Number(o.total) || 0, forma: o.payment, origem: o.kind === 'balcao' ? 'balcao' : 'manual', status: o.status, nome: o.waClient || '', cli: o.clientId, emp: o.empresaId,
+          itens: String(o.items || '').split(/,\s*/).filter(Boolean).map(t => { const m = t.match(/^(\d+)x\s+(.*)$/); return { d: m ? m[2] : t, q: m ? Number(m[1]) : 1, u: null, t: null }; }) }))];
+      if (this._lcKey === chave) this.setState({ lcKey: chave, lcErro: '', lcVendas: L.filter(v => v.iso >= de && v.iso <= ate) });
+      return;
+    }
+    let linhas = [];
+    for (let i = 0; i < 30000; i += 1000) {
+      const { data, error } = await sb.from('rest_pedidos').select('id,numero_ref,data,created_at,total,forma_pagamento,origem,status,nome_cliente,cliente_id,empresa_id,rest_pedido_itens(descricao,quantidade,valor_unitario,valor_total)')
+        .gte('data', de).lte('data', ate).order('created_at', { ascending: false }).range(i, i + 999);
+      if (error) { console.error(error); if (this._lcKey === chave) this.setState({ lcKey: chave, lcErro: 'Não foi possível carregar as compras: ' + error.message }); return; }
+      linhas = linhas.concat(data || []); if (!data || data.length < 1000) break;
+    }
+    if (this._lcKey !== chave) return;
+    this.setState({ lcKey: chave, lcErro: '', lcVendas: linhas.map(o => ({ id: o.id, ref: o.numero_ref || '', iso: o.data, ts: o.created_at || '',
+      hora: o.created_at ? new Date(o.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '', total: Number(o.total) || 0,
+      forma: o.forma_pagamento || 'dinheiro', origem: o.origem || 'manual', status: o.status || '', nome: o.nome_cliente || '', cli: o.cliente_id, emp: o.empresa_id,
+      itens: (o.rest_pedido_itens || []).map(i => { const q = Number(i.quantidade) || 0, u = i.valor_unitario != null ? Number(i.valor_unitario) : null;
+        return { d: i.descricao || '', q, u, t: i.valor_total != null ? Number(i.valor_total) : (u != null ? Math.round(u * q * 100) / 100 : null) }; }) })) });
+  };
+  // Excel das compras por cliente (resumo + cada compra e item)
+  _lcExcel = async (lista, de, ate, rotulo) => {
+    try {
+      const ExcelJS = await this._excelJS(); const wb = new ExcelJS.Workbook(); wb.creator = 'Pratto di Casa'; wb.created = new Date();
+      const AZUL = 'FF023859', R = '"R$" #,##0.00', DT = 'dd/mm/yyyy', dia = (iso) => { const x = String(iso || '').slice(0, 10).split('-').map(Number); return x[0] ? new Date(Date.UTC(x[0], x[1] - 1, x[2])) : null; };
+      const aba = (nome, cols, linhas) => { const ws = wb.addWorksheet(nome, { views: [{ state: 'frozen', ySplit: 3 }] });
+        ws.mergeCells(1, 1, 1, cols.length); ws.getCell(1, 1).value = 'Pratto di Casa · ' + nome + ' · ' + rotulo; ws.getCell(1, 1).font = { bold: true, size: 13, color: { argb: AZUL } };
+        ws.mergeCells(2, 1, 2, cols.length); ws.getCell(2, 1).value = 'Gerado em ' + new Date().toLocaleString('pt-BR'); ws.getCell(2, 1).font = { italic: true, size: 9, color: { argb: 'FF777777' } };
+        cols.forEach((c, i) => { ws.getColumn(i + 1).width = c.w; const x = ws.getRow(3).getCell(i + 1); x.value = c.h; x.font = { bold: true, color: { argb: 'FFFFFFFF' } }; x.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: AZUL } }; x.alignment = { vertical: 'middle', wrapText: true }; });
+        ws.getRow(3).height = 28;
+        linhas.forEach(l => { const arr = Array.isArray(l) ? l : l.v, row = ws.addRow(arr);
+          cols.forEach((c, i) => { const x = row.getCell(i + 1); if (c.f && (typeof x.value === 'number' || x.value instanceof Date)) x.numFmt = c.f; });
+          if (!Array.isArray(l)) { row.font = { bold: true }; for (let i = 1; i <= cols.length; i++) row.getCell(i).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: l.sub ? 'FFFFF4E5' : 'FFE6F2F5' } }; } });
+        if (linhas.length) ws.autoFilter = { from: { row: 3, column: 1 }, to: { row: 3, column: cols.length } }; };
+      const soma = (L, f) => Math.round(L.reduce((a, x) => a + (Number(f(x)) || 0), 0) * 100) / 100;
+      const todas = lista.flatMap(r => r.L);
+      aba('Resumo por cliente', [{ h: 'Cliente', w: 32 }, { h: 'Tipo', w: 14 }, { h: 'Empresa (convênio)', w: 24 }, { h: 'Pedidos', w: 9 }, { h: 'Itens', w: 8 }, { h: 'Total', w: 14, f: R }, { h: 'Na hora', w: 14, f: R }, { h: 'Na conta (crediário)', w: 16, f: R }, { h: 'Ticket médio', w: 13, f: R }, { h: '1ª compra', w: 11, f: DT }, { h: 'Última compra', w: 11, f: DT }],
+        [...lista.map(r => [r.w.nome, r.w.tipo, r.w.emp, r.L.length, r.itens, r.tot, Math.round((r.tot - r.conta) * 100) / 100, r.conta, r.L.length ? Math.round(r.tot / r.L.length * 100) / 100 : null, dia(r.pri), dia(r.ult)]),
+         { v: ['Total · ' + lista.length + ' clientes', '', '', todas.length, lista.reduce((a, r) => a + r.itens, 0), soma(lista, r => r.tot), soma(lista, r => r.tot - r.conta), soma(lista, r => r.conta), null, null, null] }]);
+      const det = []; lista.forEach(r => { r.L.slice().sort((a, b) => (a.iso + a.ts).localeCompare(b.iso + b.ts)).forEach(v => { const its = v.itens.length ? v.itens : [{ d: '(sem itens detalhados)', q: null, u: null, t: v.total }];
+          its.forEach((i, k) => det.push([r.w.nome, r.w.tipo, r.w.emp, dia(v.iso), v.hora, v.ref, i.d, i.q, i.u, i.t, k === 0 ? v.total : null, this.payLabel(v.forma)])); });
+        det.push({ sub: 1, v: ['Total de ' + r.w.nome, '', '', null, '', r.L.length + ' pedido' + (r.L.length === 1 ? '' : 's'), '', r.itens, null, null, r.tot, ''] }); });
+      det.push({ v: ['TOTAL GERAL', '', '', null, '', todas.length + ' pedidos', '', lista.reduce((a, r) => a + r.itens, 0), null, null, soma(lista, r => r.tot), ''] });
+      aba('Compras detalhadas', [{ h: 'Cliente', w: 30 }, { h: 'Tipo', w: 13 }, { h: 'Empresa (convênio)', w: 22 }, { h: 'Data', w: 11, f: DT }, { h: 'Hora', w: 7 }, { h: 'Pedido nº', w: 11 }, { h: 'Item', w: 44 }, { h: 'Qtd', w: 6 }, { h: 'Valor unitário', w: 13, f: R }, { h: 'Total do item', w: 13, f: R }, { h: 'Total do pedido', w: 14, f: R }, { h: 'Forma de pagamento', w: 18 }], det);
+      const buf = await wb.xlsx.writeBuffer(); const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })); a.download = 'compras-por-cliente-' + de + '-a-' + ate + '.xlsx';
+      document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+      this.showToast('Excel das compras por cliente baixado.');
+    } catch (e) { console.error(e); this.showToast('Não foi possível gerar o Excel: ' + ((e && e.message) || e)); }
   };
   loadHistVendas = async (de, ate, chave) => {
     let linhas = [];
@@ -9727,6 +9838,68 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       {id:'motoboys',label:'A pagar aos motoboys',value:brl(pagarMotoboys),sub:'salários + taxas',color:'var(--text-primary)',icon:'M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 19l-4.8 2.5.9-5.4L4.2 8.3l5.4-.8z',detail:'Salários fixos do mês somados às taxas de entrega acumuladas por todos os motoboys.'},
     ].map(m=>({...m, expanded:s.expandedMetric===m.id, chevronRotate:s.expandedMetric===m.id?'rotate(180deg)':'none', onToggle:()=>this.toggleMetric(m.id)}));
 
+    // ── Lançamento diário · abas (Hoje / Compras por cliente) ──
+    const lcAba=s.lancAba||'hoje', lcHoje=this.todayISO(), lcMesIni=lcHoje.slice(0,8)+'01';
+    const lcMenos=(iso,d)=>new Date(Date.parse(iso+'T12:00:00Z')-d*864e5).toISOString().slice(0,10);
+    const lcFimMes=(ym)=>{ const [y,m]=ym.split('-').map(Number); return ym+'-'+String(new Date(Date.UTC(y,m,0)).getUTCDate()).padStart(2,'0'); };
+    const lcData=(iso)=>iso?String(iso).slice(8,10)+'/'+String(iso).slice(5,7)+'/'+String(iso).slice(2,4):'—';
+    const lcDe=s.lcDe||lcMesIni, lcAte=s.lcAte||lcHoje;
+    if(s.view==='lancamento'&&lcAba==='clientes'){ const k=lcDe+'|'+lcAte+'|'+(s.orders||[]).length; if(this._lcKey!==k){ this._lcKey=k; setTimeout(()=>this.loadLancCli(lcDe,lcAte,k),0); } }
+    const lcPronto=!!s.lcKey&&String(s.lcKey).startsWith(lcDe+'|'+lcAte+'|');
+    const lcV=lcPronto?(s.lcVendas||[]).filter(v=>v.iso>=lcDe&&v.iso<=lcAte&&v.status!=='cancelado'&&v.status!=='recusado'):[];
+    const lcCliDe={}; (s.clients||[]).forEach(c=>{ lcCliDe[c.id]=c; });
+    const lcQuem=(v)=>{ const c=lcCliDe[v.cli], e=lcCliDe[v.emp];
+      if(c) return { k:c.id, id:c.id, nome:c.name, tipo:this.typeLabel(c.type), tipoCod:c.type, emp:(e&&e.name)||c.company||'' };
+      if(e) return v.nome?{ k:e.id+'|'+String(v.nome).trim().toLowerCase(), id:null, nome:String(v.nome).trim()+' ('+e.name+')', tipo:'Convênio sem cadastro', tipoCod:'', emp:e.name }:{ k:e.id, id:e.id, nome:e.name, tipo:'Empresa', tipoCod:'Empresa', emp:e.name };
+      if(v.nome) return { k:'n|'+String(v.nome).trim().toLowerCase(), id:null, nome:String(v.nome).trim(), tipo:'Sem cadastro', tipoCod:'', emp:'' };
+      return { k:'balcao', id:null, nome:'Consumidor do balcão (sem nome)', tipo:'Sem cadastro', tipoCod:'', emp:'' }; };
+    const lcGr={}; lcV.forEach(v=>{ const w=lcQuem(v), g=lcGr[w.k]||(lcGr[w.k]={ w, L:[] }); g.L.push(v); });
+    const lcR2=(v)=>Math.round((Number(v)||0)*100)/100;
+    const lcQ=(s.lcBusca||'').trim().toLowerCase(), lcOrd=s.lcOrdem||'total';
+    const lcTodos=Object.values(lcGr).map(g=>{ const ord=g.L.map(v=>v.iso+'T'+(v.ts||'')).sort();
+      return { ...g, tot:lcR2(g.L.reduce((a,v)=>a+v.total,0)), conta:lcR2(g.L.filter(v=>v.forma==='crediario').reduce((a,v)=>a+v.total,0)), itens:g.L.reduce((a,v)=>a+v.itens.reduce((b,i)=>b+(i.q||0),0),0),
+        pri:ord[0].slice(0,10), ult:ord[ord.length-1].slice(0,10), ultOrd:ord[ord.length-1] }; });
+    const lcLista=lcTodos.filter(r=>!lcQ||r.w.nome.toLowerCase().includes(lcQ)||r.w.emp.toLowerCase().includes(lcQ)||r.L.some(v=>String(v.ref).toLowerCase().includes(lcQ)||v.itens.some(i=>String(i.d).toLowerCase().includes(lcQ))))
+      .sort((a,b)=>lcOrd==='nome'?a.w.nome.localeCompare(b.w.nome,'pt-BR'):(lcOrd==='ultima'?b.ultOrd.localeCompare(a.ultOrd):(lcOrd==='pedidos'?b.L.length-a.L.length||b.tot-a.tot:b.tot-a.tot)));
+    const lcAbertos=s.lcAbertos||{}, lcTodosAbertos=lcLista.length>0&&lcLista.every(r=>lcAbertos[r.w.k]);
+    const lcCor={dinheiro:'#3f9d6b',pix:'#14b8a6',debito:'#5b8def',credito:'#8b5cf6',vr:'#d0892b',crediario:'#e0703a'};
+    const lcOrig={balcao:'Caixa',manual:'Pedido',whatsapp:'WhatsApp',site:'Site'};
+    const lancCliRows=lcLista.slice(0,400).map(r=>{ const ab=!!lcAbertos[r.w.k];
+      return { nome:r.w.nome, sub:[r.w.tipo!=='Empresa'&&r.w.emp?'convênio '+r.w.emp:'', r.L.length+' pedido'+(r.L.length===1?'':'s')+' · '+r.itens+' ite'+(r.itens===1?'m':'ns')].filter(Boolean).join(' · '),
+        typeLabel:r.w.tipo, typeStyle:r.w.tipoCod?this.typeStyle(r.w.tipoCod):'font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;border:1px dashed var(--border-input);opacity:.8',
+        pedidos:String(r.L.length), itens:String(r.itens), total:brl(r.tot), naHora:r.tot-r.conta>0.004?brl(r.tot-r.conta):'—', naConta:r.conta>0.004?brl(r.conta):'—',
+        ultima:lcData(r.ult), aberto:ab, expandido:ab?'true':'false', setaStyle:'transform:rotate('+(ab?90:0)+'deg)',
+        onToggle:(e)=>{ if(e&&e.target&&e.target.closest&&e.target.closest('[data-lc-pedido]')) return; this.setState(st=>({ lcAbertos:{ ...(st.lcAbertos||{}), [r.w.k]:!ab } })); },
+        temPedido:!!r.w.id, onPedido:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); if(r.w.id) this.openOrderForClient(r.w.id); },
+        compras:r.L.slice().sort((a,b)=>(b.iso+(b.ts||'')).localeCompare(a.iso+(a.ts||''))).map(v=>{ const cor=lcCor[v.forma]||'#8a94a6';
+          return { data:lcData(v.iso), hora:v.hora||'', ref:v.ref||'—', itens:v.itens.length?v.itens.map(i=>i.q+'x '+i.d).join(', '):'—', origem:lcOrig[v.origem]||v.origem||'—',
+            forma:this.payLabel(v.forma), formaStyle:'color:'+cor+';border-color:'+cor, valor:brl(v.total) }; }) }; });
+    const lcPres=[['Hoje',lcHoje,lcHoje],['Ontem',lcMenos(lcHoje,1),lcMenos(lcHoje,1)],['7 dias',lcMenos(lcHoje,6),lcHoje],['Este mês',lcMesIni,lcHoje],['Mês passado',lcMenos(lcMesIni,1).slice(0,8)+'01',lcMenos(lcMesIni,1)]];
+    const lcTot=lcR2(lcLista.reduce((a,r)=>a+r.tot,0)), lcConta=lcR2(lcLista.reduce((a,r)=>a+r.conta,0)), lcNPed=lcLista.reduce((a,r)=>a+r.L.length,0), lcNIt=lcLista.reduce((a,r)=>a+r.itens,0);
+    const lcRotulo=lcData(lcDe)+' a '+lcData(lcAte);
+    const lcVals={ lancCliRows,
+      lancAbas:[['hoje','Hoje',String((s.orders||[]).filter(o=>o.today).length)],['clientes','Compras por cliente',lcPronto?String(lcTodos.length):'…']].map(([id,label,n])=>({ label, n, cls:'cr-aba'+(lcAba===id?' on':''), onClick:()=>this.setState({ lancAba:id }) })),
+      lancAbaHoje:lcAba==='hoje', lancAbaCli:lcAba==='clientes',
+      lcPer:{ mes:lcAte.slice(0,7), de:lcDe, ate:lcAte, busca:s.lcBusca||'', label:lcRotulo },
+      onLcMes:(e)=>{ const v=e.target.value; if(v) this.setState({ lcDe:v+'-01', lcAte:v===lcHoje.slice(0,7)?lcHoje:lcFimMes(v), lcAbertos:{} }); },
+      onLcDe:(e)=>{ if(e.target.value) this.setState({ lcDe:e.target.value, lcAbertos:{} }); }, onLcAte:(e)=>{ if(e.target.value) this.setState({ lcAte:e.target.value, lcAbertos:{} }); },
+      onLcBusca:(e)=>this.setState({ lcBusca:e.target.value }),
+      lcPresets:lcPres.map(([label,de,ate])=>({ label, cls:'cr-chip'+(de===lcDe&&ate===lcAte?' on':''), onClick:()=>this.setState({ lcDe:de, lcAte:ate, lcAbertos:{} }) })),
+      lcOrdens:[['total','Maior consumo'],['pedidos','Mais pedidos'],['ultima','Última compra'],['nome','Nome A-Z']].map(([id,label])=>({ label, cls:'cr-chip'+(lcOrd===id?' on':''), onClick:()=>this.setState({ lcOrdem:id }) })),
+      lcExpLabel:lcTodosAbertos?'Recolher todos':'Abrir todos',
+      lcExpandirTodos:()=>this.setState({ lcAbertos:lcTodosAbertos?{}:Object.fromEntries(lcLista.slice(0,400).map(r=>[r.w.k,true])) }),
+      lcExcel:()=>this._lcExcel(lcLista,lcDe,lcAte,lcRotulo),
+      lcImprimir:()=>{ const E=(x)=>String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+        const corpo='<h2>Compras por cliente · '+E(lcRotulo)+'</h2><p>'+lcLista.length+' clientes · '+lcNPed+' pedidos · total '+E(brl(lcTot))+'</p>'+lcLista.map(r=>'<h3>'+E(r.w.nome)+(r.w.emp&&r.w.tipo!=='Empresa'?' <small>('+E(r.w.emp)+')</small>':'')+'<span>'+E(brl(r.tot))+'</span></h3><table><tr><th>Data</th><th>Hora</th><th>Pedido</th><th>Itens</th><th>Forma</th><th class="n">Valor</th></tr>'+
+          r.L.slice().sort((a,b)=>(a.iso+(a.ts||'')).localeCompare(b.iso+(b.ts||''))).map(v=>'<tr><td>'+lcData(v.iso)+'</td><td>'+E(v.hora)+'</td><td>'+E(v.ref)+'</td><td>'+E(v.itens.map(i=>i.q+'x '+i.d).join(', '))+'</td><td>'+E(this.payLabel(v.forma))+'</td><td class="n">'+E(brl(v.total))+'</td></tr>').join('')+'</table>').join('');
+        const doc='<html><head><meta charset="utf-8"><title>Compras por cliente</title><style>@page{size:A4;margin:12mm}body{font-family:Arial,sans-serif;font-size:10.5px;color:#111}h2{margin:0 0 2px;font-size:16px}p{margin:0 0 10px;color:#555}h3{display:flex;justify-content:space-between;margin:12px 0 3px;font-size:12px;border-bottom:2px solid #023859;padding-bottom:2px;break-after:avoid}h3 small{font-weight:400;color:#555}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #ddd;padding:3px 5px;text-align:left;vertical-align:top}th{background:#f0f0f0;font-size:9.5px;text-transform:uppercase}.n{text-align:right;white-space:nowrap}</style></head><body>'+corpo+'</body></html>';
+        const ifr=document.createElement('iframe'); ifr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0'; document.body.appendChild(ifr);
+        const dd=ifr.contentWindow.document; dd.open(); dd.write(doc); dd.close(); setTimeout(()=>{ try{ ifr.contentWindow.focus(); ifr.contentWindow.print(); }catch(e){} setTimeout(()=>ifr.remove(),1500); },350); },
+      lcRes:{ clientes:String(lcLista.length), pedidos:String(lcNPed), itens:lcNIt+(lcNIt===1?' item':' itens'), total:brl(lcTot), ticket:brl(lcNPed?lcTot/lcNPed:0), naHora:brl(lcTot-lcConta), naConta:brl(lcConta),
+        media:'média '+brl(lcLista.length?lcTot/lcLista.length:0)+' por cliente', mais:lcLista.length>400?'Mostrando os 400 primeiros; use a busca para achar os outros.':'' },
+      lcTemErro:lcAba==='clientes'&&!!s.lcErro, lcErro:s.lcErro||'',
+      lcVazio:lancCliRows.length===0, lcVazioTxt:!lcPronto?'Carregando as compras…':(lcTodos.length?'Nenhum cliente com essa busca.':'Nenhuma compra neste período.')
+    };
     // Lançamento / balcão
     const todayBalcao=s.orders.filter(o=>o.kind==='balcao'&&o.today);
     const balcaoCards=s.balcaoItems.map(it=>({name:it.name,price:it.price,onPrice:this.setItemPrice(it.id),countToday:todayBalcao.filter(o=>o.items.indexOf(it.name)===0).length}));
@@ -9861,7 +10034,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       clientSearch:s.clientSearch, setClientSearch:this.setClientSearch, clientTypeChips, noClientResults:clientRows.length===0,
       orderSearch:s.orderSearch, setOrderSearch:this.setOrderSearch, pedidoAberto:!!pedSel, pedDet, fecharPedido:()=>this.setState({pedidoDetalhe:null}), orderFilterChips, noOrderResults:orderRows.length===0&&!pedCarregando, abrirPedMes:this.abrirPedMes, pedMesLabel, pedRodInfo, pedLimChips, pedPagInfo, pedPagAnt, pedPagProx, pedPagAntSt, pedPagProxSt,
       credSearch:s.credSearch, setCredSearch:this.setCredSearch,
-      launchSearch:s.launchSearch, setLaunchSearch:this.setLaunchSearch,
+      launchSearch:s.launchSearch, setLaunchSearch:this.setLaunchSearch, ...lcVals,
       monthlyRows, devedoresRows, noDevedores:devedoresRows.length===0, totalRecebidoMesFmt:brl(totalRecebidoMes), totalFaturadoMesFmt:brl(totalFaturadoMes), totalCompradoMesFmt:brl(totalCompradoMes),
       metrics, orderRows, recentOrders, clientRows, crediarioRows, debtors, noDebtors:debtors.length===0, noCrediario:crediarioRows.length===0,
       waPendentesRows, hasWaPendentes, emAndamentoRows, hasEmAndamento, concluidosRows, hasConcluidos,
