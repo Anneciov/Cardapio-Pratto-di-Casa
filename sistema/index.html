@@ -3495,8 +3495,6 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 
       <!-- LANCAMENTO DIARIO / BALCAO -->
       <sc-if value="{{ isLancamento }}" hint-placeholder-val="{{ false }}">
-        <div class="cr-top"><div class="cr-abas" role="tablist"><sc-for list="{{ lancAbas }}" as="a" hint-placeholder-count="2"><button onclick="{{ a.onClick }}" class="{{ a.cls }}" role="tab">{{ a.label }}<span class="cr-cont">{{ a.n }}</span></button></sc-for></div></div>
-        <sc-if value="{{ lancAbaHoje }}" hint-placeholder-val="{{ true }}">
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px">
           <div style="position:relative;flex:1">
             <svg width="17" height="17" sc-camel-view-box="0 0 24 24" fill="none" stroke="#9a9084" stroke-width="1.8" stroke-linecap="round" style="position:absolute;left:14px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg>
@@ -3517,58 +3515,6 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
             </div>
           </sc-for>
         </div></div>
-        </sc-if>
-        <sc-if value="{{ lancAbaCli }}" hint-placeholder-val="{{ false }}">
-          <div class="cr-barra cr-periodo">
-            <label class="cr-campo">Mês<input type="month" value="{{ lcPer.mes }}" onchange="{{ onLcMes }}"></label>
-            <label class="cr-campo">De<input type="date" value="{{ lcPer.de }}" onchange="{{ onLcDe }}"></label>
-            <label class="cr-campo">Até<input type="date" value="{{ lcPer.ate }}" onchange="{{ onLcAte }}"></label>
-            <div class="cr-chips"><sc-for list="{{ lcPresets }}" as="p" hint-placeholder-count="5"><button onclick="{{ p.onClick }}" class="{{ p.cls }}">{{ p.label }}</button></sc-for></div>
-          </div>
-          <div class="cr-barra">
-            <div class="cr-busca sm" style="flex:1 1 260px;max-width:380px"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="position:absolute;left:10px;opacity:.6"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg><input value="{{ lcPer.busca }}" oninput="{{ onLcBusca }}" placeholder="Cliente, empresa, item ou nº do pedido" style="width:100%;padding:8px 12px 8px 32px;border:1px solid var(--border-input);border-radius:10px;font-size:13px;background:var(--bg-card);color:var(--text-primary);outline:none"></div>
-            <div class="cr-chips"><sc-for list="{{ lcOrdens }}" as="o" hint-placeholder-count="4"><button onclick="{{ o.onClick }}" class="{{ o.cls }}">{{ o.label }}</button></sc-for></div>
-            <div class="cr-chips" style="margin-left:auto"><button onclick="{{ lcExpandirTodos }}" class="cr-b">{{ lcExpLabel }}</button><button onclick="{{ lcImprimir }}" class="cr-b">Imprimir</button><button onclick="{{ lcExcel }}" class="cr-b">Exportar Excel</button></div>
-          </div>
-          <div class="cr-fech">
-            <div><span>Período</span><b>{{ lcPer.label }}</b></div>
-            <div><span>Clientes</span><b>{{ lcRes.clientes }}</b><small>{{ lcRes.media }}</small></div>
-            <div><span>Pedidos</span><b>{{ lcRes.pedidos }}</b><small>{{ lcRes.itens }}</small></div>
-            <div><span>Total consumido</span><b>{{ lcRes.total }}</b></div>
-            <div><span>Ticket médio</span><b>{{ lcRes.ticket }}</b><small>por pedido</small></div>
-            <div><span>Pago na hora</span><b class="verde">{{ lcRes.naHora }}</b></div>
-            <div><span>Na conta</span><b style="color:#e0703a">{{ lcRes.naConta }}</b><small>crediário</small></div>
-          </div>
-          <sc-if value="{{ lcTemErro }}" hint-placeholder-val="{{ false }}"><div class="hm-erro">{{ lcErro }}</div></sc-if>
-          <div class="cr-tabela"><div class="cr-in" style="min-width:1000px">
-            <div class="cr-g lc-g cr-cab"><div></div><div>Cliente</div><div>Tipo</div><div class="n">Pedidos</div><div class="n">Itens</div><div class="n">Total</div><div class="n">Na hora</div><div class="n">Na conta</div><div>Última compra</div></div>
-            <sc-for list="{{ lancCliRows }}" as="c" hint-placeholder-count="5"><div class="cr-lin lc-bloco">
-              <div class="cr-g lc-g cr-clic" role="button" tabindex="0" onclick="{{ c.onToggle }}" aria-expanded="{{ c.expandido }}" title="Ver as compras detalhadas">
-                <div class="lc-seta" style="{{ c.setaStyle }}" aria-hidden="true">›</div>
-                <div style="min-width:0"><div class="cr-nome sem">{{ c.nome }}</div><div class="cr-sub">{{ c.sub }}</div></div>
-                <div><span style="{{ c.typeStyle }}">{{ c.typeLabel }}</span></div>
-                <div class="n cr-mono">{{ c.pedidos }}</div>
-                <div class="n cr-mono">{{ c.itens }}</div>
-                <div class="n cr-mono cr-forte">{{ c.total }}</div>
-                <div class="n cr-mono" style="color:#3f9d6b">{{ c.naHora }}</div>
-                <div class="n cr-mono" style="color:#e0703a">{{ c.naConta }}</div>
-                <div style="display:flex;align-items:center;gap:8px;justify-content:space-between"><span class="cr-mono">{{ c.ultima }}</span><sc-if value="{{ c.temPedido }}" hint-placeholder-val="{{ false }}"><button data-lc-pedido="1" onclick="{{ c.onPedido }}" class="cr-b" title="Lançar pedido para este cliente">+ Pedido</button></sc-if></div>
-              </div>
-              <sc-if value="{{ c.aberto }}" hint-placeholder-val="{{ false }}">
-                <div class="lc-det">
-                  <div class="lc-dg lc-dcab"><div>Data</div><div>Hora</div><div>Pedido</div><div>Itens comprados</div><div>Origem</div><div>Forma</div><div class="n">Valor</div></div>
-                  <sc-for list="{{ c.compras }}" as="p" hint-placeholder-count="2">
-                    <div class="lc-dg"><div class="cr-mono">{{ p.data }}</div><div class="cr-mono cr-sub">{{ p.hora }}</div><div class="cr-mono">{{ p.ref }}</div><div class="lc-its">{{ p.itens }}</div><div class="cr-sub2">{{ p.origem }}</div><div><span class="cr-tag" style="{{ p.formaStyle }}">{{ p.forma }}</span></div><div class="n cr-mono cr-forte">{{ p.valor }}</div></div>
-                  </sc-for>
-                  <div class="lc-dg lc-dtot"><div>Total</div><div></div><div></div><div>{{ c.sub }}</div><div></div><div></div><div class="n cr-mono">{{ c.total }}</div></div>
-                </div>
-              </sc-if>
-            </div></sc-for>
-            <sc-if value="{{ lcVazio }}" hint-placeholder-val="{{ false }}"><div class="cr-vazio">{{ lcVazioTxt }}</div></sc-if>
-            <div class="cr-g lc-g cr-rod"><div></div><div>Total · {{ lcRes.clientes }} clientes</div><div></div><div class="n">{{ lcRes.pedidos }}</div><div class="n">{{ lcRes.itens }}</div><div class="n">{{ lcRes.total }}</div><div class="n">{{ lcRes.naHora }}</div><div class="n">{{ lcRes.naConta }}</div><div></div></div>
-          </div></div>
-          <sc-if value="{{ lcRes.mais }}" hint-placeholder-val="{{ false }}"><div class="cr-info" style="margin-top:6px">{{ lcRes.mais }}</div></sc-if>
-        </sc-if>
       </sc-if>
 
       <!-- CREDIARIO -->
@@ -3820,6 +3766,51 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
             <sc-if value="{{ noHistVen }}" hint-placeholder-val="{{ false }}"><div class="cr-vazio">Nenhuma venda neste período.</div></sc-if>
             <div class="cr-g hm-gv cr-rod"><div>Total</div><div></div><div></div><div>{{ histVenTot.qtd }}</div><div></div><div></div><div></div><div></div><div class="n">{{ histVenTot.total }}</div></div>
           </div></div>
+        </sc-if>
+        <sc-if value="{{ histAbaCli }}" hint-placeholder-val="{{ false }}">
+          <div class="cr-barra">
+            <div class="cr-busca sm" style="flex:1 1 260px;max-width:380px"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="position:absolute;left:10px;opacity:.6"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg><input value="{{ lcPer.busca }}" oninput="{{ onLcBusca }}" placeholder="Cliente, empresa, item ou nº do pedido" style="width:100%;padding:8px 12px 8px 32px;border:1px solid var(--border-input);border-radius:10px;font-size:13px;background:var(--bg-card);color:var(--text-primary);outline:none"></div>
+            <div class="cr-chips"><sc-for list="{{ lcOrdens }}" as="o" hint-placeholder-count="4"><button onclick="{{ o.onClick }}" class="{{ o.cls }}">{{ o.label }}</button></sc-for></div>
+            <div class="cr-chips" style="margin-left:auto"><button onclick="{{ lcExpandirTodos }}" class="cr-b">{{ lcExpLabel }}</button><button onclick="{{ lcImprimir }}" class="cr-b">Imprimir</button><button onclick="{{ lcExcel }}" class="cr-b">Exportar Excel</button></div>
+          </div>
+          <div class="cr-fech">
+            <div><span>Período</span><b>{{ lcPer.label }}</b></div>
+            <div><span>Clientes</span><b>{{ lcRes.clientes }}</b><small>{{ lcRes.media }}</small></div>
+            <div><span>Pedidos</span><b>{{ lcRes.pedidos }}</b><small>{{ lcRes.itens }}</small></div>
+            <div><span>Total consumido</span><b>{{ lcRes.total }}</b></div>
+            <div><span>Ticket médio</span><b>{{ lcRes.ticket }}</b><small>por pedido</small></div>
+            <div><span>Pago na hora</span><b class="verde">{{ lcRes.naHora }}</b></div>
+            <div><span>Na conta</span><b style="color:#e0703a">{{ lcRes.naConta }}</b><small>crediário</small></div>
+          </div>
+          <sc-if value="{{ lcTemErro }}" hint-placeholder-val="{{ false }}"><div class="hm-erro">{{ lcErro }}</div></sc-if>
+          <div class="cr-tabela"><div class="cr-in" style="min-width:1000px">
+            <div class="cr-g lc-g cr-cab"><div></div><div>Cliente</div><div>Tipo</div><div class="n">Pedidos</div><div class="n">Itens</div><div class="n">Total</div><div class="n">Na hora</div><div class="n">Na conta</div><div>Última compra</div></div>
+            <sc-for list="{{ lancCliRows }}" as="c" hint-placeholder-count="5"><div class="cr-lin lc-bloco">
+              <div class="cr-g lc-g cr-clic" role="button" tabindex="0" onclick="{{ c.onToggle }}" aria-expanded="{{ c.expandido }}" title="Ver as compras detalhadas">
+                <div class="lc-seta" style="{{ c.setaStyle }}" aria-hidden="true">›</div>
+                <div style="min-width:0"><div class="cr-nome sem">{{ c.nome }}</div><div class="cr-sub">{{ c.sub }}</div></div>
+                <div><span style="{{ c.typeStyle }}">{{ c.typeLabel }}</span></div>
+                <div class="n cr-mono">{{ c.pedidos }}</div>
+                <div class="n cr-mono">{{ c.itens }}</div>
+                <div class="n cr-mono cr-forte">{{ c.total }}</div>
+                <div class="n cr-mono" style="color:#3f9d6b">{{ c.naHora }}</div>
+                <div class="n cr-mono" style="color:#e0703a">{{ c.naConta }}</div>
+                <div style="display:flex;align-items:center;gap:8px;justify-content:space-between"><span class="cr-mono">{{ c.ultima }}</span><sc-if value="{{ c.temPedido }}" hint-placeholder-val="{{ false }}"><button data-lc-pedido="1" onclick="{{ c.onPedido }}" class="cr-b" title="Lançar pedido para este cliente">+ Pedido</button></sc-if></div>
+              </div>
+              <sc-if value="{{ c.aberto }}" hint-placeholder-val="{{ false }}">
+                <div class="lc-det">
+                  <div class="lc-dg lc-dcab"><div>Data</div><div>Hora</div><div>Pedido</div><div>Itens comprados</div><div>Origem</div><div>Forma</div><div class="n">Valor</div></div>
+                  <sc-for list="{{ c.compras }}" as="p" hint-placeholder-count="2">
+                    <div class="lc-dg"><div class="cr-mono">{{ p.data }}</div><div class="cr-mono cr-sub">{{ p.hora }}</div><div class="cr-mono">{{ p.ref }}</div><div class="lc-its">{{ p.itens }}</div><div class="cr-sub2">{{ p.origem }}</div><div><span class="cr-tag" style="{{ p.formaStyle }}">{{ p.forma }}</span></div><div class="n cr-mono cr-forte">{{ p.valor }}</div></div>
+                  </sc-for>
+                  <div class="lc-dg lc-dtot"><div>Total</div><div></div><div></div><div>{{ c.sub }}</div><div></div><div></div><div class="n cr-mono">{{ c.total }}</div></div>
+                </div>
+              </sc-if>
+            </div></sc-for>
+            <sc-if value="{{ lcVazio }}" hint-placeholder-val="{{ false }}"><div class="cr-vazio">{{ lcVazioTxt }}</div></sc-if>
+            <div class="cr-g lc-g cr-rod"><div></div><div>Total · {{ lcRes.clientes }} clientes</div><div></div><div class="n">{{ lcRes.pedidos }}</div><div class="n">{{ lcRes.itens }}</div><div class="n">{{ lcRes.total }}</div><div class="n">{{ lcRes.naHora }}</div><div class="n">{{ lcRes.naConta }}</div><div></div></div>
+          </div></div>
+          <sc-if value="{{ lcRes.mais }}" hint-placeholder-val="{{ false }}"><div class="cr-info" style="margin-top:6px">{{ lcRes.mais }}</div></sc-if>
         </sc-if>
       </sc-if>
       <!-- ENTREGAS -->
@@ -9628,6 +9619,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const hmCabV=['Total','Dinheiro','PIX','Débito','Crédito','Vale-refeição','Na conta','Recebido da conta','Motoboys'];
     const hmLinV=(r)=>[r.total,r.dinheiro,r.pix,r.debito,r.credito,r.vr,r.conta,r.rec,r.mot];
     const hmTabela=()=>{
+      if(hmAba==='clientes') return lcTabela();
       if(hmAba==='baixas') return { titulo:'Baixas mensais (do que foi pago)', cab:['Mês','Baixa em','Por','Vendas','Total vendido','Pago na hora','Recebido da conta','Total recebido','Ficou na conta','Motoboys','Caixa líquido','Situação'],
         linhas:histBaixaRows.map(r=>[r.mes,r.quando,r.por,r.vendas,r.total,r.naHora,r.rec,r.recTotal,r.naConta,r.mot,r.caixa,r.situacao]) };
       if(hmAba==='dia') return { titulo:'Histórico por dia · '+histPer.label, cab:['Data','Dia','Vendas',...hmCabV.slice(1),'Total','Ticket'],
@@ -9839,12 +9831,12 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     ].map(m=>({...m, expanded:s.expandedMetric===m.id, chevronRotate:s.expandedMetric===m.id?'rotate(180deg)':'none', onToggle:()=>this.toggleMetric(m.id)}));
 
     // ── Lançamento diário · abas (Hoje / Compras por cliente) ──
-    const lcAba=s.lancAba||'hoje', lcHoje=this.todayISO(), lcMesIni=lcHoje.slice(0,8)+'01';
+    const lcAtivo=s.view==='historico'&&hmAba==='clientes', lcHoje=this.todayISO(), lcMesIni=lcHoje.slice(0,8)+'01';
     const lcMenos=(iso,d)=>new Date(Date.parse(iso+'T12:00:00Z')-d*864e5).toISOString().slice(0,10);
     const lcFimMes=(ym)=>{ const [y,m]=ym.split('-').map(Number); return ym+'-'+String(new Date(Date.UTC(y,m,0)).getUTCDate()).padStart(2,'0'); };
     const lcData=(iso)=>iso?String(iso).slice(8,10)+'/'+String(iso).slice(5,7)+'/'+String(iso).slice(2,4):'—';
-    const lcDe=s.lcDe||lcMesIni, lcAte=s.lcAte||lcHoje;
-    if(s.view==='lancamento'&&lcAba==='clientes'){ const k=lcDe+'|'+lcAte+'|'+(s.orders||[]).length; if(this._lcKey!==k){ this._lcKey=k; setTimeout(()=>this.loadLancCli(lcDe,lcAte,k),0); } }
+    const lcDe=hmDe, lcAte=hmAte; // mesmo período do Histórico mensal
+    if(lcAtivo){ const k=lcDe+'|'+lcAte+'|'+(s.orders||[]).length; if(this._lcKey!==k){ this._lcKey=k; setTimeout(()=>this.loadLancCli(lcDe,lcAte,k),0); } }
     const lcPronto=!!s.lcKey&&String(s.lcKey).startsWith(lcDe+'|'+lcAte+'|');
     const lcV=lcPronto?(s.lcVendas||[]).filter(v=>v.iso>=lcDe&&v.iso<=lcAte&&v.status!=='cancelado'&&v.status!=='recusado'):[];
     const lcCliDe={}; (s.clients||[]).forEach(c=>{ lcCliDe[c.id]=c; });
@@ -9877,9 +9869,12 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
     const lcPres=[['Hoje',lcHoje,lcHoje],['Ontem',lcMenos(lcHoje,1),lcMenos(lcHoje,1)],['7 dias',lcMenos(lcHoje,6),lcHoje],['Este mês',lcMesIni,lcHoje],['Mês passado',lcMenos(lcMesIni,1).slice(0,8)+'01',lcMenos(lcMesIni,1)]];
     const lcTot=lcR2(lcLista.reduce((a,r)=>a+r.tot,0)), lcConta=lcR2(lcLista.reduce((a,r)=>a+r.conta,0)), lcNPed=lcLista.reduce((a,r)=>a+r.L.length,0), lcNIt=lcLista.reduce((a,r)=>a+r.itens,0);
     const lcRotulo=lcData(lcDe)+' a '+lcData(lcAte);
+    histAbas.splice(3,0,{ label:'Por cliente', n:lcPronto?String(lcTodos.length):'…', cls:'cr-aba'+(hmAba==='clientes'?' on':''), onClick:()=>this.setState({ histAba:'clientes' }) });
+    const lcTabela=()=>({ titulo:'Compras por cliente · '+lcRotulo, cab:['Cliente','Tipo','Empresa (convênio)','Data','Hora','Pedido nº','Itens','Forma','Valor'],
+      linhas:[...lcLista.flatMap(r=>[...r.L.slice().sort((a,b)=>(a.iso+(a.ts||'')).localeCompare(b.iso+(b.ts||''))).map(v=>[r.w.nome,r.w.tipo,r.w.emp,lcData(v.iso),v.hora||'',v.ref||'',v.itens.map(i=>i.q+'x '+i.d).join(', '),this.payLabel(v.forma),brl(v.total)]),
+        ['Total de '+r.w.nome,'','','','',r.L.length+' pedido'+(r.L.length===1?'':'s'),r.itens+' itens','',brl(r.tot)]]),['TOTAL · '+lcLista.length+' clientes','','','','',lcNPed+' pedidos',lcNIt+' itens','',brl(lcTot)]] });
     const lcVals={ lancCliRows,
-      lancAbas:[['hoje','Hoje',String((s.orders||[]).filter(o=>o.today).length)],['clientes','Compras por cliente',lcPronto?String(lcTodos.length):'…']].map(([id,label,n])=>({ label, n, cls:'cr-aba'+(lcAba===id?' on':''), onClick:()=>this.setState({ lancAba:id }) })),
-      lancAbaHoje:lcAba==='hoje', lancAbaCli:lcAba==='clientes',
+      histAbaCli:hmAba==='clientes',
       lcPer:{ mes:lcAte.slice(0,7), de:lcDe, ate:lcAte, busca:s.lcBusca||'', label:lcRotulo },
       onLcMes:(e)=>{ const v=e.target.value; if(v) this.setState({ lcDe:v+'-01', lcAte:v===lcHoje.slice(0,7)?lcHoje:lcFimMes(v), lcAbertos:{} }); },
       onLcDe:(e)=>{ if(e.target.value) this.setState({ lcDe:e.target.value, lcAbertos:{} }); }, onLcAte:(e)=>{ if(e.target.value) this.setState({ lcAte:e.target.value, lcAbertos:{} }); },
@@ -9897,7 +9892,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
         const dd=ifr.contentWindow.document; dd.open(); dd.write(doc); dd.close(); setTimeout(()=>{ try{ ifr.contentWindow.focus(); ifr.contentWindow.print(); }catch(e){} setTimeout(()=>ifr.remove(),1500); },350); },
       lcRes:{ clientes:String(lcLista.length), pedidos:String(lcNPed), itens:lcNIt+(lcNIt===1?' item':' itens'), total:brl(lcTot), ticket:brl(lcNPed?lcTot/lcNPed:0), naHora:brl(lcTot-lcConta), naConta:brl(lcConta),
         media:'média '+brl(lcLista.length?lcTot/lcLista.length:0)+' por cliente', mais:lcLista.length>400?'Mostrando os 400 primeiros; use a busca para achar os outros.':'' },
-      lcTemErro:lcAba==='clientes'&&!!s.lcErro, lcErro:s.lcErro||'',
+      lcTemErro:lcAtivo&&!!s.lcErro, lcErro:s.lcErro||'',
       lcVazio:lancCliRows.length===0, lcVazioTxt:!lcPronto?'Carregando as compras…':(lcTodos.length?'Nenhum cliente com essa busca.':'Nenhuma compra neste período.')
     };
     // Lançamento / balcão
