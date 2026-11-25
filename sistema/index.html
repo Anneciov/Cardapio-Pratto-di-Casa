@@ -3633,7 +3633,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           <div class="cr-chips" style="margin-left:auto">
             <sc-if value="{{ histBx.pode }}" hint-placeholder-val="{{ false }}"><button onclick="{{ histBx.onClick }}" class="cr-b cr-b-ok">{{ histBx.rot }}</button></sc-if>
             <sc-if value="{{ histBx.feita }}" hint-placeholder-val="{{ false }}"><span class="hm-bx-ok hm-bx-top">{{ histBx.txt }}</span></sc-if>
-            <button onclick="{{ histBx.onCli }}" class="cr-b" title="Comprado, pago e em aberto de cada cliente no mês">Baixa por cliente</button><button onclick="{{ histBx.onRel }}" class="cr-b">Relatório do mês</button><button onclick="{{ histImprimir }}" class="cr-b">Imprimir</button><button onclick="{{ histExportar }}" class="cr-b">Exportar planilha</button>
+            <button onclick="{{ histBx.onSim }}" class="cr-b" title="Simula a baixa do mês (não grava nada) e baixa um Excel com todas as tabelas e o consumo detalhado dos clientes">Simular baixa (Excel)</button><button onclick="{{ histBx.onCli }}" class="cr-b" title="Comprado, pago e em aberto de cada cliente no mês">Baixa por cliente</button><button onclick="{{ histBx.onRel }}" class="cr-b">Relatório do mês</button><button onclick="{{ histImprimir }}" class="cr-b">Imprimir</button><button onclick="{{ histExportar }}" class="cr-b">Exportar planilha</button>
           </div>
         </div>
         <sc-if value="{{ histTemErro }}" hint-placeholder-val="{{ false }}"><div class="hm-erro">{{ histErro }}</div></sc-if>
@@ -6246,6 +6246,166 @@ class Component extends DCLogic {
     this.showToast('Baixa de ' + nome + (refazer ? ' refeita.' : ' registrada.'));
     if (r.imprimir && this._hmRelatorioFn) setTimeout(() => this._hmRelatorioFn(ym), 400);
   };
+  // ── SIMULAÇÃO da baixa do mês: não grava nada; baixa um Excel com todas as tabelas do mês + consumo detalhado dos clientes ──
+  _excelJS=()=>window.ExcelJS?Promise.resolve(window.ExcelJS):(this._xlsP||(this._xlsP=new Promise((ok,no)=>{ const sc=document.createElement('script'); sc.src='https://unpkg.com/exceljs@4.4.0/dist/exceljs.min.js';
+    sc.onload=()=>window.ExcelJS?ok(window.ExcelJS):no(new Error('o gerador de Excel não carregou')); sc.onerror=()=>{ this._xlsP=null; sc.remove(); no(new Error('sem internet para carregar o gerador de Excel')); }; document.head.appendChild(sc); })));
+  _simDados=async(ym)=>{ const s=this.state, ini=ym+'-01', [y,m]=ym.split('-').map(Number), fim=ym+'-'+String(new Date(Date.UTC(y,m,0)).getUTCDate()).padStart(2,'0');
+    const demo=this._demo||s.userEmail==='demonstração';
+    const todas=async(mk)=>{ let L=[]; for(let i=0;i<50000;i+=1000){ const { data, error } = await mk().range(i,i+999); if(error) throw error; L=L.concat(data||[]); if(!data||data.length<1000) break; } return L; };
+    let ped=[], cred=[], mot=[], ent=[], est=[], pendDe={};
+    if(demo){
+      const hoje=this.todayISO();
+      ped=[...(s.dashStats||[]).map((o,i)=>({ id:'ds'+i, numero_ref:'', data:o.iso, created_at:'', total:o.total, forma_pagamento:o.payment, origem:'balcao', status:o.status||'entregue', nome_cliente:'', cliente_id:null, empresa_id:null,
+          rest_pedido_itens:(o.itens||[]).map(x=>({ descricao:x.d, quantidade:Number(x.q)||1, valor_unitario:x.v!=null?Number(x.v):null, valor_total:null })) })),
+        ...(s.orders||[]).filter(o=>o.today).map(o=>({ id:o.dbId||o.id, numero_ref:o.id, data:hoje, created_at:'', total:o.total, forma_pagamento:o.payment, origem:o.kind==='balcao'?'balcao':'manual', status:o.status, nome_cliente:o.waClient||'', cliente_id:o.clientId, empresa_id:o.empresaId,
+          rest_pedido_itens:String(o.items||'').split(/,\s*/).filter(Boolean).map(t=>{ const mm=t.match(/^(\d+)x\s+(.*)$/); return { descricao:mm?mm[2]:t, quantidade:mm?Number(mm[1]):1, valor_unitario:null, valor_total:null }; }) }))]
+        .filter(v=>v.data>=ini&&v.data<=fim);
+      cred=(s.crediarioHistory||[]).map(h=>({ tipo:h.type==='Débito'?'debito':(h.type==='Pagamento'?'pagamento':(h.type==='Fatura fechada'?'fatura_fechada':h.type)), valor:h.amount, data:h.iso||hoje, descricao:h.desc||h.description||'', cliente_id:null, empresa_id:null, nomeConta:h.who })).filter(x=>x.data>=ini&&x.data<=fim);
+      mot=(s.motoboyPayments||[]).filter(p=>(p.iso||hoje)>=ini&&(p.iso||hoje)<=fim).map(p=>({ data:p.iso||hoje, valor:p.amount, detalhe:p.detail, rest_motoboys:{ nome:p.motoboy } }));
+    } else {
+      [ped,cred,mot,ent,est]=await Promise.all([
+        todas(()=>sb.from('rest_pedidos').select('id,numero_ref,data,created_at,total,forma_pagamento,origem,status,nome_cliente,cliente_id,empresa_id,rest_pedido_itens(descricao,quantidade,valor_unitario,valor_total)').gte('data',ini).lte('data',fim).order('created_at',{ascending:true})),
+        todas(()=>sb.from('rest_crediario_lancamentos').select('id,tipo,valor,data,created_at,descricao,cliente_id,empresa_id,rest_clientes(nome),rest_empresas(nome)').gte('data',ini).lte('data',fim).order('created_at',{ascending:true})),
+        todas(()=>sb.from('rest_motoboy_pagamentos').select('id,detalhe,valor,data,rest_motoboys(nome)').gte('data',ini).lte('data',fim).order('data',{ascending:true})).catch(e=>{ console.warn('[simulação motoboys]',e); return []; }),
+        todas(()=>sb.from('rest_entregas').select('id,regiao,taxa,status,data_entrega,pedido_ref,rest_motoboys(nome)').gte('data_entrega',ini).lte('data_entrega',fim+'T23:59:59').order('data_entrega',{ascending:true})).catch(e=>{ console.warn('[simulação entregas]',e); return []; }),
+        todas(()=>sb.from('rest_estoque_movimentacoes').select('id,tipo,quantidade,data,motivo,rest_produtos(nome,unidade)').gte('data',ini).lte('data',fim+'T23:59:59').order('data',{ascending:true})).catch(e=>{ console.warn('[simulação estoque]',e); return []; }) ]);
+      // vendas no crediário ainda não pagas (o saldo devedor cobre as compras mais novas), igual à baixa de verdade
+      const contas=(s.clients||[]).filter(c=>c.balance>0.004).map(c=>({id:c.id,balance:Math.round(c.balance*100)/100}));
+      if(contas.length){ const lista=contas.map(c=>c.id).join(',');
+        const cv=await todas(()=>sb.from('rest_pedidos').select('id,cliente_id,empresa_id,total,created_at,status').eq('forma_pagamento','crediario').or('cliente_id.in.('+lista+'),empresa_id.in.('+lista+')').order('created_at',{ascending:false}));
+        pendDe=this._hmFifo(contas,cv.map(o=>({ id:o.id, conta:o.empresa_id||o.cliente_id, total:Number(o.total)||0, ord:o.created_at||'', status:o.status }))); }
+    }
+    let porCli=null; try{ porCli=await this._bxClientes(ym); }catch(e){ console.warn('[simulação por cliente]',e); }
+    return { ini, fim, ped, cred, mot, ent, est, pendDe, porCli, demo }; };
+  simularBaixaMes=async(ym,t)=>{ const MES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    const nome=MES[parseInt(ym.slice(5,7),10)-1]+'/'+ym.slice(0,4), atual=ym===this.todayISO().slice(0,7);
+    const gerar=async()=>{ const [ExcelJS,D]=await Promise.all([this._excelJS(),this._simDados(ym)]); await this._simExcel(ExcelJS,ym,nome,t,D); return ''; };
+    const r=await this._bxModal({ nome, sim:true, atual, t, info:null, salvar:gerar });
+    if(r) this.showToast('Excel da simulação de '+nome+' baixado. Nada foi gravado.'); };
+  _simExcel=async(ExcelJS,ym,nomeMes,t,D)=>{ const s=this.state, r2=(v)=>Math.round((Number(v)||0)*100)/100;
+    const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'], mesN=(k)=>MESES[parseInt(k.slice(5,7),10)-1]+'/'+k.slice(0,4);
+    const cliDe={}; (s.clients||[]).forEach(c=>{ cliDe[c.id]=c; });
+    const FORMA={dinheiro:'Dinheiro',pix:'PIX',debito:'Cartão de débito',credito:'Cartão de crédito',vr:'Vale-refeição',crediario:'Na conta (crediário)'};
+    const ORIG={balcao:'Caixa',manual:'Pedido',whatsapp:'WhatsApp',site:'Site'}, STAT={entregue:'Concluído',aberto:'Em aberto',recusado:'Recusado',cancelado:'Cancelado'};
+    const cancel=(v)=>v.status==='cancelado'||v.status==='recusado';
+    const dia=(iso)=>{ const x=String(iso||'').slice(0,10).split('-').map(Number); return x.length===3&&x[0]?new Date(Date.UTC(x[0],x[1]-1,x[2])):null; };
+    const hora=(ts)=>ts?new Date(ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';
+    // quem consumiu: a pessoa (cliente_id); sem cadastro, a empresa ou o nome digitado; sem nada, consumidor do balcão
+    const quem=(v)=>{ const c=cliDe[v.cliente_id], e=cliDe[v.empresa_id];
+      if(c) return { k:c.id, nome:c.name, tipo:this.typeLabel(c.type), emp:(e&&e.name)||c.company||'', tel:c.phone||'' };
+      if(e) return { k:v.nome_cliente?e.id+'|'+String(v.nome_cliente).trim().toLowerCase():e.id, nome:v.nome_cliente?String(v.nome_cliente).trim()+' ('+e.name+')':e.name, tipo:'Empresa', emp:e.name, tel:e.phone||'' };
+      if(v.nome_cliente) return { k:'n|'+String(v.nome_cliente).trim().toLowerCase(), nome:String(v.nome_cliente).trim(), tipo:'Sem cadastro', emp:'', tel:'' };
+      return { k:'balcao', nome:'Consumidor do balcão (sem nome)', tipo:'Sem cadastro', emp:'', tel:'' }; };
+    const vendas=D.ped.map(v=>{ const its=(v.rest_pedido_itens||[]).map(i=>{ const q=Number(i.quantidade)||0, u=i.valor_unitario!=null?Number(i.valor_unitario):null, tt=i.valor_total!=null?Number(i.valor_total):(u!=null?r2(u*q):null); return { d:i.descricao||'', q, u, t:tt }; });
+      const pend=r2(D.pendDe[v.id]||0), c=cancel(v), w=quem(v), tot=Number(v.total)||0;
+      const sit=c?'Cancelada (fica fora)':((v.forma_pagamento==='crediario'&&pend>0.004)?(pend<tot-0.004?'Pendente parcial (continua na lista)':'Pendente (continua na lista)'):(v.status==='aberto'?'Em aberto (fica fora)':'Paga → iria para Baixadas'));
+      return { v, its, pend, c, w, tot, sit }; });
+    const validas=vendas.filter(x=>!x.c);
+    const wb=new ExcelJS.Workbook(); wb.creator='Pratto di Casa'; wb.created=new Date();
+    const AZUL='FF023859', CLARO='FFE6F2F5', SUB='FFFFF4E5';
+    const R='"R$" #,##0.00;[Red]-"R$" #,##0.00', DT='dd/mm/yyyy', PC='0.0%';
+    const aba=(nome,cols,linhas,tit)=>{ const ws=wb.addWorksheet(nome,{ views:[{ state:'frozen', ySplit:3 }], properties:{ tabColor:{ argb:AZUL } } });
+      ws.mergeCells(1,1,1,Math.max(2,cols.length)); const c1=ws.getCell(1,1); c1.value=tit; c1.font={ bold:true, size:13, color:{argb:AZUL} }; ws.getRow(1).height=22;
+      ws.mergeCells(2,1,2,Math.max(2,cols.length)); const c2=ws.getCell(2,1); c2.value='SIMULAÇÃO · '+nomeMes+' · nada foi gravado no sistema · gerado em '+new Date().toLocaleString('pt-BR'); c2.font={ italic:true, size:9, color:{argb:'FF8A6D3B'} };
+      cols.forEach((c,i)=>{ ws.getColumn(i+1).width=c.w||14; });
+      const h=ws.getRow(3); cols.forEach((c,i)=>{ const x=h.getCell(i+1); x.value=c.h; x.font={ bold:true, color:{argb:'FFFFFFFF'} }; x.fill={ type:'pattern', pattern:'solid', fgColor:{argb:AZUL} }; x.alignment={ vertical:'middle', wrapText:true }; }); h.height=30;
+      linhas.forEach(l=>{ const arr=Array.isArray(l)?l:l.v, row=ws.addRow(arr);
+        cols.forEach((c,i)=>{ if(c.f){ const x=row.getCell(i+1); if(x.value instanceof Date||typeof x.value==='number') x.numFmt=c.f; } });
+        if(!Array.isArray(l)){ const cor=l.tot?CLARO:(l.sub?SUB:null); row.font=l.sub?{ bold:true, color:{argb:'FF7A4A00'} }:{ bold:true };
+          if(cor) for(let i=1;i<=cols.length;i++){ const x=row.getCell(i); x.fill={ type:'pattern', pattern:'solid', fgColor:{argb:cor} }; if(l.tot) x.border={ top:{ style:'thin', color:{argb:AZUL} } }; } } });
+      if(linhas.length) ws.autoFilter={ from:{ row:3, column:1 }, to:{ row:3, column:cols.length } };
+      else ws.addRow(['Nenhum registro no mês.']);
+      return ws; };
+    const soma=(L,f)=>r2(L.reduce((a,x)=>a+(Number(f(x))||0),0));
+    const T=t||{}, pc=D.porCli;
+    // 1) Resumo da baixa (o que seria gravado)
+    const pagas=validas.filter(x=>x.sit.startsWith('Paga')), pend=validas.filter(x=>x.sit.startsWith('Pendente'));
+    const res=aba('Resumo da baixa',[{h:'Item',w:46},{h:'Valor',w:20},{h:'Observação',w:58}],[
+      ['Mês',nomeMes,'Simulação: a baixa NÃO foi registrada'],
+      ['Vendas',Number(T.vendas)||validas.length,(Number(T.dias_com_venda)||0)+' dias com venda'],
+      ['Total vendido',r2(T.total!=null?T.total:soma(validas,x=>x.tot)),''],
+      ['Ticket médio',r2(T.ticket),''],
+      ['Pago na hora',r2(T.na_hora),'dinheiro, PIX, cartão e vale'],
+      ['Ficou na conta (crediário)',r2(T.na_conta),'continua no Crediário'],
+      ['Recebido da conta',r2(T.recebido_conta),'pagamentos do crediário no mês'],
+      {tot:1,v:['Total recebido',r2(T.recebido_total),'na hora + recebido da conta']},
+      ['Pagamentos de motoboys',r2(T.motoboys),''],
+      {tot:1,v:['Caixa líquido',r2(T.caixa_liquido),'total − na conta + recebido − motoboys']},
+      ['Vendas pagas que iriam para "Baixadas"',pagas.length,''],
+      ['Vendas pendentes que continuariam na lista',pend.length,''],
+      ['Valor pendente dessas vendas',soma(pend,x=>x.pend),'calculado pelo saldo devedor de cada conta'],
+      ['Clientes com compra no mês',new Set(validas.map(x=>x.w.k)).size,''],
+      ['Em aberto do mês (crediário, por cliente)',pc?pc.tot.pendente:'','compras do mês ainda não pagas'],
+      ['Saldo devedor total hoje',pc?pc.tot.saldo:r2((s.clients||[]).reduce((a,c)=>a+(c.balance>0?c.balance:0),0)),'os saldos não mudam com a baixa']
+    ],'Pratto di Casa · Simulação da baixa de '+nomeMes);
+    res.eachRow((row,i)=>{ if(i>3){ const c=row.getCell(2); if(typeof c.value==='number'&&!/^(Vendas|Clientes)/.test(String(row.getCell(1).value))) c.numFmt=R; } });
+    // 2) Por forma de pagamento
+    const pf=T.por_forma||{}, FK=Object.keys(FORMA), totF=FK.reduce((a,f)=>a+(Number((pf[f]||{}).valor)||0),0);
+    aba('Por forma de pagamento',[{h:'Forma de pagamento',w:26},{h:'Vendas',w:10},{h:'Valor',w:16,f:R},{h:'% do total',w:12,f:PC}],
+      [...FK.map(f=>[FORMA[f],Number((pf[f]||{}).qtd)||0,r2((pf[f]||{}).valor),totF?(Number((pf[f]||{}).valor)||0)/totF:0]),
+       {tot:1,v:['Total',FK.reduce((a,f)=>a+(Number((pf[f]||{}).qtd)||0),0),r2(totF),totF?1:0]}],'Por forma de pagamento · '+nomeMes);
+    // 3) Por dia
+    const porDia={}; validas.forEach(x=>{ const d=String(x.v.data).slice(0,10), g=porDia[d]||(porDia[d]={q:0,t:0,f:{}}); g.q++; g.t+=x.tot; const f=x.v.forma_pagamento; g.f[f]=(g.f[f]||0)+x.tot; });
+    const recDia={}; D.cred.filter(c=>c.tipo==='pagamento').forEach(c=>{ const d=String(c.data).slice(0,10); recDia[d]=(recDia[d]||0)+(Number(c.valor)||0); });
+    const dias=[...new Set([...Object.keys(porDia),...Object.keys(recDia)])].sort(), SEM=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+    aba('Por dia',[{h:'Dia',w:12,f:DT},{h:'Dia da semana',w:14},{h:'Vendas',w:9},{h:'Total vendido',w:15,f:R},...FK.map(f=>({h:FORMA[f],w:15,f:R})),{h:'Recebido da conta',w:15,f:R}],
+      [...dias.map(d=>{ const g=porDia[d]||{q:0,t:0,f:{}}, dd=dia(d); return [dd,dd?SEM[dd.getUTCDay()]:'',g.q,r2(g.t),...FK.map(f=>r2(g.f[f])),r2(recDia[d])]; }),
+       {tot:1,v:['Total','',validas.length,soma(validas,x=>x.tot),...FK.map(f=>soma(validas.filter(x=>x.v.forma_pagamento===f),x=>x.tot)),soma(D.cred.filter(c=>c.tipo==='pagamento'),c=>c.valor)]}],'Vendas por dia · '+nomeMes);
+    // 4) Vendas
+    aba('Vendas',[{h:'Data',w:11,f:DT},{h:'Hora',w:7},{h:'Pedido nº',w:11},{h:'Cliente',w:30},{h:'Tipo',w:13},{h:'Empresa (convênio)',w:22},{h:'Origem',w:10},{h:'Forma de pagamento',w:20},{h:'Status',w:11},{h:'Itens',w:50},{h:'Total',w:13,f:R},{h:'Falta receber',w:13,f:R},{h:'Situação na baixa',w:34}],
+      [...vendas.map(x=>[dia(x.v.data),hora(x.v.created_at),x.v.numero_ref||'',x.w.nome,x.w.tipo,x.w.emp,ORIG[x.v.origem]||x.v.origem||'',FORMA[x.v.forma_pagamento]||x.v.forma_pagamento||'',STAT[x.v.status]||x.v.status||'',x.its.map(i=>i.q+'x '+i.d).join(', '),r2(x.tot),x.pend||null,x.sit]),
+       {tot:1,v:['Total','','',validas.length+' vendas válidas','','','','','','',soma(validas,x=>x.tot),soma(validas,x=>x.pend),'']}],'Vendas do mês · '+nomeMes);
+    // 5) Itens vendidos
+    const linhasIt=[]; validas.forEach(x=>x.its.forEach(i=>linhasIt.push([dia(x.v.data),x.v.numero_ref||'',x.w.nome,i.d,i.q,i.u,i.t,FORMA[x.v.forma_pagamento]||x.v.forma_pagamento||''])));
+    aba('Itens vendidos',[{h:'Data',w:11,f:DT},{h:'Pedido nº',w:11},{h:'Cliente',w:30},{h:'Item',w:44},{h:'Qtd',w:7},{h:'Valor unitário',w:14,f:R},{h:'Total do item',w:14,f:R},{h:'Forma de pagamento',w:20}],
+      [...linhasIt,{tot:1,v:['Total','','','',linhasIt.reduce((a,l)=>a+(l[4]||0),0),null,r2(linhasIt.reduce((a,l)=>a+(Number(l[6])||0),0)),'']}],'Itens vendidos · '+nomeMes);
+    // 6) Produtos mais vendidos
+    const prod={}; validas.forEach(x=>x.its.forEach(i=>{ const k=String(i.d).trim()||'(sem nome)'; const g=prod[k]||(prod[k]={q:0,t:0,n:0}); g.q+=i.q; g.t+=Number(i.t)||0; g.n++; }));
+    const prodL=Object.entries(prod).sort((a,b)=>b[1].q-a[1].q||b[1].t-a[1].t);
+    aba('Produtos mais vendidos',[{h:'#',w:5},{h:'Item',w:46},{h:'Quantidade',w:12},{h:'Pedidos',w:10},{h:'Valor total',w:15,f:R},{h:'Preço médio',w:13,f:R}],
+      [...prodL.map(([k,g],i)=>[i+1,k,g.q,g.n,r2(g.t),g.q?r2(g.t/g.q):null]),{tot:1,v:['','Total',prodL.reduce((a,[,g])=>a+g.q,0),'',r2(prodL.reduce((a,[,g])=>a+g.t,0)),null]}],'Produtos mais vendidos · '+nomeMes);
+    // 7) Consumo detalhado dos clientes (cada pedido e item, agrupado por cliente, com o total de cada cliente)
+    const grupos={}; validas.forEach(x=>{ const g=grupos[x.w.k]||(grupos[x.w.k]={ w:x.w, L:[] }); g.L.push(x); });
+    const gl=Object.values(grupos).sort((a,b)=>(a.w.k==='balcao')-(b.w.k==='balcao')||a.w.nome.localeCompare(b.w.nome,'pt-BR'));
+    const det=[]; gl.forEach(g=>{ g.L.sort((a,b)=>(String(a.v.data)+(a.v.created_at||'')).localeCompare(String(b.v.data)+(b.v.created_at||'')));
+      g.L.forEach(x=>{ const its=x.its.length?x.its:[{ d:'(sem itens detalhados)', q:null, u:null, t:x.tot }];
+        its.forEach((i,k)=>det.push([g.w.nome,g.w.tipo,g.w.emp,dia(x.v.data),hora(x.v.created_at),x.v.numero_ref||'',i.d,i.q,i.u,i.t,k===0?r2(x.tot):null,FORMA[x.v.forma_pagamento]||x.v.forma_pagamento||'',x.sit])); });
+      det.push({ sub:1, v:['Total de '+g.w.nome,'','',null,'',g.L.length+' pedido'+(g.L.length===1?'':'s'),'',g.L.reduce((a,x)=>a+x.its.reduce((b,i)=>b+(i.q||0),0),0),null,null,soma(g.L,x=>x.tot),'',''] }); });
+    det.push({ tot:1, v:['TOTAL GERAL · '+gl.length+' clientes','','',null,'',validas.length+' pedidos','','',null,null,soma(validas,x=>x.tot),'',''] });
+    aba('Consumo detalhado clientes',[{h:'Cliente',w:30},{h:'Tipo',w:13},{h:'Empresa (convênio)',w:22},{h:'Data',w:11,f:DT},{h:'Hora',w:7},{h:'Pedido nº',w:11},{h:'Item consumido',w:44},{h:'Qtd',w:6},{h:'Valor unitário',w:13,f:R},{h:'Total do item',w:13,f:R},{h:'Total do pedido',w:14,f:R},{h:'Forma de pagamento',w:20},{h:'Situação na baixa',w:32}],
+      det,'Consumo detalhado dos clientes · '+nomeMes);
+    // 8) Resumo por cliente (consumo + crediário: pago, em aberto, saldo)
+    const pcDe={}; ((pc&&pc.linhas)||[]).forEach(l=>{ pcDe[l.id]=l; });
+    const usados=new Set(), SIT={pago:'Pago',parcial:'Parcial',aberto:'Em aberto',anterior:'Saldo anterior'};
+    const resumo=gl.map(g=>{ const L=g.L, f=(k)=>soma(L.filter(x=>x.v.forma_pagamento===k),x=>x.tot), id=g.w.k, cr=pcDe[id]&&!usados.has(id)?(usados.add(id),pcDe[id]):null;
+      const ds=L.map(x=>String(x.v.data)).sort(), tot=soma(L,x=>x.tot);
+      return [g.w.nome,g.w.tipo,g.w.emp,g.w.tel,L.length,L.reduce((a,x)=>a+x.its.reduce((b,i)=>b+(i.q||0),0),0),tot,f('dinheiro'),f('pix'),r2(f('debito')+f('credito')),f('vr'),f('crediario'),L.length?r2(tot/L.length):null,dia(ds[0]),dia(ds[ds.length-1]),
+        cr?cr.pago:null,cr?cr.pendente:null,cr?cr.saldo:null,cr?(SIT[cr.sit]||''):'']; });
+    ((pc&&pc.linhas)||[]).filter(l=>!usados.has(l.id)).forEach(l=>resumo.push([l.nome,l.tipo,(l.c&&l.c.company)||'',(l.c&&l.c.phone)||'',0,0,0,0,0,0,0,0,null,null,null,l.pago,l.pendente,l.saldo,SIT[l.sit]||'']));
+    const cs=(i)=>r2(resumo.reduce((a,r)=>a+(Number(r[i])||0),0));
+    aba('Resumo por cliente',[{h:'Cliente',w:30},{h:'Tipo',w:13},{h:'Empresa (convênio)',w:22},{h:'Telefone',w:15},{h:'Pedidos',w:9},{h:'Itens',w:8},{h:'Total consumido',w:15,f:R},{h:'Dinheiro',w:13,f:R},{h:'PIX',w:13,f:R},{h:'Cartão',w:13,f:R},{h:'Vale-refeição',w:13,f:R},{h:'Na conta (crediário)',w:15,f:R},{h:'Ticket médio',w:13,f:R},{h:'1ª compra',w:11,f:DT},{h:'Última compra',w:11,f:DT},{h:'Pago no mês (crediário)',w:15,f:R},{h:'Em aberto do mês',w:15,f:R},{h:'Saldo devedor hoje',w:15,f:R},{h:'Situação',w:14}],
+      [...resumo,{tot:1,v:['Total · '+resumo.length+' clientes','','','',cs(4),cs(5),cs(6),cs(7),cs(8),cs(9),cs(10),cs(11),null,null,null,cs(15),cs(16),cs(17),'']}],'Resumo do consumo por cliente · '+nomeMes);
+    // 9) Crediário (lançamentos do mês)
+    const TIPO={debito:'Compra (débito)',pagamento:'Pagamento',fatura_fechada:'Fatura fechada'};
+    const contaNome=(c)=>c.nomeConta||(c.rest_empresas&&c.rest_empresas.nome)||(c.rest_clientes&&c.rest_clientes.nome)||(cliDe[c.empresa_id]||cliDe[c.cliente_id]||{}).name||'—';
+    aba('Crediário',[{h:'Data',w:11,f:DT},{h:'Hora',w:7},{h:'Tipo',w:16},{h:'Cliente / empresa',w:32},{h:'Descrição',w:50},{h:'Valor',w:14,f:R}],
+      [...D.cred.map(c=>[dia(c.data),hora(c.created_at),TIPO[c.tipo]||c.tipo,contaNome(c),c.descricao||'',r2(c.valor)]),
+       {tot:1,v:['Compras',null,'','','',soma(D.cred.filter(c=>c.tipo==='debito'),c=>c.valor)]},{tot:1,v:['Pagamentos',null,'','','',soma(D.cred.filter(c=>c.tipo==='pagamento'),c=>c.valor)]}],'Lançamentos do crediário · '+nomeMes);
+    // 10) Motoboys e entregas
+    aba('Pagamentos motoboys',[{h:'Data',w:11,f:DT},{h:'Motoboy',w:24},{h:'Detalhe',w:40},{h:'Valor',w:14,f:R}],
+      [...D.mot.map(p=>[dia(p.data),(p.rest_motoboys&&p.rest_motoboys.nome)||'—',p.detalhe||'',r2(p.valor)]),{tot:1,v:['Total','','',soma(D.mot,p=>p.valor)]}],'Pagamentos de motoboys · '+nomeMes);
+    aba('Entregas',[{h:'Data',w:11,f:DT},{h:'Motoboy',w:24},{h:'Região',w:24},{h:'Pedido',w:12},{h:'Taxa',w:12,f:R},{h:'Status',w:12}],
+      [...D.ent.map(e=>[dia(e.data_entrega),(e.rest_motoboys&&e.rest_motoboys.nome)||'—',e.regiao||'',e.pedido_ref||'',r2(e.taxa),e.status||'']),{tot:1,v:['Total · '+D.ent.length+' entregas','','','',soma(D.ent,e=>e.taxa),'']}],'Entregas · '+nomeMes);
+    // 11) Estoque
+    aba('Estoque',[{h:'Data',w:11,f:DT},{h:'Produto',w:32},{h:'Tipo',w:10},{h:'Quantidade',w:12},{h:'Unidade',w:10},{h:'Motivo',w:36}],
+      D.est.map(e=>[dia(e.data),(e.rest_produtos&&e.rest_produtos.nome)||'—',e.tipo==='entrada'?'Entrada':(e.tipo==='saida'?'Saída':e.tipo),Number(e.quantidade)||0,(e.rest_produtos&&e.rest_produtos.unidade)||'',e.motivo||'']),'Movimentações de estoque · '+nomeMes);
+    // 12) Baixas já registradas (para comparar)
+    aba('Baixas anteriores',[{h:'Mês',w:14},{h:'Baixa em',w:18},{h:'Por',w:26},{h:'Vendas',w:9},{h:'Total vendido',w:15,f:R},{h:'Pago na hora',w:15,f:R},{h:'Recebido da conta',w:15,f:R},{h:'Total recebido',w:15,f:R},{h:'Na conta',w:15,f:R},{h:'Motoboys',w:13,f:R},{h:'Caixa líquido',w:15,f:R}],
+      (s.histFech||[]).slice().sort((a,b)=>String(b.mes).localeCompare(String(a.mes))).map(f=>{ const x=f.totais||{};
+        return [mesN(String(f.mes).slice(0,7)),f.fechado_em?new Date(f.fechado_em).toLocaleString('pt-BR'):'',f.fechado_por||'',Number(x.vendas)||0,r2(x.total),r2(x.na_hora),r2(x.recebido_conta),r2(x.recebido_total),r2(x.na_conta),r2(x.motoboys),r2(x.caixa_liquido)]; }),'Baixas já registradas');
+    const buf=await wb.xlsx.writeBuffer();
+    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})); a.download='simulacao-baixa-'+ym+'.xlsx';
+    document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1500); };
   // ── fim carga histórico ──
   // ── Clientes: carga do resumo ──
   loadResumoClientes = async () => {
@@ -6309,9 +6469,10 @@ class Component extends DCLogic {
     const n=(q,um,muitos)=>q+' '+(q===1?um:muitos);
     const fundo=document.createElement('div'); fundo.className='bxm-fundo'; fundo.id='pdc-bxm';
     fundo.innerHTML='<div class="bxm" role="dialog" aria-modal="true" aria-labelledby="bxm-t" aria-describedby="bxm-d">'+
-      '<div class="bxm-cab"><div class="bxm-ic">'+ico(I.arq,22)+'</div><div><h2 id="bxm-t">'+(o.refazer?'Refazer a baixa de ':'Dar baixa em ')+o.nome+'</h2>'+
-        '<p id="bxm-d">Fecha o mês do que foi pago e guarda os totais para o relatório de vendas.</p></div>'+
+      '<div class="bxm-cab"><div class="bxm-ic">'+ico(I.arq,22)+'</div><div><h2 id="bxm-t">'+(o.sim?'Simulação da baixa de ':(o.refazer?'Refazer a baixa de ':'Dar baixa em '))+o.nome+'</h2>'+
+        '<p id="bxm-d">'+(o.sim?'Mostra como ficaria a baixa do mês e baixa um Excel com todas as tabelas. Nada é gravado no sistema.':'Fecha o mês do que foi pago e guarda os totais para o relatório de vendas.')+'</p></div>'+
         '<button type="button" class="bxm-x" data-a="nao" aria-label="Fechar">'+ico(I.x,18)+'</button></div>'+
+      (o.sim?'<div class="bxm-aviso">'+ico(I.av,16)+'<span><b>SIMULAÇÃO</b> · a baixa não é registrada, as vendas não mudam de lista e os saldos ficam iguais.</span></div>':'')+
       (o.atual?'<div class="bxm-aviso">'+ico(I.av,16)+'<span>Este mês ainda não terminou. Se houver vendas depois da baixa, o Histórico avisa para refazer.</span></div>':'')+
       '<div class="bxm-kpis">'+
         kpi('Vendas',String(Number(t.vendas)||0),'',t.dias_com_venda?n(Number(t.dias_com_venda),'dia com venda','dias com venda'):'')+
@@ -6328,17 +6489,18 @@ class Component extends DCLogic {
             :linha('pe',I.rel,'As pendentes do crediário continuam na lista','Até o cliente pagar',''))+
         linha('in',I.esc,'Os saldos devedores não mudam','A baixa fica guardada e não pode ser apagada, só refeita','')+
       '</div>'+
-      '<label class="bxm-imp"><input type="checkbox" data-k="imp" checked>Imprimir o relatório de vendas depois</label>'+
+      (o.sim?'<div class="bxm-sec">O Excel traz</div><div class="bxm-fx">'+linha('in',I.arq,'Resumo da baixa, por forma de pagamento e por dia','Os mesmos totais da baixa de verdade','')+linha('in',I.mv,'Vendas, itens vendidos e produtos mais vendidos','Com a situação de cada venda na baixa','')+linha('ok',I.esc,'Consumo detalhado dos clientes no mês','Cada pedido e item por cliente, com o total de cada um, e o resumo por cliente','')+linha('pe',I.rel,'Crediário, motoboys, entregas, estoque e baixas anteriores','Tudo do mês','')+'</div>'
+        :'<label class="bxm-imp"><input type="checkbox" data-k="imp" checked>Imprimir o relatório de vendas depois</label>')+
       '<div class="bxm-err" role="alert" data-k="err"></div>'+
       '<div class="bxm-rod"><button type="button" class="bxm-b bxm-b0" data-a="nao">Cancelar</button>'+
-        '<button type="button" class="bxm-b bxm-b1" data-a="sim">'+ico(I.ok,15)+'<span>'+(o.refazer?'Refazer baixa':'Confirmar baixa')+'</span></button></div></div>';
+        '<button type="button" class="bxm-b bxm-b1" data-a="sim">'+ico(I.ok,15)+'<span>'+(o.sim?'Baixar Excel da simulação':(o.refazer?'Refazer baixa':'Confirmar baixa'))+'</span></button></div></div>';
     const q=(s)=>fundo.querySelector(s), bt=q('[data-a=sim]'), err=q('[data-k=err]');
     let salvando=false;
     const sai=(v)=>{ document.removeEventListener('keydown',tecla,true); fundo.remove(); fim(v); };
-    const sim=async()=>{ if(salvando) return; salvando=true; bt.disabled=true; bt.querySelector('span').textContent='Registrando…'; err.textContent='';
+    const sim=async()=>{ if(salvando) return; salvando=true; bt.disabled=true; bt.querySelector('span').textContent=o.sim?'Gerando Excel…':'Registrando…'; err.textContent='';
       let e=''; try{ e=(await o.salvar())||''; }catch(x){ e=String(x&&x.message||x); }
-      if(e){ salvando=false; bt.disabled=false; bt.querySelector('span').textContent=o.refazer?'Refazer baixa':'Confirmar baixa'; err.textContent='Não foi possível registrar a baixa: '+e; return; }
-      sai({ imprimir:q('[data-k=imp]').checked }); };
+      if(e){ salvando=false; bt.disabled=false; bt.querySelector('span').textContent=o.sim?'Baixar Excel da simulação':(o.refazer?'Refazer baixa':'Confirmar baixa'); err.textContent=(o.sim?'Não foi possível gerar o Excel: ':'Não foi possível registrar a baixa: ')+e; return; }
+      sai({ imprimir:!o.sim&&q('[data-k=imp]').checked }); };
     const tecla=(e)=>{ if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); if(!salvando) sai(null); return; }
       if(e.key==='Tab'){ const f=[...fundo.querySelectorAll('button:not(:disabled),input')]; if(!f.length) return; const a=f[0], z=f[f.length-1];
         if(e.shiftKey&&document.activeElement===a){ e.preventDefault(); z.focus(); } else if(!e.shiftKey&&document.activeElement===z){ e.preventDefault(); a.focus(); } } };
@@ -9327,7 +9489,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
         onVer:()=>this.setState({histAba:'vendas',histSit:'baixadas',histBusca:'',histFiltro:'todas',histDe:ym+'-01',histAte:ym===hmMesAtual?hmHoje:hmFimMes(ym)}) }; });
     const hmYmSel=hmAte.slice(0,7), hmFSel=hmFech[hmYmSel], hmMudSel=hmMudou(hmYmSel), hmGSel=hmPorMes[hmYmSel]||hmGrupo();
     const histBx={ pode:hmResOk&&(!hmFSel||hmMudSel)&&(hmGSel.qtd>0||hmGSel.rec>0), rot:(hmFSel?'Refazer baixa de ':'Dar baixa em ')+hmNomeMes(hmYmSel),
-      feita:!!hmFSel&&!hmMudSel, txt:'✓ Baixa de '+hmNomeMes(hmYmSel)+(hmFSel?' feita em '+hmQuando(hmFSel.fechado_em).slice(0,8):''), onClick:hmBaixar(hmYmSel), onRel:()=>hmRelatorio(hmYmSel), onCli:()=>this._bxClientesModal(hmYmSel,hmFSel) };
+      feita:!!hmFSel&&!hmMudSel, txt:'✓ Baixa de '+hmNomeMes(hmYmSel)+(hmFSel?' feita em '+hmQuando(hmFSel.fechado_em).slice(0,8):''), onClick:hmBaixar(hmYmSel), onRel:()=>hmRelatorio(hmYmSel), onCli:()=>this._bxClientesModal(hmYmSel,hmFSel), onSim:()=>this.simularBaixaMes(hmYmSel,hmTotaisMes(hmYmSel)) };
     // faixa do período, topo, abas e atalhos
     const hmCx=hmCaixa(hmPer), hmMaiorVenda=hmVen.reduce((a,v)=>Math.max(a,v.total),0);
     const histPer={ de:hmDe, ate:hmAte, mes:hmDe.slice(0,7), busca:s.histBusca||'', label:hmData(hmDe)+' a '+hmData(hmAte), nDias:hmNDias+(hmNDias===1?' dia':' dias'), ateMes:hmNomeMes(hmAte.slice(0,7)),
