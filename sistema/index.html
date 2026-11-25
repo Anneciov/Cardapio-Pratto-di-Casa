@@ -3,6 +3,10 @@
 <meta charset="utf-8">
 <script>/* dificulta abrir o inspetor (F12, Ctrl+Shift+I/J/C, Ctrl+U e botão direito fora dos campos); não impede quem sabe usar o menu do navegador */(function(){var campo=function(t){return t&&t.closest&&t.closest('input,textarea,select,[contenteditable="true"]');};document.addEventListener('keydown',function(e){var k=String(e.key||'').toUpperCase(),c=e.ctrlKey||e.metaKey;if(k==='F12'||(c&&e.shiftKey&&(k==='I'||k==='J'||k==='C'))||(c&&k==='U')){e.preventDefault();e.stopPropagation();}},true);document.addEventListener('contextmenu',function(e){if(!campo(e.target))e.preventDefault();},true);})();</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23023859'/%3E%3Ctext x='32' y='43' font-size='30' font-family='Arial' font-weight='700' text-anchor='middle' fill='%2354ACBF'%3EP%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href="/sistema.webmanifest">
+<meta name="theme-color" content="#023859">
+<link rel="apple-touch-icon" href="/icones/sistema-apple-180.png">
+<script>if('serviceWorker' in navigator&&location.protocol==='https:'){addEventListener('load',function(){navigator.serviceWorker.register('/sistema-sw.js',{scope:'/sistema'}).catch(function(){});});}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://esm.sh https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: blob: https://fonts.gstatic.com; img-src 'self' data: blob: https://*.whatsapp.net https://*.supabase.co https://cardapio-pratto-di-casa.vercel.app; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://esm.sh https://unpkg.com http://127.0.0.1:3335; base-uri 'self'; form-action 'self'; frame-src https://cardapio-pratto-di-casa.vercel.app;">
 <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -2919,6 +2923,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
         <h1 style="font-family:'Instrument Serif',serif;font-size:20px;font-weight:400;letter-spacing:0;line-height:1.2">{{ pageTitle }}</h1>
         <p style="font-size:12px;color:#847a6e;margin-top:0">{{ pageSub }}</p>
       </div>
+      <sc-if value="{{ appPodeInstalar }}" hint-placeholder-val="{{ false }}"><button onclick="{{ instalarApp }}" title="Instalar o sistema como aplicativo (abre em janela própria, com ícone na área de trabalho)" style="display:flex;align-items:center;gap:6px;flex-shrink:0;height:28px;padding:0 11px;border-radius:999px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;background:rgba(84,172,191,.14);border:1px solid rgba(84,172,191,.55);color:#7fd0df"><svg width="14" height="14" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12 M7 10l5 5 5-5 M5 21h14"></path></svg>Instalar app</button></sc-if>
       <button onclick="{{ toggleLoja }}" title="{{ lojaTitle }}" aria-pressed="{{ lojaPressed }}" style="{{ lojaBtnStyle }}"><span style="{{ lojaDotStyle }}"></span>{{ lojaLabel }}</button>
       <button onclick="{{ toggleTheme }}" title="{{ themeLabel }}" class="tema-btn" style="width:38px;height:38px;border-radius:50%;border:1px solid var(--border-card);background:var(--bg-card);color:var(--text-primary);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ themeIcon }}"></path></svg></button>
       <div style="text-align:right;font-size:11.5px;color:#847a6e">Hoje<br><span style="font-family:'Space Mono',monospace;color:var(--text-primary);font-size:12.5px">{{ todayFmt }}</span></div>
@@ -4768,7 +4773,12 @@ class Component extends DCLogic {
     sbReady.then(()=>{ this.checkSession(); });
   }
 
-  componentDidMount(){ document.addEventListener('paste',this.colarFotoPrato); this.setState({ arte:this.arteDados() }); this._loginTimer=setInterval(()=>{ if(!this.state.authed) this.setState(s=>({loginSlide:((s.loginSlide||0)+1)%3})); },5000); this._buildNumpad(); this._tick=setInterval(()=>{ if((this.state.waEmAndamento&&this.state.waEmAndamento.length)||(this.state.orders||[]).some(o=>o.prepIni&&!o.pronto&&(Date.now()-new Date(o.prepIni).getTime())<432e5)) this.setState(s=>({nowTick:s.nowTick+1})); },1000); }
+  componentDidMount(){ this._pwaInit(); document.addEventListener('paste',this.colarFotoPrato); this.setState({ arte:this.arteDados() }); this._loginTimer=setInterval(()=>{ if(!this.state.authed) this.setState(s=>({loginSlide:((s.loginSlide||0)+1)%3})); },5000); this._buildNumpad(); this._tick=setInterval(()=>{ if((this.state.waEmAndamento&&this.state.waEmAndamento.length)||(this.state.orders||[]).some(o=>o.prepIni&&!o.pronto&&(Date.now()-new Date(o.prepIni).getTime())<432e5)) this.setState(s=>({nowTick:s.nowTick+1})); },1000); }
+  _pwaInit(){ if(this._pwaOk) return; this._pwaOk=true;
+    window.addEventListener('beforeinstallprompt',(e)=>{ e.preventDefault(); this._bip=e; this.setState({ appPodeInstalar:true }); });
+    window.addEventListener('appinstalled',()=>{ this._bip=null; this.setState({ appPodeInstalar:false }); this.showToast('App instalado! Abra pelo ícone Pratto di Casa na área de trabalho ou no menu Iniciar.'); }); }
+  instalarApp=async()=>{ const e=this._bip; if(!e){ this.showToast('Use o ícone de instalar na barra de endereço do navegador (Chrome ou Edge).'); return; }
+    try{ e.prompt(); const r=await e.userChoice; if(r&&r.outcome==='accepted'){ this._bip=null; this.setState({ appPodeInstalar:false }); } }catch(x){ console.warn('[instalar app]',x); } };
   componentWillUnmount(){ if(this._loginTimer) clearInterval(this._loginTimer); if(this._numpad){ this._numpad.remove(); this._numpad=null; } if(this._tick) clearInterval(this._tick); }
 
   /* ============ TECLADO NUMÉRICO VIRTUAL ============ */
@@ -10035,7 +10045,7 @@ const FLOW={aberto:['Em aberto','fbeee0;color:#c07b1e'],em_preparo:['Em preparo'
       hasSlots: s.signupSlots===null || s.signupSlots>0, noSlots: s.signupSlots!==null && s.signupSlots<=0,
       signupSlotsMsg: s.signupSlots===null?'Verificando vagas…':(s.signupSlots>0?('Vagas disponíveis: '+s.signupSlots+' de 5'):'Nenhuma vaga disponível no momento.'),
       navItems, ...navFlyVals, theme:s.theme, rootStyle, showFull, asideStyle, brandRowStyle, collapseBtnStyle, collapseIcon, themeBtnStyle, themeIcon, themeLabel, toggleTheme:this.toggleTheme, toggleCollapse:this.toggleCollapse,
-      toggleLoja:this.toggleLoja, lojaLabel:s.lojaSalvando?'Salvando…':(s.lojaAberta===false?'Fechado':(s.lojaAberta==null&&!this._demo?'Verificando…':'Aberto')), lojaPressed:s.lojaAberta===false?'false':'true',
+      toggleLoja:this.toggleLoja, appPodeInstalar:!!s.appPodeInstalar, instalarApp:this.instalarApp, lojaLabel:s.lojaSalvando?'Salvando…':(s.lojaAberta===false?'Fechado':(s.lojaAberta==null&&!this._demo?'Verificando…':'Aberto')), lojaPressed:s.lojaAberta===false?'false':'true',
       lojaTitle:s.lojaAberta===false?'Restaurante FECHADO: o cardápio não aceita pedidos. Clique para abrir.':'Restaurante ABERTO: clientes podem pedir pelo cardápio. Clique para fechar.',
       lojaBtnStyle:'display:flex;align-items:center;gap:6px;flex-shrink:0;height:28px;padding:0 10px;border-radius:999px;cursor:pointer;font-family:inherit;font-size:12px;line-height:1;font-weight:600;letter-spacing:.01em;'+(s.lojaAberta===false?'background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.55);color:#dc2626':'background:rgba(22,163,74,.12);border:1px solid rgba(22,163,74,.55);color:#16a34a')+(s.lojaSalvando?';opacity:.65;cursor:wait':''),
       lojaDotStyle:'width:7px;height:7px;border-radius:50%;flex-shrink:0;background:'+(s.lojaAberta===false?'#dc2626':'#16a34a')+';box-shadow:0 0 0 2px '+(s.lojaAberta===false?'rgba(220,38,38,.2)':'rgba(22,163,74,.2)'),
