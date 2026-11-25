@@ -6,7 +6,7 @@
 <link rel="manifest" href="/sistema.webmanifest">
 <meta name="theme-color" content="#023859">
 <link rel="apple-touch-icon" href="/icones/sistema-apple-180.png">
-<script>if('serviceWorker' in navigator&&location.protocol==='https:'){addEventListener('load',function(){navigator.serviceWorker.register('/sistema-sw.js',{scope:'/sistema'}).catch(function(){});});}</script>
+<script>addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__pdcBip=e;});if('serviceWorker' in navigator&&location.protocol==='https:'){addEventListener('load',function(){navigator.serviceWorker.register('/sistema-sw.js',{scope:'/sistema'}).catch(function(){});});}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://esm.sh https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: blob: https://fonts.gstatic.com; img-src 'self' data: blob: https://*.whatsapp.net https://*.supabase.co https://cardapio-pratto-di-casa.vercel.app; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://esm.sh https://unpkg.com http://127.0.0.1:3335; base-uri 'self'; form-action 'self'; frame-src https://cardapio-pratto-di-casa.vercel.app;">
 <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -4774,7 +4774,7 @@ class Component extends DCLogic {
   }
 
   componentDidMount(){ this._pwaInit(); document.addEventListener('paste',this.colarFotoPrato); this.setState({ arte:this.arteDados() }); this._loginTimer=setInterval(()=>{ if(!this.state.authed) this.setState(s=>({loginSlide:((s.loginSlide||0)+1)%3})); },5000); this._buildNumpad(); this._tick=setInterval(()=>{ if((this.state.waEmAndamento&&this.state.waEmAndamento.length)||(this.state.orders||[]).some(o=>o.prepIni&&!o.pronto&&(Date.now()-new Date(o.prepIni).getTime())<432e5)) this.setState(s=>({nowTick:s.nowTick+1})); },1000); }
-  _pwaInit(){ if(this._pwaOk) return; this._pwaOk=true;
+  _pwaInit(){ if(this._pwaOk) return; this._pwaOk=true; if(window.__pdcBip){ this._bip=window.__pdcBip; setTimeout(()=>this.setState({ appPodeInstalar:true }),0); }
     window.addEventListener('beforeinstallprompt',(e)=>{ e.preventDefault(); this._bip=e; this.setState({ appPodeInstalar:true }); });
     window.addEventListener('appinstalled',()=>{ this._bip=null; this.setState({ appPodeInstalar:false }); this.showToast('App instalado! Abra pelo ícone Pratto di Casa na área de trabalho ou no menu Iniciar.'); }); }
   instalarApp=async()=>{ const e=this._bip; if(!e){ this.showToast('Use o ícone de instalar na barra de endereço do navegador (Chrome ou Edge).'); return; }
