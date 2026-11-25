@@ -8858,7 +8858,7 @@ class Component extends DCLogic {
   abrirNavFly=(gid,e)=>{ const el=e&&e.currentTarget, r=el?el.getBoundingClientRect():{top:90,right:74};
     if(!this._navFlyTecla){ this._navFlyTecla=(ev)=>{ if(ev.key==='Escape'&&this.state.navFly){ ev.stopPropagation(); this.setState({navFly:null}); } }; document.addEventListener('keydown',this._navFlyTecla,true); }
     const fecha=this.state.navFly&&this.state.navFly.id===gid; this.setState({navFly:fecha?null:{id:gid,top:r.top-6,left:r.right+10}}); };
-  navGroupChildren=(gid)=>({operacao:['pedidos','cozinha','entregas','motoboys'],'clientes-grupo':['clientes','empresas','crediario'],financeiro:['lancamento','historico'],'cardapio-grupo':['cardapio','estoque']}[gid]||[]);
+  navGroupChildren=(gid)=>({operacao:['pedidos','cozinha','entregas','motoboys'],'clientes-grupo':['clientes','empresas','crediario'],financeiro:['historico'],'cardapio-grupo':['cardapio','estoque']}[gid]||[]);
   toggleNavGroup=(gid)=>{ const def=this.navGroupChildren(gid).includes(this.state.view); const cur=this.state.navExpanded[gid]!==undefined?this.state.navExpanded[gid]:def; this.setState(s=>({navExpanded:{...s.navExpanded,[gid]:!cur}})); };
   toggleMetric=(id)=>this.setState(s=>({expandedMetric:s.expandedMetric===id?null:id}));
 
@@ -9125,9 +9125,9 @@ class Component extends DCLogic {
     const activePacotes = s.pacotes.filter(p=>p.used<p.meals).length;
     const waNaoLidas=(s.waMsgs||[]).filter(m=>m.direcao==='entrada'&&!m.lida).length;
     const badgeFor=(id)=> id==='whatsapp'?(waNaoLidas||null):id==='cozinha'&&(s.waEmAndamento||[]).filter(p=>!p.pronto).length?(s.waEmAndamento||[]).filter(p=>!p.pronto).length:(id==='pedidos'&&openOrders?openOrders:(id==='crediario'&&debtorCount?debtorCount:(id==='entregas'&&pendingDel.length?pendingDel.length:(id==='empresas'&&activePacotes?activePacotes:null))));
-    const mkLeaf=(id,child)=>{ const active=s.view===id; return {id,label:leafLabel[id],iconPath:IC[id],iconCor:id==='whatsapp'?'color:#25D366':'',showIcon:!child,isGroup:false,chevronPath:'',badge:badgeFor(id),
+    const mkLeaf=(id,child)=>{ const active=s.view===id; return {id,label:leafLabel[id],iconPath:IC[id],iconCor:id==='whatsapp'?'color:#25D366':(child?'width:16px;height:16px;opacity:.85':''),showIcon:true,isGroup:false,chevronPath:'',badge:badgeFor(id),
       onClick:()=>this.setState({view:id}),
-      style:'display:flex;align-items:center;gap:11px;padding:'+(collapsed?'11px 0':(child?'9px 14px 9px 38px':'10px 14px'))+';justify-content:'+(collapsed?'center':'flex-start')+';border-radius:9px;cursor:pointer;font-size:'+(child?'13.5px':'14px')+';font-weight:'+(active?'600':'500')+';color:'+(active?'#fff':'#b3d6de')+';background:'+(active?'linear-gradient(120deg,#26658C,#2f7a9e);box-shadow:inset 3px 0 0 #A7EBF2':'transparent') }; };
+      style:'display:flex;align-items:center;gap:11px;padding:'+(collapsed?'11px 0':(child?'8px 14px 8px 32px':'10px 14px'))+';justify-content:'+(collapsed?'center':'flex-start')+';border-radius:9px;cursor:pointer;font-size:'+(child?'13.5px':'14px')+';font-weight:'+(active?'600':'500')+';color:'+(active?'#fff':'#b3d6de')+';background:'+(active?'linear-gradient(120deg,#26658C,#2f7a9e);box-shadow:inset 3px 0 0 #A7EBF2':'transparent') }; };
     let navItems;
     const navGroupDefs=[{id:'operacao',label:'Operação',icon:'pedidos'},{id:'clientes-grupo',label:'Clientes',icon:'clientes'},{id:'financeiro',label:'Financeiro',icon:'lancamento'},{id:'cardapio-grupo',label:'Cardápio & Estoque',icon:'cardapio'}];
     if(collapsed){
